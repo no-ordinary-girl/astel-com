@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>АСТЕЛ-КОМ</title>
+
+    <!-- Preload Critical Fonts -->
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-latin/geist-v5-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-latin/geist-v5-latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Local CSS (Fonts are now loaded inside this file) -->
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Block: header -->
+      <header class="header">
+        <!-- Top bar always visible -->
+        <div class="header__top">
+          <div class="header__logo">АСТЕЛ-КОМ</div>
+
+          <!-- Hamburger Button -->
+          <button
+            class="header__toggle"
+            id="menu-toggle"
+            aria-label="Toggle menu"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Collapsible menu -->
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="#" class="header__link header__link--active">ГОЛОВНА</a>
+            <a href="#" class="header__link">ПРО НАС</a>
+            <a href="#" class="header__link">ТОВАРИ ТА ПОСЛУГИ</a>
+            <a href="#" class="header__link">КОНТАКТИ</a>
+          </nav>
+
+          <div class="header__lang">
+            <div class="header__lang-trigger">
+              UA
+              <svg
+                class="header__lang-icon"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </div>
+            <ul class="header__lang-menu">
+              <li class="header__lang-item">
+                <a href="#" class="header__lang-link">UA</a>
+              </li>
+              <li class="header__lang-item">
+                <a href="#" class="header__lang-link">EN</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- Block: hero -->
+        <section class="hero">
+          <h1 class="hero__title">ОБЛАДНАННЯ ТА РІШЕННЯ<br />АСТЕЛ-КОМ</h1>
+          <p class="hero__description">
+            Надійне телекомунікаційне обладнання та IoT-рішення для бізнесу в
+            Україні.
+          </p>
+          <a href="#" class="hero__link">
+            ПЕРЕГЛЯНУТИ КАТАЛОГ
+            <!-- Block: icon-arrow (reusable) -->
+            <svg
+              class="icon-arrow hero__link-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </section>
+
+        <!-- Block: products -->
+        <section class="products">
+          <!-- Block: card | Modifiers: dark, layout-top -->
+          <div class="card card--dark card--layout-top">
+            <h2 class="card__title">
+              GSM/LTE-МОДЕМИ
+              <svg
+                class="icon-arrow card__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h2>
+            <img
+              class="card__image"
+              src="assets/images/gsm-lte-modules.png"
+              alt="GSM/LTE Modems"
+            />
+          </div>
+
+          <!-- Block: card | Modifiers: light, layout-top -->
+          <div class="card card--light card--layout-top">
+            <h2 class="card__title">
+              NBIoT-МОДЕМИ
+              <svg
+                class="icon-arrow card__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h2>
+            <img
+              class="card__image"
+              src="assets/images/NBIoT-modules.png"
+              alt="NBIoT Modems"
+            />
+          </div>
+
+          <!-- Block: card | Modifiers: dark, layout-top -->
+          <div class="card card--dark card--layout-top">
+            <h2 class="card__title">
+              АКСЕССУАРИ ДЛЯ<br />БАНКІВСЬКИХ ТЕРМІНАЛІВ
+              <svg
+                class="icon-arrow card__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h2>
+            <img
+              class="card__image card__image--small"
+              src="assets/images/bank.png"
+              alt="Accessories for Bank Terminals"
+            />
+          </div>
+
+          <!-- Block: card | Modifiers: light, layout-bottom -->
+          <div class="card card--light card--layout-bottom">
+            <h2 class="card__title">
+              АНТЕНИ
+              <svg
+                class="icon-arrow card__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h2>
+            <img
+              class="card__image"
+              src="assets/images/antennas.png"
+              alt="Antennas"
+            />
+          </div>
+
+          <!-- Block: card | Modifiers: dark, layout-bottom -->
+          <div class="card card--dark card--layout-bottom">
+            <h2 class="card__title">
+              КАБЕЛІ НИЗКОВОЛЬТНОГО<br />ЖИВЛЕННЯ
+              <svg
+                class="icon-arrow card__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </h2>
+            <img
+              class="card__image"
+              src="assets/images/cables.png"
+              alt="Low Voltage Cables"
+            />
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      const toggleBtn = document.getElementById("menu-toggle");
+      const collapseMenu = document.getElementById("menu-collapse");
+
+      toggleBtn.addEventListener("click", () => {
+        collapseMenu.classList.toggle("header__collapse--open");
+      });
+    </script>
+  </body>
+</html>

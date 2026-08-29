@@ -564,6 +564,58 @@ html {
 }
 
 /* ===========================
+   TRUSTED BY SECTION
+   =========================== */
+
+/* --- MOBILE DEFAULT --- */
+.trusted {
+  padding: 60px 20px;
+  background-color: var(--gray-100, #f4f3f4);
+  text-align: center;
+}
+
+.trusted__title {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 32px);
+  color: #161617;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.trusted__logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 30px 40px;
+  max-width: 1200px; /* Increased to give bigger logos room to breathe */
+  margin: 0 auto 32px auto;
+}
+
+.trusted__logo {
+  height: 35px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.trusted__logo:hover {
+  transform: scale(1.05);
+}
+
+.trusted__text {
+  max-width: 750px;
+  margin: 0 auto;
+  color: #4b5563;
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.6;
+}
+
+/* ===========================
    MEDIA QUERIES (Desktop)
    =========================== */
 
@@ -635,6 +687,24 @@ html {
   .card--layout-top,
   .card--layout-bottom {
     grid-column: span 1;
+  }
+
+  .trusted {
+    padding: 80px 24px;
+  }
+
+  .trusted__title {
+    margin-bottom: 48px;
+  }
+
+  .trusted__logos {
+    gap: 50px 70px; /* Slightly wider gap to balance the larger logos */
+    margin-bottom: 48px;
+  }
+
+  .trusted__logo {
+    height: 70px; /* Significantly increased from 45px */
+    max-width: 250px; /* Increased to allow wider logos to scale up naturally */
   }
 }
 

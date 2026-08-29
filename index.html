@@ -251,12 +251,143 @@
         </section>
       </main>
     </div>
+    <!-- Block: Scrollytelling -->
+    <section class="scrollytelling">
+      <!-- 1. STICKY BACKGROUND (The Image locks here) -->
+      <div class="scrollytelling__background">
+        <div class="scrollytelling__dots scrollytelling__dots--top-right"></div>
+        <div
+          class="scrollytelling__dots scrollytelling__dots--bottom-left"
+        ></div>
+        <img
+          src="assets/images/com-900.png"
+          alt="COM-900 Modem"
+          class="scrollytelling__image"
+        />
+      </div>
+
+      <!-- 2. SCROLLING FOREGROUND (Text blocks naturally scroll over the image) -->
+      <div class="scrollytelling__foreground">
+        <!-- SCENE 0 -->
+        <div class="step">
+          <div class="step__box step__box--left step__box--up">
+            <p>
+              COM-900/485 ― це ультракомпактний, економічний, дводіапазонний
+              інтелектуальний промисловий GSM/GPRS/LTE модем (термінал).
+            </p>
+            <div class="step__line"></div>
+          </div>
+          <div class="step__spacer"></div>
+          <div class="step__box step__box--right step__box--down">
+            <p>
+              Модем СОМ-900-485-4G оснащений двома незалежними портами RS232,
+              двома незалежними портами RS485 та двома слотами для SIM-карт, що
+              робить його унікальним пристроєм для М2М додатків, де потрібна
+              надійна бездротова передача даних.
+            </p>
+            <div class="step__line"></div>
+          </div>
+        </div>
+
+        <!-- SCENE 1 -->
+        <div class="step">
+          <div class="step__box step__box--left step__box--down">
+            <p>
+              Ультракомпактність - модем СОМ-900-485-4G виконаний у міцному
+              металевому корпусі з розмірами всього 63х15х60мм, що дозволяє
+              застосовувати даний модем у жорстких умовах експлуатації.
+            </p>
+            <div class="step__line"></div>
+          </div>
+          <div class="step__spacer"></div>
+          <div class="step__box step__box--right step__box--up">
+            <p>
+              Економічність ― модем СОМ-900-485-4G є відмінною альтернативою
+              існуючим імпортним моделям з послідовним портом, завдяки низькій
+              ціні, технічну підтримку та розширену гарантію.
+            </p>
+            <div class="step__line"></div>
+          </div>
+        </div>
+
+        <!-- SCENE 2 -->
+        <div class="step">
+          <div class="step__box step__box--left step__box--up">
+            <p>
+              Інтелектуальність – модем створений на базі радіомодуля А7672Е
+              компанії SIMCOM, що містить внутрішній потужний процесор, для
+              якого існує безліч стандартних та кастомізованих додатків
+              («прошивок»).
+            </p>
+            <div class="step__line"></div>
+          </div>
+          <div class="step__spacer"></div>
+          <div class="step__box step__box--right step__box--down">
+            <p>
+              Промисловість – наявність двох СОМ-портів, двох портів RS485 та
+              оригінального ПЗ дозволяє успішно підключати модем СОМ-900-485-4G
+              до різних типів приладів обліку електроенергії, тепла, води та
+              газу.
+            </p>
+            <div class="step__line"></div>
+          </div>
+        </div>
+
+        <!-- SCENE 3 -->
+        <div class="step">
+          <div class="step__box step__box--left step__box--down">
+            <p>
+              Оригінальне базове програмне забезпечення модему СОМ-900/485
+              забезпечує підтримку безперервної роботи з двома SIM-картами.
+              Зовнішній контролер (супервізор) постійно моніторить радіомодуль і
+              перезавантажує його при «зависанні».
+            </p>
+            <div class="step__line"></div>
+          </div>
+          <div class="step__spacer"></div>
+          <div class="step__box step__box--right step__box--up">
+            <p>
+              При виробництві модему СОМ-900-485-4G ми прагнемо максимально
+              використовувати вітчизняні компоненти та комплектуючі. Це
+              друкована плата, корпус, кріплення та оригінальне програмне
+              забезпечення від українських інженерів.
+            </p>
+            <div class="step__line"></div>
+          </div>
+        </div>
+      </div>
+    </section>
     <script>
+      // Hamburger Menu
       const toggleBtn = document.getElementById("menu-toggle");
       const collapseMenu = document.getElementById("menu-collapse");
+      if (toggleBtn && collapseMenu) {
+        toggleBtn.addEventListener("click", () => {
+          collapseMenu.classList.toggle("header__collapse--open");
+        });
+      }
 
-      toggleBtn.addEventListener("click", () => {
-        collapseMenu.classList.toggle("header__collapse--open");
+      // Simple, Bulletproof Scroll Observer
+      const steps = document.querySelectorAll(".step");
+
+      const observerOptions = {
+        root: null,
+        rootMargin: "-40% 0px -40% 0px", // Safely triggers when the text hits the middle 20% of your screen
+        threshold: 0,
+      };
+
+      const stepObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-active");
+          } else {
+            entry.target.classList.remove("is-active");
+          }
+        });
+      }, observerOptions);
+
+      steps.forEach((step) => {
+        stepObserver.observe(step);
       });
     </script>
   </body>

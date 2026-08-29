@@ -410,6 +410,102 @@ html {
   max-height: 70%;
   right: 5%;
 }
+/* ===========================
+   SCROLLYTELLING SECTION
+   =========================== */
+
+.scrollytelling {
+  position: relative;
+  background-color: var(--gray-100);
+}
+
+/* 1. STICKY BACKGROUND */
+.scrollytelling__background {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1; /* Keeps image behind text */
+}
+
+.scrollytelling__image {
+  width: 100%;
+  max-width: 250px;
+  z-index: 5;
+}
+
+.scrollytelling__dots {
+  position: absolute;
+  width: 150px;
+  height: 120px;
+  background-image: radial-gradient(var(--gray-500) 2px, transparent 2px);
+  background-size: 20px 20px;
+  opacity: 0.3;
+}
+.scrollytelling__dots--top-right {
+  top: 15%;
+  right: 5%;
+}
+.scrollytelling__dots--bottom-left {
+  bottom: 15%;
+  left: 5%;
+}
+
+/* 2. SCROLLING FOREGROUND */
+.scrollytelling__foreground {
+  position: relative;
+  z-index: 2; /* Forces text above the sticky image */
+  margin-top: -100vh; /* CRITICAL: Pulls the first text block up to overlay the image immediately */
+  padding-bottom: 20vh;
+}
+
+/* Individual Text Blocks */
+.step {
+  min-height: 100vh; /* Forces you to scroll a full screen to see the next text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  gap: 20px;
+
+  /* Hidden by default, floats up slightly */
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.step.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step__spacer,
+.step__line {
+  display: none; /* Hide gap and arrows on mobile */
+}
+
+.step__box {
+  background-color: rgba(244, 243, 244, 0.95);
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 350px;
+  text-align: center;
+  width: 100%;
+}
+
+.step__box p {
+  color: #161617;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
 
 /* ===========================
    MEDIA QUERIES (Desktop)
@@ -483,6 +579,88 @@ html {
   .card--layout-top,
   .card--layout-bottom {
     grid-column: span 1;
+  }
+}
+
+/* --- DESKTOP LAYOUT --- */
+@media (min-width: 900px) {
+  .scrollytelling__image {
+    max-width: 400px;
+  }
+
+  .step {
+    flex-direction: row;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    gap: 0;
+  }
+
+  /* Physical gap that blocks text from overlapping the 400px image */
+  .step__spacer {
+    display: block;
+    width: 420px;
+    flex-shrink: 0;
+  }
+
+  .step__box {
+    flex: 1;
+    background: transparent;
+    padding: 0;
+    position: relative;
+  }
+
+  /* Text Alignments */
+  .step__box--left {
+    text-align: right;
+    padding-right: 30px;
+  }
+  .step__box--right {
+    text-align: left;
+    padding-left: 30px;
+  }
+
+  /* Zig-Zag Offsets */
+  .step__box--up {
+    margin-bottom: 150px;
+  }
+  .step__box--down {
+    margin-top: 150px;
+  }
+
+  /* Arrows */
+  .step__line {
+    display: block;
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 1px;
+    background-color: var(--gray-900);
+  }
+  .step__line::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--gray-900);
+    border-right: 1px solid var(--gray-900);
+  }
+
+  .step__box--left .step__line {
+    right: -60px;
+  }
+  .step__box--left .step__line::after {
+    right: 0;
+    transform: rotate(45deg);
+  }
+
+  .step__box--right .step__line {
+    left: -60px;
+  }
+  .step__box--right .step__line::after {
+    left: 0;
+    transform: rotate(-135deg);
   }
 }
 

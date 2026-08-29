@@ -112,8 +112,7 @@
         <section class="hero">
           <h1 class="hero__title">ОБЛАДНАННЯ ТА РІШЕННЯ<br />АСТЕЛ-КОМ</h1>
           <p class="hero__description">
-            Надійне телекомунікаційне обладнання та IoT-рішення для бізнесу в
-            Україні.
+            Надійне телекомунікаційне обладнання для бізнесу в Україні.
           </p>
           <a href="#" class="hero__link">
             ПЕРЕГЛЯНУТИ КАТАЛОГ
@@ -265,15 +264,15 @@
       </div>
 
       <!-- 2. FIXED FOREGROUND TEXT -->
-      <!-- SCENE 0 -->
-      <div class="dlrtt-copy pos-left offset-up scene-0">
+      <!-- PAIR 1 -->
+      <div class="dlrtt-copy pos-left offset-up m-scene-0 d-scene-0">
         <h2>COM-900/485.</h2>
         <p>
           Це ультракомпактний, економічний, дводіапазонний інтелектуальний
           промисловий GSM/GPRS/LTE модем (термінал).
         </p>
       </div>
-      <div class="dlrtt-copy pos-right offset-down scene-0">
+      <div class="dlrtt-copy pos-right offset-down m-scene-1 d-scene-0">
         <h2>Надійна передача.</h2>
         <p>
           Модем оснащений двома незалежними портами RS232, двома незалежними
@@ -282,16 +281,8 @@
         </p>
       </div>
 
-      <!-- SCENE 1 -->
-      <div class="dlrtt-copy pos-left offset-down scene-1">
-        <h2>Компактність.</h2>
-        <p>
-          Модем виконаний у міцному металевому корпусі з розмірами всього
-          63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
-          експлуатації.
-        </p>
-      </div>
-      <div class="dlrtt-copy pos-right offset-up scene-1">
+      <!-- PAIR 2 -->
+      <div class="dlrtt-copy pos-left offset-down m-scene-2 d-scene-1">
         <h2>Економічність.</h2>
         <p>
           Відмінна альтернатива існуючим імпортним моделям з послідовним портом
@@ -299,9 +290,17 @@
           гарантії.
         </p>
       </div>
+      <div class="dlrtt-copy pos-right offset-up m-scene-3 d-scene-1">
+        <h2>Компактність.</h2>
+        <p>
+          Модем виконаний у міцному металевому корпусі з розмірами всього
+          63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
+          експлуатації.
+        </p>
+      </div>
 
-      <!-- SCENE 2 -->
-      <div class="dlrtt-copy pos-left offset-up scene-2">
+      <!-- PAIR 3 -->
+      <div class="dlrtt-copy pos-left offset-up m-scene-4 d-scene-2">
         <h2>Інтелектуальність.</h2>
         <p>
           Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
@@ -309,7 +308,7 @@
           кастомізованих додатків («прошивок»).
         </p>
       </div>
-      <div class="dlrtt-copy pos-right offset-down scene-2">
+      <div class="dlrtt-copy pos-right offset-down m-scene-5 d-scene-2">
         <h2>Промисловість.</h2>
         <p>
           Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
@@ -318,8 +317,8 @@
         </p>
       </div>
 
-      <!-- SCENE 3 -->
-      <div class="dlrtt-copy pos-left offset-down scene-3">
+      <!-- PAIR 4 -->
+      <div class="dlrtt-copy pos-left offset-down m-scene-6 d-scene-3">
         <h2>Безперебійність.</h2>
         <p>
           Оригінальне програмне забезпечення підтримує роботу з двома
@@ -327,7 +326,7 @@
           радіомодуль і миттєво перезавантажує його при «зависанні».
         </p>
       </div>
-      <div class="dlrtt-copy pos-right offset-up scene-3">
+      <div class="dlrtt-copy pos-right offset-up m-scene-7 d-scene-3">
         <h2>Українська якість.</h2>
         <p>
           При виробництві ми максимально використовуємо вітчизняні компоненти.
@@ -346,20 +345,21 @@
         });
       }
 
-      // DLR-Style Fixed Scrollytelling
+      // DLR-Style Responsive Scrollytelling
       document.addEventListener("DOMContentLoaded", function () {
         const track = document.getElementById("dlrtt-track");
         if (!track) return;
 
         const copies = document.querySelectorAll(".dlrtt-copy");
-        const scenesCount = 4; // Total number of scenes
 
         function updateScrollytelling() {
           const rect = track.getBoundingClientRect();
           const vh = window.innerHeight;
 
-          // Only show text if the sticky visual is currently locked to the viewport
-          // (Meaning the top of the track has reached the screen, and the bottom hasn't scrolled away)
+          // Determine device format
+          const isDesktop = window.innerWidth >= 960;
+          const scenesCount = isDesktop ? 4 : 8; // 4 pairs on desktop, 8 singles on mobile
+
           const isLocked = rect.top <= 0 && rect.bottom >= vh;
 
           if (!isLocked) {
@@ -367,19 +367,21 @@
             return;
           }
 
-          // Calculate progress from 0.0 (start) to 1.0 (end)
           let scrollableDistance = rect.height - vh;
           if (scrollableDistance <= 0) scrollableDistance = 1;
 
           let progress = -rect.top / scrollableDistance;
           progress = Math.max(0, Math.min(1, progress));
 
-          // Determine which scene index (0, 1, 2, or 3) should be active
           const activeIndex = Math.floor(progress * scenesCount * 0.999);
 
-          // Toggle the .dlrtt-on class for the active scene
+          // Apply visibility based on the active screen type
           copies.forEach((c) => {
-            if (c.classList.contains("scene-" + activeIndex)) {
+            const targetClass = isDesktop
+              ? "d-scene-" + activeIndex
+              : "m-scene-" + activeIndex;
+
+            if (c.classList.contains(targetClass)) {
               c.classList.add("dlrtt-on");
             } else {
               c.classList.remove("dlrtt-on");

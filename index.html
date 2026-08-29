@@ -251,110 +251,89 @@
         </section>
       </main>
     </div>
-    <!-- Block: Scrollytelling -->
-    <section class="scrollytelling">
-      <!-- 1. STICKY BACKGROUND (The Image locks here) -->
-      <div class="scrollytelling__background">
-        <div class="scrollytelling__dots scrollytelling__dots--top-right"></div>
-        <div
-          class="scrollytelling__dots scrollytelling__dots--bottom-left"
-        ></div>
+    <!-- DLR-Style Scrollytelling Section -->
+    <section class="dlrtt-scrollytelling" id="dlrtt-track">
+      <!-- 1. STICKY BACKGROUND (Frozen Image) -->
+      <div class="dlrtt-visual">
+        <div class="dlrtt-dots dlrtt-dots--top-right"></div>
+        <div class="dlrtt-dots dlrtt-dots--bottom-left"></div>
         <img
           src="assets/images/com-900.png"
           alt="COM-900 Modem"
-          class="scrollytelling__image"
+          class="dlrtt-image"
         />
       </div>
 
-      <!-- 2. SCROLLING FOREGROUND (Text blocks naturally scroll over the image) -->
-      <div class="scrollytelling__foreground">
-        <!-- SCENE 0 -->
-        <div class="step">
-          <div class="step__box step__box--left step__box--up">
-            <p>
-              COM-900/485 ― це ультракомпактний, економічний, дводіапазонний
-              інтелектуальний промисловий GSM/GPRS/LTE модем (термінал).
-            </p>
-            <div class="step__line"></div>
-          </div>
-          <div class="step__spacer"></div>
-          <div class="step__box step__box--right step__box--down">
-            <p>
-              Модем СОМ-900-485-4G оснащений двома незалежними портами RS232,
-              двома незалежними портами RS485 та двома слотами для SIM-карт, що
-              робить його унікальним пристроєм для М2М додатків, де потрібна
-              надійна бездротова передача даних.
-            </p>
-            <div class="step__line"></div>
-          </div>
-        </div>
+      <!-- 2. FIXED FOREGROUND TEXT -->
+      <!-- SCENE 0 -->
+      <div class="dlrtt-copy pos-left offset-up scene-0">
+        <h2>COM-900/485.</h2>
+        <p>
+          Це ультракомпактний, економічний, дводіапазонний інтелектуальний
+          промисловий GSM/GPRS/LTE модем (термінал).
+        </p>
+      </div>
+      <div class="dlrtt-copy pos-right offset-down scene-0">
+        <h2>Надійна передача.</h2>
+        <p>
+          Модем оснащений двома незалежними портами RS232, двома незалежними
+          портами RS485 та двома слотами для SIM-карт, що робить його унікальним
+          пристроєм для М2М додатків.
+        </p>
+      </div>
 
-        <!-- SCENE 1 -->
-        <div class="step">
-          <div class="step__box step__box--left step__box--down">
-            <p>
-              Ультракомпактність - модем СОМ-900-485-4G виконаний у міцному
-              металевому корпусі з розмірами всього 63х15х60мм, що дозволяє
-              застосовувати даний модем у жорстких умовах експлуатації.
-            </p>
-            <div class="step__line"></div>
-          </div>
-          <div class="step__spacer"></div>
-          <div class="step__box step__box--right step__box--up">
-            <p>
-              Економічність ― модем СОМ-900-485-4G є відмінною альтернативою
-              існуючим імпортним моделям з послідовним портом, завдяки низькій
-              ціні, технічну підтримку та розширену гарантію.
-            </p>
-            <div class="step__line"></div>
-          </div>
-        </div>
+      <!-- SCENE 1 -->
+      <div class="dlrtt-copy pos-left offset-down scene-1">
+        <h2>Компактність.</h2>
+        <p>
+          Модем виконаний у міцному металевому корпусі з розмірами всього
+          63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
+          експлуатації.
+        </p>
+      </div>
+      <div class="dlrtt-copy pos-right offset-up scene-1">
+        <h2>Економічність.</h2>
+        <p>
+          Відмінна альтернатива існуючим імпортним моделям з послідовним портом
+          завдяки низькій ціні, якісній технічній підтримці та розширеній
+          гарантії.
+        </p>
+      </div>
 
-        <!-- SCENE 2 -->
-        <div class="step">
-          <div class="step__box step__box--left step__box--up">
-            <p>
-              Інтелектуальність – модем створений на базі радіомодуля А7672Е
-              компанії SIMCOM, що містить внутрішній потужний процесор, для
-              якого існує безліч стандартних та кастомізованих додатків
-              («прошивок»).
-            </p>
-            <div class="step__line"></div>
-          </div>
-          <div class="step__spacer"></div>
-          <div class="step__box step__box--right step__box--down">
-            <p>
-              Промисловість – наявність двох СОМ-портів, двох портів RS485 та
-              оригінального ПЗ дозволяє успішно підключати модем СОМ-900-485-4G
-              до різних типів приладів обліку електроенергії, тепла, води та
-              газу.
-            </p>
-            <div class="step__line"></div>
-          </div>
-        </div>
+      <!-- SCENE 2 -->
+      <div class="dlrtt-copy pos-left offset-up scene-2">
+        <h2>Інтелектуальність.</h2>
+        <p>
+          Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
+          внутрішній потужний процесор, для якого існує безліч стандартних та
+          кастомізованих додатків («прошивок»).
+        </p>
+      </div>
+      <div class="dlrtt-copy pos-right offset-down scene-2">
+        <h2>Промисловість.</h2>
+        <p>
+          Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
+          дозволяє успішно підключати модем до різних типів приладів обліку
+          електроенергії, тепла, води та газу.
+        </p>
+      </div>
 
-        <!-- SCENE 3 -->
-        <div class="step">
-          <div class="step__box step__box--left step__box--down">
-            <p>
-              Оригінальне базове програмне забезпечення модему СОМ-900/485
-              забезпечує підтримку безперервної роботи з двома SIM-картами.
-              Зовнішній контролер (супервізор) постійно моніторить радіомодуль і
-              перезавантажує його при «зависанні».
-            </p>
-            <div class="step__line"></div>
-          </div>
-          <div class="step__spacer"></div>
-          <div class="step__box step__box--right step__box--up">
-            <p>
-              При виробництві модему СОМ-900-485-4G ми прагнемо максимально
-              використовувати вітчизняні компоненти та комплектуючі. Це
-              друкована плата, корпус, кріплення та оригінальне програмне
-              забезпечення від українських інженерів.
-            </p>
-            <div class="step__line"></div>
-          </div>
-        </div>
+      <!-- SCENE 3 -->
+      <div class="dlrtt-copy pos-left offset-down scene-3">
+        <h2>Безперебійність.</h2>
+        <p>
+          Оригінальне програмне забезпечення підтримує роботу з двома
+          SIM-картами. Зовнішній контролер (супервізор) постійно моніторить
+          радіомодуль і миттєво перезавантажує його при «зависанні».
+        </p>
+      </div>
+      <div class="dlrtt-copy pos-right offset-up scene-3">
+        <h2>Українська якість.</h2>
+        <p>
+          При виробництві ми максимально використовуємо вітчизняні компоненти.
+          Корпус, кріплення, друкована плата та оригінальне ПЗ — це результат
+          досвіду українських інженерів.
+        </p>
       </div>
     </section>
     <script>
@@ -367,27 +346,54 @@
         });
       }
 
-      // Simple, Bulletproof Scroll Observer
-      const steps = document.querySelectorAll(".step");
+      // DLR-Style Fixed Scrollytelling
+      document.addEventListener("DOMContentLoaded", function () {
+        const track = document.getElementById("dlrtt-track");
+        if (!track) return;
 
-      const observerOptions = {
-        root: null,
-        rootMargin: "-40% 0px -40% 0px", // Safely triggers when the text hits the middle 20% of your screen
-        threshold: 0,
-      };
+        const copies = document.querySelectorAll(".dlrtt-copy");
+        const scenesCount = 4; // Total number of scenes
 
-      const stepObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-active");
-          } else {
-            entry.target.classList.remove("is-active");
+        function updateScrollytelling() {
+          const rect = track.getBoundingClientRect();
+          const vh = window.innerHeight;
+
+          // Only show text if the sticky visual is currently locked to the viewport
+          // (Meaning the top of the track has reached the screen, and the bottom hasn't scrolled away)
+          const isLocked = rect.top <= 0 && rect.bottom >= vh;
+
+          if (!isLocked) {
+            copies.forEach((c) => c.classList.remove("dlrtt-on"));
+            return;
           }
-        });
-      }, observerOptions);
 
-      steps.forEach((step) => {
-        stepObserver.observe(step);
+          // Calculate progress from 0.0 (start) to 1.0 (end)
+          let scrollableDistance = rect.height - vh;
+          if (scrollableDistance <= 0) scrollableDistance = 1;
+
+          let progress = -rect.top / scrollableDistance;
+          progress = Math.max(0, Math.min(1, progress));
+
+          // Determine which scene index (0, 1, 2, or 3) should be active
+          const activeIndex = Math.floor(progress * scenesCount * 0.999);
+
+          // Toggle the .dlrtt-on class for the active scene
+          copies.forEach((c) => {
+            if (c.classList.contains("scene-" + activeIndex)) {
+              c.classList.add("dlrtt-on");
+            } else {
+              c.classList.remove("dlrtt-on");
+            }
+          });
+        }
+
+        window.addEventListener("scroll", updateScrollytelling, {
+          passive: true,
+        });
+        window.addEventListener("resize", updateScrollytelling, {
+          passive: true,
+        });
+        updateScrollytelling(); // Run once on load
       });
     </script>
   </body>

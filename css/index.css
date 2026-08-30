@@ -485,7 +485,11 @@ html {
   width: 100%;
   max-width: 250px;
   z-index: 2;
-  margin-top: 0; /* Pushes the image down to the lower half on mobile */
+  margin-top: clamp(
+    0px,
+    calc(412.389px + -44.248vh),
+    200px
+  ); /* Pushes the image down to the lower half on mobile */
 }
 
 /* Decorative Dots */
@@ -667,6 +671,98 @@ html {
   color: #4b5563;
   font-size: clamp(14px, 1.5vw, 16px);
   line-height: 1.6;
+}
+
+/* ===========================
+   ABOUT US & PHILOSOPHY
+   =========================== */
+
+/* --- MOBILE DEFAULT --- */
+.about {
+  padding: 80px 0;
+  background-color: var(--gray-100, #f4f3f4);
+}
+
+.about__container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.about__title {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 36px);
+  color: var(--gray-900, #161617);
+  margin-bottom: 24px;
+}
+
+.about__text {
+  font-size: clamp(15px, 2vw, 17px);
+  line-height: 1.6;
+  color: #4b5563; /* Medium gray */
+  margin-bottom: 32px;
+}
+
+.about__text strong {
+  color: var(--gray-900, #161617);
+}
+
+.about__subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-900, #161617);
+  margin-bottom: 16px;
+}
+
+.about__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about__list li {
+  position: relative;
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.5;
+  color: #4b5563;
+  padding-left: 20px;
+}
+
+.about__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--gray-900, #161617);
+  border-radius: 50%;
+}
+
+.values__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.value-card {
+  /* Premium left-border accent */
+  border-left: 2px solid var(--gray-900, #161617);
+  padding-left: 16px;
+}
+
+.value-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900, #161617);
+  margin-bottom: 8px;
+}
+
+.value-card__text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
 }
 
 /* ===========================
@@ -939,6 +1035,22 @@ html {
   .dlrtt-copy.offset-down {
     margin-top: clamp(100px, 12vh, 200px);
   }
+
+  .about {
+    padding: 120px 0;
+  }
+
+  .about__container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px; /* Space between Company Info and Values */
+    align-items: start;
+  }
+
+  .values__grid {
+    grid-template-columns: 1fr 1fr; /* 2x2 grid for values */
+    gap: 32px 24px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -952,7 +1064,8 @@ html {
   }
 
   .applications {
-    padding: 100px 0;
+    /* padding: 100px 0; */
+    padding: 0px;
   }
 
   .applications__grid {
@@ -1113,5 +1226,61 @@ html {
 
   .app-card__text {
     font-size: 16px;
+  }
+
+  .about {
+    padding: 160px 0;
+  }
+
+  .about__container {
+    gap: 120px;
+  }
+
+  .about__title {
+    font-size: 52px;
+    margin-bottom: 32px;
+  }
+
+  .about__text {
+    font-size: 24px;
+    margin-bottom: 48px;
+  }
+
+  .about__subtitle {
+    font-size: 26px;
+    margin-bottom: 24px;
+  }
+
+  .about__list {
+    gap: 16px;
+  }
+
+  .about__list li {
+    font-size: 20px;
+    padding-left: 28px;
+  }
+
+  .about__list li::before {
+    top: 11px;
+    width: 8px;
+    height: 8px;
+  }
+
+  .values__grid {
+    gap: 48px 32px;
+  }
+
+  .value-card {
+    border-left-width: 3px;
+    padding-left: 24px;
+  }
+
+  .value-card__title {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .value-card__text {
+    font-size: 18px;
   }
 }

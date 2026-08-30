@@ -564,6 +564,60 @@ html {
 }
 
 /* ===========================
+   APPLICATIONS SECTION
+   =========================== */
+
+/* --- MOBILE DEFAULT --- */
+.applications {
+  padding: 60px 0;
+  /* background-color: #ffffff;  */
+}
+
+.applications__title {
+  text-align: center;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--gray-900, #161617);
+  margin-bottom: 48px;
+}
+
+.applications__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px 20px;
+}
+
+.app-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.app-card__icon {
+  height: 64px;
+  width: auto;
+  margin-bottom: 24px;
+}
+
+.app-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900, #161617);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.app-card__text {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===========================
    TRUSTED BY SECTION
    =========================== */
 
@@ -816,24 +870,35 @@ html {
     display: flex;
     justify-content: flex-end;
   }
+
+  .applications__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Centers the 5th odd card nicely on tablet sizes */
+  .app-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 320px;
+    margin: 0 auto;
+  }
 }
 
 /* --- DESKTOP LAYOUT --- */
 @media (min-width: 900px) {
   .dlrtt-scrollytelling {
     height: 400vh;
-    max-height: 3200px;
+    max-height: 4000px;
   }
 
   .dlrtt-image {
     /* Image scales from 450px up to 800px on ultrawide monitors */
-    max-width: clamp(450px, 25vw, 800px);
+    max-width: clamp(350px, 25vw, 800px);
     margin-top: 0;
   }
 
   .dlrtt-copy {
     /* Text box scales from 320px up to 600px */
-    width: clamp(320px, 22vw, 600px);
+    width: clamp(220px, 22vw, 800px);
     max-width: none;
     background: transparent;
     padding: 0;
@@ -848,7 +913,7 @@ html {
     top: 50%;
     bottom: auto;
     left: auto;
-    right: calc(50vw + clamp(240px, 14vw, 450px));
+    right: calc(50vw + clamp(200px, 14vw, 450px));
     text-align: right;
     transform: translateY(calc(-50% + 20px));
   }
@@ -856,7 +921,7 @@ html {
   .dlrtt-copy.pos-right {
     top: 50%;
     bottom: auto;
-    left: calc(50vw + clamp(240px, 14vw, 450px));
+    left: calc(50vw + clamp(200px, 14vw, 450px));
     right: auto;
     text-align: left;
     transform: translateY(calc(-50% + 20px));
@@ -884,5 +949,169 @@ html {
   .card__image {
     max-width: 90%;
     max-height: 80%;
+  }
+
+  .applications {
+    padding: 100px 0;
+  }
+
+  .applications__grid {
+    /* Aligns all 5 elements in a single row */
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+
+  .app-card {
+    padding: 0 24px;
+    /* Adds the subtle vertical separator lines from the design */
+    border-right: 1px solid var(--gray-200, #e7e7e7);
+  }
+
+  /* Removes the border from the very last card and resets its grid behavior */
+  .app-card:last-child {
+    grid-column: auto;
+    max-width: none;
+    border-right: none;
+  }
+
+  .app-card__text {
+    font-size: 14px;
+  }
+}
+
+/* ===========================
+   ULTRAWIDE / 4K SCREENS
+   =========================== */
+@media (min-width: 1600px) {
+  /* Expand the main constraining wrappers */
+  .container,
+  .footer__container,
+  .trusted__logos {
+    max-width: 1600px;
+  }
+
+  .container {
+    padding: 0 80px;
+  }
+
+  /* Scale up Header */
+  .header__logo,
+  .header__link,
+  .header__lang {
+    font-size: 18px; /* Up from 13px */
+  }
+
+  .header__nav {
+    gap: 60px;
+  }
+
+  /* Scale up Hero */
+  .hero {
+    padding: 120px 0;
+  }
+
+  .hero__title {
+    font-size: 64px; /* Breaks out of the previous 42px clamp */
+  }
+
+  .hero__description {
+    font-size: 28px; /* Breaks out of the previous 22px clamp */
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__link {
+    font-size: 20px;
+  }
+
+  /* Scale up Products Grid */
+  .products {
+    gap: 30px;
+    padding-bottom: 120px;
+  }
+
+  .card {
+    padding: 40px;
+  }
+
+  .card__title {
+    font-size: 22px; /* Up from 16px */
+  }
+
+  /* Scale up Trusted By Section */
+  .trusted {
+    padding: 120px 40px;
+  }
+
+  .trusted__title {
+    font-size: 48px;
+    margin-bottom: 80px;
+  }
+
+  .trusted__logos {
+    gap: 70px 100px; /* Much wider gaps for huge screens */
+    margin-bottom: 80px;
+  }
+
+  .trusted__logo {
+    height: 100px; /* Up from 70px */
+    max-width: 320px;
+  }
+
+  .trusted__text {
+    font-size: 24px;
+    max-width: 1000px;
+  }
+
+  /* Scale up Footer */
+  .footer {
+    padding: 120px 80px;
+  }
+
+  .footer__contacts {
+    max-width: 600px;
+    gap: 32px;
+  }
+
+  .footer__text,
+  .footer__link {
+    font-size: 20px; /* Up from 16px */
+  }
+
+  .footer__icon {
+    width: 32px; /* Up from 24px */
+    height: 32px;
+  }
+
+  .footer__map {
+    max-width: 800px; /* Map grows proportionally with the layout */
+  }
+
+  .applications {
+    padding: 140px 0;
+  }
+
+  .applications__title {
+    font-size: 48px;
+    margin-bottom: 80px;
+  }
+
+  .app-card {
+    padding: 0 40px;
+  }
+
+  .app-card__icon {
+    height: 64px;
+    margin-bottom: 32px;
+  }
+
+  .app-card__title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .app-card__text {
+    font-size: 16px;
   }
 }

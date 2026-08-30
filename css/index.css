@@ -485,7 +485,7 @@ html {
   width: 100%;
   max-width: 250px;
   z-index: 2;
-  margin-top: 25vh; /* Pushes the image down to the lower half on mobile */
+  margin-top: 0; /* Pushes the image down to the lower half on mobile */
 }
 
 /* Decorative Dots */
@@ -546,11 +546,11 @@ html {
   transform: translate(-50%, 0); /* Locks smoothly into top position */
 }
 
-/* Typography */
+/* Typography: Upgraded with higher maximums for 4K/5K screens */
 .dlrtt-copy h2 {
   font-family: inherit;
   font-weight: 700;
-  font-size: clamp(16px, 3vw, 36px);
+  font-size: clamp(20px, 2vw, 48px); /* Grows up to 48px on huge screens */
   line-height: 1.15;
   color: #00081b;
   margin: 0 0 12px 0;
@@ -559,7 +559,7 @@ html {
 .dlrtt-copy p {
   margin: 0;
   color: #6b7280;
-  font-size: clamp(14px, 1.15vw, 16px);
+  font-size: clamp(14px, 1vw, 24px); /* Grows up to 24px on huge screens */
   line-height: 1.6;
 }
 
@@ -613,6 +613,87 @@ html {
   color: #4b5563;
   font-size: clamp(14px, 1.5vw, 16px);
   line-height: 1.6;
+}
+
+/* ===========================
+   FOOTER SECTION
+   =========================== */
+
+/* --- MOBILE DEFAULT --- */
+.footer {
+  background-color: #1a1a1a; /* Dark gray/black background */
+  color: #e5e7eb;
+  padding: 60px 20px;
+}
+
+.footer__container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Aligns icon to the top when text is multi-line (like the phone numbers) */
+.footer__item--align-top {
+  align-items: flex-start;
+}
+
+.footer__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.footer__text {
+  font-size: clamp(14px, 4vw, 16px);
+  line-height: 1.5;
+  color: #e5e7eb;
+}
+
+.footer__text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer__link {
+  font-size: clamp(14px, 4vw, 16px);
+  color: #e5e7eb;
+  text-decoration: none;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer__map {
+  width: 100%;
+  border-radius: 8px; /* Optional: Softens the map corners slightly */
+  overflow: hidden;
+  display: flex;
+}
+
+.footer__map-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
 }
 
 /* ===========================
@@ -706,32 +787,68 @@ html {
     height: 70px; /* Significantly increased from 45px */
     max-width: 250px; /* Increased to allow wider logos to scale up naturally */
   }
+
+  .footer {
+    padding: 80px 40px;
+    width: 100%;
+  }
+
+  .footer__container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+  }
+
+  .footer__contacts {
+    flex: 1;
+    max-width: 400px;
+    gap: 24px;
+  }
+
+  .footer__text,
+  .footer__link {
+    font-size: 16px;
+  }
+
+  .footer__map {
+    flex: 1;
+    max-width: 600px; /* Limits how wide the map gets on huge screens */
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 /* --- DESKTOP LAYOUT --- */
-@media (min-width: 960px) {
+@media (min-width: 900px) {
   .dlrtt-scrollytelling {
-    height: 400vh; /* Desktop: Back to 4 simultaneous pairs */
+    height: 400vh;
+    max-height: 3200px;
   }
 
   .dlrtt-image {
-    max-width: 450px;
-    margin-top: 0; /* Returns image to dead-center */
+    /* Image scales from 450px up to 800px on ultrawide monitors */
+    max-width: clamp(450px, 25vw, 800px);
+    margin-top: 0;
   }
 
   .dlrtt-copy {
-    width: 320px;
-    max-width: 25vw;
+    /* Text box scales from 320px up to 600px */
+    width: clamp(320px, 22vw, 600px);
+    max-width: none;
     background: transparent;
     padding: 0;
   }
 
-  /* Override mobile top positioning, lock to left and right sides */
+  /* 
+   * Offset distance adapts dynamically to the growing image.
+   * On normal laptops it stays at 240px. 
+   * On 5K screens it pushes out to 450px to make room for the larger modem.
+   */
   .dlrtt-copy.pos-left {
     top: 50%;
     bottom: auto;
     left: auto;
-    right: calc(50vw + 240px);
+    right: calc(50vw + clamp(240px, 14vw, 450px));
     text-align: right;
     transform: translateY(calc(-50% + 20px));
   }
@@ -739,7 +856,7 @@ html {
   .dlrtt-copy.pos-right {
     top: 50%;
     bottom: auto;
-    left: calc(50vw + 240px);
+    left: calc(50vw + clamp(240px, 14vw, 450px));
     right: auto;
     text-align: left;
     transform: translateY(calc(-50% + 20px));
@@ -750,11 +867,12 @@ html {
     transform: translateY(-50%);
   }
 
+  /* Vertical offsets stretch dynamically based on screen height */
   .dlrtt-copy.offset-up {
-    margin-top: -100px;
+    margin-top: clamp(-100px, -12vh, -200px);
   }
   .dlrtt-copy.offset-down {
-    margin-top: 100px;
+    margin-top: clamp(100px, 12vh, 200px);
   }
 }
 

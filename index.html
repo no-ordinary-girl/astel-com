@@ -35,13 +35,13 @@
       crossorigin
     />
 
-    <!-- Local CSS (Fonts are now loaded inside this file) -->
+    <!-- Local CSS -->
     <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
-    <div class="container">
-      <!-- Block: header -->
-      <header class="header">
+    <!-- Block: Header -->
+    <header class="header">
+      <div class="container header__inner">
         <!-- Top bar always visible -->
         <div class="header__top">
           <div class="header__logo">АСТЕЛ-КОМ</div>
@@ -105,20 +105,39 @@
             </ul>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
 
-      <main>
-        <!-- Block: hero -->
-        <section class="hero">
-          <h1 class="hero__title">ОБЛАДНАННЯ ТА РІШЕННЯ<br />АСТЕЛ-КОМ</h1>
-          <p class="hero__description">
-            Надійне телекомунікаційне обладнання для бізнесу в Україні.
-          </p>
-          <a href="#" class="hero__link">
-            ПЕРЕГЛЯНУТИ КАТАЛОГ
-            <!-- Block: icon-arrow (reusable) -->
+    <main class="container">
+      <!-- Block: Hero -->
+      <section class="hero">
+        <h1 class="hero__title">ОБЛАДНАННЯ ТА РІШЕННЯ<br />АСТЕЛ-КОМ</h1>
+        <p class="hero__description">
+          Надійне телекомунікаційне обладнання для бізнесу в Україні.
+        </p>
+        <a href="#" class="hero__link">
+          ПЕРЕГЛЯНУТИ КАТАЛОГ
+          <svg
+            class="icon-arrow hero__link-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+      </section>
+
+      <!-- Block: Products -->
+      <section class="products">
+        <div class="card card--dark card--layout-top">
+          <h2 class="card__title">
+            GSM/LTE-МОДЕМИ
             <svg
-              class="icon-arrow hero__link-icon"
+              class="icon-arrow card__icon"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -128,131 +147,106 @@
             >
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
-          </a>
-        </section>
+          </h2>
+          <img
+            class="card__image"
+            src="assets/images/gsm-lte-modules.png"
+            alt="GSM/LTE Modems"
+          />
+        </div>
 
-        <!-- Block: products -->
-        <section class="products">
-          <!-- Block: card | Modifiers: dark, layout-top -->
-          <div class="card card--dark card--layout-top">
-            <h2 class="card__title">
-              GSM/LTE-МОДЕМИ
-              <svg
-                class="icon-arrow card__icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </h2>
-            <img
-              class="card__image"
-              src="assets/images/gsm-lte-modules.png"
-              alt="GSM/LTE Modems"
-            />
-          </div>
+        <div class="card card--light card--layout-top">
+          <h2 class="card__title">
+            NBIoT-МОДЕМИ
+            <svg
+              class="icon-arrow card__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </h2>
+          <img
+            class="card__image"
+            src="assets/images/NBIoT-modules.png"
+            alt="NBIoT Modems"
+          />
+        </div>
 
-          <!-- Block: card | Modifiers: light, layout-top -->
-          <div class="card card--light card--layout-top">
-            <h2 class="card__title">
-              NBIoT-МОДЕМИ
-              <svg
-                class="icon-arrow card__icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </h2>
-            <img
-              class="card__image"
-              src="assets/images/NBIoT-modules.png"
-              alt="NBIoT Modems"
-            />
-          </div>
+        <div class="card card--dark card--layout-top">
+          <h2 class="card__title">
+            АКСЕСУАРИ ДЛЯ<br />БАНКІВСЬКИХ ТЕРМІНАЛІВ
+            <svg
+              class="icon-arrow card__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </h2>
+          <img
+            class="card__image card__image--small"
+            src="assets/images/bank.png"
+            alt="Accessories for Bank Terminals"
+          />
+        </div>
 
-          <!-- Block: card | Modifiers: dark, layout-top -->
-          <div class="card card--dark card--layout-top">
-            <h2 class="card__title">
-              АКСЕССУАРИ ДЛЯ<br />БАНКІВСЬКИХ ТЕРМІНАЛІВ
-              <svg
-                class="icon-arrow card__icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </h2>
-            <img
-              class="card__image card__image--small"
-              src="assets/images/bank.png"
-              alt="Accessories for Bank Terminals"
-            />
-          </div>
+        <div class="card card--light card--layout-bottom">
+          <h2 class="card__title">
+            АНТЕНИ
+            <svg
+              class="icon-arrow card__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </h2>
+          <img
+            class="card__image"
+            src="assets/images/antennas.png"
+            alt="Antennas"
+          />
+        </div>
 
-          <!-- Block: card | Modifiers: light, layout-bottom -->
-          <div class="card card--light card--layout-bottom">
-            <h2 class="card__title">
-              АНТЕНИ
-              <svg
-                class="icon-arrow card__icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </h2>
-            <img
-              class="card__image"
-              src="assets/images/antennas.png"
-              alt="Antennas"
-            />
-          </div>
+        <div class="card card--dark card--layout-bottom">
+          <h2 class="card__title">
+            КАБЕЛІ НИЗКОВОЛЬТНОГО<br />ЖИВЛЕННЯ
+            <svg
+              class="icon-arrow card__icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </h2>
+          <img
+            class="card__image"
+            src="assets/images/cables.png"
+            alt="Low Voltage Cables"
+          />
+        </div>
+      </section>
+    </main>
 
-          <!-- Block: card | Modifiers: dark, layout-bottom -->
-          <div class="card card--dark card--layout-bottom">
-            <h2 class="card__title">
-              КАБЕЛІ НИЗКОВОЛЬТНОГО<br />ЖИВЛЕННЯ
-              <svg
-                class="icon-arrow card__icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </h2>
-            <img
-              class="card__image"
-              src="assets/images/cables.png"
-              alt="Low Voltage Cables"
-            />
-          </div>
-        </section>
-      </main>
-    </div>
-    <!-- DLR-Style Scrollytelling Section -->
+    <!-- Block: DLR-Style Scrollytelling -->
     <section class="dlrtt-scrollytelling" id="dlrtt-track">
-      <!-- 1. STICKY BACKGROUND (Frozen Image) -->
       <div class="dlrtt-visual">
         <div class="dlrtt-dots dlrtt-dots--top-right"></div>
         <div class="dlrtt-dots dlrtt-dots--bottom-left"></div>
@@ -261,87 +255,86 @@
           alt="COM-900 Modem"
           class="dlrtt-image"
         />
-      </div>
 
-      <!-- 2. FIXED FOREGROUND TEXT -->
-      <!-- PAIR 1 -->
-      <div class="dlrtt-copy pos-left offset-up m-scene-0 d-scene-0">
-        <h2>COM-900/485.</h2>
-        <p>
-          Це ультракомпактний, економічний, дводіапазонний інтелектуальний
-          промисловий GSM/GPRS/LTE модем (термінал).
-        </p>
-      </div>
-      <div class="dlrtt-copy pos-right offset-down m-scene-1 d-scene-0">
-        <h2>Надійна передача.</h2>
-        <p>
-          Модем оснащений двома незалежними портами RS232, двома незалежними
-          портами RS485 та двома слотами для SIM-карт, що робить його унікальним
-          пристроєм для М2М додатків.
-        </p>
-      </div>
+        <!-- FIXED FOREGROUND TEXT (Now safely inside the visual container) -->
+        <!-- PAIR 1 -->
+        <div class="dlrtt-copy pos-left offset-up m-scene-0 d-scene-0">
+          <h2>COM-900/485.</h2>
+          <p>
+            Це ультракомпактний, економічний, дводіапазонний інтелектуальний
+            промисловий GSM/GPRS/LTE модем (термінал).
+          </p>
+        </div>
+        <div class="dlrtt-copy pos-right offset-down m-scene-1 d-scene-0">
+          <h2>Надійна передача.</h2>
+          <p>
+            Модем оснащений двома незалежними портами RS232, двома незалежними
+            портами RS485 та двома слотами для SIM-карт, що робить його
+            унікальним пристроєм для М2М додатків.
+          </p>
+        </div>
 
-      <!-- PAIR 2 -->
-      <div class="dlrtt-copy pos-left offset-down m-scene-2 d-scene-1">
-        <h2>Економічність.</h2>
-        <p>
-          Відмінна альтернатива існуючим імпортним моделям з послідовним портом
-          завдяки низькій ціні, якісній технічній підтримці та розширеній
-          гарантії.
-        </p>
-      </div>
-      <div class="dlrtt-copy pos-right offset-up m-scene-3 d-scene-1">
-        <h2>Компактність.</h2>
-        <p>
-          Модем виконаний у міцному металевому корпусі з розмірами всього
-          63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
-          експлуатації.
-        </p>
-      </div>
+        <!-- PAIR 2 -->
+        <div class="dlrtt-copy pos-left offset-down m-scene-2 d-scene-1">
+          <h2>Економічність.</h2>
+          <p>
+            Відмінна альтернатива існуючим імпортним моделям з послідовним
+            портом завдяки низькій ціні, якісній технічній підтримці та
+            розширеній гарантії.
+          </p>
+        </div>
+        <div class="dlrtt-copy pos-right offset-up m-scene-3 d-scene-1">
+          <h2>Компактність.</h2>
+          <p>
+            Модем виконаний у міцному металевому корпусі з розмірами всього
+            63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
+            експлуатації.
+          </p>
+        </div>
 
-      <!-- PAIR 3 -->
-      <div class="dlrtt-copy pos-left offset-up m-scene-4 d-scene-2">
-        <h2>Інтелектуальність.</h2>
-        <p>
-          Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
-          внутрішній потужний процесор, для якого існує безліч стандартних та
-          кастомізованих додатків («прошивок»).
-        </p>
-      </div>
-      <div class="dlrtt-copy pos-right offset-down m-scene-5 d-scene-2">
-        <h2>Промисловість.</h2>
-        <p>
-          Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
-          дозволяє успішно підключати модем до різних типів приладів обліку
-          електроенергії, тепла, води та газу.
-        </p>
-      </div>
+        <!-- PAIR 3 -->
+        <div class="dlrtt-copy pos-left offset-up m-scene-4 d-scene-2">
+          <h2>Інтелектуальність.</h2>
+          <p>
+            Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
+            внутрішній потужний процесор, для якого існує безліч стандартних та
+            кастомізованих додатків («прошивок»).
+          </p>
+        </div>
+        <div class="dlrtt-copy pos-right offset-down m-scene-5 d-scene-2">
+          <h2>Промисловість.</h2>
+          <p>
+            Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
+            дозволяє успішно підключати модем до різних типів приладів обліку
+            електроенергії, тепла, води та газу.
+          </p>
+        </div>
 
-      <!-- PAIR 4 -->
-      <div class="dlrtt-copy pos-left offset-down m-scene-6 d-scene-3">
-        <h2>Безперебійність.</h2>
-        <p>
-          Оригінальне програмне забезпечення підтримує роботу з двома
-          SIM-картами. Зовнішній контролер (супервізор) постійно моніторить
-          радіомодуль і миттєво перезавантажує його при «зависанні».
-        </p>
-      </div>
-      <div class="dlrtt-copy pos-right offset-up m-scene-7 d-scene-3">
-        <h2>Українська якість.</h2>
-        <p>
-          При виробництві ми максимально використовуємо вітчизняні компоненти.
-          Корпус, кріплення, друкована плата та оригінальне ПЗ — це результат
-          досвіду українських інженерів.
-        </p>
+        <!-- PAIR 4 -->
+        <div class="dlrtt-copy pos-left offset-down m-scene-6 d-scene-3">
+          <h2>Безперебійність.</h2>
+          <p>
+            Оригінальне програмне забезпечення підтримує роботу з двома
+            SIM-картами. Зовнішній контролер (супервізор) постійно моніторить
+            радіомодуль і миттєво перезавантажує його при «зависанні».
+          </p>
+        </div>
+        <div class="dlrtt-copy pos-right offset-up m-scene-7 d-scene-3">
+          <h2>Українська якість.</h2>
+          <p>
+            При виробництві ми максимально використовуємо вітчизняні компоненти.
+            Корпус, кріплення, друкована плата та оригінальне ПЗ — це результат
+            досвіду українських інженерів.
+          </p>
+        </div>
       </div>
     </section>
+
     <!-- Block: Applications -->
     <section class="applications">
       <div class="container">
         <h2 class="applications__title">СФЕРИ ЗАСТОСУВАННЯ</h2>
-
         <div class="applications__grid">
-          <!-- Card 1 -->
           <div class="app-card">
             <img
               src="assets/images/energy.svg"
@@ -353,8 +346,6 @@
               Збір даних з лічильників електроенергії та підстанцій
             </p>
           </div>
-
-          <!-- Card 2 -->
           <div class="app-card">
             <img
               src="assets/images/water.svg"
@@ -364,8 +355,6 @@
             <h3 class="app-card__title">Водопостачання</h3>
             <p class="app-card__text">Моніторинг витрати води та стану мереж</p>
           </div>
-
-          <!-- Card 3 -->
           <div class="app-card">
             <img
               src="assets/images/heat.svg"
@@ -377,8 +366,6 @@
               Облік тепла та контроль теплових пунктів
             </p>
           </div>
-
-          <!-- Card 4 -->
           <div class="app-card">
             <img
               src="assets/images/factory.svg"
@@ -390,8 +377,6 @@
               Передача даних з обладнання та датчиків
             </p>
           </div>
-
-          <!-- Card 5 -->
           <div class="app-card">
             <img
               src="assets/images/payment_terminals.svg"
@@ -406,16 +391,15 @@
         </div>
       </div>
     </section>
+
     <!-- Block: About Us (Technical / Swiss Design) -->
     <section class="about-tech" id="about">
       <div class="container">
-        <!-- Top: Company Info & Directions -->
         <div class="about-tech__top">
           <div class="about-tech__branding">
             <h2 class="about-tech__title">АСТЕЛ-КОМ</h2>
             <span class="about-tech__badge">На ринку з 2005 року</span>
           </div>
-
           <div class="about-tech__details">
             <p class="about-tech__lead">
               Ми — технічна компанія з Києва. Наші ключові напрямки діяльності:
@@ -435,7 +419,6 @@
 
         <div class="about-tech__divider"></div>
 
-        <!-- Bottom: Core Principles Grid -->
         <div class="about-tech__bottom">
           <div class="tech-card">
             <div class="tech-card__num">01</div>
@@ -445,7 +428,6 @@
               своїх офісах та будинках.
             </p>
           </div>
-
           <div class="tech-card">
             <div class="tech-card__num">02</div>
             <h4 class="tech-card__title">Клієнт має рацію</h4>
@@ -454,7 +436,6 @@
               комфорт — наш головний пріоритет.
             </p>
           </div>
-
           <div class="tech-card">
             <div class="tech-card__num">03</div>
             <h4 class="tech-card__title">Реальна користь</h4>
@@ -463,7 +444,6 @@
               «впарювати» їм послуги та товари.
             </p>
           </div>
-
           <div class="tech-card">
             <div class="tech-card__num">04</div>
             <h4 class="tech-card__title">Постійний розвиток</h4>
@@ -475,11 +455,11 @@
         </div>
       </div>
     </section>
+
     <!-- Block: Trusted By -->
     <section class="trusted">
       <div class="container">
         <h2 class="trusted__title">НАМ ДОВІРЯЮТЬ</h2>
-
         <div class="trusted__logos">
           <img
             src="assets/images/Kyivstar_logo.svg"
@@ -522,13 +502,13 @@
             class="trusted__logo"
           />
         </div>
-
         <p class="trusted__text">
           Співпраця з лідерами в галузі - підтвердження нашої надійності та
           якості обладнання і сервісу.
         </p>
       </div>
     </section>
+
     <!-- Block: Footer -->
     <footer class="footer" id="footer">
       <div class="container footer__container">
@@ -542,7 +522,6 @@
             />
             <span class="footer__text">Компанія ТОВ "АСТЕЛ-КОМ"</span>
           </div>
-
           <div class="footer__item">
             <img
               src="assets/images/person.svg"
@@ -551,7 +530,6 @@
             />
             <span class="footer__text">Сергій +380504443355</span>
           </div>
-
           <div class="footer__item">
             <img
               src="assets/images/location.svg"
@@ -562,7 +540,6 @@
               >вул. Солом'янська, 5, Київ, Україна</span
             >
           </div>
-
           <div class="footer__item footer__item--align-top">
             <img
               src="assets/images/phone.svg"
@@ -578,7 +555,6 @@
               >
             </div>
           </div>
-
           <div class="footer__item">
             <img
               src="assets/images/mail.svg"
@@ -593,27 +569,33 @@
 
         <!-- Right: Map -->
         <div class="footer__map">
-          <!-- Replace 'map.png' with your actual map image file from your assets -->
-          <img
-            src="assets/images/map.png"
-            alt="Карта проїзду"
-            class="footer__map-image"
-          />
+          <a
+            href="https://www.google.com/maps/place/%D0%B2%D1%83%D0%BB%D0%B8%D1%86%D1%8F+%D0%A1%D0%BE%D0%BB%D0%BE%D0%BC'%D1%8F%D0%BD%D1%81%D1%8C%D0%BA%D0%B0,+5,+%D0%9A%D0%B8%D1%97%D0%B2,+02000/@50.4292719,30.4740125,17.3z/data=!4m6!3m5!1s0x40d4cec096b20375:0xe10485e9d7544aaa!8m2!3d50.4292232!4d30.4751274!16s%2Fg%2F11c4dc3zvj?hl=uk&entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank"
+          >
+            <img
+              src="assets/images/map.png"
+              alt="Карта проїзду"
+              class="footer__map-image"
+            />
+          </a>
         </div>
       </div>
     </footer>
-    <script>
-      // Hamburger Menu
-      const toggleBtn = document.getElementById("menu-toggle");
-      const collapseMenu = document.getElementById("menu-collapse");
-      if (toggleBtn && collapseMenu) {
-        toggleBtn.addEventListener("click", () => {
-          collapseMenu.classList.toggle("header__collapse--open");
-        });
-      }
 
-      // DLR-Style Responsive Scrollytelling
+    <!-- Scripts -->
+    <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Hamburger Menu
+        const toggleBtn = document.getElementById("menu-toggle");
+        const collapseMenu = document.getElementById("menu-collapse");
+        if (toggleBtn && collapseMenu) {
+          toggleBtn.addEventListener("click", () => {
+            collapseMenu.classList.toggle("header__collapse--open");
+          });
+        }
+
+        // DLR-Style Responsive Scrollytelling
         const track = document.getElementById("dlrtt-track");
         if (!track) return;
 
@@ -625,14 +607,11 @@
 
           // Determine device format
           const isDesktop = window.innerWidth >= 960;
-          const scenesCount = isDesktop ? 4 : 8; // 4 pairs on desktop, 8 singles on mobile
+          const scenesCount = isDesktop ? 4 : 8;
 
-          const isLocked = rect.top <= 0 && rect.bottom >= vh;
-
-          if (!isLocked) {
-            copies.forEach((c) => c.classList.remove("dlrtt-on"));
-            return;
-          }
+          // If track is completely off screen, do nothing.
+          // This eliminates the abrupt disappearing bug completely.
+          if (rect.bottom < 0 || rect.top > vh) return;
 
           let scrollableDistance = rect.height - vh;
           if (scrollableDistance <= 0) scrollableDistance = 1;
@@ -642,12 +621,10 @@
 
           const activeIndex = Math.floor(progress * scenesCount * 0.999);
 
-          // Apply visibility based on the active screen type
           copies.forEach((c) => {
             const targetClass = isDesktop
               ? "d-scene-" + activeIndex
               : "m-scene-" + activeIndex;
-
             if (c.classList.contains(targetClass)) {
               c.classList.add("dlrtt-on");
             } else {

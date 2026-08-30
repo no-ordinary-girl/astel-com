@@ -1,8 +1,6 @@
 /* ===========================
    FONTS
    =========================== */
-
-/* geist-regular - latin */
 @font-face {
   font-display: swap;
   font-family: "Geist";
@@ -11,16 +9,6 @@
   src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-regular.woff2")
     format("woff2");
 }
-/* geist-italic - latin */
-@font-face {
-  font-display: swap;
-  font-family: "Geist";
-  font-style: italic;
-  font-weight: 400;
-  src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-italic.woff2")
-    format("woff2");
-}
-/* geist-700 - latin */
 @font-face {
   font-display: swap;
   font-family: "Geist";
@@ -29,17 +17,6 @@
   src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-700.woff2")
     format("woff2");
 }
-/* geist-700italic - latin */
-@font-face {
-  font-display: swap;
-  font-family: "Geist";
-  font-style: italic;
-  font-weight: 700;
-  src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-700italic.woff2")
-    format("woff2");
-}
-
-/* geist-mono-regular - latin */
 @font-face {
   font-display: swap;
   font-family: "Geist Mono";
@@ -48,16 +25,6 @@
   src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-regular.woff2")
     format("woff2");
 }
-/* geist-mono-italic - latin */
-@font-face {
-  font-display: swap;
-  font-family: "Geist Mono";
-  font-style: italic;
-  font-weight: 400;
-  src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-italic.woff2")
-    format("woff2");
-}
-/* geist-mono-700 - latin */
 @font-face {
   font-display: swap;
   font-family: "Geist Mono";
@@ -66,20 +33,10 @@
   src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700.woff2")
     format("woff2");
 }
-/* geist-mono-700italic - latin */
-@font-face {
-  font-display: swap;
-  font-family: "Geist Mono";
-  font-style: italic;
-  font-weight: 700;
-  src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700italic.woff2")
-    format("woff2");
-}
 
 /* ===========================
-   RESET
+   RESET & VARIABLES
    =========================== */
-
 *,
 *::after,
 *::before {
@@ -96,37 +53,27 @@ video {
   height: auto;
 }
 
-input,
-button,
-textarea,
-select {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border-color: transparent;
-}
-
 a {
   text-decoration: none;
   color: inherit;
 }
 
-ul,
-ol {
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border-color: transparent;
+  cursor: pointer;
+}
+
+ul {
   list-style-type: none;
 }
 
-/* ===========================
-   CSS VARIABLES
-   =========================== */
-
 :root {
-  /* Colors */
-  --gray-100: #f4f3f4; /* Main background & Light text */
-  --gray-200: #e7e7e7; /* Light card background */
-  --gray-900: #161617; /* Dark card background & Dark text */
-
-  /* Fonts */
+  --gray-100: #f4f3f4;
+  --gray-200: #e7e7e7;
+  --gray-900: #161617;
   --font-base: "Geist", sans-serif;
   --font-mono: "Geist Mono", monospace;
 }
@@ -134,7 +81,6 @@ ol {
 /* ===========================
    BASE
    =========================== */
-
 body {
   font-family: var(--font-base);
   background-color: var(--gray-100);
@@ -143,7 +89,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 html {
@@ -157,10 +102,6 @@ html {
   margin: 0 auto;
 }
 
-/* ===========================
-   REUSABLE COMPONENTS
-   =========================== */
-
 .icon-arrow {
   width: 18px;
   height: 18px;
@@ -168,14 +109,23 @@ html {
 }
 
 /* ===========================
-   HEADER (Mobile First)
+   HEADER (Sticky)
    =========================== */
-
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: var(--gray-100);
+  width: 100%;
   padding: 24px 0;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 500;
+}
+
+.header__inner {
+  display: flex;
+  flex-direction: column;
 }
 
 .header__top {
@@ -184,7 +134,7 @@ html {
   align-items: center;
   width: 100%;
   position: relative;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .header__logo {
@@ -196,14 +146,9 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--gray-900);
   padding: 4px;
 }
 
-/* Mobile Full-Screen Menu Sheet */
 .header__collapse {
   position: fixed;
   top: 0;
@@ -212,7 +157,7 @@ html {
   height: 100vh;
   height: 100dvh;
   background-color: var(--gray-100);
-  z-index: 99;
+  z-index: 999;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -235,7 +180,6 @@ html {
 .header__nav {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 24px;
 }
@@ -247,15 +191,11 @@ html {
   transition: border-color 0.3s ease;
 }
 
-.header__link:hover {
+.header__link:hover,
+.header__link--active {
   border-bottom-color: var(--gray-900);
 }
 
-.header__link--active {
-  border-bottom: 1.5px solid var(--gray-900);
-}
-
-/* Language Dropdown */
 .header__lang {
   position: relative;
   display: inline-block;
@@ -302,7 +242,6 @@ html {
   display: block;
   padding: 6px 16px;
   text-align: center;
-  transition: background-color 0.2s ease;
 }
 
 .header__lang-link:hover {
@@ -312,7 +251,6 @@ html {
 /* ===========================
    HERO 
    =========================== */
-
 .hero {
   text-align: center;
   padding: 60px 0;
@@ -348,9 +286,8 @@ html {
 }
 
 /* ===========================
-   PRODUCTS (Mobile First)
+   PRODUCTS 
    =========================== */
-
 .products {
   display: grid;
   grid-template-columns: 1fr;
@@ -406,69 +343,18 @@ html {
 }
 
 .card__image--small {
-  max-width: 65%;
-  max-height: 70%;
   right: 5%;
-}
-/* ===========================
-   SCROLLYTELLING SECTION
-   =========================== */
-
-.scrollytelling {
-  position: relative;
-  background-color: var(--gray-100);
-}
-
-.scrollytelling__visual {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.scrollytelling__image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 250px;
-  z-index: 2;
-}
-
-.scrollytelling__dots {
-  position: absolute;
-  width: 150px;
-  height: 120px;
-  background-image: radial-gradient(var(--gray-500) 2px, transparent 2px);
-  background-size: 20px 20px;
-  opacity: 0.3;
-}
-.scrollytelling__dots--top-right {
-  top: 15%;
-  right: 5%;
-}
-.scrollytelling__dots--bottom-left {
-  bottom: 15%;
-  left: 5%;
 }
 
 /* ===========================
    DLR-STYLE SCROLLYTELLING
    =========================== */
-
 .dlrtt-scrollytelling {
   position: relative;
-  background-color: var(--gray-100, #f4f3f4);
+  background-color: var(--gray-100);
   height: 800vh; /* Mobile: 8 independent scenes */
 }
 
-/* The Sticky Viewport */
 .dlrtt-visual {
   position: sticky;
   top: 0;
@@ -485,14 +371,9 @@ html {
   width: 100%;
   max-width: 250px;
   z-index: 2;
-  margin-top: clamp(
-    0px,
-    calc(412.389px + -44.248vh),
-    200px
-  ); /* Pushes the image down to the lower half on mobile */
+  margin-top: clamp(0px, calc(412.389px - 44.248vh), 200px);
 }
 
-/* Decorative Dots */
 .dlrtt-dots {
   position: absolute;
   width: 150px;
@@ -513,9 +394,9 @@ html {
   left: 5%;
 }
 
-/* The Fixed Text Nodes */
+/* The Text Nodes - Positioned ABSOLUTE inside the sticky container! */
 .dlrtt-copy {
-  position: fixed;
+  position: absolute;
   z-index: 11;
   opacity: 0;
   visibility: hidden;
@@ -538,23 +419,19 @@ html {
 .dlrtt-copy.pos-right {
   top: 8%;
   bottom: auto;
-  transform: translate(
-    -50%,
-    20px
-  ); /* Starts slightly lower to drift up smoothly */
+  transform: translate(-50%, 20px);
 }
 
 .dlrtt-copy.dlrtt-on {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0); /* Locks smoothly into top position */
+  transform: translate(-50%, 0);
 }
 
-/* Typography: Upgraded with higher maximums for 4K/5K screens */
 .dlrtt-copy h2 {
   font-family: inherit;
   font-weight: 700;
-  font-size: clamp(20px, 2vw, 48px); /* Grows up to 48px on huge screens */
+  font-size: clamp(20px, 2vw, 48px);
   line-height: 1.15;
   color: #00081b;
   margin: 0 0 12px 0;
@@ -563,26 +440,22 @@ html {
 .dlrtt-copy p {
   margin: 0;
   color: #6b7280;
-  font-size: clamp(14px, 1vw, 24px); /* Grows up to 24px on huge screens */
+  font-size: clamp(14px, 1vw, 24px);
   line-height: 1.6;
 }
 
 /* ===========================
    APPLICATIONS SECTION
    =========================== */
-
-/* --- MOBILE DEFAULT --- */
 .applications {
   padding: 60px 0;
-  /* background-color: #ffffff;  */
 }
 
 .applications__title {
   text-align: center;
-  font-family: inherit;
   font-weight: 700;
   font-size: clamp(24px, 4vw, 32px);
-  color: var(--gray-900, #161617);
+  color: var(--gray-900);
   margin-bottom: 48px;
 }
 
@@ -609,7 +482,6 @@ html {
 .app-card__title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--gray-900, #161617);
   margin-bottom: 12px;
   line-height: 1.3;
 }
@@ -618,69 +490,14 @@ html {
   font-size: 13px;
   color: #6b7280;
   line-height: 1.5;
-  margin: 0;
-}
-
-/* ===========================
-   TRUSTED BY SECTION
-   =========================== */
-
-/* --- MOBILE DEFAULT --- */
-.trusted {
-  padding: 60px 20px;
-  background-color: var(--gray-100, #f4f3f4);
-  text-align: center;
-}
-
-.trusted__title {
-  font-family: inherit;
-  font-weight: 700;
-  font-size: clamp(24px, 3vw, 32px);
-  color: #161617;
-  text-transform: uppercase;
-  margin-bottom: 32px;
-}
-
-.trusted__logos {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 30px 40px;
-  max-width: 1200px; /* Increased to give bigger logos room to breathe */
-  margin: 0 auto 32px auto;
-}
-
-.trusted__logo {
-  height: 35px;
-  width: auto;
-  max-width: 140px;
-  object-fit: contain;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-}
-
-.trusted__logo:hover {
-  transform: scale(1.05);
-}
-
-.trusted__text {
-  max-width: 750px;
-  margin: 0 auto;
-  color: #4b5563;
-  font-size: clamp(14px, 1.5vw, 16px);
-  line-height: 1.6;
 }
 
 /* ===========================
    ABOUT US (TECHNICAL / SWISS)
    =========================== */
-
-/* --- MOBILE DEFAULT --- */
 .about-tech {
   padding: 80px 0;
-  color: var(--gray-900, #161617);
+  color: var(--gray-900);
 }
 
 .about-tech__top {
@@ -690,7 +507,6 @@ html {
 }
 
 .about-tech__title {
-  font-family: inherit;
   font-weight: 700;
   font-size: clamp(36px, 6vw, 48px);
   line-height: 1.1;
@@ -700,12 +516,12 @@ html {
 
 .about-tech__badge {
   display: inline-block;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background-color: var(--gray-900, #161617);
+  background-color: var(--gray-900);
   color: #ffffff;
   padding: 6px 12px;
   border-radius: 4px;
@@ -732,21 +548,19 @@ html {
   position: relative;
 }
 
-/* Technical arrow bullet points */
 .about-tech__list li::before {
   content: "→";
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   position: absolute;
   left: 0;
   top: 0;
-  color: var(--gray-900, #161617);
   font-weight: 700;
 }
 
 .about-tech__divider {
   width: 100%;
   height: 2px;
-  background-color: var(--gray-900, #161617);
+  background-color: var(--gray-900);
   margin: 48px 0;
 }
 
@@ -762,11 +576,11 @@ html {
 }
 
 .tech-card__num {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 48px;
   font-weight: 700;
   line-height: 1;
-  color: var(--gray-200, #e7e7e7);
+  color: var(--gray-200);
   margin-bottom: 16px;
 }
 
@@ -785,14 +599,61 @@ html {
 }
 
 /* ===========================
+   TRUSTED BY SECTION
+   =========================== */
+.trusted {
+  padding: 60px 20px;
+  background-color: var(--gray-100);
+  text-align: center;
+}
+
+.trusted__title {
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 32px);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.trusted__logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 30px 40px;
+  max-width: 1200px;
+  margin: 0 auto 32px auto;
+}
+
+.trusted__logo {
+  height: 35px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.trusted__logo:hover {
+  transform: scale(1.05);
+}
+
+.trusted__text {
+  max-width: 750px;
+  margin: 0 auto;
+  color: #4b5563;
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: 1.6;
+}
+
+/* ===========================
    FOOTER SECTION
    =========================== */
-
-/* --- MOBILE DEFAULT --- */
 .footer {
-  background-color: #1a1a1a; /* Dark gray/black background */
+  background-color: #1a1a1a;
   color: #e5e7eb;
   padding: 60px 20px;
+  width: 100%;
 }
 
 .footer__container {
@@ -815,7 +676,6 @@ html {
   gap: 16px;
 }
 
-/* Aligns icon to the top when text is multi-line (like the phone numbers) */
 .footer__item--align-top {
   align-items: flex-start;
 }
@@ -829,7 +689,6 @@ html {
 .footer__text {
   font-size: clamp(14px, 4vw, 16px);
   line-height: 1.5;
-  color: #e5e7eb;
 }
 
 .footer__text-group {
@@ -840,8 +699,6 @@ html {
 
 .footer__link {
   font-size: clamp(14px, 4vw, 16px);
-  color: #e5e7eb;
-  text-decoration: none;
   line-height: 1.5;
   transition: color 0.2s ease;
 }
@@ -853,7 +710,7 @@ html {
 
 .footer__map {
   width: 100%;
-  border-radius: 8px; /* Optional: Softens the map corners slightly */
+  border-radius: 8px;
   overflow: hidden;
   display: flex;
 }
@@ -862,23 +719,21 @@ html {
   width: 100%;
   height: auto;
   object-fit: cover;
-  display: block;
 }
 
 /* ===========================
    MEDIA QUERIES (Desktop)
    =========================== */
-
 @media (min-width: 700px) {
   .container {
     padding: 0 40px;
   }
 
-  .header {
+  .header__inner {
     display: grid;
-    grid-template-columns: 1fr auto 1fr; /* 3-column Grid for perfect centering */
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    padding: 30px 0;
+    flex-direction: row;
   }
 
   .header__top {
@@ -893,7 +748,6 @@ html {
     display: none;
   }
 
-  /* Unwraps the mobile sheet and MAKES IT VISIBLE AGAIN */
   .header__collapse {
     display: contents;
     opacity: 1;
@@ -904,7 +758,7 @@ html {
   .header__nav {
     flex-direction: row;
     gap: 24px;
-    justify-self: center; /* Drops right into the center column */
+    justify-self: center;
   }
 
   .header__link {
@@ -913,7 +767,7 @@ html {
 
   .header__lang {
     font-size: 13px;
-    justify-self: end; /* Drops right into the far-right column */
+    justify-self: end;
   }
 
   .header__lang-menu {
@@ -939,6 +793,16 @@ html {
     grid-column: span 1;
   }
 
+  .applications__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .app-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
   .trusted {
     padding: 80px 24px;
   }
@@ -948,18 +812,17 @@ html {
   }
 
   .trusted__logos {
-    gap: 50px 70px; /* Slightly wider gap to balance the larger logos */
+    gap: 50px 70px;
     margin-bottom: 48px;
   }
 
   .trusted__logo {
-    height: 70px; /* Significantly increased from 45px */
-    max-width: 250px; /* Increased to allow wider logos to scale up naturally */
+    height: 70px;
+    max-width: 250px;
   }
 
   .footer {
     padding: 80px 40px;
-    width: 100%;
   }
 
   .footer__container {
@@ -981,49 +844,30 @@ html {
 
   .footer__map {
     flex: 1;
-    max-width: 600px; /* Limits how wide the map gets on huge screens */
+    max-width: 600px;
     display: flex;
     justify-content: flex-end;
   }
-
-  .applications__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Centers the 5th odd card nicely on tablet sizes */
-  .app-card:last-child {
-    grid-column: 1 / -1;
-    max-width: 320px;
-    margin: 0 auto;
-  }
 }
 
-/* --- DESKTOP LAYOUT --- */
-@media (min-width: 900px) {
+@media (min-width: 960px) {
   .dlrtt-scrollytelling {
     height: 400vh;
     max-height: 4000px;
   }
 
   .dlrtt-image {
-    /* Image scales from 450px up to 800px on ultrawide monitors */
     max-width: clamp(350px, 25vw, 800px);
     margin-top: 0;
   }
 
   .dlrtt-copy {
-    /* Text box scales from 320px up to 600px */
     width: clamp(220px, 22vw, 800px);
     max-width: none;
     background: transparent;
     padding: 0;
   }
 
-  /* 
-   * Offset distance adapts dynamically to the growing image.
-   * On normal laptops it stays at 240px. 
-   * On 5K screens it pushes out to 450px to make room for the larger modem.
-   */
   .dlrtt-copy.pos-left {
     top: 50%;
     bottom: auto;
@@ -1047,7 +891,6 @@ html {
     transform: translateY(-50%);
   }
 
-  /* Vertical offsets stretch dynamically based on screen height */
   .dlrtt-copy.offset-up {
     margin-top: clamp(-100px, -12vh, -200px);
   }
@@ -1067,7 +910,7 @@ html {
   }
 
   .about-tech__branding {
-    flex: 0 0 35%; /* Restricts the title width to create a strong vertical column */
+    flex: 0 0 35%;
   }
 
   .about-tech__details {
@@ -1095,23 +938,19 @@ html {
   }
 
   .applications {
-    /* padding: 100px 0; */
     padding: 0px;
   }
 
   .applications__grid {
-    /* Aligns all 5 elements in a single row */
     grid-template-columns: repeat(5, 1fr);
     gap: 0;
   }
 
   .app-card {
     padding: 0 24px;
-    /* Adds the subtle vertical separator lines from the design */
-    border-right: 1px solid var(--gray-200, #e7e7e7);
+    border-right: 1px solid var(--gray-200);
   }
 
-  /* Removes the border from the very last card and resets its grid behavior */
   .app-card:last-child {
     grid-column: auto;
     max-width: none;
@@ -1123,16 +962,12 @@ html {
   }
 
   .about-tech__bottom {
-    grid-template-columns: repeat(
-      4,
-      1fr
-    ); /* Spreads numbers 01-04 horizontally */
+    grid-template-columns: repeat(4, 1fr);
     gap: 32px;
   }
 
-  /* Add a subtle top border to each card for an engineering blueprint feel */
   .tech-card {
-    border-top: 1px solid var(--gray-200, #e7e7e7);
+    border-top: 1px solid var(--gray-200);
     padding-top: 24px;
   }
 }
@@ -1141,7 +976,6 @@ html {
    ULTRAWIDE / 4K SCREENS
    =========================== */
 @media (min-width: 1600px) {
-  /* Expand the main constraining wrappers */
   .container,
   .footer__container,
   .trusted__logos {
@@ -1152,28 +986,26 @@ html {
     padding: 0 80px;
   }
 
-  /* Scale up Header */
   .header__logo,
   .header__link,
   .header__lang {
-    font-size: 18px; /* Up from 13px */
+    font-size: 18px;
   }
 
   .header__nav {
     gap: 60px;
   }
 
-  /* Scale up Hero */
   .hero {
     padding: 120px 0;
   }
 
   .hero__title {
-    font-size: 64px; /* Breaks out of the previous 42px clamp */
+    font-size: 64px;
   }
 
   .hero__description {
-    font-size: 28px; /* Breaks out of the previous 22px clamp */
+    font-size: 28px;
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -1183,7 +1015,6 @@ html {
     font-size: 20px;
   }
 
-  /* Scale up Products Grid */
   .products {
     gap: 30px;
     padding-bottom: 120px;
@@ -1194,10 +1025,9 @@ html {
   }
 
   .card__title {
-    font-size: 22px; /* Up from 16px */
+    font-size: 22px;
   }
 
-  /* Scale up Trusted By Section */
   .trusted {
     padding: 120px 40px;
   }
@@ -1208,12 +1038,12 @@ html {
   }
 
   .trusted__logos {
-    gap: 70px 100px; /* Much wider gaps for huge screens */
+    gap: 70px 100px;
     margin-bottom: 80px;
   }
 
   .trusted__logo {
-    height: 100px; /* Up from 70px */
+    height: 100px;
     max-width: 320px;
   }
 
@@ -1222,7 +1052,6 @@ html {
     max-width: 1000px;
   }
 
-  /* Scale up Footer */
   .footer {
     padding: 120px 80px;
   }
@@ -1234,16 +1063,16 @@ html {
 
   .footer__text,
   .footer__link {
-    font-size: 20px; /* Up from 16px */
+    font-size: 20px;
   }
 
   .footer__icon {
-    width: 32px; /* Up from 24px */
+    width: 32px;
     height: 32px;
   }
 
   .footer__map {
-    max-width: 800px; /* Map grows proportionally with the layout */
+    max-width: 800px;
   }
 
   .applications {

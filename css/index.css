@@ -674,95 +674,114 @@ html {
 }
 
 /* ===========================
-   ABOUT US & PHILOSOPHY
+   ABOUT US (TECHNICAL / SWISS)
    =========================== */
 
 /* --- MOBILE DEFAULT --- */
-.about {
+.about-tech {
   padding: 80px 0;
-  background-color: var(--gray-100, #f4f3f4);
+  color: var(--gray-900, #161617);
 }
 
-.about__container {
+.about-tech__top {
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: 40px;
 }
 
-.about__title {
+.about-tech__title {
   font-family: inherit;
   font-weight: 700;
-  font-size: clamp(28px, 4vw, 36px);
-  color: var(--gray-900, #161617);
+  font-size: clamp(36px, 6vw, 48px);
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.about-tech__badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--gray-900, #161617);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.about-tech__lead {
+  font-size: clamp(16px, 2vw, 18px);
+  font-weight: 700;
+  line-height: 1.5;
   margin-bottom: 24px;
 }
 
-.about__text {
-  font-size: clamp(15px, 2vw, 17px);
+.about-tech__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.about-tech__list li {
+  font-size: clamp(14px, 1.5vw, 16px);
   line-height: 1.6;
-  color: #4b5563; /* Medium gray */
-  margin-bottom: 32px;
+  color: #4b5563;
+  padding-left: 20px;
+  position: relative;
 }
 
-.about__text strong {
+/* Technical arrow bullet points */
+.about-tech__list li::before {
+  content: "→";
+  font-family: var(--font-mono, monospace);
+  position: absolute;
+  left: 0;
+  top: 0;
   color: var(--gray-900, #161617);
-}
-
-.about__subtitle {
-  font-size: 18px;
   font-weight: 700;
-  color: var(--gray-900, #161617);
+}
+
+.about-tech__divider {
+  width: 100%;
+  height: 2px;
+  background-color: var(--gray-900, #161617);
+  margin: 48px 0;
+}
+
+.about-tech__bottom {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+.tech-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.tech-card__num {
+  font-family: var(--font-mono, monospace);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gray-200, #e7e7e7);
   margin-bottom: 16px;
 }
 
-.about__list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.about__list li {
-  position: relative;
-  font-size: clamp(14px, 1.5vw, 16px);
-  line-height: 1.5;
-  color: #4b5563;
-  padding-left: 20px;
-}
-
-.about__list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 9px;
-  width: 6px;
-  height: 6px;
-  background-color: var(--gray-900, #161617);
-  border-radius: 50%;
-}
-
-.values__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
-.value-card {
-  /* Premium left-border accent */
-  border-left: 2px solid var(--gray-900, #161617);
-  padding-left: 16px;
-}
-
-.value-card__title {
-  font-size: 16px;
+.tech-card__title {
+  font-size: 18px;
   font-weight: 700;
-  color: var(--gray-900, #161617);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
-.value-card__text {
+.tech-card__text {
   font-size: 14px;
-  line-height: 1.5;
-  color: #6b7280;
+  line-height: 1.6;
+  color: #4b5563;
 }
 
 /* ===========================
@@ -1036,20 +1055,32 @@ html {
     margin-top: clamp(100px, 12vh, 200px);
   }
 
-  .about {
+  .about-tech {
     padding: 120px 0;
   }
 
-  .about__container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px; /* Space between Company Info and Values */
-    align-items: start;
+  .about-tech__top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 60px;
   }
 
-  .values__grid {
-    grid-template-columns: 1fr 1fr; /* 2x2 grid for values */
-    gap: 32px 24px;
+  .about-tech__branding {
+    flex: 0 0 35%; /* Restricts the title width to create a strong vertical column */
+  }
+
+  .about-tech__details {
+    flex: 1;
+  }
+
+  .about-tech__divider {
+    margin: 80px 0;
+  }
+
+  .about-tech__bottom {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px 40px;
   }
 }
 
@@ -1089,6 +1120,20 @@ html {
 
   .app-card__text {
     font-size: 14px;
+  }
+
+  .about-tech__bottom {
+    grid-template-columns: repeat(
+      4,
+      1fr
+    ); /* Spreads numbers 01-04 horizontally */
+    gap: 32px;
+  }
+
+  /* Add a subtle top border to each card for an engineering blueprint feel */
+  .tech-card {
+    border-top: 1px solid var(--gray-200, #e7e7e7);
+    padding-top: 24px;
   }
 }
 
@@ -1228,59 +1273,53 @@ html {
     font-size: 16px;
   }
 
-  .about {
+  .about-tech {
     padding: 160px 0;
   }
 
-  .about__container {
-    gap: 120px;
+  .about-tech__title {
+    font-size: 64px;
+    margin-bottom: 16px;
   }
 
-  .about__title {
-    font-size: 52px;
+  .about-tech__badge {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+
+  .about-tech__lead {
+    font-size: 24px;
     margin-bottom: 32px;
   }
 
-  .about__text {
-    font-size: 24px;
-    margin-bottom: 48px;
+  .about-tech__list li {
+    font-size: 20px;
+    padding-left: 32px;
   }
 
-  .about__subtitle {
-    font-size: 26px;
+  .about-tech__divider {
+    margin: 100px 0;
+  }
+
+  .about-tech__bottom {
+    gap: 48px;
+  }
+
+  .tech-card {
+    padding-top: 32px;
+  }
+
+  .tech-card__num {
+    font-size: 64px;
     margin-bottom: 24px;
   }
 
-  .about__list {
-    gap: 16px;
-  }
-
-  .about__list li {
-    font-size: 20px;
-    padding-left: 28px;
-  }
-
-  .about__list li::before {
-    top: 11px;
-    width: 8px;
-    height: 8px;
-  }
-
-  .values__grid {
-    gap: 48px 32px;
-  }
-
-  .value-card {
-    border-left-width: 3px;
-    padding-left: 24px;
-  }
-
-  .value-card__title {
+  .tech-card__title {
     font-size: 22px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
-  .value-card__text {
+  .tech-card__text {
     font-size: 18px;
   }
 }

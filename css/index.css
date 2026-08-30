@@ -394,7 +394,6 @@ html {
   left: 5%;
 }
 
-/* The Text Nodes - Positioned ABSOLUTE inside the sticky container! */
 .dlrtt-copy {
   position: absolute;
   z-index: 11;
@@ -474,7 +473,7 @@ html {
 }
 
 .app-card__icon {
-  height: 64px;
+  height: 72px;
   width: auto;
   margin-bottom: 24px;
 }
@@ -797,12 +796,6 @@ html {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .app-card:last-child {
-    grid-column: 1 / -1;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
   .trusted {
     padding: 80px 24px;
   }
@@ -939,10 +932,11 @@ html {
 
   .applications {
     padding: 0px;
+    margin: 0 auto;
   }
 
   .applications__grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0;
   }
 

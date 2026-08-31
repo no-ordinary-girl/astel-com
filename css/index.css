@@ -314,7 +314,7 @@
 
 .trusted__title {
   font-weight: 700;
-  font-size: clamp(28px, 7vw, 36px);
+  font-size: clamp(32px, 7vw, 40px);
   text-transform: uppercase;
   margin-bottom: 32px;
 }
@@ -353,7 +353,7 @@
 /* ===========================
    PAGE MEDIA QUERIES
    =========================== */
-@media (min-width: 700px) {
+@media (min-width: 760px) {
   .products {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -537,6 +537,10 @@
     max-height: 80%;
   }
 
+  .features-scroll {
+    max-height: 3600px;
+  }
+
   .applications {
     padding: 0px;
     margin: 0 auto;
@@ -710,5 +714,163 @@
 
   .tech-card__text {
     font-size: 20px;
+  }
+}
+
+/* ===========================
+   MASSIVE SCREENS (2560px+)
+   =========================== */
+@media (min-width: 2560px) {
+  .hero {
+    padding: 160px 0;
+  }
+
+  .hero__title {
+    font-size: 96px;
+  }
+
+  .hero__description {
+    font-size: 40px;
+    max-width: 1200px;
+  }
+
+  .hero__link {
+    font-size: 28px;
+  }
+
+  .container,
+  .footer__container {
+    max-width: 2000px;
+  }
+
+  .products {
+    gap: 40px;
+    padding-bottom: 160px;
+  }
+
+  .card {
+    padding: 60px;
+  }
+
+  .card__title {
+    font-size: 32px;
+  }
+
+  .icon-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .features-scroll {
+    max-height: 4800px;
+  }
+
+  .features-copy h2 {
+    font-size: 64px;
+  }
+
+  .features-copy p {
+    font-size: 32px;
+  }
+
+  .trusted {
+    padding: 160px 40px;
+  }
+
+  .trusted__title {
+    font-size: 64px;
+    margin-bottom: 100px;
+  }
+
+  .trusted__logos {
+    gap: 80px 120px;
+    margin-bottom: 100px;
+  }
+
+  .trusted__logo {
+    height: 120px;
+    max-width: 400px;
+  }
+
+  .trusted__text {
+    font-size: 32px;
+    max-width: 1200px;
+  }
+
+  .applications {
+    padding: 180px 0;
+  }
+
+  .applications__title {
+    font-size: 64px;
+    margin-bottom: 100px;
+  }
+
+  .app-card {
+    padding: 0 60px;
+  }
+
+  .app-card__icon {
+    height: 80px;
+    margin-bottom: 40px;
+  }
+
+  .app-card__title {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+
+  .app-card__text {
+    font-size: 26px;
+  }
+
+  .about-tech {
+    padding: 200px 0;
+  }
+
+  .about-tech__title {
+    font-size: 96px;
+    margin-bottom: 24px;
+  }
+
+  .about-tech__badge {
+    font-size: 24px;
+    padding: 10px 20px;
+  }
+
+  .about-tech__lead {
+    font-size: 36px;
+    margin-bottom: 40px;
+  }
+
+  .about-tech__list li {
+    font-size: 28px;
+    padding-left: 40px;
+  }
+
+  .about-tech__divider {
+    margin: 120px 0;
+  }
+
+  .about-tech__bottom {
+    gap: 60px;
+  }
+
+  .tech-card {
+    padding-top: 40px;
+  }
+
+  .tech-card__num {
+    font-size: 100px;
+    margin-bottom: 32px;
+  }
+
+  .tech-card__title {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  .tech-card__text {
+    font-size: 26px;
   }
 }

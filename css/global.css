@@ -449,7 +449,7 @@ body {
 @media (min-width: 1600px) {
   .container,
   .footer__container {
-    max-width: 1600px;
+    max-width: 2000px;
   }
 
   .container {

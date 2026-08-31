@@ -1,0 +1,644 @@
+/* ===========================
+   ABOUT HERO SECTION (Mobile Base)
+   =========================== */
+.about-hero {
+  padding: 60px 0;
+  background-color: var(--gray-100);
+  display: flex;
+  align-items: center;
+  /* Minimum height to ensure it looks balanced even if content is short */
+  /* min-height: calc(100vh - 100px); */
+  height: calc(100vh - 100px);
+  /* Stretches to fill the screen on normal devices... */
+  max-height: 1080px;
+}
+
+.about-hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+}
+
+.about-hero__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.about-hero__title {
+  font-size: clamp(36px, 10vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--gray-900);
+}
+
+.about-hero__text {
+  font-size: clamp(16px, 4.5vw, 20px);
+  line-height: 1.5;
+  color: #374151; /* Slightly softer gray for paragraph text */
+  max-width: 600px;
+}
+
+.about-hero__visual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-hero__image {
+  width: 100%;
+  max-width: 450px;
+  object-fit: contain;
+  filter: drop-shadow(0 30px 20px rgba(0, 0, 0, 0.2));
+}
+
+/* ===========================
+   HISTORY SECTION (Mobile Base)
+   =========================== */
+.history {
+  padding: 60px 0 100px 0;
+  background-color: var(--gray-100);
+}
+
+.history__title {
+  text-align: center;
+  font-size: clamp(32px, 8vw, 40px);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  color: var(--gray-900);
+}
+
+.history__timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+/* Vertical Timeline Line (Mobile Position) */
+.history__timeline::before {
+  content: "";
+  position: absolute;
+  top: 24px; /* Center of 48px icon */
+  bottom: 24px;
+  left: 79px; /* 48px icon + 12px gap + 20px center of node - 1px line offset */
+  width: 2px;
+  background-color: var(--gray-900);
+  z-index: 0;
+}
+
+.history__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 40px 1fr;
+  grid-template-areas:
+    "icon node year"
+    "icon node text";
+  column-gap: 12px;
+  row-gap: 4px;
+}
+
+.history__icon-box {
+  grid-area: icon;
+  width: 48px;
+  height: 48px;
+  align-self: flex-start;
+}
+
+.history__icon-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.history__node {
+  grid-area: node;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px; /* Matches icon height for perfect vertical centering */
+}
+
+.history__dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--gray-900);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.history__year {
+  grid-area: year;
+  font-family: var(--font-base);
+  font-weight: 700;
+  font-size: 16px;
+  align-self: end;
+}
+
+.history__text {
+  grid-area: text;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ===========================
+   STATS SECTION (Mobile Base)
+   =========================== */
+.stats {
+  /* padding: 40px 0 80px 0; */
+  background-color: var(--gray-100);
+}
+
+.stats__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center; /* Centers items on mobile */
+}
+
+.stats__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stats__icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.stats__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stats__value {
+  font-family: var(--font-base);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+  margin: 0 auto;
+}
+
+.stats__value--text {
+  font-size: 24px; /* Makes "ВСЯ УКРАЇНА" smaller than the numbers */
+  margin-bottom: 8px;
+}
+
+.stats__label {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--gray-900);
+  letter-spacing: 0.02em;
+}
+
+/* ===========================
+   WHY CHOOSE US SECTION (Mobile Base)
+   =========================== */
+.why {
+  padding: 60px 0 100px 0;
+  background-color: var(--gray-100);
+}
+
+.why__title {
+  text-align: center;
+  font-size: clamp(32px, 8vw, 40px);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  color: var(--gray-900);
+}
+
+.why__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+.why__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.why__icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.why__subtitle {
+  font-family: var(--font-base);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.why__text {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* ===========================
+   DESKTOP (960px+)
+   =========================== */
+@media (min-width: 960px) {
+  .about-hero {
+    padding: 100px 0;
+  }
+
+  .about-hero__inner {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 64px;
+  }
+
+  .about-hero__title {
+    font-size: clamp(36px, 6vw, 48px);
+  }
+
+  .about-hero__text {
+    font-size: clamp(18px, 1.5vw, 24px);
+  }
+
+  .about-hero__image {
+    max-width: 550px;
+  }
+
+  .history {
+    padding: 80px 0 120px 0;
+  }
+
+  .history__title {
+    margin-bottom: 80px;
+    font-size: clamp(32px, 5vw, 40px);
+  }
+
+  .history__timeline {
+    gap: 40px;
+  }
+
+  .history__item {
+    grid-template-columns: 64px 48px 180px 1fr;
+    grid-template-areas: "icon node year text";
+    align-items: center;
+    column-gap: 24px;
+  }
+
+  .history__icon-box,
+  .history__node {
+    height: 64px;
+  }
+
+  .history__icon-box {
+    width: 64px;
+  }
+
+  .history__dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .history__year {
+    font-size: 20px;
+    align-self: center;
+  }
+
+  .history__text {
+    font-size: 18px;
+  }
+
+  .history__timeline::before {
+    top: 32px;
+    bottom: 32px;
+    left: 111px;
+  }
+
+  /* .stats {
+    padding: 60px 0 120px 0;
+  } */
+
+  .stats__inner {
+    flex-direction: row;
+    justify-content: space-around; /* Spreads them evenly in a row */
+    gap: 24px;
+  }
+
+  .stats__icon {
+    width: 64px;
+    height: 64px;
+    gap: 20px;
+  }
+
+  .stats__value {
+    font-size: 56px;
+  }
+
+  .stats__value--text {
+    font-size: 26px;
+  }
+
+  .stats__label {
+    font-size: 15px;
+  }
+
+  .why {
+    padding: 80px 0 120px 0;
+  }
+
+  .why__title {
+    margin-bottom: 80px;
+    font-size: clamp(32px, 5vw, 40px);
+  }
+
+  .why__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .why__item {
+    gap: 20px;
+  }
+
+  .why__icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .why__subtitle {
+    font-size: 20px;
+  }
+
+  .why__text {
+    font-size: 16px;
+  }
+}
+
+/* ===========================
+   ULTRAWIDE / 4K (1600px+)
+   =========================== */
+@media (min-width: 1600px) {
+  .about-hero {
+    padding: 140px 0;
+  }
+
+  .about-hero__title {
+    font-size: 72px;
+  }
+
+  .about-hero__text {
+    font-size: 28px;
+    max-width: 700px;
+  }
+
+  .about-hero__image {
+    max-width: 700px;
+  }
+
+  .history__title {
+    font-size: 48px;
+    margin-bottom: 100px;
+  }
+
+  .history__timeline {
+    gap: 60px;
+    max-width: 1200px;
+  }
+
+  .history__item {
+    grid-template-columns: 80px 64px 240px 1fr;
+    column-gap: 32px;
+  }
+
+  .history__icon-box,
+  .history__node {
+    height: 80px;
+  }
+
+  .history__icon-box {
+    width: 80px;
+  }
+
+  .history__year {
+    font-size: 26px;
+  }
+
+  .history__text {
+    font-size: 24px;
+  }
+
+  .history__timeline::before {
+    top: 40px;
+    bottom: 40px;
+    left: 143px;
+  }
+
+  /* .stats {
+    padding: 80px 0 160px 0;
+  } */
+
+  .stats__inner {
+    max-width: 1400px;
+  }
+
+  .stats__item {
+    gap: 24px;
+  }
+
+  .stats__icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .stats__value {
+    font-size: 72px;
+  }
+
+  .stats__value--text {
+    font-size: 32px;
+  }
+
+  .stats__label {
+    font-size: 18px;
+  }
+
+  .why {
+    padding: 100px 0 140px 0;
+  }
+
+  .why__title {
+    font-size: 48px;
+    margin-bottom: 100px;
+  }
+
+  .why__grid {
+    gap: 48px;
+  }
+
+  .why__item {
+    gap: 24px;
+  }
+
+  .why__icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .why__subtitle {
+    font-size: 24px;
+  }
+
+  .why__text {
+    font-size: 20px;
+  }
+}
+
+/* ===========================
+   MASSIVE SCREENS (1920px+)
+   =========================== */
+@media (min-width: 1920px) {
+  .about-hero {
+    padding: 180px 0;
+  }
+
+  .about-hero__title {
+    font-size: 96px;
+  }
+
+  .about-hero__text {
+    font-size: 36px;
+    max-width: 900px;
+  }
+
+  .about-hero__image {
+    max-width: 900px;
+  }
+
+  .history {
+    padding: 120px 0 180px 0;
+  }
+
+  .history__title {
+    font-size: 64px;
+    margin-bottom: 140px;
+  }
+
+  .history__timeline {
+    gap: 80px;
+    max-width: 1400px;
+  }
+
+  .history__item {
+    grid-template-columns: 100px 80px 300px 1fr;
+    column-gap: 40px;
+  }
+
+  .history__icon-box,
+  .history__node {
+    height: 100px;
+  }
+
+  .history__icon-box {
+    width: 100px;
+  }
+
+  .history__dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .history__year {
+    font-size: 32px;
+  }
+
+  .history__text {
+    font-size: 32px;
+  }
+
+  .history__timeline::before {
+    top: 50px;
+    bottom: 50px;
+    left: 179px;
+  }
+
+  /* .stats {
+    padding: 100px 0 200px 0;
+  } */
+
+  .stats__inner {
+    max-width: 1600px;
+  }
+
+  .stats__item {
+    gap: 32px;
+  }
+
+  .stats__icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .stats__value {
+    font-size: 96px;
+    margin-bottom: 8px;
+  }
+
+  .stats__value--text {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .stats__label {
+    font-size: 24px;
+  }
+
+  .why {
+    padding: 120px 0 180px 0;
+  }
+
+  .why__title {
+    font-size: 64px;
+    margin-bottom: 140px;
+  }
+
+  .why__grid {
+    gap: 60px;
+  }
+
+  .why__item {
+    gap: 32px;
+  }
+
+  .why__icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  .why__subtitle {
+    font-size: 32px;
+  }
+
+  .why__text {
+    font-size: 26px;
+  }
+}

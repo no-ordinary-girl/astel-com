@@ -80,8 +80,33 @@ ul {
 }
 
 /* ===========================
+   CUSTOM SCROLLBAR
+   =========================== */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gray-100);
+  border-radius: 10px;
+  border: 4px solid var(--gray-900);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* ===========================
    BASE
    =========================== */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-base);
   background-color: var(--gray-100);
@@ -90,10 +115,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-html {
-  scroll-behavior: smooth;
+  overflow-x: clip; /* Prevents horizontal overflow without breaking sticky headers */
 }
 
 .container {
@@ -115,22 +137,18 @@ html {
 .header {
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 9999;
   background-color: var(--gray-100);
   width: 100%;
   padding: 24px 0;
   font-family: var(--font-mono);
-  font-size: 15px; /* Bumped up from 13px */
+  font-size: 15px;
   font-weight: 500;
 }
 
 .header__image {
-  height: clamp(
-    20px,
-    3vw,
-    32px
-  ); /* Scales smoothly between 20px on mobile and 32px on 4K */
-  width: auto; /* Keeps the logo from stretching or distorting */
+  height: clamp(20px, 3vw, 32px);
+  width: auto;
   display: block;
 }
 
@@ -150,7 +168,7 @@ html {
 
 .header__logo {
   letter-spacing: 0.5px;
-  font-size: 20px; /* Bumped up from 18px */
+  font-size: 20px;
 }
 
 .header__toggle {
@@ -196,7 +214,7 @@ html {
 }
 
 .header__link {
-  font-size: 18px; /* Bumped up from 16px */
+  font-size: 18px;
   padding-bottom: 4px;
   border-bottom: 1.5px solid transparent;
   transition: border-color 0.3s ease;
@@ -210,7 +228,7 @@ html {
 .header__lang {
   position: relative;
   display: inline-block;
-  font-size: 18px; /* Bumped up from 16px */
+  font-size: 18px;
 }
 
 .header__lang-trigger {
@@ -268,7 +286,7 @@ html {
 }
 
 .hero__title {
-  font-size: clamp(36px, 9vw, 48px); /* SIGNIFICANTLY BIGGER */
+  font-size: clamp(36px, 9vw, 48px);
   font-weight: 700;
   line-height: 1.3;
   margin-bottom: 24px;
@@ -276,7 +294,7 @@ html {
 }
 
 .hero__description {
-  font-size: clamp(20px, 5vw, 24px); /* MUCH BIGGER */
+  font-size: clamp(20px, 5vw, 24px);
   font-weight: 400;
   margin-bottom: 48px;
 }
@@ -286,7 +304,7 @@ html {
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 18px; /* BIGGER */
+  font-size: 18px;
   font-weight: 600;
   border-bottom: 1.5px solid var(--gray-900);
   padding-bottom: 4px;
@@ -333,7 +351,7 @@ html {
 
 .card__title {
   font-family: var(--font-mono);
-  font-size: clamp(16px, calc(3.037px + 1.852vw), 22px); /* MUCH BIGGER */
+  font-size: clamp(16px, calc(3.037px + 1.852vw), 22px);
   font-weight: 400;
   line-height: 1.5;
   z-index: 2;
@@ -358,7 +376,7 @@ html {
 }
 
 /* ===========================
-   SCROLLYTELLING (Mobile Base)
+   MODEM FEATURES (Mobile Base)
    =========================== */
 .features-scroll {
   background-color: var(--gray-100);
@@ -420,7 +438,7 @@ html {
 .applications__title {
   text-align: center;
   font-weight: 700;
-  font-size: clamp(32px, 8vw, 40px); /* BIGGER */
+  font-size: clamp(32px, 8vw, 40px);
   color: var(--gray-900);
   margin-bottom: 48px;
 }
@@ -446,14 +464,14 @@ html {
 }
 
 .app-card__title {
-  font-size: 24px; /* BIGGER */
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 12px;
   line-height: 1.3;
 }
 
 .app-card__text {
-  font-size: 18px; /* BIGGER */
+  font-size: 18px;
   color: #6b7280;
   line-height: 1.5;
 }
@@ -474,7 +492,7 @@ html {
 
 .about-tech__title {
   font-weight: 700;
-  font-size: clamp(42px, 10vw, 56px); /* BIGGER */
+  font-size: clamp(42px, 10vw, 56px);
   line-height: 1.1;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -483,7 +501,7 @@ html {
 .about-tech__badge {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 16px; /* BIGGER */
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -494,7 +512,7 @@ html {
 }
 
 .about-tech__lead {
-  font-size: clamp(20px, 5vw, 24px); /* BIGGER */
+  font-size: clamp(20px, 5vw, 24px);
   font-weight: 700;
   line-height: 1.5;
   margin-bottom: 24px;
@@ -507,7 +525,7 @@ html {
 }
 
 .about-tech__list li {
-  font-size: clamp(18px, 4.5vw, 20px); /* BIGGER */
+  font-size: clamp(18px, 4.5vw, 20px);
   line-height: 1.6;
   color: #4b5563;
   padding-left: 20px;
@@ -543,7 +561,7 @@ html {
 
 .tech-card__num {
   font-family: var(--font-mono);
-  font-size: 64px; /* BIGGER */
+  font-size: 64px;
   font-weight: 700;
   line-height: 1;
   color: var(--gray-400);
@@ -551,7 +569,7 @@ html {
 }
 
 .tech-card__title {
-  font-size: 22px; /* BIGGER */
+  font-size: 22px;
   font-weight: 700;
   margin-bottom: 12px;
   text-transform: uppercase;
@@ -559,7 +577,7 @@ html {
 }
 
 .tech-card__text {
-  font-size: 18px; /* BIGGER */
+  font-size: 18px;
   line-height: 1.6;
   color: #4b5563;
 }
@@ -575,7 +593,7 @@ html {
 
 .trusted__title {
   font-weight: 700;
-  font-size: clamp(28px, 7vw, 36px); /* BIGGER */
+  font-size: clamp(28px, 7vw, 36px);
   text-transform: uppercase;
   margin-bottom: 32px;
 }
@@ -608,7 +626,7 @@ html {
   max-width: 750px;
   margin: 0 auto;
   color: #4b5563;
-  font-size: clamp(16px, 4vw, 18px); /* BIGGER */
+  font-size: clamp(16px, 4vw, 18px);
   line-height: 1.6;
 }
 
@@ -653,7 +671,7 @@ html {
 }
 
 .footer__text {
-  font-size: clamp(16px, 4.5vw, 18px); /* BIGGER */
+  font-size: clamp(16px, 4.5vw, 18px);
   line-height: 1.5;
 }
 
@@ -664,7 +682,7 @@ html {
 }
 
 .footer__link {
-  font-size: clamp(16px, 4.5vw, 18px); /* BIGGER */
+  font-size: clamp(16px, 4.5vw, 18px);
   line-height: 1.5;
   transition: color 0.2s ease;
 }
@@ -810,12 +828,14 @@ html {
   }
 }
 
-/* --- SCROLLYTELLING ACTIVATED FOR DESKTOP ONLY --- */
+/* --- MODEM FEATURES SCROLL (DESKTOP ONLY) --- */
 @media (min-width: 960px) {
   .features-scroll {
     height: 400vh;
     max-height: 3200px;
     padding: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .features-visual {
@@ -826,6 +846,7 @@ html {
     justify-content: center;
     overflow: hidden;
     gap: 0;
+    pointer-events: none; /* Allows hover clicks to pass through to the scrollbar */
   }
 
   .features-image {
@@ -858,6 +879,7 @@ html {
   }
 
   .features-copy {
+    pointer-events: auto; /* Reactivates mouse interactions on text */
     position: absolute;
     z-index: 11;
     opacity: 0;
@@ -978,7 +1000,7 @@ html {
   }
 
   .app-card__text {
-    font-size: 16px; /* Matched for desktop scale */
+    font-size: 16px;
   }
 
   .about-tech__bottom {
@@ -1021,11 +1043,11 @@ html {
   }
 
   .hero__title {
-    font-size: 72px; /* Bigger for 4k */
+    font-size: 72px;
   }
 
   .hero__description {
-    font-size: 32px; /* Bigger for 4k */
+    font-size: 32px;
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -1045,7 +1067,7 @@ html {
   }
 
   .card__title {
-    font-size: 26px; /* Bigger for 4k */
+    font-size: 26px;
   }
 
   .features-scroll {
@@ -1118,12 +1140,12 @@ html {
   }
 
   .app-card__title {
-    font-size: 28px; /* Bigger for 4k */
+    font-size: 28px;
     margin-bottom: 16px;
   }
 
   .app-card__text {
-    font-size: 20px; /* Bigger for 4k */
+    font-size: 20px;
   }
 
   .about-tech {
@@ -1131,7 +1153,7 @@ html {
   }
 
   .about-tech__title {
-    font-size: 72px; /* Bigger for 4k */
+    font-size: 72px;
     margin-bottom: 16px;
   }
 
@@ -1141,12 +1163,12 @@ html {
   }
 
   .about-tech__lead {
-    font-size: 28px; /* Bigger for 4k */
+    font-size: 28px;
     margin-bottom: 32px;
   }
 
   .about-tech__list li {
-    font-size: 24px; /* Bigger for 4k */
+    font-size: 24px;
     padding-left: 32px;
   }
 
@@ -1163,16 +1185,16 @@ html {
   }
 
   .tech-card__num {
-    font-size: 80px; /* Bigger for 4k */
+    font-size: 80px;
     margin-bottom: 24px;
   }
 
   .tech-card__title {
-    font-size: 26px; /* Bigger for 4k */
+    font-size: 26px;
     margin-bottom: 16px;
   }
 
   .tech-card__text {
-    font-size: 20px; /* Bigger for 4k */
+    font-size: 20px;
   }
 }

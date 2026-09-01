@@ -18,6 +18,9 @@
   flex-direction: column;
   gap: 48px;
   align-items: center;
+  /* margin: 120px auto; */
+  /* margin-bottom: 120px; */
+  /* padding-bottom: 120px; */
 }
 
 .about-hero__content {
@@ -33,6 +36,7 @@
   line-height: 1.1;
   text-transform: uppercase;
   color: var(--gray-900);
+  margin-top: 120px;
 }
 
 .about-hero__text {
@@ -53,14 +57,14 @@
   width: 100%;
   max-width: 450px;
   object-fit: contain;
-  filter: drop-shadow(0 30px 20px rgba(0, 0, 0, 0.2));
+  /* filter: drop-shadow(0 30px 20px rgba(0, 0, 0, 0.2)); */
 }
 
 /* ===========================
    HISTORY SECTION (Mobile Base)
    =========================== */
 .history {
-  padding: 60px 0 100px 0;
+  padding: 60px 0;
   background-color: var(--gray-100);
 }
 
@@ -70,6 +74,7 @@
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 48px;
+  margin-top: 120px;
   color: var(--gray-900);
 }
 
@@ -164,6 +169,7 @@
   flex-direction: column;
   gap: 48px;
   align-items: center; /* Centers items on mobile */
+  padding: 80px 0;
 }
 
 .stats__item {
@@ -242,6 +248,7 @@
   width: 48px;
   height: 48px;
   object-fit: contain;
+  margin: 0 auto;
 }
 
 .why__subtitle {
@@ -251,12 +258,14 @@
   text-transform: uppercase;
   color: var(--gray-900);
   line-height: 1.2;
+  margin: 0 auto;
 }
 
 .why__text {
   font-size: 16px;
   line-height: 1.5;
   color: #374151;
+  text-align: center;
 }
 
 /* ===========================
@@ -271,10 +280,12 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 64px;
+    /* margin-bottom: 0px; */
   }
 
   .about-hero__title {
     font-size: clamp(36px, 6vw, 48px);
+    margin-top: 0px;
   }
 
   .about-hero__text {
@@ -291,6 +302,7 @@
 
   .history__title {
     margin-bottom: 80px;
+    margin-top: 0px;
     font-size: clamp(32px, 5vw, 40px);
   }
 

@@ -4,15 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Товари та послуги - АСТЕЛ-КОМ</title>
-    <!-- Core global styles -->
     <link rel="stylesheet" href="css/global.css" />
-    <!-- Specific styles for this page -->
     <link rel="stylesheet" href="css/products.css" />
   </head>
   <body>
-    <!-- ===========================
-         HEADER
-         =========================== -->
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
@@ -51,7 +46,7 @@
             <a href="products.html" class="header__link header__link--active"
               >ТОВАРИ ТА ПОСЛУГИ</a
             >
-            <a href="#" class="header__link">КОНТАКТИ</a>
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
           </nav>
 
           <div class="header__lang">
@@ -84,12 +79,8 @@
       </div>
     </header>
 
-    <!-- ===========================
-         CATALOG SECTION
-         =========================== -->
     <main class="catalog">
       <div class="container catalog__inner">
-        <!-- Sidebar Filters -->
         <aside class="sidebar">
           <h2 class="sidebar__title">КАТЕГОРІЇ</h2>
           <ul class="sidebar__list">
@@ -135,42 +126,66 @@
             </li>
           </ul>
 
-          <!-- Filter Widget -->
           <div class="sidebar__filter">
             <div class="sidebar__filter-header">ФІЛЬТРИ</div>
             <div class="sidebar__filter-body">
               <div class="filter-group">
-                <div class="filter-label">Ціна</div>
+                <div class="filter-label">
+                  Ціна
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    style="color: #9ca3af"
+                  >
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                  </svg>
+                </div>
+
                 <div class="filter-price-row">
                   <input
                     type="number"
                     id="filter-min"
-                    placeholder="від 40.00"
                     value="40"
-                    min="0"
+                    min="40"
+                    max="9360"
                   />
+                  <span class="filter-price-divider">-</span>
                   <input
                     type="number"
                     id="filter-max"
-                    placeholder="до 9360.00"
                     value="9360"
-                    min="0"
+                    min="40"
+                    max="9360"
                   />
-                  <button id="apply-filters" aria-label="Застосувати фільтр">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                  </button>
+                </div>
+
+                <div class="range-slider">
+                  <div class="range-slider__track"></div>
+                  <div class="range-slider__progress" id="range-progress"></div>
+                  <input
+                    type="range"
+                    class="range-slider__input"
+                    id="range-min"
+                    min="40"
+                    max="9360"
+                    value="40"
+                    step="10"
+                  />
+                  <input
+                    type="range"
+                    class="range-slider__input"
+                    id="range-max"
+                    min="40"
+                    max="9360"
+                    value="9360"
+                    step="10"
+                  />
                 </div>
               </div>
 
@@ -186,12 +201,10 @@
           </div>
         </aside>
 
-        <!-- Product Grid Content -->
         <div class="catalog__content">
           <div class="catalog__header" id="product-counter">15 товарів</div>
 
           <div class="catalog__grid" id="product-grid">
-            <!-- ================= GSM/LTE ================= -->
             <article
               class="product-card"
               data-category="gsm"
@@ -276,7 +289,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/СОМ-900-ITR-rev-B.webp"
+                  src="assets/images/items/СОМ-900-ITR-rev-B.png"
                   alt="GSM/GPRS-модем ITRON rev.B"
                   class="product-card__img"
                 />
@@ -296,7 +309,6 @@
               <div class="product-card__footer">Ціна без ПДВ</div>
             </article>
 
-            <!-- ================= NBIoT ================= -->
             <article
               class="product-card"
               data-category="nbiot"
@@ -305,7 +317,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/СОМ-900-NBI-int.PNG"
+                  src="assets/images/items/СОМ-900-NBI-int.png"
                   alt="NBIoT-модем внутрішній"
                   class="product-card__img"
                 />
@@ -330,7 +342,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/СОМ-900-NBI-ext.webp"
+                  src="assets/images/items/СОМ-900-NBI-ext.png"
                   alt="NBIoT-модем зовнішній"
                   class="product-card__img"
                 />
@@ -347,7 +359,6 @@
               <div class="product-card__footer">Код: Ціна вказана без ПДВ</div>
             </article>
 
-            <!-- ================= POS TERMINALS ================= -->
             <article
               class="product-card"
               data-category="pos"
@@ -356,7 +367,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/usb-pos-terminal.webp"
+                  src="assets/images/items/usb-pos-terminal.png"
                   alt="USB-кабель 3 м"
                   class="product-card__img"
                 />
@@ -381,7 +392,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/battery-PoS-Ingenico-IWL220-iWL250.webp"
+                  src="assets/images/items/battery-PoS-Ingenico-Move-2500.png"
                   alt="Акумуляторна батарея iWL220"
                   class="product-card__img"
                 />
@@ -407,7 +418,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/battery-PoS-Ingenico-Move-2500.webp"
+                  src="assets/images/items/battery-PoS-Ingenico-Move-2500.png"
                   alt="Акумуляторна батарея Move 2500"
                   class="product-card__img"
                 />
@@ -451,7 +462,6 @@
               <div class="product-card__footer">Ціна без ПДВ</div>
             </article>
 
-            <!-- ================= ANTENNAS ================= -->
             <article
               class="product-card"
               data-category="antenna"
@@ -460,7 +470,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/GSM-antenna-3dBi-SMA.webp"
+                  src="assets/images/items/GSM-antenna-3dBi-SMA.png"
                   alt="GSM-антена 3dBi"
                   class="product-card__img"
                 />
@@ -486,7 +496,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/GSM-antenna-3.5dBi-SMA.webp"
+                  src="assets/images/items/GSM-antenna-3.5dBi-SMA.png"
                   alt="GSM-антена 3.5dBi"
                   class="product-card__img"
                 />
@@ -504,7 +514,6 @@
               <div class="product-card__footer">Ціна без ПДВ</div>
             </article>
 
-            <!-- ================= CABLES ================= -->
             <article
               class="product-card"
               data-category="cables"
@@ -591,9 +600,6 @@
       </div>
     </main>
 
-    <!-- ===========================
-         FOOTER 
-         =========================== -->
     <footer class="footer" id="footer">
       <div class="container footer__container">
         <div class="footer__contacts">
@@ -679,9 +685,6 @@
       </div>
     </footer>
 
-    <!-- ===========================
-         INTERACTIVE SCRIPTS
-         =========================== -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Mobile Menu Logic
@@ -693,20 +696,44 @@
           });
         }
 
-        // Filtering Logic
+        // Filtering Variables
         const filterMin = document.getElementById("filter-min");
         const filterMax = document.getElementById("filter-max");
+        const rangeMin = document.getElementById("range-min");
+        const rangeMax = document.getElementById("range-max");
+        const rangeProgress = document.getElementById("range-progress");
         const filterInstock = document.getElementById("filter-instock");
-        const applyBtn = document.getElementById("apply-filters");
         const categoryLinks = document.querySelectorAll(
           ".sidebar__link[data-target]",
         );
-
         const cards = document.querySelectorAll(".product-card");
         const counterElement = document.getElementById("product-counter");
 
+        const MIN_PRICE = 40;
+        const MAX_PRICE = 9360;
+        const PRICE_GAP = 100;
+
         let activeCategory = "all";
 
+        // --- НОВЕ: Читання параметрів з URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryFromUrl = urlParams.get("category");
+
+        if (categoryFromUrl) {
+          const targetLink = document.querySelector(
+            `.sidebar__link[data-target="${categoryFromUrl}"]`,
+          );
+          if (targetLink) {
+            categoryLinks.forEach((l) =>
+              l.classList.remove("sidebar__link--active"),
+            );
+            targetLink.classList.add("sidebar__link--active");
+            activeCategory = categoryFromUrl;
+          }
+        }
+        // --------------------------------------
+
+        // Filter Logic Function
         function applyFilters() {
           const min = parseFloat(filterMin.value) || 0;
           const max = parseFloat(filterMax.value) || Infinity;
@@ -754,32 +781,91 @@
           }
         }
 
-        // Category Click Event
+        // Dual Slider Logic
+        function updateProgress() {
+          const minVal = parseInt(rangeMin.value);
+          const maxVal = parseInt(rangeMax.value);
+
+          const leftPercent =
+            ((minVal - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100;
+          const rightPercent =
+            100 - ((maxVal - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100;
+
+          rangeProgress.style.left = leftPercent + "%";
+          rangeProgress.style.right = rightPercent + "%";
+        }
+
+        function syncSlidersToInputs(e) {
+          let minVal = parseInt(rangeMin.value);
+          let maxVal = parseInt(rangeMax.value);
+
+          if (maxVal - minVal < PRICE_GAP) {
+            if (e.target.id === "range-min") {
+              rangeMin.value = maxVal - PRICE_GAP;
+            } else {
+              rangeMax.value = minVal + PRICE_GAP;
+            }
+          } else {
+            filterMin.value = minVal;
+            filterMax.value = maxVal;
+            updateProgress();
+            applyFilters();
+          }
+        }
+
+        function syncInputsToSliders() {
+          let minVal = parseInt(filterMin.value) || MIN_PRICE;
+          let maxVal = parseInt(filterMax.value) || MAX_PRICE;
+
+          // Constraints
+          if (minVal < MIN_PRICE) minVal = MIN_PRICE;
+          if (maxVal > MAX_PRICE) maxVal = MAX_PRICE;
+
+          if (maxVal - minVal >= PRICE_GAP) {
+            rangeMin.value = minVal;
+            rangeMax.value = maxVal;
+            filterMin.value = minVal;
+            filterMax.value = maxVal;
+            updateProgress();
+            applyFilters();
+          }
+        }
+
+        // Event Listeners for Sliders & Inputs
+        rangeMin.addEventListener("input", syncSlidersToInputs);
+        rangeMax.addEventListener("input", syncSlidersToInputs);
+        filterMin.addEventListener("change", syncInputsToSliders);
+        filterMax.addEventListener("change", syncInputsToSliders);
+
+        // Category Click Event (Updates URL dynamically without reload)
         categoryLinks.forEach((link) => {
           link.addEventListener("click", (e) => {
             e.preventDefault();
-            // Update active state class
             categoryLinks.forEach((l) =>
               l.classList.remove("sidebar__link--active"),
             );
             link.classList.add("sidebar__link--active");
-
-            // Set active category and filter
             activeCategory = link.getAttribute("data-target");
+
+            // Update URL in browser for clean sharing
+            const newUrl = new URL(window.location);
+            if (activeCategory === "all") {
+              newUrl.searchParams.delete("category");
+            } else {
+              newUrl.searchParams.set("category", activeCategory);
+            }
+            window.history.pushState({}, "", newUrl);
+
             applyFilters();
           });
         });
 
-        // Event Listeners for Filters
-        applyBtn.addEventListener("click", applyFilters);
+        // Event Listener for In-Stock Checkbox
         filterInstock.addEventListener("change", applyFilters);
 
-        // Trigger filter on enter key in input fields
-        [filterMin, filterMax].forEach((input) => {
-          input.addEventListener("keypress", function (e) {
-            if (e.key === "Enter") applyFilters();
-          });
-        });
+        // Initialize UI on load
+        updateProgress();
+        applyFilters(); // Фільтрує одразу при завантаженні сторінки, якщо є URL параметр
       });
     </script>
   </body>

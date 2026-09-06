@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Товари та послуги - АСТЕЛ-КОМ</title>
+    <!-- Core global styles -->
     <link rel="stylesheet" href="css/global.css" />
+    <!-- Specific styles for this page -->
     <link rel="stylesheet" href="css/products.css" />
   </head>
   <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
@@ -79,9 +84,32 @@
       </div>
     </header>
 
+    <!-- ===========================
+         CATALOG SECTION
+         =========================== -->
     <main class="catalog">
-      <div class="container catalog__inner">
-        <aside class="sidebar">
+      <div class="container catalog__inner" id="catalog-inner">
+        <!-- Mobile Filter Toggle Button -->
+        <button class="catalog__filter-toggle" id="filter-toggle">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon
+              points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
+            ></polygon>
+          </svg>
+          Фільтри та Категорії
+        </button>
+
+        <!-- Sidebar Filters -->
+        <aside class="sidebar" id="sidebar">
           <h2 class="sidebar__title">КАТЕГОРІЇ</h2>
           <ul class="sidebar__list">
             <li class="sidebar__item">
@@ -126,6 +154,7 @@
             </li>
           </ul>
 
+          <!-- Filter Widget -->
           <div class="sidebar__filter">
             <div class="sidebar__filter-header">ФІЛЬТРИ</div>
             <div class="sidebar__filter-body">
@@ -201,6 +230,7 @@
           </div>
         </aside>
 
+        <!-- Product Grid Content -->
         <div class="catalog__content">
           <div class="catalog__header" id="product-counter">15 товарів</div>
 
@@ -443,7 +473,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/cable-PoS-Ingenico-iCT220.webp"
+                  src="assets/images/items/cable-PoS-Ingenico-iCT220.png"
                   alt="Кабель для пінпада"
                   class="product-card__img"
                 />
@@ -522,7 +552,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/cable-2,1х5,5.webp"
+                  src="assets/images/items/cable-2,1х5,5.png"
                   alt="Кабель живлення кутовий"
                   class="product-card__img"
                 />
@@ -549,7 +579,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/cable-1,4х3,4.webp"
+                  src="assets/images/items/cable-1,4х3,4.png"
                   alt="Кабель живлення кутовий"
                   class="product-card__img"
                 />
@@ -576,7 +606,7 @@
             >
               <div class="product-card__image-wrap">
                 <img
-                  src="assets/images/items/cable-2,1х5,5-with-filter.webp"
+                  src="assets/images/items/cable-2,1х5,5-with-filter.png"
                   alt="Кабель живлення прямий"
                   class="product-card__img"
                 />
@@ -657,10 +687,7 @@
         </div>
 
         <div class="footer__map">
-          <a
-            href="https://www.google.com/maps/place/%D0%B2%D1%83%D0%BB%D0%B8%D1%86%D1%8F+%D0%A1%D0%BE%D0%BB%D0%BE%D0%BC'%D1%8F%D0%BD%D1%81%D1%8C%D0%BA%D0%B0,+5,+%D0%9A%D0%B8%D1%97%D0%B2,+02000/@50.4292719,30.4740125,17.3z/data=!4m6!3m5!1s0x40d4cec096b20375:0xe10485e9d7544aaa!8m2!3d50.4292232!4d30.4751274!16s%2Fg%2F11c4dc3zvj?hl=uk&entry=ttu&g_ep=EgoyMDI2MDgyNi4wIKXMDSoASAFQAw%3D%3D"
-            target="_blank"
-          >
+          <a href="https://www.google.com/maps/place/..." target="_blank">
             <picture>
               <source
                 media="(min-width: 1440px)"
@@ -684,19 +711,75 @@
         </div>
       </div>
     </footer>
-
+    <button
+      id="back-to-top"
+      class="back-to-top"
+      aria-label="Повернутися нагору"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Mobile Menu Logic
+        // --- Header Mobile Menu Logic ---
         const toggleBtn = document.getElementById("menu-toggle");
         const collapseMenu = document.getElementById("menu-collapse");
+
         if (toggleBtn && collapseMenu) {
           toggleBtn.addEventListener("click", () => {
             collapseMenu.classList.toggle("header__collapse--open");
           });
         }
 
-        // Filtering Variables
+        // --- НОВЕ: Close Mobile Menu on Link Click & Smooth Scroll ---
+        const headerLinks = document.querySelectorAll(".header__link");
+        headerLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            // Close the menu immediately
+            if (
+              collapseMenu &&
+              collapseMenu.classList.contains("header__collapse--open")
+            ) {
+              collapseMenu.classList.remove("header__collapse--open");
+            }
+
+            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
+            const targetId = link.getAttribute("href");
+            if (targetId === "#footer") {
+              e.preventDefault(); // Prevent instant jump
+              const footerElement = document.getElementById("footer");
+              if (footerElement) {
+                // Add a tiny delay so the menu closing animation can start before scrolling
+                setTimeout(() => {
+                  footerElement.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }
+            }
+          });
+        });
+        // ------------------------------------------------------------
+
+        // --- Mobile Filter Toggle Logic ---
+        const filterToggleBtn = document.getElementById("filter-toggle");
+        const sidebarElement = document.getElementById("sidebar");
+
+        if (filterToggleBtn && sidebarElement) {
+          filterToggleBtn.addEventListener("click", () => {
+            sidebarElement.classList.toggle("sidebar--open");
+          });
+        }
+
+        // --- Filtering Variables ---
         const filterMin = document.getElementById("filter-min");
         const filterMax = document.getElementById("filter-max");
         const rangeMin = document.getElementById("range-min");
@@ -715,7 +798,7 @@
 
         let activeCategory = "all";
 
-        // --- НОВЕ: Читання параметрів з URL ---
+        // Read URL parameter on load
         const urlParams = new URLSearchParams(window.location.search);
         const categoryFromUrl = urlParams.get("category");
 
@@ -731,9 +814,7 @@
             activeCategory = categoryFromUrl;
           }
         }
-        // --------------------------------------
 
-        // Filter Logic Function
         function applyFilters() {
           const min = parseFloat(filterMin.value) || 0;
           const max = parseFloat(filterMax.value) || Infinity;
@@ -745,21 +826,12 @@
             const price = parseFloat(card.getAttribute("data-price"));
             const isInstock = card.getAttribute("data-instock") === "true";
             const category = card.getAttribute("data-category");
-
             let show = true;
 
-            // Check Category
-            if (activeCategory !== "all" && category !== activeCategory) {
+            if (activeCategory !== "all" && category !== activeCategory)
               show = false;
-            }
-            // Check Price
-            if (price < min || price > max) {
-              show = false;
-            }
-            // Check Stock
-            if (instockOnly && !isInstock) {
-              show = false;
-            }
+            if (price < min || price > max) show = false;
+            if (instockOnly && !isInstock) show = false;
 
             if (show) {
               card.style.display = "flex";
@@ -769,7 +841,6 @@
             }
           });
 
-          // Update counter text
           if (visibleCount === 0) {
             counterElement.textContent = "Товарів не знайдено";
           } else if (visibleCount === 1) {
@@ -781,7 +852,7 @@
           }
         }
 
-        // Dual Slider Logic
+        // --- Dual Slider Logic ---
         function updateProgress() {
           const minVal = parseInt(rangeMin.value);
           const maxVal = parseInt(rangeMax.value);
@@ -817,7 +888,6 @@
           let minVal = parseInt(filterMin.value) || MIN_PRICE;
           let maxVal = parseInt(filterMax.value) || MAX_PRICE;
 
-          // Constraints
           if (minVal < MIN_PRICE) minVal = MIN_PRICE;
           if (maxVal > MAX_PRICE) maxVal = MAX_PRICE;
 
@@ -831,23 +901,24 @@
           }
         }
 
-        // Event Listeners for Sliders & Inputs
         rangeMin.addEventListener("input", syncSlidersToInputs);
         rangeMax.addEventListener("input", syncSlidersToInputs);
         filterMin.addEventListener("change", syncInputsToSliders);
         filterMax.addEventListener("change", syncInputsToSliders);
 
-        // Category Click Event (Updates URL dynamically without reload)
+        // --- Category Clicks & Auto-Close Logic ---
         categoryLinks.forEach((link) => {
           link.addEventListener("click", (e) => {
             e.preventDefault();
+
+            // Set active category visually
             categoryLinks.forEach((l) =>
               l.classList.remove("sidebar__link--active"),
             );
             link.classList.add("sidebar__link--active");
             activeCategory = link.getAttribute("data-target");
 
-            // Update URL in browser for clean sharing
+            // Update URL parameters dynamically
             const newUrl = new URL(window.location);
             if (activeCategory === "all") {
               newUrl.searchParams.delete("category");
@@ -856,16 +927,51 @@
             }
             window.history.pushState({}, "", newUrl);
 
+            // Filter grid
             applyFilters();
+
+            // Auto-close sidebar on mobile after selection
+            if (window.innerWidth < 960 && sidebarElement) {
+              sidebarElement.classList.remove("sidebar--open");
+            }
           });
         });
 
-        // Event Listener for In-Stock Checkbox
         filterInstock.addEventListener("change", applyFilters);
 
-        // Initialize UI on load
+        // --- Back to Top Button Logic ---
+        const backToTopBtn = document.getElementById("back-to-top");
+        const footerElement = document.getElementById("footer");
+
+        if (backToTopBtn && footerElement) {
+          window.addEventListener("scroll", () => {
+            // Show/Hide button
+            if (window.scrollY > 300) {
+              backToTopBtn.classList.add("show");
+            } else {
+              backToTopBtn.classList.remove("show");
+            }
+
+            // Invert colors when overlapping the footer
+            const footerRect = footerElement.getBoundingClientRect();
+            if (footerRect.top <= window.innerHeight - 24) {
+              backToTopBtn.classList.add("back-to-top--inverted");
+            } else {
+              backToTopBtn.classList.remove("back-to-top--inverted");
+            }
+          });
+
+          backToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          });
+        }
+
+        // Initialize UI
         updateProgress();
-        applyFilters(); // Фільтрує одразу при завантаженні сторінки, якщо є URL параметр
+        applyFilters();
       });
     </script>
   </body>

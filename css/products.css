@@ -14,13 +14,59 @@
 }
 
 /* ===========================
+   MOBILE TOGGLE BUTTON
+   =========================== */
+.catalog__filter-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: "Geist", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.catalog__filter-toggle:active {
+  background-color: #374151;
+}
+
+/* ===========================
    SIDEBAR (Categories & Filters)
    =========================== */
 .sidebar {
   background-color: transparent;
   padding: 0;
+  display: none; /* Hidden on mobile by default */
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Visually reveals sidebar when toggled on mobile */
+.sidebar.sidebar--open {
+  display: block;
+  animation: fadeIn 0.3s ease;
+  margin-top: 16px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sidebar::-webkit-scrollbar {
@@ -134,7 +180,7 @@
   background-color: transparent;
   border-radius: 6px;
   font-size: 14px;
-  font-family: "Geist", sans-serif; /* Changed from mono to standard Geist */
+  font-family: "Geist", sans-serif;
   color: var(--gray-900);
   transition: all 0.2s;
   text-align: center;
@@ -146,7 +192,6 @@
   background-color: #ffffff;
 }
 
-/* Remove default arrows from number inputs */
 .filter-price-row input::-webkit-outer-spin-button,
 .filter-price-row input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -202,14 +247,13 @@
   outline: none;
 }
 
-/* Thumb for Chrome/Safari/Edge */
 .range-slider__input::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  background-color: var(--gray-900); /* Solid black */
-  border: none; /* Removed white border */
+  background-color: var(--gray-900);
+  border: none;
   border-radius: 50%;
   cursor: grab;
   position: relative;
@@ -225,14 +269,13 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Thumb for Firefox */
 .range-slider__input::-moz-range-thumb {
   pointer-events: auto;
   -moz-appearance: none;
   width: 16px;
   height: 16px;
-  background-color: var(--gray-900); /* Solid black */
-  border: none; /* Removed white border */
+  background-color: var(--gray-900);
+  border: none;
   border-radius: 50%;
   cursor: grab;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -410,12 +453,16 @@
   .catalog {
     padding: 60px 0 100px 0;
   }
+  .catalog__filter-toggle {
+    display: none; /* Hide toggle button on desktop */
+  }
   .catalog__inner {
     flex-direction: row;
     align-items: flex-start;
     gap: 48px;
   }
   .sidebar {
+    display: block !important; /* Always show sidebar on desktop */
     width: 260px;
     flex-shrink: 0;
     position: sticky;
@@ -523,5 +570,58 @@
   .product-card__status,
   .product-card__footer {
     font-size: 16px;
+  }
+}
+
+/* ===========================
+   BACK TO TOP BUTTON
+   =========================== */
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:active {
+  background-color: #374151;
+  transform: scale(0.95);
+}
+
+/* --- НОВИЙ КЛАС ДЛЯ ІНВЕРСІЇ КОЛЬОРІВ --- */
+.back-to-top.back-to-top--inverted {
+  background-color: #ffffff;
+  color: var(--gray-900);
+}
+
+.back-to-top.back-to-top--inverted:active {
+  background-color: var(--gray-200);
+}
+
+/* Hide the button on desktop screens (960px and wider) */
+@media (min-width: 960px) {
+  .back-to-top {
+    display: none !important;
   }
 }

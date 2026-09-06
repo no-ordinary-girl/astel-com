@@ -599,7 +599,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Hamburger Menu
+        // --- Hamburger Menu ---
         const toggleBtn = document.getElementById("menu-toggle");
         const collapseMenu = document.getElementById("menu-collapse");
         if (toggleBtn && collapseMenu) {
@@ -608,53 +608,80 @@
           });
         }
 
-        // Responsive Scrollytelling
-        // Modem Features Responsive Scrollytelling
+        // --- Responsive Scrollytelling ---
         const track = document.getElementById("features-track");
-        if (!track) return;
+        if (track) {
+          const copies = document.querySelectorAll(".features-copy");
 
-        const copies = document.querySelectorAll(".features-copy");
+          function updateScrollytelling() {
+            const isDesktop = window.innerWidth >= 960;
 
-        function updateScrollytelling() {
-          const isDesktop = window.innerWidth >= 960;
+            // Disable dynamic scroll classes completely on mobile
+            if (!isDesktop) {
+              copies.forEach((c) => c.classList.remove("is-active"));
+              return;
+            }
 
-          // Disable dynamic scroll classes completely on mobile
-          if (!isDesktop) {
-            copies.forEach((c) => c.classList.remove("is-active"));
-            return;
+            const rect = track.getBoundingClientRect();
+            const vh = window.innerHeight;
+
+            if (rect.bottom < 0 || rect.top > vh) return;
+
+            let scrollableDistance = rect.height - vh;
+            if (scrollableDistance <= 0) scrollableDistance = 1;
+
+            let progress = -rect.top / scrollableDistance;
+            progress = Math.max(0, Math.min(1, progress));
+
+            const scenesCount = 4;
+            const activeIndex = Math.floor(progress * scenesCount * 0.999);
+
+            copies.forEach((c) => {
+              const targetClass = "d-scene-" + activeIndex;
+              if (c.classList.contains(targetClass)) {
+                c.classList.add("is-active");
+              } else {
+                c.classList.remove("is-active");
+              }
+            });
           }
 
-          const rect = track.getBoundingClientRect();
-          const vh = window.innerHeight;
-
-          if (rect.bottom < 0 || rect.top > vh) return;
-
-          let scrollableDistance = rect.height - vh;
-          if (scrollableDistance <= 0) scrollableDistance = 1;
-
-          let progress = -rect.top / scrollableDistance;
-          progress = Math.max(0, Math.min(1, progress));
-
-          const scenesCount = 4;
-          const activeIndex = Math.floor(progress * scenesCount * 0.999);
-
-          copies.forEach((c) => {
-            const targetClass = "d-scene-" + activeIndex;
-            if (c.classList.contains(targetClass)) {
-              c.classList.add("is-active");
-            } else {
-              c.classList.remove("is-active");
-            }
+          window.addEventListener("scroll", updateScrollytelling, {
+            passive: true,
           });
+          window.addEventListener("resize", updateScrollytelling, {
+            passive: true,
+          });
+          updateScrollytelling(); // Run once on load
         }
 
-        window.addEventListener("scroll", updateScrollytelling, {
-          passive: true,
+        // --- Close Mobile Menu on Link Click & Smooth Scroll ---
+        const headerLinks = document.querySelectorAll(
+          ".header__nav .header__link",
+        );
+        headerLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            // 1. Закриваємо меню
+            if (
+              collapseMenu &&
+              collapseMenu.classList.contains("header__collapse--open")
+            ) {
+              collapseMenu.classList.remove("header__collapse--open");
+            }
+
+            // 2. Якщо клік по контактах, плавно скролимо вниз
+            const targetId = link.getAttribute("href");
+            if (targetId === "#footer") {
+              e.preventDefault();
+              const footerElement = document.getElementById("footer");
+              if (footerElement) {
+                setTimeout(() => {
+                  footerElement.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }
+            }
+          });
         });
-        window.addEventListener("resize", updateScrollytelling, {
-          passive: true,
-        });
-        updateScrollytelling(); // Run once on load
       });
     </script>
   </body>

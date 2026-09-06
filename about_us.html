@@ -101,7 +101,7 @@
           <!-- Image -->
           <div class="about-hero__visual">
             <img
-              src="assets/images/about-company.png"
+              src="assets/images/about3-modified.png"
               alt="Модем АСТЕЛ-КОМ"
               class="about-hero__image"
             />
@@ -393,11 +393,41 @@
         // Hamburger Menu
         const toggleBtn = document.getElementById("menu-toggle");
         const collapseMenu = document.getElementById("menu-collapse");
+
         if (toggleBtn && collapseMenu) {
           toggleBtn.addEventListener("click", () => {
             collapseMenu.classList.toggle("header__collapse--open");
           });
         }
+
+        // --- Close Mobile Menu on Link Click ---
+        const headerLinks = document.querySelectorAll(
+          ".header__nav .header__link",
+        );
+
+        headerLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            // 1. Close the menu
+            if (
+              collapseMenu &&
+              collapseMenu.classList.contains("header__collapse--open")
+            ) {
+              collapseMenu.classList.remove("header__collapse--open");
+            }
+
+            // 2. Smooth scroll to footer if the link is "КОНТАКТИ"
+            const targetId = link.getAttribute("href");
+            if (targetId === "#footer") {
+              e.preventDefault();
+              const footerElement = document.getElementById("footer");
+              if (footerElement) {
+                setTimeout(() => {
+                  footerElement.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }
+            }
+          });
+        });
       });
     </script>
   </body>

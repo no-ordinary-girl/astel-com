@@ -279,6 +279,17 @@ body {
 }
 
 /* ===========================
+   DYNAMIC HEADER "MORE" DROPDOWN
+   =========================== */
+
+.hide-on-compact {
+  display: inline-flex !important;
+}
+.show-on-compact {
+  display: none !important;
+}
+
+/* ===========================
    FOOTER SECTION
    =========================== */
 .footer {
@@ -354,6 +365,12 @@ body {
   filter: brightness(0.7);
 }
 
+@media (hover: hover) {
+  .header__link:hover {
+    border-bottom-color: var(--gray-900);
+  }
+}
+
 /* ===========================
    GLOBAL MEDIA QUERIES
    =========================== */
@@ -412,6 +429,93 @@ body {
     transform: translateY(0);
   }
 
+  .hide-on-compact {
+    display: none !important; /* Ось те саме критичне правило для 700px! */
+  }
+  .show-on-compact {
+    display: inline-flex !important;
+  }
+
+  .header__more {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Кнопка "БІЛЬШЕ" */
+  button.header__more-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  /* Іконка стрілочки */
+  .header__more-icon {
+    transition: transform 0.3s ease;
+    display: block;
+  }
+
+  .header__more:hover .header__more-icon,
+  .header__more.is-open .header__more-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Випадаюче меню */
+  .header__more-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: auto;
+    margin-top: 4px;
+    background-color: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    padding: 8px 0;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+
+  /* Показуємо меню */
+  .header__more:hover .header__more-menu,
+  .header__more.is-open .header__more-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .header__more-link {
+    display: block;
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 14px;
+    color: var(--gray-900);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+  }
+
+  .header__more-link:hover {
+    background-color: var(--gray-200);
+  }
+
+  .header__more-link--active {
+    color: var(--gray-900);
+    font-weight: 700;
+    background-color: var(--gray-200);
+  }
+
   .footer {
     padding: 80px 40px;
   }
@@ -444,6 +548,15 @@ body {
 @media (min-width: 1024px) {
   .header__nav {
     gap: 40px;
+  }
+}
+
+@media (min-width: 1150px) {
+  .hide-on-compact {
+    display: inline-flex !important;
+  }
+  .show-on-compact {
+    display: none !important;
   }
 }
 

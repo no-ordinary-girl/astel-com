@@ -41,8 +41,11 @@
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
-          <!-- <div class="header__logo">АСТЕЛ-КОМ</div> -->
-          <img src="assets/images/logo-main.svg" class="header__image" alt="" />
+          <img
+            src="assets/images/logo-main.svg"
+            class="header__image"
+            alt="АСТЕЛ-КОМ"
+          />
 
           <button
             class="header__toggle"
@@ -72,8 +75,49 @@
               >ГОЛОВНА</a
             >
             <a href="about_us.html" class="header__link">ПРО НАС</a>
-            <a href="products.html" class="header__link">ТОВАРИ ТА ПОСЛУГИ</a>
+
+            <!-- Ці посилання видимі ТІЛЬКИ на широких екранах (коли є місце) -->
+            <a href="products.html" class="header__link hide-on-compact"
+              >ТОВАРИ</a
+            >
+            <a href="downloads.html" class="header__link hide-on-compact"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+
             <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <!-- Випадаюче меню "БІЛЬШЕ" (видиме на мобільних та вузьких десктопах) -->
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a href="downloads.html" class="header__more-link"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
           </nav>
 
           <div class="header__lang">
@@ -279,71 +323,120 @@
           class="features-image"
         />
 
-        <div class="features-copy pos-left offset-up m-scene-0 d-scene-0">
-          <h2>COM-900/485.</h2>
-          <p>
-            Це ультракомпактний, економічний, дводіапазонний інтелектуальний
-            промисловий GSM/GPRS/LTE модем (термінал).
-          </p>
-        </div>
-        <div class="features-copy pos-right offset-down m-scene-1 d-scene-0">
-          <h2>Надійна передача.</h2>
-          <p>
-            Модем оснащений двома незалежними портами RS232, двома незалежними
-            портами RS485 та двома слотами для SIM-карт, що робить його
-            унікальним пристроєм для М2М додатків.
-          </p>
-        </div>
+        <div class="features-carousel-wrapper">
+          <!-- Ліва стрілка -->
+          <button
+            class="carousel-arrow carousel-arrow--left"
+            id="carousel-prev"
+            aria-label="Попередня"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
 
-        <div class="features-copy pos-left offset-down m-scene-2 d-scene-1">
-          <h2>Економічність.</h2>
-          <p>
-            Відмінна альтернатива існуючим імпортним моделям з послідовним
-            портом завдяки низькій ціні, якісній технічній підтримці та
-            розширеній гарантії.
-          </p>
-        </div>
-        <div class="features-copy pos-right offset-up m-scene-3 d-scene-1">
-          <h2>Компактність.</h2>
-          <p>
-            Модем виконаний у міцному металевому корпусі з розмірами всього
-            63х15х60мм, що дозволяє застосовувати його у найжорсткіших умовах
-            експлуатації.
-          </p>
-        </div>
+          <div class="features-carousel" id="features-carousel">
+            <div class="features-copy pos-left offset-up m-scene-0 d-scene-0">
+              <h2>COM-900/485.</h2>
+              <p>
+                Це ультракомпактний, економічний, дводіапазонний інтелектуальний
+                промисловий GSM/GPRS/LTE модем (термінал).
+              </p>
+            </div>
+            <div
+              class="features-copy pos-right offset-down m-scene-1 d-scene-0"
+            >
+              <h2>Надійна передача.</h2>
+              <p>
+                Модем оснащений двома незалежними портами RS232, двома
+                незалежними портами RS485 та двома слотами для SIM-карт, що
+                робить його унікальним пристроєм для М2М додатків.
+              </p>
+            </div>
 
-        <div class="features-copy pos-left offset-up m-scene-4 d-scene-2">
-          <h2>Інтелектуальність.</h2>
-          <p>
-            Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
-            внутрішній потужний процесор, для якого існує безліч стандартних та
-            кастомізованих додатків («прошивок»).
-          </p>
-        </div>
-        <div class="features-copy pos-right offset-down m-scene-5 d-scene-2">
-          <h2>Промисловість.</h2>
-          <p>
-            Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
-            дозволяє успішно підключати модем до різних типів приладів обліку
-            електроенергії, тепла, води та газу.
-          </p>
-        </div>
+            <div class="features-copy pos-left offset-down m-scene-2 d-scene-1">
+              <h2>Економічність.</h2>
+              <p>
+                Відмінна альтернатива існуючим імпортним моделям з послідовним
+                портом завдяки низькій ціні, якісній технічній підтримці та
+                розширеній гарантії.
+              </p>
+            </div>
+            <div class="features-copy pos-right offset-up m-scene-3 d-scene-1">
+              <h2>Компактність.</h2>
+              <p>
+                Модем виконаний у міцному металевому корпусі з розмірами всього
+                63х15х60мм, що дозволяє застосовувати його у найжорсткіших
+                умовах експлуатації.
+              </p>
+            </div>
 
-        <div class="features-copy pos-left offset-down m-scene-6 d-scene-3">
-          <h2>Безперебійність.</h2>
-          <p>
-            Оригінальне програмне забезпечення підтримує роботу з двома
-            SIM-картами. Зовнішній контролер (супервізор) постійно моніторить
-            радіомодуль і миттєво перезавантажує його при «зависанні».
-          </p>
-        </div>
-        <div class="features-copy pos-right offset-up m-scene-7 d-scene-3">
-          <h2>Українська якість.</h2>
-          <p>
-            При виробництві ми максимально використовуємо вітчизняні компоненти.
-            Корпус, кріплення, друкована плата та оригінальне ПЗ — це результат
-            досвіду українських інженерів.
-          </p>
+            <div class="features-copy pos-left offset-up m-scene-4 d-scene-2">
+              <h2>Інтелектуальність.</h2>
+              <p>
+                Створений на базі радіомодуля А7672Е компанії SIMCOM. Містить
+                внутрішній потужний процесор, для якого існує безліч стандартних
+                та кастомізованих додатків («прошивок»).
+              </p>
+            </div>
+            <div
+              class="features-copy pos-right offset-down m-scene-5 d-scene-2"
+            >
+              <h2>Промисловість.</h2>
+              <p>
+                Наявність двох СОМ-портів, двох портів RS485 та оригінального ПЗ
+                дозволяє успішно підключати модем до різних типів приладів
+                обліку електроенергії, тепла, води та газу.
+              </p>
+            </div>
+
+            <div class="features-copy pos-left offset-down m-scene-6 d-scene-3">
+              <h2>Безперебійність.</h2>
+              <p>
+                Оригінальне програмне забезпечення підтримує роботу з двома
+                SIM-картами. Зовнішній контролер (супервізор) постійно
+                моніторить радіомодуль і миттєво перезавантажує його при
+                «зависанні».
+              </p>
+            </div>
+            <div class="features-copy pos-right offset-up m-scene-7 d-scene-3">
+              <h2>Українська якість.</h2>
+              <p>
+                При виробництві ми максимально використовуємо вітчизняні
+                компоненти. Корпус, кріплення, друкована плата та оригінальне ПЗ
+                — це результат досвіду українських інженерів.
+              </p>
+            </div>
+          </div>
+
+          <!-- Права стрілка -->
+          <button
+            class="carousel-arrow carousel-arrow--right"
+            id="carousel-next"
+            aria-label="Наступна"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -670,11 +763,16 @@
             }
 
             // 2. Якщо клік по контактах, плавно скролимо вниз
+            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
             const targetId = link.getAttribute("href");
             if (targetId === "#footer") {
-              e.preventDefault();
+              e.preventDefault(); // Prevent instant jump
+
+              link.blur(); // ДОДАЙТЕ ЦЕЙ РЯДОК: знімає "залипання" підкреслення
+
               const footerElement = document.getElementById("footer");
               if (footerElement) {
+                // Add a tiny delay so the menu closing animation can start before scrolling
                 setTimeout(() => {
                   footerElement.scrollIntoView({ behavior: "smooth" });
                 }, 100);
@@ -683,6 +781,94 @@
           });
         });
       });
+
+      // --- Header "MORE" Dropdown Logic (Mobile) ---
+      const moreToggle = document.getElementById("more-toggle");
+      const moreDropdown = document.getElementById("header-more-dropdown");
+
+      if (moreToggle && moreDropdown) {
+        moreToggle.addEventListener("click", (e) => {
+          // Запобігаємо стандартній поведінці, якщо це десктоп і меню працює по hover
+          if (window.innerWidth < 960) {
+            e.preventDefault();
+            moreDropdown.classList.toggle("is-open");
+          }
+        });
+      }
+
+      // --- Mobile Infinite Carousel Logic ---
+      const carousel = document.getElementById("features-carousel");
+      const prevBtn = document.getElementById("carousel-prev");
+      const nextBtn = document.getElementById("carousel-next");
+
+      if (carousel && prevBtn && nextBtn) {
+        // 1. Створюємо клони першої та останньої карток
+        const originalCards = Array.from(
+          carousel.querySelectorAll(".features-copy"),
+        );
+        const firstClone = originalCards[0].cloneNode(true);
+        const lastClone =
+          originalCards[originalCards.length - 1].cloneNode(true);
+
+        // Додаємо їм спеціальний клас, щоб приховати на десктопі
+        firstClone.classList.add("is-clone");
+        lastClone.classList.add("is-clone");
+
+        // 2. Додаємо клони на початок і кінець каруселі
+        carousel.appendChild(firstClone);
+        carousel.insertBefore(lastClone, originalCards[0]);
+
+        // 3. Функція для розрахунку кроку скролу (ширина картки + gap)
+        const getCardWidth = () => {
+          const card = carousel.querySelector(".features-copy");
+          return card.offsetWidth + 16; // 16px - це gap між картками
+        };
+
+        // 4. Встановлюємо правильну початкову позицію (ховаємо клон, показуємо реальну 1-шу картку)
+        setTimeout(() => {
+          if (window.innerWidth < 960) {
+            carousel.classList.add("no-smooth"); // вимикаємо плавність для миттєвого стрибка
+            carousel.scrollLeft = getCardWidth();
+            setTimeout(() => carousel.classList.remove("no-smooth"), 50);
+          }
+        }, 100);
+
+        // 5. Логіка кнопок
+        prevBtn.addEventListener("click", () => {
+          carousel.scrollBy({ left: -getCardWidth(), behavior: "smooth" });
+        });
+
+        nextBtn.addEventListener("click", () => {
+          carousel.scrollBy({ left: getCardWidth(), behavior: "smooth" });
+        });
+
+        // 6. Безкінечний цикл: "Телепортація" під час зупинки скролу
+        let scrollTimeout;
+        carousel.addEventListener("scroll", () => {
+          if (window.innerWidth >= 960) return;
+
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            const cardWidth = getCardWidth();
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+
+            // Якщо доскролили до лівого краю (до клону останньої картки)
+            if (carousel.scrollLeft <= 10) {
+              carousel.classList.add("no-smooth");
+              // Непомітно стрибаємо до реальної останньої картки
+              carousel.scrollLeft = maxScroll - cardWidth;
+              setTimeout(() => carousel.classList.remove("no-smooth"), 20);
+            }
+            // Якщо доскролили до правого краю (до клону першої картки)
+            else if (carousel.scrollLeft >= maxScroll - 10) {
+              carousel.classList.add("no-smooth");
+              // Непомітно стрибаємо до реальної першої картки
+              carousel.scrollLeft = cardWidth;
+              setTimeout(() => carousel.classList.remove("no-smooth"), 20);
+            }
+          }, 150); // Чекаємо 150мс після закінчення свайпу, щоб не зламати інерцію
+        });
+      }
     </script>
   </body>
 </html>

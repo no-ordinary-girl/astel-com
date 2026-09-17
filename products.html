@@ -48,10 +48,58 @@
           <nav class="header__nav">
             <a href="index.html" class="header__link">ГОЛОВНА</a>
             <a href="about_us.html" class="header__link">ПРО НАС</a>
-            <a href="products.html" class="header__link header__link--active"
-              >ТОВАРИ ТА ПОСЛУГИ</a
+
+            <!-- ВИПРАВЛЕНО: Додано клас header__link--active до "ТОВАРИ" -->
+            <a
+              href="products.html"
+              class="header__link hide-on-compact header__link--active"
+              >ТОВАРИ</a
             >
+            <a href="downloads.html" class="header__link hide-on-compact"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+
             <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div
+              class="header__more show-on-compact header__link--active"
+              id="header-more-dropdown"
+            >
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <!-- ВИПРАВЛЕНО: Замінено на правильний клас header__more-link--active -->
+                <a
+                  href="products.html"
+                  class="header__more-link header__more-link--active"
+                  >ТОВАРИ</a
+                >
+                <a href="downloads.html" class="header__more-link"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
           </nav>
 
           <div class="header__lang">
@@ -754,9 +802,13 @@
             }
 
             // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
+            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
             const targetId = link.getAttribute("href");
             if (targetId === "#footer") {
               e.preventDefault(); // Prevent instant jump
+
+              link.blur(); // ДОДАЙТЕ ЦЕЙ РЯДОК: знімає "залипання" підкреслення
+
               const footerElement = document.getElementById("footer");
               if (footerElement) {
                 // Add a tiny delay so the menu closing animation can start before scrolling

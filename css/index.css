@@ -72,7 +72,7 @@
 
 .card__title {
   font-family: var(--font-mono);
-  font-size: clamp(16px, calc(3.037px + 1.852vw), 22px);
+  font-size: clamp(20px, 5vw, 24px);
   font-weight: 400;
   line-height: 1.5;
   z-index: 2;
@@ -101,52 +101,135 @@
    =========================== */
 .features-scroll {
   background-color: var(--gray-100);
-  padding: 60px 24px;
+  padding: 40px 0 60px 0;
+  overflow: hidden;
 }
 
 .features-visual {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 32px;
+  position: relative;
 }
 
 .features-image {
-  width: 100%;
-  max-width: 250px;
-  order: -1;
-  margin-bottom: 16px;
+  width: 92%;
+  max-width: 380px;
   z-index: 2;
+  margin: 0 auto;
+  display: block;
 }
 
 .features-dots {
   display: none;
 }
 
-.features-copy {
-  text-align: center;
-  max-width: 500px;
+/* Обгортка та Стрілки */
+.features-carousel-wrapper {
+  position: relative;
   width: 100%;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-60%);
+  width: 36px; /* Ідеальний розмір, щоб не залазити на картку */
+  height: 36px;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-900);
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.carousel-arrow:active {
+  background-color: var(--gray-200);
+  transform: translateY(-60%) scale(0.95);
+}
+
+.carousel-arrow--left {
+  left: 6px;
+}
+
+.carousel-arrow--right {
+  right: 6px;
+}
+
+/* Mobile Horizontal Carousel */
+.features-carousel {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  width: 100%;
+  gap: 16px;
+  /* ПРИБИРАЄМО padding з боків, центрування робитимуть margin у карток */
+  padding: 16px 0 40px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.features-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.features-copy {
+  /* Жорстко фіксуємо ширину для ідеальної математики */
+  flex: 0 0 76vw;
+  width: 76vw;
+  max-width: none !important;
+  scroll-snap-align: center;
+  background-color: var(--gray-200);
+  padding: 40px 24px;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* Математично точне центрування першої та останньої карток */
+.features-copy:first-child {
+  margin-left: 12vw;
+}
+
+.features-copy:last-child {
+  margin-right: 12vw;
 }
 
 .features-copy h2 {
   font-family: inherit;
   font-weight: 700;
-  font-size: clamp(24px, 7vw, 32px);
-  line-height: 1.15;
+  font-size: clamp(22px, 6.5vw, 28px);
+  line-height: 1.2;
   color: #00081b;
-  margin: 0 0 8px 0;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.02em;
 }
 
 .features-copy p {
   margin: 0;
-  color: #6b7280;
-  font-size: clamp(16px, 4.5vw, 20px);
+  color: #4b5563;
+  font-size: clamp(15px, 4.2vw, 18px);
   line-height: 1.6;
 }
 
-.features-copy.m-scene-0 {
-  order: -2;
+.features-carousel.no-smooth {
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
 }
 
 /* ===========================
@@ -363,6 +446,10 @@
     width: 100%;
   }
 
+  .card__title {
+    font-size: clamp(16px, calc(3.037px + 1.852vw), 22px);
+  }
+
   .card--layout-top,
   .card--layout-bottom {
     grid-column: span 1;
@@ -399,13 +486,16 @@
     padding: 0;
     position: relative;
     z-index: 1;
+    overflow: visible;
   }
 
   .features-visual {
     position: sticky;
     top: 0;
     height: 100vh;
+    display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: center;
     overflow: hidden;
     gap: 0;
@@ -415,48 +505,65 @@
   .features-image {
     max-width: clamp(350px, 25vw, 800px);
     margin: 0;
+    padding: 0;
     order: 0;
+    position: relative;
   }
 
-  .features-dots {
-    display: block;
+  .carousel-arrow {
+    display: none !important;
+  }
+
+  .features-carousel-wrapper,
+  .features-carousel {
     position: absolute;
-    width: 150px;
-    height: 120px;
-    background-image: radial-gradient(
-      var(--gray-500, #9ca3af) 2px,
-      transparent 2px
-    );
-    background-size: 20px 20px;
-    opacity: 0.3;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
   }
 
-  .features-dots--top-right {
-    top: 15%;
-    right: 5%;
-  }
-
-  .features-dots--bottom-left {
-    bottom: 15%;
-    left: 5%;
+  /* Перетворюємо карусель на невидимий шар на десктопі */
+  .features-carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
   }
 
   .features-copy {
+    /* Скидання мобільних стилів карток */
+    flex: none;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+
+    /* Десктопні стилі абсолютного позиціювання */
     pointer-events: auto;
     position: absolute;
     z-index: 11;
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0; /* Текст прихований... */
+    visibility: hidden; /* ...доки не спрацює JavaScript */
     transition:
       opacity 0.4s ease,
       transform 0.4s ease,
       visibility 0.4s;
     width: clamp(220px, 22vw, 800px);
     max-width: none;
-    background: transparent;
-    padding: 0;
   }
 
+  /* ЦЕЙ КЛАС Я ВИПАДКОВО ПРОПУСТИВ МИНУЛОГО РАЗУ! ВІН РОБИТЬ ТЕКСТ ВИДИМИМ */
   .features-copy.is-active {
     opacity: 1;
     visibility: visible;
@@ -500,6 +607,32 @@
 
   .features-copy.offset-down {
     margin-top: clamp(100px, 12vh, 200px);
+  }
+
+  /* Декоративні крапки */
+  .features-dots {
+    display: block;
+    position: absolute;
+    width: 150px;
+    height: 120px;
+    background-image: radial-gradient(
+      var(--gray-500, #9ca3af) 2px,
+      transparent 2px
+    );
+    background-size: 20px 20px;
+    opacity: 0.3;
+  }
+  .features-dots--top-right {
+    top: 15%;
+    right: 5%;
+  }
+  .features-dots--bottom-left {
+    bottom: 15%;
+    left: 5%;
+  }
+
+  .features-copy.is-clone {
+    display: none !important;
   }
 
   .about-tech {

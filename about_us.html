@@ -16,8 +16,11 @@
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
-          <!-- <div class="header__logo">АСТЕЛ-КОМ</div> -->
-          <img src="assets/images/logo-main.svg" class="header__image" alt="" />
+          <img
+            src="assets/images/logo-main.svg"
+            class="header__image"
+            alt="АСТЕЛ-КОМ"
+          />
 
           <button
             class="header__toggle"
@@ -47,8 +50,49 @@
             <a href="about_us.html" class="header__link header__link--active"
               >ПРО НАС</a
             >
-            <a href="products.html" class="header__link">ТОВАРИ ТА ПОСЛУГИ</a>
+
+            <!-- Ці посилання видимі ТІЛЬКИ на широких екранах (коли є місце) -->
+            <a href="products.html" class="header__link hide-on-compact"
+              >ТОВАРИ</a
+            >
+            <a href="downloads.html" class="header__link hide-on-compact"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+
             <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <!-- Випадаюче меню "БІЛЬШЕ" (видиме на мобільних та вузьких десктопах) -->
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a href="downloads.html" class="header__more-link"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
           </nav>
 
           <div class="header__lang">
@@ -101,7 +145,7 @@
           <!-- Image -->
           <div class="about-hero__visual">
             <img
-              src="assets/images/about3-modified.png"
+              src="assets/images/about-no-bg2-exp.png"
               alt="Модем АСТЕЛ-КОМ"
               class="about-hero__image"
             />
@@ -416,11 +460,16 @@
             }
 
             // 2. Smooth scroll to footer if the link is "КОНТАКТИ"
+            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
             const targetId = link.getAttribute("href");
             if (targetId === "#footer") {
-              e.preventDefault();
+              e.preventDefault(); // Prevent instant jump
+
+              link.blur(); // ДОДАЙТЕ ЦЕЙ РЯДОК: знімає "залипання" підкреслення
+
               const footerElement = document.getElementById("footer");
               if (footerElement) {
+                // Add a tiny delay so the menu closing animation can start before scrolling
                 setTimeout(() => {
                   footerElement.scrollIntoView({ behavior: "smooth" });
                 }, 100);

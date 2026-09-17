@@ -76,7 +76,7 @@ ul {
   --gray-400: #d6d6d6;
   --gray-900: #161617;
   --font-base: "Geist", sans-serif;
-  --font-mono: "Geist Mono", monospace;
+  --font-mono: "Geist Mono", --font-base;
 }
 
 /* ===========================

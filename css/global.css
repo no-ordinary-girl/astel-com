@@ -2,36 +2,50 @@
    FONTS
    =========================== */
 @font-face {
-  font-display: swap;
   font-family: "Geist";
   font-style: normal;
   font-weight: 400;
-  src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-regular.woff2")
-    format("woff2");
-}
-@font-face {
   font-display: swap;
+  src:
+    url("../assets/fonts/geist-v5-latin/geist-v5-latin-regular.woff2")
+      format("woff2"),
+    url("../assets/fonts/geist-v5-latin/geist-v5-latin-regular.woff")
+      format("woff");
+}
+
+@font-face {
   font-family: "Geist";
   font-style: normal;
   font-weight: 700;
-  src: url("../assets/fonts/geist-v5-latin/geist-v5-latin-700.woff2")
-    format("woff2");
-}
-@font-face {
   font-display: swap;
+  src:
+    url("../assets/fonts/geist-v5-latin/geist-v5-latin-700.woff2")
+      format("woff2"),
+    url("../assets/fonts/geist-v5-latin/geist-v5-latin-700.woff") format("woff");
+}
+
+@font-face {
   font-family: "Geist Mono";
   font-style: normal;
   font-weight: 400;
-  src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-regular.woff2")
-    format("woff2");
-}
-@font-face {
   font-display: swap;
+  src:
+    url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-regular.woff2")
+      format("woff2"),
+    url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-regular.woff")
+      format("woff");
+}
+
+@font-face {
   font-family: "Geist Mono";
   font-style: normal;
   font-weight: 700;
-  src: url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700.woff2")
-    format("woff2");
+  font-display: swap;
+  src:
+    url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700.woff2")
+      format("woff2"),
+    url("../assets/fonts/geist-mono-v6-latin/geist-mono-v6-latin-700.woff")
+      format("woff");
 }
 
 /* ===========================
@@ -76,7 +90,7 @@ ul {
   --gray-400: #d6d6d6;
   --gray-900: #161617;
   --font-base: "Geist", sans-serif;
-  --font-mono: "Geist Mono", sans-serif;
+  --font-mono: "Geist Mono", monospace;
 }
 
 /* ===========================
@@ -85,17 +99,14 @@ ul {
 ::-webkit-scrollbar {
   width: 14px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--gray-900);
 }
-
 ::-webkit-scrollbar-thumb {
   background-color: var(--gray-100);
   border-radius: 10px;
   border: 4px solid var(--gray-900);
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background-color: #9ca3af;
 }
@@ -125,14 +136,16 @@ body {
   margin: 0 auto;
 }
 
-.icon-arrow {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.3s ease;
+/* Утиліта для інверсії SVG (використовується в хедері та картках) */
+.cart-icon-black {
+  filter: invert(1);
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 /* ===========================
-   HEADER (Sticky)
+   HEADER (Sticky) & CART
    =========================== */
 .header {
   position: sticky;
@@ -145,12 +158,6 @@ body {
   font-size: 15px;
   font-weight: 500;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
-
-.header__image {
-  height: clamp(20px, 3vw, 32px);
-  width: auto;
-  display: block;
 }
 
 .header__inner {
@@ -167,9 +174,16 @@ body {
   z-index: 1000;
 }
 
-.header__logo {
-  letter-spacing: 0.5px;
-  font-size: 20px;
+.header__image {
+  height: clamp(20px, 3vw, 32px);
+  width: auto;
+  display: block;
+}
+
+.header__top-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .header__toggle {
@@ -221,9 +235,22 @@ body {
   transition: border-color 0.3s ease;
 }
 
-.header__link:hover,
 .header__link--active {
   border-bottom-color: var(--gray-900);
+}
+
+@media (hover: hover) {
+  .header__link:hover {
+    border-bottom-color: var(--gray-900);
+  }
+}
+
+/* --- Utilities (Lang & Desktop Cart) --- */
+.header__utils {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-direction: column;
 }
 
 .header__lang {
@@ -278,15 +305,106 @@ body {
   background-color: var(--gray-200);
 }
 
+/* --- Cart Styles --- */
+.header__cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.header__cart:hover {
+  transform: scale(1.1);
+}
+
+.header__cart--desktop {
+  display: none;
+}
+
 /* ===========================
    DYNAMIC HEADER "MORE" DROPDOWN
    =========================== */
-
 .hide-on-compact {
   display: inline-flex !important;
 }
 .show-on-compact {
   display: none !important;
+}
+
+.header__more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header__more-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  color: inherit;
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+}
+
+.header__more-icon {
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.header__more:hover .header__more-icon,
+.header__more.is-open .header__more-icon {
+  transform: rotate(180deg);
+}
+
+.header__more-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: auto;
+  margin-top: 4px;
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  padding: 8px 0;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.header__more:hover .header__more-menu,
+.header__more.is-open .header__more-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.header__more-link {
+  display: block;
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--gray-900);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease;
+}
+
+.header__more-link:hover {
+  background-color: var(--gray-200);
+}
+
+.header__more-link--active {
+  color: var(--gray-900);
+  font-weight: 700;
+  background-color: var(--gray-200);
 }
 
 /* ===========================
@@ -365,15 +483,11 @@ body {
   filter: brightness(0.7);
 }
 
-@media (hover: hover) {
-  .header__link:hover {
-    border-bottom-color: var(--gray-900);
-  }
-}
-
 /* ===========================
-   GLOBAL MEDIA QUERIES
+   GLOBAL MEDIA QUERIES (Header & Footer)
    =========================== */
+
+/* --- 700px (TABLETS & WIDE PHONES) --- */
 @media (min-width: 700px) {
   .container {
     padding: 0 40px;
@@ -385,15 +499,40 @@ body {
     align-items: center;
     flex-direction: row;
   }
-
   .header__top {
     width: auto;
+  }
+
+  .header__top-controls {
+    width: auto;
+  }
+  .header__cart--mobile {
+    display: none;
+  }
+  .header__cart--desktop {
+    display: flex;
+  }
+
+  .header__utils {
+    flex-direction: row;
+    justify-self: end;
+  }
+
+  .header__lang {
+    justify-self: auto;
+    font-size: 14px;
+  }
+  .header__lang-menu {
+    right: 0;
+    transform: translateY(-10px);
+  }
+  .header__lang:hover .header__lang-menu {
+    transform: translateY(0);
   }
 
   .header__logo {
     font-size: 14px;
   }
-
   .header__toggle {
     display: none;
   }
@@ -415,128 +554,39 @@ body {
     font-size: 14px;
   }
 
-  .header__lang {
-    font-size: 14px;
-    justify-self: end;
-  }
-
-  .header__lang-menu {
-    right: 0;
-    transform: translateY(-10px);
-  }
-
-  .header__lang:hover .header__lang-menu {
-    transform: translateY(0);
-  }
-
   .hide-on-compact {
-    display: none !important; /* Ось те саме критичне правило для 700px! */
+    display: none !important;
   }
   .show-on-compact {
     display: inline-flex !important;
   }
 
-  .header__more {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Кнопка "БІЛЬШЕ" */
-  button.header__more-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: transparent;
-    border: none;
-    font-family: inherit;
-    color: inherit;
-    outline: none;
-    cursor: pointer;
-    margin: 0;
-  }
-
-  /* Іконка стрілочки */
-  .header__more-icon {
-    transition: transform 0.3s ease;
-    display: block;
-  }
-
-  .header__more:hover .header__more-icon,
-  .header__more.is-open .header__more-icon {
-    transform: rotate(180deg);
-  }
-
-  /* Випадаюче меню */
   .header__more-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    left: -16px;
     right: auto;
-    margin-top: 4px;
-    background-color: var(--gray-100);
-    border: 1px solid var(--gray-200);
-    padding: 8px 0;
-    min-width: 180px;
-    display: flex;
-    flex-direction: column;
-    z-index: 10;
-    opacity: 0;
-    visibility: hidden;
     transform: translateY(-10px);
-    transition: all 0.3s ease;
   }
-
-  /* Показуємо меню */
-  .header__more:hover .header__more-menu,
-  .header__more.is-open .header__more-menu {
-    opacity: 1;
-    visibility: visible;
+  .header__more:hover .header__more-menu {
     transform: translateY(0);
-  }
-
-  .header__more-link {
-    display: block;
-    padding: 8px 16px;
-    text-align: left;
-    font-size: 14px;
-    color: var(--gray-900);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
-  }
-
-  .header__more-link:hover {
-    background-color: var(--gray-200);
-  }
-
-  .header__more-link--active {
-    color: var(--gray-900);
-    font-weight: 700;
-    background-color: var(--gray-200);
   }
 
   .footer {
     padding: 80px 40px;
   }
-
   .footer__container {
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
   }
-
   .footer__contacts {
     flex: 1;
     max-width: 400px;
     gap: 24px;
   }
-
   .footer__text,
   .footer__link {
     font-size: 16px;
   }
-
   .footer__map {
     flex: 1;
     max-width: 600px;
@@ -545,12 +595,14 @@ body {
   }
 }
 
+/* --- 1024px --- */
 @media (min-width: 1024px) {
   .header__nav {
     gap: 40px;
   }
 }
 
+/* --- 1150px (WIDE DESKTOP HEADER) --- */
 @media (min-width: 1150px) {
   .hide-on-compact {
     display: inline-flex !important;
@@ -560,22 +612,20 @@ body {
   }
 }
 
+/* --- 1600px (4K GLOBAL SCALING) --- */
 @media (min-width: 1600px) {
   .container,
   .footer__container {
     max-width: 2000px;
   }
-
   .container {
     padding: 0 80px;
   }
-
   .header__logo,
   .header__link,
   .header__lang {
     font-size: 20px;
   }
-
   .header__nav {
     gap: 60px;
   }
@@ -583,22 +633,18 @@ body {
   .footer {
     padding: 120px 80px;
   }
-
   .footer__contacts {
     max-width: 600px;
     gap: 32px;
   }
-
   .footer__text,
   .footer__link {
     font-size: 22px;
   }
-
   .footer__icon {
     width: 32px;
     height: 32px;
   }
-
   .footer__map {
     max-width: 800px;
   }

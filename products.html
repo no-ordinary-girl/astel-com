@@ -22,26 +22,40 @@
             alt="АСТЕЛ-КОМ"
           />
 
-          <button
-            class="header__toggle"
-            id="menu-toggle"
-            aria-label="Toggle menu"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <!-- Додано обгортку для мобільного кошика та меню -->
+          <div class="header__top-controls">
+            <a
+              href="#"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
             >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="header__collapse" id="menu-collapse">
@@ -49,7 +63,6 @@
             <a href="index.html" class="header__link">ГОЛОВНА</a>
             <a href="about_us.html" class="header__link">ПРО НАС</a>
 
-            <!-- ВИПРАВЛЕНО: Додано клас header__link--active до "ТОВАРИ" -->
             <a
               href="products.html"
               class="header__link hide-on-compact header__link--active"
@@ -88,7 +101,6 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <!-- ВИПРАВЛЕНО: Замінено на правильний клас header__more-link--active -->
                 <a
                   href="products.html"
                   class="header__more-link header__more-link--active"
@@ -102,31 +114,46 @@
             </div>
           </nav>
 
-          <div class="header__lang">
-            <div class="header__lang-trigger">
-              UA
-              <svg
-                class="header__lang-icon"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
+          <!-- Додано обгортку utils для об'єднання мовного меню та десктопного кошика -->
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
             </div>
-            <ul class="header__lang-menu">
-              <li class="header__lang-item">
-                <a href="#" class="header__lang-link">UA</a>
-              </li>
-              <li class="header__lang-item">
-                <a href="#" class="header__lang-link">EN</a>
-              </li>
-            </ul>
+
+            <a
+              href="#"
+              class="header__cart header__cart--desktop"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
           </div>
         </div>
       </div>
@@ -289,6 +316,13 @@
               data-price="4300"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-485.png"
@@ -314,6 +348,13 @@
               data-price="4300"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-ITR-4G.png"
@@ -340,6 +381,13 @@
               data-price="4300"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-PSG-4G.png"
@@ -365,6 +413,14 @@
               data-price="4900"
               data-instock="false"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
+
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-ITR-rev-B.png"
@@ -393,6 +449,13 @@
               data-price="8064"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-NBI-int.png"
@@ -418,6 +481,13 @@
               data-price="9360"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/СОМ-900-NBI-ext.png"
@@ -443,6 +513,13 @@
               data-price="210"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/usb-pos-terminal.png"
@@ -468,6 +545,13 @@
               data-price="1140"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/battery-PoS-Ingenico-Move-2500.png"
@@ -494,6 +578,13 @@
               data-price="1140"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/battery-PoS-Ingenico-Move-2500.png"
@@ -519,6 +610,13 @@
               data-price="260"
               data-instock="false"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/cable-PoS-Ingenico-iCT220.png"
@@ -546,6 +644,13 @@
               data-price="120"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/GSM-antenna-3dBi-SMA.png"
@@ -572,6 +677,13 @@
               data-price="150"
               data-instock="true"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/GSM-antenna-3.5dBi-SMA.png"
@@ -598,6 +710,13 @@
               data-price="50"
               data-instock="false"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/cable-2,1х5,5.png"
@@ -625,6 +744,13 @@
               data-price="50"
               data-instock="false"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/cable-1,4х3,4.png"
@@ -652,6 +778,13 @@
               data-price="40"
               data-instock="false"
             >
+              <button class="product-card__cart" aria-label="Додати в кошик">
+                <img
+                  src="assets/images/shopping_cart.svg"
+                  class="cart-icon-black"
+                  alt="Кошик"
+                />
+              </button>
               <div class="product-card__image-wrap">
                 <img
                   src="assets/images/items/cable-2,1х5,5-with-filter.png"

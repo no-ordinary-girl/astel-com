@@ -256,7 +256,7 @@
 .checkmark {
   width: 18px;
   height: 18px;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--gray-400);
   background-color: transparent;
   border-radius: 4px;
   display: flex;
@@ -342,8 +342,17 @@
 }
 
 .product-card__cart:hover {
-  background-color: var(--gray-200);
+  background-color: var(--gray-900);
+  border-color: var(--gray-900);
   transform: scale(1.05);
+}
+
+.product-card__cart img {
+  transition: filter 0.2s ease;
+}
+
+.product-card__cart:hover img {
+  filter: invert(0);
 }
 
 .product-card__image-wrap {

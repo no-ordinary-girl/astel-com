@@ -42,6 +42,46 @@
     format("woff2");
 }
 
+/* geist-regular - cyrillic_latin */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2")
+    format("woff2");
+}
+
+/* geist-italic - cyrillic_latin */
+@font-face {
+  font-family: "Geist";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-italic.woff2")
+    format("woff2");
+}
+
+/* geist-700 - cyrillic_latin */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2")
+    format("woff2");
+}
+
+/* geist-700italic - cyrillic_latin */
+@font-face {
+  font-family: "Geist";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700italic.woff2")
+    format("woff2");
+}
+
 /* ===========================
    RESET & VARIABLES
    =========================== */

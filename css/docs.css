@@ -1,0 +1,342 @@
+/* ===========================
+   DOCUMENTATION PAGE (Mobile Base)
+   =========================== */
+.docs-page {
+  padding: 48px 0 80px 0;
+  background-color: var(--gray-100);
+  min-height: calc(100vh - 200px);
+}
+
+.docs-header {
+  margin-bottom: 40px;
+}
+
+.docs-header__badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.docs-header__title {
+  font-size: clamp(32px, 8vw, 48px);
+  font-weight: 700;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.docs-header__subtitle {
+  font-size: clamp(16px, 4vw, 18px);
+  color: #4b5563;
+  line-height: 1.5;
+  max-width: 680px;
+}
+
+/* Accordion List */
+.docs-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.docs-item {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.docs-item:hover {
+  border-color: var(--gray-400);
+}
+
+.docs-item.is-open {
+  border-color: var(--gray-900);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* Clickable Product Button */
+.docs-item__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.docs-item__trigger:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.docs-item__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.docs-item__thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-200);
+  padding: 6px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.docs-item__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.docs-item__category {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.docs-item__title {
+  font-size: clamp(16px, 4vw, 19px);
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.35;
+}
+
+.docs-item__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.docs-item__count {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  background-color: var(--gray-200);
+  color: var(--gray-900);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.docs-item__chevron {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-900);
+  transition:
+    transform 0.3s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.docs-item.is-open .docs-item__chevron {
+  transform: rotate(180deg);
+  background-color: var(--gray-900);
+  border-color: var(--gray-900);
+  color: #ffffff;
+}
+
+/* Expandable Panel */
+.docs-item__panel {
+  display: none;
+  padding: 0 24px 24px 24px;
+  border-top: 1px solid var(--gray-200);
+  background-color: #ffffff;
+}
+
+.docs-item.is-open .docs-item__panel {
+  display: block;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.docs-files {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding-top: 20px;
+}
+
+/* Individual PDF / File Link */
+.docs-file-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  color: var(--gray-900);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+}
+
+.docs-file-link:hover {
+  background-color: var(--gray-900);
+  border-color: var(--gray-900);
+  color: #ffffff;
+}
+
+.docs-file-link__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docs-file-link__icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.docs-file-link__action {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.docs-item__footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.docs-item__product-link {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  transition: color 0.2s ease;
+}
+
+.docs-item__product-link:hover {
+  color: var(--gray-900);
+  text-decoration: underline;
+}
+
+/* ===========================
+   DESKTOP & 4K MEDIA QUERIES
+   =========================== */
+@media (min-width: 700px) {
+  .docs-item__count {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 960px) {
+  .docs-page {
+    padding: 64px 0 120px 0;
+  }
+
+  .docs-header {
+    margin-bottom: 56px;
+  }
+
+  .docs-item__trigger {
+    padding: 24px 32px;
+  }
+
+  .docs-item__thumb {
+    width: 64px;
+    height: 64px;
+  }
+
+  .docs-item__panel {
+    padding: 0 32px 28px 32px;
+  }
+
+  .docs-files {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-top: 24px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .docs-page {
+    padding: 90px 0 160px 0;
+  }
+
+  .docs-header__title {
+    font-size: 64px;
+  }
+
+  .docs-header__subtitle {
+    font-size: 22px;
+    max-width: 850px;
+  }
+
+  .docs-accordion {
+    gap: 24px;
+  }
+
+  .docs-item__trigger {
+    padding: 32px 40px;
+  }
+
+  .docs-item__thumb {
+    width: 76px;
+    height: 76px;
+  }
+
+  .docs-item__title {
+    font-size: 24px;
+  }
+
+  .docs-file-link {
+    font-size: 17px;
+    padding: 20px 24px;
+  }
+}

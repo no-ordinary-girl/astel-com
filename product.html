@@ -32,34 +32,6 @@
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/product-detail.css" />
   </head>
@@ -376,7 +348,7 @@
               ${product.docs
                 .map(
                   (d) => `
-                <a href="${d.url}" ${d.download ? `download="${d.title}"` : 'target="_blank" rel="noopener"'} class="doc-item">
+                <a href="${d.url}" ${d.download ? `download="${d.download}"` : 'target="_blank" rel="noopener"'} class="doc-item">
                   <div class="doc-item__left">
                     <svg class="doc-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -386,6 +358,7 @@
                     </svg>
                     <span>${d.title}</span>
                   </div>
+                  <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 700;">${d.download ? "PDF" : ""}</span>
                 </a>`,
                 )
                 .join("")}

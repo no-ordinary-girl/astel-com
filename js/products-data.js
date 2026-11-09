@@ -83,12 +83,12 @@ const PRODUCTS_DATA = {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-485-4G.pdf",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_485_4g.pdf",
-        download: true,
+        download: "Керівництво_СОМ-900-485-4G.pdf",
       },
       {
         title: "Паспорт модему СОМ-900-485-4G_new.pdf",
         url: "assets/downloads/pasport_modemu_som_900_485_4g_new.pdf",
-        download: true,
+        download: "Паспорт_СОМ-900-485-4G.pdf",
       },
     ],
   },
@@ -168,10 +168,6 @@ const PRODUCTS_DATA = {
       { label: "Стан", value: "Новий" },
     ],
     docs: [
-      {
-        title: "Посібник з монтажу та експлуатації модему COM-900-ITR-4G (УКР)",
-        url: "#",
-      },
       {
         title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
         url: "https://drive.google.com/drive/folders/1q9sgd73QvcjcMYumlP0hoZdJ9QtkWSIF?usp=drive_link",
@@ -256,7 +252,7 @@ const PRODUCTS_DATA = {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-PSG-4G.pdf",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_psg_4g.pdf",
-        download: true,
+        download: "Керівництво_СОМ-900-PSG-4G.pdf",
       },
       {
         title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
@@ -307,15 +303,15 @@ const PRODUCTS_DATA = {
         title:
           "Керівництво з монтажу та експлуатації модему COM-900-ITR-rev.B_укр.pdf",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__com_900_itr_rev.b_ukr.pdf",
-        download: true,
+        download: "Керівництво_COM-900-ITR-rev.B_укр.pdf",
       },
       {
         title: "Паспорт COM-900-ITR rev.B_укр.pdf",
         url: "assets/downloads/pasport_com_900_itr_rev.b_ukr.pdf",
-        download: true,
+        download: "Паспорт_COM-900-ITR-rev.B_укр.pdf",
       },
       {
-        title: "Драйвер для підключення модему до комп'ютера",
+        title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
         url: "https://drive.google.com/file/d/1JBDeT-JS19cQ2wMgbSH9fdD4cftc-B6T/view?usp=sharing",
       },
     ],
@@ -394,7 +390,7 @@ const PRODUCTS_DATA = {
       {
         title: "Паспорт NBIoT-модему_укр.pdf",
         url: "assets/downloads/pasport_nbiot_modemu_ukr.pdf",
-        download: true,
+        download: "Паспорт_NBIoT-модему_укр.pdf",
       },
     ],
   },
@@ -473,7 +469,7 @@ const PRODUCTS_DATA = {
       {
         title: "Паспорт NBIoT-модему COM-900-NBI-ext.pdf",
         url: "assets/downloads/pasport_nbiot_modemu_com_900_nbi_ext.pdf",
-        download: true,
+        download: "Паспорт_NBIoT-модему_COM-900-NBI-ext.pdf",
       },
     ],
   },

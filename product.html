@@ -302,6 +302,33 @@
         document.getElementById("page-title").textContent =
           `${product.title} — АСТЕЛ-КОМ`;
 
+        // Gallery Images Array (falls back to single product.image)
+        const galleryImages =
+          product.images && product.images.length > 0
+            ? product.images
+            : [product.image];
+
+        const thumbsHtml =
+          galleryImages.length > 1
+            ? `
+            <div class="product-hero__thumbs" id="product-thumbs">
+              ${galleryImages
+                .map(
+                  (imgSrc, idx) => `
+                <button
+                  type="button"
+                  class="product-hero__thumb-btn ${idx === 0 ? "is-active" : ""}"
+                  data-src="${imgSrc}"
+                  aria-label="Фото ${idx + 1}"
+                >
+                  <img src="${imgSrc}" alt="${product.title} - фото ${idx + 1}" class="product-hero__thumb-img" />
+                </button>
+              `,
+                )
+                .join("")}
+            </div>`
+            : "";
+
         const renderTableRows = (rows) =>
           rows
             .map(
@@ -374,7 +401,15 @@
 
           <div class="product-hero">
             <div class="product-hero__gallery">
-              <img src="${product.image}" alt="${product.title}" class="product-hero__img" />
+              <div class="product-hero__main-img-wrap">
+                <img
+                  src="${galleryImages[0]}"
+                  alt="${product.title}"
+                  class="product-hero__img"
+                  id="main-product-img"
+                />
+              </div>
+              ${thumbsHtml}
             </div>
 
             <div class="product-hero__info">
@@ -395,7 +430,7 @@
                 ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
 
                 <button type="button" class="wholesale-toggle" id="wholesale-btn">
-                  Показати оптові ціни ↓
+                  Показати оптові ціни
                 </button>
                 <div class="wholesale-box" id="wholesale-box">
                   Для уточнення індивідуальних оптових цін залежно від обсягу партії зв'яжіться з відділом продажу: <strong>+380 (50) 444-33-55</strong> або <strong>astelkom@gmail.com</strong>.
@@ -423,6 +458,40 @@
           </div>
         `;
 
+        container.querySelectorAll("img").forEach((img) => {
+          img.addEventListener("error", function () {
+            if (!this.dataset.retried) {
+              this.dataset.retried = "true";
+              const src = this.getAttribute("src");
+              this.src = src.includes("СОМ-")
+                ? src.replace("СОМ-", "COM-")
+                : src.replace("COM-", "СОМ-");
+              const btn = this.closest(".product-hero__thumb-btn");
+              if (btn) btn.setAttribute("data-src", this.src);
+            }
+          });
+        });
+
+        // Gallery Thumbnail Switcher Logic
+        const mainImg = document.getElementById("main-product-img");
+        const thumbButtons = document.querySelectorAll(
+          ".product-hero__thumb-btn",
+        );
+
+        if (mainImg && thumbButtons.length > 0) {
+          thumbButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const newSrc = btn.getAttribute("data-src");
+              if (newSrc && mainImg.getAttribute("src") !== newSrc) {
+                mainImg.setAttribute("src", newSrc);
+              }
+              thumbButtons.forEach((b) => b.classList.remove("is-active"));
+              btn.classList.add("is-active");
+            });
+          });
+        }
+
+        // Wholesale Toggle Logic
         const wholesaleBtn = document.getElementById("wholesale-btn");
         const wholesaleBox = document.getElementById("wholesale-box");
         if (wholesaleBtn && wholesaleBox) {

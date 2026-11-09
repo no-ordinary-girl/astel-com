@@ -152,7 +152,7 @@ const CartManager = {
 
     toast.innerHTML = `
       <span>${message}</span>
-      <a href="cart.html" style="font-family: var(--font-mono, monospace); font-weight: 700; text-decoration: underline; color: #ffffff; white-space: nowrap;">Оформити →</a>
+      <a href="cart.html" style="font-family: var(--font-mono, monospace); font-weight: 700; text-decoration: underline; color: #ffffff; white-space: nowrap;">Оформити</a>
     `;
     toast.style.pointerEvents = "auto";
     toast.style.opacity = "1";

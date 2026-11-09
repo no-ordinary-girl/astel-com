@@ -254,6 +254,9 @@
 }
 
 .docs-item__product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
@@ -261,10 +264,20 @@
   transition: color 0.2s ease;
 }
 
+.docs-item__product-link .hero__link-icon {
+  width: 18px;
+  height: 18px;
+  /* transition: transform 0.3s ease; */
+}
+
 .docs-item__product-link:hover {
   color: var(--gray-900);
   text-decoration: underline;
 }
+
+/* .docs-item__product-link:hover .hero__link-icon {
+  transform: translateX(6px);
+} */
 
 /* ===========================
    DESKTOP & 4K MEDIA QUERIES

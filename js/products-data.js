@@ -176,9 +176,15 @@ const PRODUCTS_DATA = {
       { label: "Стан", value: "Новий" },
     ],
     docs: [
+      // {
+      //   title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
+      //   url: "https://drive.google.com/drive/folders/1q9sgd73QvcjcMYumlP0hoZdJ9QtkWSIF?usp=drive_link",
+      // },
       {
-        title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
-        url: "https://drive.google.com/drive/folders/1q9sgd73QvcjcMYumlP0hoZdJ9QtkWSIF?usp=drive_link",
+        title:
+          "Незабаром буде доступне керівництво з монтажу та експлуатації модему СОМ-900-ITR-4G.pdf",
+        url: "#",
+        download: "Керівництво_СОМ-900-ITR-4G.pdf",
       },
     ],
   },
@@ -267,10 +273,10 @@ const PRODUCTS_DATA = {
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_psg_4g.pdf",
         download: "Керівництво_СОМ-900-PSG-4G.pdf",
       },
-      {
-        title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
-        url: "https://drive.google.com/drive/folders/1q9sgd73QvcjcMYumlP0hoZdJ9QtkWSIF?usp=sharing",
-      },
+      // {
+      //   title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
+      //   url: "https://drive.google.com/drive/folders/1q9sgd73QvcjcMYumlP0hoZdJ9QtkWSIF?usp=sharing",
+      // },
     ],
   },
 
@@ -327,10 +333,10 @@ const PRODUCTS_DATA = {
         url: "assets/downloads/pasport_com_900_itr_rev.b_ukr.pdf",
         download: "Паспорт_COM-900-ITR-rev.B_укр.pdf",
       },
-      {
-        title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
-        url: "https://drive.google.com/file/d/1JBDeT-JS19cQ2wMgbSH9fdD4cftc-B6T/view?usp=sharing",
-      },
+      // {
+      //   title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
+      //   url: "https://drive.google.com/file/d/1JBDeT-JS19cQ2wMgbSH9fdD4cftc-B6T/view?usp=sharing",
+      // },
     ],
   },
 

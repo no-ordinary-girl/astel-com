@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Завантаження - АСТЕЛ-КОМ</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- Core global styles -->
+    <link rel="stylesheet" href="css/global.css" />
+    <!-- Specific styles for Downloads page -->
+    <link rel="stylesheet" href="css/downloads.css" />
+  </head>
+  <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="АСТЕЛ-КОМ"
+            />
+          </a>
+
+          <div class="header__top-controls">
+            <a
+              href="#"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="index.html" class="header__link">ГОЛОВНА</a>
+            <a href="about_us.html" class="header__link">ПРО НАС</a>
+
+            <a href="products.html" class="header__link hide-on-compact"
+              >ТОВАРИ</a
+            >
+            <a
+              href="downloads.html"
+              class="header__link hide-on-compact header__link--active"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div
+              class="header__more show-on-compact header__link--active"
+              id="header-more-dropdown"
+            >
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a
+                  href="downloads.html"
+                  class="header__more-link header__more-link--active"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
+          </nav>
+
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
+            </div>
+
+            <a
+              href="#"
+              class="header__cart header__cart--desktop"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===========================
+         DOWNLOADS SECTION
+         =========================== -->
+    <main class="downloads-page">
+      <div class="container">
+        <div class="downloads-header">
+          <span class="downloads-header__badge">Програмне забезпечення</span>
+          <h1 class="downloads-header__title">Драйвери та утиліти</h1>
+          <p class="downloads-header__subtitle">
+            Офіційні драйвери для підключення GSM/GPRS, LTE та NBIoT-модемів
+            АСТЕЛ-КОМ до комп'ютера через інтерфейс USB для конфігурації та
+            програмування.
+          </p>
+        </div>
+
+        <div class="downloads-grid">
+          <!-- Driver 1: USB Signed Driver -->
+          <article class="download-card">
+            <div class="download-card__top">
+              <div class="download-card__meta">
+                <span class="download-card__tag">USB Драйвер</span>
+                <span class="download-card__format">ZIP-архів</span>
+              </div>
+              <h2 class="download-card__title">
+                USB-драйвер для модемів СОМ-900 (4G / LTE)
+              </h2>
+              <p class="download-card__desc">
+                Цифрово підписаний драйвер віртуального COM-порту для
+                підключення, діагностики та конфігурації модемів серії
+                СОМ-900-485-4G, СОМ-900-ITR-4G та СОМ-900-PSG-4G у середовищі ОС
+                Windows.
+              </p>
+              <div class="download-card__filename">
+                USB-SignedDriver-20261109T084905Z-1-001.zip
+              </div>
+            </div>
+
+            <a
+              href="assets/downloads/USB-SignedDriver-20261109T084905Z-1-001.zip"
+              download="ASTEL-COM_USB_SignedDriver.zip"
+              class="download-card__btn"
+            >
+              <span class="download-card__btn-left">
+                <img
+                  src="assets/images/download.svg"
+                  alt="Завантажити"
+                  class="download-card__icon"
+                />
+                <span>Завантажити драйвер</span>
+              </span>
+              <span>ZIP</span>
+            </a>
+          </article>
+
+          <!-- Driver 2: Standard Driver Package -->
+          <article class="download-card">
+            <div class="download-card__top">
+              <div class="download-card__meta">
+                <span class="download-card__tag">Базовий пакет драйверів</span>
+                <span class="download-card__format">ZIP-архів</span>
+              </div>
+              <h2 class="download-card__title">
+                Універсальний пакет драйверів СОМ-900 (Drv)
+              </h2>
+              <p class="download-card__desc">
+                Комплект драйверів для підключення промислових модемів лінійки
+                СОМ-900 до ПК через USB-кабель для локального налаштування
+                параметрів та оновлення вбудованого ПЗ.
+              </p>
+              <div class="download-card__filename">
+                Drv-20261109T084851Z-1-001.zip
+              </div>
+            </div>
+
+            <a
+              href="assets/downloads/Drv-20261109T084851Z-1-001.zip"
+              download="ASTEL-COM_Modem_Drv.zip"
+              class="download-card__btn"
+            >
+              <span class="download-card__btn-left">
+                <img
+                  src="assets/images/download.svg"
+                  alt="Завантажити"
+                  class="download-card__icon"
+                />
+                <span>Завантажити драйвер</span>
+              </span>
+              <span>ZIP</span>
+            </a>
+          </article>
+
+          <!-- Driver 3: Upcoming Slot 1 -->
+          <article class="download-card download-card--upcoming">
+            <div class="download-card__top">
+              <div class="download-card__meta">
+                <span class="download-card__tag">Драйвер / Утиліта</span>
+                <span class="download-card__format">Очікується</span>
+              </div>
+              <h2 class="download-card__title">
+                Драйвер для модемів серії СОМ-900-ITR rev.B
+              </h2>
+              <p class="download-card__desc">
+                Спеціалізований драйвер USB-інтерфейсу для програмування та
+                налагождення GSM/GPRS-модемів СОМ-900-ITR rev.B.
+              </p>
+              <div class="download-card__filename">
+                Готується до публікації на сервері
+              </div>
+            </div>
+
+            <!-- Коли додасте файл у assets/downloads/, замініть href і приберіть клас download-card__btn--disabled -->
+            <a
+              href="#"
+              class="download-card__btn download-card__btn--disabled"
+              aria-disabled="true"
+            >
+              <span class="download-card__btn-left">
+                <img
+                  src="assets/images/download.svg"
+                  alt="Завантажити"
+                  class="download-card__icon"
+                  style="filter: none; opacity: 0.6"
+                />
+                <span>Незабаром</span>
+              </span>
+              <span>ZIP</span>
+            </a>
+          </article>
+
+          <!-- Driver 4: Upcoming Slot 2 -->
+          <article class="download-card download-card--upcoming">
+            <div class="download-card__top">
+              <div class="download-card__meta">
+                <span class="download-card__tag">NBIoT / Конфігуратор</span>
+                <span class="download-card__format">Очікується</span>
+              </div>
+              <h2 class="download-card__title">
+                Драйвер та конфігуратор для NBIoT-модемів (int / ext)
+              </h2>
+              <p class="download-card__desc">
+                Програмний пакет для підключення та налаштування розкладу
+                сеансів зв'язку NBIoT-модемів СОМ-900-NBI-int та СОМ-900-NBI-ext
+                через USB 1.1.
+              </p>
+              <div class="download-card__filename">
+                Готується до публікації на сервері
+              </div>
+            </div>
+
+            <!-- Коли додасте файл у assets/downloads/, замініть href і приберіть клас download-card__btn--disabled -->
+            <a
+              href="#"
+              class="download-card__btn download-card__btn--disabled"
+              aria-disabled="true"
+            >
+              <span class="download-card__btn-left">
+                <img
+                  src="assets/images/download.svg"
+                  alt="Завантажити"
+                  class="download-card__icon"
+                  style="filter: none; opacity: 0.6"
+                />
+                <span>Незабаром</span>
+              </span>
+              <span>ZIP</span>
+            </a>
+          </article>
+        </div>
+
+        <!-- Link to Documentation Page -->
+        <div class="downloads-helper">
+          <p class="downloads-helper__text">
+            Шукаєте технічні паспорти або керівництва з монтажу та експлуатації
+            модемів у форматі PDF?
+          </p>
+          <a href="docs.html" class="downloads-helper__link">
+            ПЕРЕЙТИ ДО ДОКУМЕНТАЦІЇ
+            <svg
+              class="icon-arrow hero__link-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===========================
+         FOOTER
+         =========================== -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">Компанія ТОВ "АСТЕЛ-КОМ"</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Сергій +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >вул. Солом'янська, 5, Київ, Україна</span
+            >
+          </div>
+          <div class="footer__item footer__item--align-top">
+            <img
+              src="assets/images/phone.svg"
+              alt="Phone"
+              class="footer__icon"
+            />
+            <div class="footer__text-group">
+              <a href="tel:+380504443355" class="footer__link"
+                >+380 (50) 444-33-55</a
+              >
+              <a href="tel:+380443039551" class="footer__link"
+                >+380 (44) 303-95-51</a
+              >
+            </div>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/mail.svg"
+              alt="Email"
+              class="footer__icon"
+            />
+            <a href="mailto:astelkom@gmail.com" class="footer__link"
+              >astelkom@gmail.com</a
+            >
+          </div>
+        </div>
+
+        <div class="footer__map">
+          <a href="https://www.google.com/maps/place/..." target="_blank">
+            <picture>
+              <source
+                media="(min-width: 1440px)"
+                srcset="assets/images/map-wide.png"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcset="assets/images/map.png"
+              />
+              <source
+                media="(min-width: 500px)"
+                srcset="assets/images/map-tablet.png"
+              />
+              <img
+                src="assets/images/map-mobile.png"
+                alt="Карта проїзду"
+                class="footer__map-image"
+              />
+            </picture>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Header Mobile Menu Logic ---
+        const toggleBtn = document.getElementById("menu-toggle");
+        const collapseMenu = document.getElementById("menu-collapse");
+
+        if (toggleBtn && collapseMenu) {
+          toggleBtn.addEventListener("click", () => {
+            collapseMenu.classList.toggle("header__collapse--open");
+          });
+        }
+
+        // --- Close Mobile Menu on Link Click & Smooth Scroll ---
+        const headerLinks = document.querySelectorAll(".header__link");
+        headerLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            if (
+              collapseMenu &&
+              collapseMenu.classList.contains("header__collapse--open")
+            ) {
+              collapseMenu.classList.remove("header__collapse--open");
+            }
+
+            const targetId = link.getAttribute("href");
+            if (targetId === "#footer") {
+              e.preventDefault();
+              link.blur();
+
+              const footerElement = document.getElementById("footer");
+              if (footerElement) {
+                setTimeout(() => {
+                  footerElement.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }
+            }
+          });
+        });
+
+        // --- Header "MORE" Dropdown Logic (Mobile) ---
+        const moreToggle = document.getElementById("more-toggle");
+        const moreDropdown = document.getElementById("header-more-dropdown");
+
+        if (moreToggle && moreDropdown) {
+          moreToggle.addEventListener("click", (e) => {
+            if (window.innerWidth < 960) {
+              e.preventDefault();
+              moreDropdown.classList.toggle("is-open");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

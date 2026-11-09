@@ -720,7 +720,10 @@
 
           cartListEl.innerHTML = cart
             .map((item) => {
+              const minQty = CartManager.getMinQty(item.id);
+              const isAtMin = item.qty <= minQty;
               const lineTotal = item.price * item.qty;
+
               return `
                 <div class="cart-item" data-id="${item.id}">
                   <a href="product.html?id=${item.id}" class="cart-item__img-wrap">
@@ -729,14 +732,31 @@
                   <div class="cart-item__details">
                     <a href="product.html?id=${item.id}" class="cart-item__title">${item.title}</a>
                     <span class="cart-item__price">${CartManager.formatPrice(item.price)} / шт.</span>
+                    ${
+                      minQty > 1
+                        ? `<span style="font-family: var(--font-mono); font-size: 11px; color: #6b7280;">Мін. замовлення: ${minQty} шт.</span>`
+                        : ""
+                    }
                     <button type="button" class="cart-item__remove" data-remove="${item.id}" style="width: fit-content;">
                       Видалити
                     </button>
                   </div>
                   <div class="cart-item__controls">
                     <div class="qty-control">
-                      <button type="button" class="qty-btn" data-dec="${item.id}" aria-label="Зменшити">−</button>
-                      <input type="number" class="qty-input" value="${item.qty}" min="1" data-input="${item.id}" />
+                      <button
+                        type="button"
+                        class="qty-btn"
+                        data-dec="${item.id}"
+                        aria-label="Зменшити"
+                        ${isAtMin ? 'disabled style="opacity: 0.35; cursor: not-allowed;"' : ""}
+                      >−</button>
+                      <input
+                        type="number"
+                        class="qty-input"
+                        value="${item.qty}"
+                        min="${minQty}"
+                        data-input="${item.id}"
+                      />
                       <button type="button" class="qty-btn" data-inc="${item.id}" aria-label="Збільшити">+</button>
                     </div>
                     <div class="cart-item__sum">${CartManager.formatPrice(lineTotal)}</div>
@@ -763,8 +783,11 @@
             renderCart();
           } else if (decId) {
             const item = CartManager.getCart().find((i) => i.id === decId);
-            if (item) CartManager.updateQty(decId, item.qty - 1);
-            renderCart();
+            const minQty = CartManager.getMinQty(decId);
+            if (item && item.qty > minQty) {
+              CartManager.updateQty(decId, item.qty - 1);
+              renderCart();
+            }
           } else if (remId) {
             CartManager.removeItem(remId);
             renderCart();
@@ -774,8 +797,12 @@
         cartListEl.addEventListener("change", (e) => {
           const inputId = e.target.getAttribute("data-input");
           if (inputId) {
+            const minQty = CartManager.getMinQty(inputId);
             const val = parseInt(e.target.value, 10);
-            CartManager.updateQty(inputId, isNaN(val) || val < 1 ? 1 : val);
+            CartManager.updateQty(
+              inputId,
+              isNaN(val) || val < minQty ? minQty : val,
+            );
             renderCart();
           }
         });

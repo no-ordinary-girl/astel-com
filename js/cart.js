@@ -1,11 +1,47 @@
 // js/cart.js
 const CART_STORAGE_KEY = "astelkom_cart";
 
+// The 6 products allowed to be ordered from 1 pc ("Оптом і в роздріб")
+const RETAIL_ALLOWED_IDS = new Set([
+  "com-900-itr-rev-b",
+  "battery-iwl220",
+  "battery-move-2500",
+  "cable-dc-2-1x5-5-angled",
+  "cable-dc-1-4x3-4-angled",
+  "cable-dc-2-1x5-5-straight-filter",
+]);
+
 const CartManager = {
+  getMinQty(productOrId) {
+    const id = typeof productOrId === "string" ? productOrId : productOrId?.id;
+    if (!id) return 1;
+    if (RETAIL_ALLOWED_IDS.has(id)) return 1;
+
+    // Also check PRODUCTS_DATA if available
+    if (
+      typeof PRODUCTS_DATA !== "undefined" &&
+      PRODUCTS_DATA[id] &&
+      PRODUCTS_DATA[id].saleTerms === "Оптом і в роздріб"
+    ) {
+      return 1;
+    }
+
+    return 10;
+  },
+
   getCart() {
     try {
       const raw = localStorage.getItem(CART_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      const items = raw ? JSON.parse(raw) : [];
+      // Ensure any existing items in localStorage respect their minQty
+      return items.map((item) => {
+        const minQty = this.getMinQty(item.id);
+        return {
+          ...item,
+          minQty,
+          qty: Math.max(minQty, item.qty || minQty),
+        };
+      });
     } catch (e) {
       return [];
     }
@@ -26,38 +62,44 @@ const CartManager = {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " ₴";
   },
 
-  addItem(product, qty = 1) {
+  addItem(product, requestedQty) {
     if (!product || !product.id) return;
     const cart = this.getCart();
     const existing = cart.find((item) => item.id === product.id);
     const numericPrice = product.numericPrice || this.parsePrice(product.price);
+    const minQty = this.getMinQty(product);
 
     if (existing) {
-      existing.qty += qty;
+      // If already in cart, add 1 (or requestedQty)
+      const increment = requestedQty ? requestedQty : 1;
+      existing.qty = Math.max(minQty, existing.qty + increment);
     } else {
+      // First time adding to cart: start at minQty (10 for wholesale, 1 for retail)
+      const initialQty = requestedQty ? Math.max(minQty, requestedQty) : minQty;
       cart.push({
         id: product.id,
         title: product.title,
         price: numericPrice,
         image: product.image,
-        qty: qty,
+        minQty: minQty,
+        qty: initialQty,
       });
     }
 
     this.saveCart(cart);
-    this.showToast(`Додано в кошик: ${product.title}`);
+    this.showToast(
+      `Додано в кошик: ${product.title} (${existing ? "+1" : minQty + " шт."})`,
+    );
   },
 
   updateQty(id, newQty) {
-    let cart = this.getCart();
+    const cart = this.getCart();
     const item = cart.find((i) => i.id === id);
     if (!item) return;
 
-    if (newQty <= 0) {
-      cart = cart.filter((i) => i.id !== id);
-    } else {
-      item.qty = newQty;
-    }
+    const minQty = this.getMinQty(id);
+    // Block setting quantity below minQty (10 or 1)
+    item.qty = Math.max(minQty, parseInt(newQty, 10) || minQty);
     this.saveCart(cart);
   },
 

@@ -1310,7 +1310,7 @@
               typeof PRODUCTS_DATA !== "undefined" &&
               PRODUCTS_DATA[productId]
             ) {
-              CartManager.addItem(PRODUCTS_DATA[productId], 1);
+              CartManager.addItem(PRODUCTS_DATA[productId]);
             } else {
               CartManager.addItem({
                 id: productId || titleLink.textContent.trim(),

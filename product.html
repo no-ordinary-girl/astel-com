@@ -508,7 +508,7 @@
         const addToCartBtn = document.getElementById("add-to-cart-btn");
         if (addToCartBtn && product) {
           addToCartBtn.addEventListener("click", () => {
-            CartManager.addItem(product, 1);
+            CartManager.addItem(product);
           });
         }
       });

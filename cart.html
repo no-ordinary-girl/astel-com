@@ -288,18 +288,24 @@
                     </h3>
                   </div>
 
+                  <!-- Inside Step 2: Інформація про доставку -->
                   <div class="form-field" id="field-city">
                     <label class="form-label" for="city">
                       Місто<span class="req">*</span>
                     </label>
-                    <input
-                      type="text"
-                      id="city"
-                      class="form-input"
-                      placeholder="Наприклад: Київ"
-                    />
+                    <div class="autocomplete-wrap">
+                      <input
+                        type="text"
+                        id="city"
+                        class="form-input"
+                        placeholder="Почніть вводити назву міста (наприклад: Київ)"
+                        autocomplete="off"
+                      />
+                      <div class="autocomplete-list" id="city-dropdown"></div>
+                    </div>
                     <span class="form-error"
-                      >Будь ласка, вкажіть місто доставки.</span
+                      >Будь ласка, вкажіть місто доставки зі списку доступних
+                      населених пунктів.</span
                     >
                   </div>
 
@@ -340,11 +346,17 @@
                           </label>
                         </div>
                         <div class="form-field" id="field-branch-nova">
-                          <input
-                            type="text"
-                            class="form-input branch-input"
-                            placeholder="Вкажіть номер відділення або поштомату / адресу*"
-                          />
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Оберіть зі списку або введіть номер відділення / адресу*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
                           <span class="form-error"
                             >Вкажіть номер відділення або поштомату Нової
                             Пошти.</span
@@ -382,11 +394,17 @@
                           </label>
                         </div>
                         <div class="form-field" id="field-branch-ukr">
-                          <input
-                            type="text"
-                            class="form-input branch-input"
-                            placeholder="Вкажіть індекс / номер відділення або поштомату*"
-                          />
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Оберіть зі списку або введіть індекс / адресу відділення*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
                           <span class="form-error"
                             >Вкажіть індекс або номер відділення Укрпошти.</span
                           >
@@ -427,11 +445,17 @@
                           </label>
                         </div>
                         <div class="form-field" id="field-branch-meest">
-                          <input
-                            type="text"
-                            class="form-input branch-input"
-                            placeholder="Вкажіть номер відділення або поштомату Meest*"
-                          />
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Оберіть зі списку або введіть номер відділення / поштомату Meest*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
                           <span class="form-error"
                             >Вкажіть номер відділення або поштомату Meest
                             ПОШТА.</span
@@ -585,7 +609,7 @@
                   >Доставка (<span id="summary-carrier">Нова Пошта</span
                   >):</span
                 >
-                <span id="summary-shipping">за тарифами перевізника</span>
+                <span id="summary-shipping">безкоштовно</span>
               </div>
               <div class="summary-row summary-row--total">
                 <span>Разом:</span>
@@ -683,6 +707,7 @@
     </footer>
 
     <script src="js/products-data.js"></script>
+    <script src="js/delivery-data.js"></script>
     <script src="js/cart.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -1036,6 +1061,129 @@
             loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${loginEmail}</strong>.`;
             loginFeedback.classList.add("is-visible");
           });
+        // --- City & Branch Hint Dropdown Autocomplete Logic ---
+        const cityInput = document.getElementById("city");
+        const cityDropdown = document.getElementById("city-dropdown");
+
+        function closeAllDropdowns() {
+          document
+            .querySelectorAll(".autocomplete-list.is-open")
+            .forEach((el) => el.classList.remove("is-open"));
+        }
+
+        function renderCityDropdown(query) {
+          const matches = DeliveryDirectory.searchCities(query);
+          if (matches.length === 0) {
+            cityDropdown.innerHTML = `<div class="autocomplete-empty">Населений пункт не знайдено або доставка тимчасово недоступна</div>`;
+          } else {
+            cityDropdown.innerHTML = matches
+              .map(
+                (c) => `
+              <div class="autocomplete-item" data-city="${c.name}">
+                <span class="autocomplete-item__main">м. ${c.name}</span>
+                <span class="autocomplete-item__sub">${c.oblast}</span>
+              </div>
+            `,
+              )
+              .join("");
+          }
+          cityDropdown.classList.add("is-open");
+        }
+
+        cityInput.addEventListener("focus", () => {
+          closeAllDropdowns();
+          renderCityDropdown(cityInput.value);
+        });
+
+        cityInput.addEventListener("input", () => {
+          renderCityDropdown(cityInput.value);
+        });
+
+        cityDropdown.addEventListener("mousedown", (e) => {
+          const item = e.target.closest(".autocomplete-item");
+          if (!item) return;
+          const selectedCity = item.getAttribute("data-city");
+          cityInput.value = selectedCity;
+          document.getElementById("field-city").classList.remove("has-error");
+          cityDropdown.classList.remove("is-open");
+
+          // Clear existing branch inputs when city changes so user picks a branch in the new city
+          document.querySelectorAll(".branch-input").forEach((inp) => {
+            inp.value = "";
+          });
+        });
+
+        // Branch / Locker Autocomplete for all 3 carriers
+        document
+          .querySelectorAll("#delivery-group .radio-card")
+          .forEach((card) => {
+            const carrierKey = card.getAttribute("data-carrier");
+            const branchInput = card.querySelector(".branch-input");
+            const branchDropdown = card.querySelector(".branch-dropdown");
+            const typeRadios = card.querySelectorAll(
+              `input[name="${carrierKey}_type"]`,
+            );
+
+            async function updateBranchDropdown() {
+              const activeType = card.querySelector(
+                `input[name="${carrierKey}_type"]:checked`,
+              ).value;
+              const currentCity = cityInput.value.trim() || "Київ";
+              const items = await DeliveryDirectory.getBranches(
+                carrierKey,
+                activeType,
+                currentCity,
+                branchInput.value,
+              );
+
+              if (items.length === 0) {
+                branchDropdown.innerHTML = `<div class="autocomplete-empty">Відділень за цим запитом не знайдено</div>`;
+              } else {
+                branchDropdown.innerHTML = items
+                  .map(
+                    (b) => `
+                <div class="autocomplete-item" data-branch="${b.title.replace(/"/g, "&quot;")}">
+                  <span class="autocomplete-item__main">${b.title}</span>
+                  <span class="autocomplete-item__sub">${b.subtitle}</span>
+                </div>
+              `,
+                  )
+                  .join("");
+              }
+              branchDropdown.classList.add("is-open");
+            }
+
+            branchInput.addEventListener("focus", () => {
+              closeAllDropdowns();
+              updateBranchDropdown();
+            });
+
+            branchInput.addEventListener("input", () => {
+              updateBranchDropdown();
+            });
+
+            branchDropdown.addEventListener("mousedown", (e) => {
+              const item = e.target.closest(".autocomplete-item");
+              if (!item) return;
+              branchInput.value = item.getAttribute("data-branch");
+              branchInput.closest(".form-field").classList.remove("has-error");
+              branchDropdown.classList.remove("is-open");
+            });
+
+            // Clear branch input when switching between Відділення and Поштомат
+            typeRadios.forEach((r) => {
+              r.addEventListener("change", () => {
+                branchInput.value = "";
+              });
+            });
+          });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".autocomplete-wrap")) {
+            closeAllDropdowns();
+          }
+        });
       });
     </script>
   </body>

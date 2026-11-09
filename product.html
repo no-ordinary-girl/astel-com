@@ -271,6 +271,7 @@
     </footer>
 
     <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Mobile Menu Logic
@@ -441,7 +442,7 @@
               </div>
 
               <div class="product-hero__actions">
-                <button type="button" class="btn-primary">
+                <button type="button" class="btn-primary" id="add-to-cart-btn">
                   Замовити / Додати в кошик
                 </button>
               </div>
@@ -501,6 +502,13 @@
         if (wholesaleBtn && wholesaleBox) {
           wholesaleBtn.addEventListener("click", () => {
             wholesaleBox.classList.toggle("is-open");
+          });
+        }
+
+        const addToCartBtn = document.getElementById("add-to-cart-btn");
+        if (addToCartBtn && product) {
+          addToCartBtn.addEventListener("click", () => {
+            CartManager.addItem(product, 1);
           });
         }
       });

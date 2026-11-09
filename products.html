@@ -1290,5 +1290,40 @@
         applyFilters();
       });
     </script>
+    <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".product-card").forEach((card) => {
+          const cartBtn = card.querySelector(".product-card__cart");
+          const titleLink = card.querySelector(".product-card__title");
+          if (!cartBtn || !titleLink) return;
+
+          const urlParams = new URLSearchParams(
+            titleLink.getAttribute("href").split("?")[1],
+          );
+          const productId = urlParams.get("id");
+
+          cartBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (
+              typeof PRODUCTS_DATA !== "undefined" &&
+              PRODUCTS_DATA[productId]
+            ) {
+              CartManager.addItem(PRODUCTS_DATA[productId], 1);
+            } else {
+              CartManager.addItem({
+                id: productId || titleLink.textContent.trim(),
+                title: titleLink.textContent.trim(),
+                price: parseFloat(card.getAttribute("data-price")) || 0,
+                image: card
+                  .querySelector(".product-card__img")
+                  .getAttribute("src"),
+              });
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

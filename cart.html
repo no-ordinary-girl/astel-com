@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Кошик та оформлення замовлення - АСТЕЛ-КОМ</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/cart.css" />
+  </head>
+  <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="АСТЕЛ-КОМ"
+            />
+          </a>
+
+          <div class="header__top-controls">
+            <a
+              href="cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="index.html" class="header__link">ГОЛОВНА</a>
+            <a href="about_us.html" class="header__link">ПРО НАС</a>
+            <a href="products.html" class="header__link hide-on-compact"
+              >ТОВАРИ</a
+            >
+            <a href="downloads.html" class="header__link hide-on-compact"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a href="downloads.html" class="header__more-link"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
+          </nav>
+
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
+            </div>
+
+            <a
+              href="cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===========================
+         MAIN CART & CHECKOUT
+         =========================== -->
+    <main class="cart-page">
+      <div class="container">
+        <h1 class="cart-page__title">Оформлення замовлення</h1>
+
+        <div class="cart-layout">
+          <!-- LEFT COLUMN: ОФОРМЛЕННЯ ЗАМОВЛЕННЯ -->
+          <section class="checkout-panel">
+            <h2 class="checkout-panel__heading">Оформлення замовлення</h2>
+
+            <!-- Tabs -->
+            <div class="checkout-tabs" role="tablist">
+              <button
+                type="button"
+                class="checkout-tab is-active"
+                id="tab-new-btn"
+                data-tab="new-buyer"
+              >
+                Новий покупець
+              </button>
+              <button
+                type="button"
+                class="checkout-tab"
+                id="tab-returning-btn"
+                data-tab="returning-buyer"
+              >
+                Я постійний клієнт
+              </button>
+            </div>
+
+            <!-- TAB 1: НОВИЙ ПОКУПЕЦЬ -->
+            <div class="tab-content is-active" id="new-buyer">
+              <form id="checkout-form" novalidate>
+                <!-- Step 1: Особисті дані -->
+                <div class="checkout-step">
+                  <div class="checkout-step__header">
+                    <span class="checkout-step__num">1</span>
+                    <h3 class="checkout-step__title">Особисті дані</h3>
+                  </div>
+
+                  <div class="form-grid form-grid--2col">
+                    <div class="form-field" id="field-firstName">
+                      <label class="form-label" for="firstName">
+                        Ваше ім'я<span class="req">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-input"
+                        placeholder="Введіть ваше ім'я"
+                      />
+                      <span class="form-error"
+                        >Будь ласка, введіть ваше ім'я (мінімум 2 літери).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-lastName">
+                      <label class="form-label" for="lastName">
+                        Ваше прізвище<span class="req">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="lastName"
+                        class="form-input"
+                        placeholder="Введіть ваше прізвище"
+                      />
+                      <span class="form-error"
+                        >Будь ласка, введіть ваше прізвище (мінімум 2
+                        літери).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-phone">
+                      <label class="form-label" for="phone">Телефон</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        class="form-input"
+                        placeholder="+380 (XX) XXX-XX-XX"
+                      />
+                      <span class="form-error"
+                        >Невірний формат телефону (наприклад:
+                        +380501234567).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-email">
+                      <label class="form-label" for="email">
+                        E-mail<span class="req">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="example@domain.com"
+                      />
+                      <span class="form-error"
+                        >Будь ласка, введіть коректну адресу E-mail.</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2: Інформація про доставку -->
+                <div class="checkout-step">
+                  <div class="checkout-step__header">
+                    <span class="checkout-step__num">2</span>
+                    <h3 class="checkout-step__title">
+                      Інформація про доставку
+                    </h3>
+                  </div>
+
+                  <div class="form-field" id="field-city">
+                    <label class="form-label" for="city">
+                      Місто<span class="req">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="city"
+                      class="form-input"
+                      placeholder="Наприклад: Київ"
+                    />
+                    <span class="form-error"
+                      >Будь ласка, вкажіть місто доставки.</span
+                    >
+                  </div>
+
+                  <!-- Варіанти доставки -->
+                  <div class="options-subtitle">Варіанти доставки</div>
+                  <div class="radio-group" id="delivery-group">
+                    <!-- Нова Пошта -->
+                    <div class="radio-card is-selected" data-carrier="nova">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="carrier"
+                            value="Нова Пошта"
+                            checked
+                          />
+                          <span>Нова Пошта (відділення або поштомат)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="nova_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Відділення
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="nova_type"
+                              value="Поштомат"
+                            />
+                            Поштомат
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-nova">
+                          <input
+                            type="text"
+                            class="form-input branch-input"
+                            placeholder="Вкажіть номер відділення або поштомату / адресу*"
+                          />
+                          <span class="form-error"
+                            >Вкажіть номер відділення або поштомату Нової
+                            Пошти.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Укрпошта -->
+                    <div class="radio-card" data-carrier="ukr">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input type="radio" name="carrier" value="Укрпошта" />
+                          <span>Укрпошта (відділення або поштомат)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="ukr_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Відділення
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="ukr_type"
+                              value="Поштомат"
+                            />
+                            Поштомат
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-ukr">
+                          <input
+                            type="text"
+                            class="form-input branch-input"
+                            placeholder="Вкажіть індекс / номер відділення або поштомату*"
+                          />
+                          <span class="form-error"
+                            >Вкажіть індекс або номер відділення Укрпошти.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Meest ПОШТА -->
+                    <div class="radio-card" data-carrier="meest">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="carrier"
+                            value="Meest ПОШТА"
+                          />
+                          <span>Meest ПОШТА (відділення або поштомат)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="meest_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Відділення
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="meest_type"
+                              value="Поштомат"
+                            />
+                            Поштомат
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-meest">
+                          <input
+                            type="text"
+                            class="form-input branch-input"
+                            placeholder="Вкажіть номер відділення або поштомату Meest*"
+                          />
+                          <span class="form-error"
+                            >Вкажіть номер відділення або поштомату Meest
+                            ПОШТА.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Варіанти оплати -->
+                  <div class="options-subtitle">Варіанти оплати</div>
+                  <div class="radio-group" id="payment-group">
+                    <label class="radio-card is-selected">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Готівка"
+                            checked
+                          />
+                          <span>Готівка (при отриманні)</span>
+                        </span>
+                      </div>
+                    </label>
+
+                    <label class="radio-card">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Оплата банківською картою"
+                          />
+                          <span
+                            >Оплата банківською картою (Visa / Mastercard)</span
+                          >
+                        </span>
+                      </div>
+                    </label>
+
+                    <label class="radio-card">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Google Pay"
+                          />
+                          <span>Google Pay</span>
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="place-order-btn">
+                  Підтвердити замовлення
+                </button>
+
+                <div class="success-banner" id="order-success"></div>
+              </form>
+            </div>
+
+            <!-- TAB 2: Я ПОСТІЙНИЙ КЛІЄНТ -->
+            <div class="tab-content" id="returning-buyer">
+              <p class="returning-info">
+                Якщо ви зареєстрований клієнт, введіть ваш логін/email та
+                пароль, якщо ви ще не є нашим клієнтом, то перейдіть у розділ
+                <strong>"Новий покупець"</strong> і заповніть поля потрібною
+                інформацією.
+              </p>
+
+              <form id="login-form" novalidate>
+                <div class="form-grid">
+                  <div class="form-field" id="field-login-email">
+                    <label class="form-label" for="loginEmail">
+                      Логін / E-mail<span class="req">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="loginEmail"
+                      class="form-input"
+                      placeholder="Введіть ваш E-mail"
+                    />
+                    <span class="form-error"
+                      >Будь ласка, введіть коректний логін або E-mail.</span
+                    >
+                  </div>
+
+                  <div class="form-field" id="field-login-password">
+                    <label class="form-label" for="loginPassword">
+                      Пароль<span class="req">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      id="loginPassword"
+                      class="form-input"
+                      placeholder="Введіть ваш пароль"
+                    />
+                    <span class="form-error"
+                      >Будь ласка, введіть ваш пароль (мінімум 6
+                      символів).</span
+                    >
+                  </div>
+
+                  <div class="forgot-row">
+                    <button
+                      type="button"
+                      class="forgot-link"
+                      id="forgot-pass-btn"
+                    >
+                      Забули пароль?
+                    </button>
+                    <button
+                      type="button"
+                      class="forgot-link"
+                      id="switch-to-new-btn"
+                    >
+                      Перейти у "Новий покупець" →
+                    </button>
+                  </div>
+
+                  <button type="submit" class="submit-btn">
+                    Увійти та продовжити
+                  </button>
+                </div>
+
+                <div class="success-banner" id="login-feedback"></div>
+              </form>
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN: ВАШЕ ЗАМОВЛЕННЯ -->
+          <aside class="order-summary">
+            <h2 class="checkout-panel__heading" style="margin-bottom: 4px">
+              Ваше замовлення
+            </h2>
+
+            <div class="cart-items" id="cart-items-list">
+              <!-- Populated dynamically via JS -->
+            </div>
+
+            <div class="summary-totals" id="summary-totals">
+              <div class="summary-row">
+                <span>Сума замовлення:</span>
+                <span id="summary-subtotal">0 ₴</span>
+              </div>
+              <div class="summary-row">
+                <span
+                  >Доставка (<span id="summary-carrier">Нова Пошта</span
+                  >):</span
+                >
+                <span id="summary-shipping">за тарифами перевізника</span>
+              </div>
+              <div class="summary-row summary-row--total">
+                <span>Разом:</span>
+                <span id="summary-total">0 ₴</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===========================
+         FOOTER
+         =========================== -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">Компанія ТОВ "АСТЕЛ-КОМ"</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Сергій +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >вул. Солом'янська, 5, Київ, Україна</span
+            >
+          </div>
+          <div class="footer__item footer__item--align-top">
+            <img
+              src="assets/images/phone.svg"
+              alt="Phone"
+              class="footer__icon"
+            />
+            <div class="footer__text-group">
+              <a href="tel:+380504443355" class="footer__link"
+                >+380 (50) 444-33-55</a
+              >
+              <a href="tel:+380443039551" class="footer__link"
+                >+380 (44) 303-95-51</a
+              >
+            </div>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/mail.svg"
+              alt="Email"
+              class="footer__icon"
+            />
+            <a href="mailto:astelkom@gmail.com" class="footer__link"
+              >astelkom@gmail.com</a
+            >
+          </div>
+        </div>
+
+        <div class="footer__map">
+          <a href="https://www.google.com/maps/place/..." target="_blank">
+            <picture>
+              <source
+                media="(min-width: 1440px)"
+                srcset="assets/images/map-wide.png"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcset="assets/images/map.png"
+              />
+              <source
+                media="(min-width: 500px)"
+                srcset="assets/images/map-tablet.png"
+              />
+              <img
+                src="assets/images/map-mobile.png"
+                alt="Карта проїзду"
+                class="footer__map-image"
+              />
+            </picture>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Header Mobile Menu ---
+        const toggleBtn = document.getElementById("menu-toggle");
+        const collapseMenu = document.getElementById("menu-collapse");
+        if (toggleBtn && collapseMenu) {
+          toggleBtn.addEventListener("click", () => {
+            collapseMenu.classList.toggle("header__collapse--open");
+          });
+        }
+
+        // --- Render Cart Items & Summary ---
+        const cartListEl = document.getElementById("cart-items-list");
+        const subtotalEl = document.getElementById("summary-subtotal");
+        const totalEl = document.getElementById("summary-total");
+        const summaryTotalsEl = document.getElementById("summary-totals");
+
+        function renderCart() {
+          const cart = CartManager.getCart();
+
+          if (cart.length === 0) {
+            cartListEl.innerHTML = `
+              <div class="empty-cart-box">
+                <p style="margin-bottom: 16px;">Ваш кошик порожній.</p>
+                <a href="products.html" class="submit-btn" style="display: inline-block; width: auto; text-decoration: none;">
+                  Перейти до каталогу
+                </a>
+              </div>
+            `;
+            subtotalEl.textContent = "0 ₴";
+            totalEl.textContent = "0 ₴";
+            return;
+          }
+
+          cartListEl.innerHTML = cart
+            .map((item) => {
+              const lineTotal = item.price * item.qty;
+              return `
+                <div class="cart-item" data-id="${item.id}">
+                  <a href="product.html?id=${item.id}" class="cart-item__img-wrap">
+                    <img src="${item.image}" alt="${item.title}" class="cart-item__img" />
+                  </a>
+                  <div class="cart-item__details">
+                    <a href="product.html?id=${item.id}" class="cart-item__title">${item.title}</a>
+                    <span class="cart-item__price">${CartManager.formatPrice(item.price)} / шт.</span>
+                    <button type="button" class="cart-item__remove" data-remove="${item.id}" style="width: fit-content;">
+                      Видалити
+                    </button>
+                  </div>
+                  <div class="cart-item__controls">
+                    <div class="qty-control">
+                      <button type="button" class="qty-btn" data-dec="${item.id}" aria-label="Зменшити">−</button>
+                      <input type="number" class="qty-input" value="${item.qty}" min="1" data-input="${item.id}" />
+                      <button type="button" class="qty-btn" data-inc="${item.id}" aria-label="Збільшити">+</button>
+                    </div>
+                    <div class="cart-item__sum">${CartManager.formatPrice(lineTotal)}</div>
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+
+          const subtotal = CartManager.getSubtotal();
+          subtotalEl.textContent = CartManager.formatPrice(subtotal);
+          totalEl.textContent = CartManager.formatPrice(subtotal);
+        }
+
+        // Delegate clicks for +, -, remove, and manual input inside cart list
+        cartListEl.addEventListener("click", (e) => {
+          const incId = e.target.getAttribute("data-inc");
+          const decId = e.target.getAttribute("data-dec");
+          const remId = e.target.getAttribute("data-remove");
+
+          if (incId) {
+            const item = CartManager.getCart().find((i) => i.id === incId);
+            if (item) CartManager.updateQty(incId, item.qty + 1);
+            renderCart();
+          } else if (decId) {
+            const item = CartManager.getCart().find((i) => i.id === decId);
+            if (item) CartManager.updateQty(decId, item.qty - 1);
+            renderCart();
+          } else if (remId) {
+            CartManager.removeItem(remId);
+            renderCart();
+          }
+        });
+
+        cartListEl.addEventListener("change", (e) => {
+          const inputId = e.target.getAttribute("data-input");
+          if (inputId) {
+            const val = parseInt(e.target.value, 10);
+            CartManager.updateQty(inputId, isNaN(val) || val < 1 ? 1 : val);
+            renderCart();
+          }
+        });
+
+        renderCart();
+
+        // --- Tabs Switching (Новий покупець / Я постійний клієнт) ---
+        const tabButtons = document.querySelectorAll(".checkout-tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        function activateTab(targetId) {
+          tabButtons.forEach((btn) => {
+            btn.classList.toggle(
+              "is-active",
+              btn.getAttribute("data-tab") === targetId,
+            );
+          });
+          tabContents.forEach((panel) => {
+            panel.classList.toggle("is-active", panel.id === targetId);
+          });
+        }
+
+        tabButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            activateTab(btn.getAttribute("data-tab"));
+          });
+        });
+
+        document
+          .getElementById("switch-to-new-btn")
+          .addEventListener("click", () => {
+            activateTab("new-buyer");
+          });
+
+        // --- Delivery & Payment Radio Card Selection ---
+        const carrierSummaryEl = document.getElementById("summary-carrier");
+        const deliveryCards = document.querySelectorAll(
+          "#delivery-group .radio-card",
+        );
+
+        deliveryCards.forEach((card) => {
+          const radio = card.querySelector('input[name="carrier"]');
+          radio.addEventListener("change", () => {
+            deliveryCards.forEach((c) => c.classList.remove("is-selected"));
+            card.classList.add("is-selected");
+            carrierSummaryEl.textContent = radio.value;
+          });
+        });
+
+        const paymentCards = document.querySelectorAll(
+          "#payment-group .radio-card",
+        );
+        paymentCards.forEach((card) => {
+          const radio = card.querySelector('input[name="payment"]');
+          radio.addEventListener("change", () => {
+            paymentCards.forEach((c) => c.classList.remove("is-selected"));
+            card.classList.add("is-selected");
+          });
+        });
+
+        // --- Form Validation Helpers ---
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const phoneRegex =
+          /^(\+?38)?\s?\(?0\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
+
+        function setFieldError(fieldId, isInvalid, customMsg) {
+          const field = document.getElementById(fieldId);
+          if (!field) return false;
+          if (customMsg) {
+            const errSpan = field.querySelector(".form-error");
+            if (errSpan) errSpan.textContent = customMsg;
+          }
+          field.classList.toggle("has-error", isInvalid);
+          return !isInvalid;
+        }
+
+        // Clear error state on input
+        document.querySelectorAll(".form-input").forEach((input) => {
+          input.addEventListener("input", () => {
+            const parentField = input.closest(".form-field");
+            if (parentField) parentField.classList.remove("has-error");
+          });
+        });
+
+        // --- Validate "Новий покупець" Checkout Form ---
+        const checkoutForm = document.getElementById("checkout-form");
+        const orderSuccess = document.getElementById("order-success");
+
+        checkoutForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          orderSuccess.classList.remove("is-visible");
+
+          if (CartManager.getCart().length === 0) {
+            alert(
+              "Ваш кошик порожній! Додайте товари перед оформленням замовлення.",
+            );
+            return;
+          }
+
+          const firstName = document.getElementById("firstName").value.trim();
+          const lastName = document.getElementById("lastName").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const city = document.getElementById("city").value.trim();
+
+          let isValid = true;
+
+          if (!setFieldError("field-firstName", firstName.length < 2))
+            isValid = false;
+          if (!setFieldError("field-lastName", lastName.length < 2))
+            isValid = false;
+
+          // Phone is optional per label ("Телефон"), but if entered or empty we validate format
+          if (phone.length > 0 && !phoneRegex.test(phone)) {
+            setFieldError(
+              "field-phone",
+              true,
+              "Невірний формат телефону (введіть номер у форматі +380XXXXXXXXX).",
+            );
+            isValid = false;
+          } else {
+            setFieldError("field-phone", false);
+          }
+
+          if (!setFieldError("field-email", !emailRegex.test(email)))
+            isValid = false;
+          if (!setFieldError("field-city", city.length < 2)) isValid = false;
+
+          // Validate active carrier branch / locker field
+          const selectedCarrierCard = document.querySelector(
+            "#delivery-group .radio-card.is-selected",
+          );
+          const carrierKey = selectedCarrierCard.getAttribute("data-carrier");
+          const branchFieldId = `field-branch-${carrierKey}`;
+          const branchInput =
+            selectedCarrierCard.querySelector(".branch-input");
+
+          if (
+            !setFieldError(branchFieldId, branchInput.value.trim().length < 1)
+          ) {
+            isValid = false;
+          }
+
+          if (!isValid) {
+            const firstErr = checkoutForm.querySelector(
+              ".form-field.has-error",
+            );
+            if (firstErr) {
+              firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            return;
+          }
+
+          // Gather selected delivery & payment details
+          const carrierName = selectedCarrierCard.querySelector(
+            'input[name="carrier"]',
+          ).value;
+          const deliveryType = selectedCarrierCard.querySelector(
+            `input[name="${carrierKey}_type"]:checked`,
+          ).value;
+          const paymentMethod = document.querySelector(
+            'input[name="payment"]:checked',
+          ).value;
+          const totalFormatted = CartManager.formatPrice(
+            CartManager.getSubtotal(),
+          );
+
+          orderSuccess.innerHTML = `
+            <strong>Дякуємо за замовлення, ${firstName} ${lastName}!</strong><br />
+            Сума замовлення: <strong>${totalFormatted}</strong><br />
+            Доставка: <strong>${carrierName} (${deliveryType}: ${branchInput.value.trim()}, м. ${city})</strong><br />
+            Спосіб оплати: <strong>${paymentMethod}</strong><br />
+            Підтвердження відправлено на <strong>${email}</strong>. Наш менеджер зв'яжеться з вами найближчим часом.
+          `;
+          orderSuccess.classList.add("is-visible");
+
+          CartManager.clearCart();
+          renderCart();
+          checkoutForm.reset();
+        });
+
+        // --- Validate "Я постійний клієнт" Login Form ---
+        const loginForm = document.getElementById("login-form");
+        const loginFeedback = document.getElementById("login-feedback");
+
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          loginFeedback.classList.remove("is-visible");
+
+          const loginEmail = document.getElementById("loginEmail").value.trim();
+          const loginPassword = document
+            .getElementById("loginPassword")
+            .value.trim();
+
+          let loginValid = true;
+          if (!setFieldError("field-login-email", !emailRegex.test(loginEmail)))
+            loginValid = false;
+          if (!setFieldError("field-login-password", loginPassword.length < 6))
+            loginValid = false;
+
+          if (!loginValid) return;
+
+          loginFeedback.innerHTML = `
+            Обліковий запис <strong>${loginEmail}</strong> успішно авторизовано. Ваші контактні дані підвантажено у форму замовлення.
+          `;
+          loginFeedback.classList.add("is-visible");
+
+          // Pre-fill email in checkout tab and switch to it after a short pause
+          document.getElementById("email").value = loginEmail;
+          setTimeout(() => {
+            activateTab("new-buyer");
+          }, 1200);
+        });
+
+        // Forgot Password Handler
+        document
+          .getElementById("forgot-pass-btn")
+          .addEventListener("click", () => {
+            const loginEmail = document
+              .getElementById("loginEmail")
+              .value.trim();
+            if (!emailRegex.test(loginEmail)) {
+              setFieldError(
+                "field-login-email",
+                true,
+                "Введіть ваш E-mail у це поле, щоб ми надіслали посилання для відновлення пароля.",
+              );
+              return;
+            }
+            setFieldError("field-login-email", false);
+            loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${loginEmail}</strong>.`;
+            loginFeedback.classList.add("is-visible");
+          });
+      });
+    </script>
+  </body>
+</html>

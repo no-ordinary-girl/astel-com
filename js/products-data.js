@@ -82,9 +82,14 @@ const PRODUCTS_DATA = {
       {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-485-4G.pdf",
-        url: "#",
+        url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_485_4g.pdf",
+        download: true,
       },
-      { title: "Паспорт модему СОМ-900-485-4G_new.pdf", url: "#" },
+      {
+        title: "Паспорт модему СОМ-900-485-4G_new.pdf",
+        url: "assets/downloads/pasport_modemu_som_900_485_4g_new.pdf",
+        download: true,
+      },
     ],
   },
 
@@ -250,7 +255,8 @@ const PRODUCTS_DATA = {
       {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-PSG-4G.pdf",
-        url: "https://drive.google.com/file/d/1AkRyMVI-dPMVhfznWMJQqczXee3z2Fzi/view?usp=drive_link",
+        url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_psg_4g.pdf",
+        download: true,
       },
       {
         title: "Драйвер для підключення модему до комп'ютера (Google Drive)",
@@ -299,10 +305,15 @@ const PRODUCTS_DATA = {
     docs: [
       {
         title:
-          "Керівництво з монтажу та експлуатації модему COM-900-ITR-rev.B (УКР)",
-        url: "https://drive.google.com/file/d/1U2rem_1KbegOiBbzMp_w58BY1QVqbWqF/view?usp=sharing",
+          "Керівництво з монтажу та експлуатації модему COM-900-ITR-rev.B_укр.pdf",
+        url: "assets/downloads/kerivnitstvo_z_montazhu_t__com_900_itr_rev.b_ukr.pdf",
+        download: true,
       },
-      { title: "Паспорт COM-900-ITR rev.B_укр.pdf", url: "#" },
+      {
+        title: "Паспорт COM-900-ITR rev.B_укр.pdf",
+        url: "assets/downloads/pasport_com_900_itr_rev.b_ukr.pdf",
+        download: true,
+      },
       {
         title: "Драйвер для підключення модему до комп'ютера",
         url: "https://drive.google.com/file/d/1JBDeT-JS19cQ2wMgbSH9fdD4cftc-B6T/view?usp=sharing",
@@ -379,7 +390,13 @@ const PRODUCTS_DATA = {
       { label: "Вихід під зовнішню антену", value: "Так" },
       { label: "Стан", value: "Новий" },
     ],
-    docs: [{ title: "Паспорт NBIoT-модему_укр.pdf", url: "#" }],
+    docs: [
+      {
+        title: "Паспорт NBIoT-модему_укр.pdf",
+        url: "assets/downloads/pasport_nbiot_modemu_ukr.pdf",
+        download: true,
+      },
+    ],
   },
 
   "com-900-nbi-ext": {
@@ -452,7 +469,13 @@ const PRODUCTS_DATA = {
       { label: "Вихід під зовнішню антену", value: "Так" },
       { label: "Стан", value: "Новий" },
     ],
-    docs: [{ title: "Паспорт NBIoT-модему COM-900-NBI-ext.pdf", url: "#" }],
+    docs: [
+      {
+        title: "Паспорт NBIoT-модему COM-900-NBI-ext.pdf",
+        url: "assets/downloads/pasport_nbiot_modemu_com_900_nbi_ext.pdf",
+        download: true,
+      },
+    ],
   },
 
   "gsm-antenna-3dbi": {

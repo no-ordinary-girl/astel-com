@@ -410,6 +410,7 @@
   font-weight: 700;
   color: var(--gray-900);
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .qty-input::-webkit-outer-spin-button,

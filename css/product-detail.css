@@ -55,6 +55,8 @@
   justify-content: space-between;
   gap: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  /* Give the entire gallery card a fixed layout height so it never resizes */
+  height: 480px;
 }
 
 .product-hero__main-img-wrap {
@@ -63,13 +65,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Lock the image container height so all photos fit into the exact same box */
+  height: 360px;
+  overflow: hidden;
 }
 
 .product-hero__img {
   width: 100%;
-  max-width: 480px; /* Increased from 300px */
-  max-height: 380px; /* Increased from 220px */
-  object-fit: contain;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Scales the image cleanly without distortion */
   mix-blend-mode: multiply;
   transition: opacity 0.2s ease;
 }
@@ -120,8 +126,18 @@
 .product-hero__info {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: center; /* space-between Pushes price-box to the bottom */
+  height: 100%; /* Fills the matching height of the gallery card */
+  gap: 16px;
+}
+
+.product-hero__title {
+  font-size: clamp(24px, 6vw, 36px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--gray-900);
+  margin-top: 8px; /* Keeps title close to the badges above it */
+  margin-bottom: 0;
 }
 
 .product-hero__badges {
@@ -383,17 +399,22 @@
 
   .product-hero {
     flex-direction: row;
-    align-items: stretch;
+    align-items: stretch; /* Forces both columns to be the exact same height */
     gap: 48px;
   }
 
   .product-hero__gallery {
     flex: 0 0 44%;
     padding: 28px;
+    height: 480px; /* Locked height */
   }
 
   .product-hero__info {
     flex: 1;
+    height: 480px; /* MUST match the gallery height so space-between pins to the bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* space-between Pins price-box to the bottom */
   }
 
   .product-hero__actions {

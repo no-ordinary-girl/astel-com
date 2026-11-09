@@ -413,6 +413,8 @@
             </div>
 
             <div class="product-hero__info">
+            <!-- Top Group (Badges + Title) -->
+            <div class="product-hero__top-content" style="display: flex; flex-direction: column; gap: 12px;">
               <div class="product-hero__badges">
                 <span class="badge ${product.inStock ? "badge--instock" : "badge--outstock"}">
                   ${product.stockText}
@@ -421,28 +423,30 @@
               </div>
 
               <h1 class="product-hero__title">${product.title}</h1>
+            </div>
 
-              <div class="product-hero__price-box">
-                <div class="product-hero__price-row">
-                  <span class="product-hero__price">${product.price}</span>
-                  <span class="product-hero__vat">${product.vatNote}</span>
-                </div>
-                ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
+            <!-- Bottom Group (Price Box pushed down via space-between) -->
+            <div class="product-hero__price-box">
+              <div class="product-hero__price-row">
+                <span class="product-hero__price">${product.price}</span>
+                <span class="product-hero__vat">${product.vatNote}</span>
+              </div>
+              ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
 
-                <button type="button" class="wholesale-toggle" id="wholesale-btn">
-                  Показати оптові ціни
+              <button type="button" class="wholesale-toggle" id="wholesale-btn">
+                Показати оптові ціни
+              </button>
+              <div class="wholesale-box" id="wholesale-box">
+                Для уточнення індивідуальних оптових цін залежно від обсягу партії зв'яжіться з відділом продажу: <strong>+380 (50) 444-33-55</strong> або <strong>astelkom@gmail.com</strong>.
+              </div>
+
+              <div class="product-hero__actions">
+                <button type="button" class="btn-primary">
+                  Замовити / Додати в кошик
                 </button>
-                <div class="wholesale-box" id="wholesale-box">
-                  Для уточнення індивідуальних оптових цін залежно від обсягу партії зв'яжіться з відділом продажу: <strong>+380 (50) 444-33-55</strong> або <strong>astelkom@gmail.com</strong>.
-                </div>
-
-                <div class="product-hero__actions">
-                  <button type="button" class="btn-primary">
-                    Замовити / Додати в кошик
-                  </button>
-                </div>
               </div>
             </div>
+          </div>
           </div>
 
           <div class="product-sections">

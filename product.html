@@ -567,6 +567,13 @@
         const incBtn = document.getElementById("qty-inc");
         const addToCartBtn = document.getElementById("add-to-cart-btn");
 
+        if (product.inStock === false) {
+          addToCartBtn.disabled = true;
+          addToCartBtn.textContent = "Немає в наявності";
+
+          document.querySelector(".product-detail-qty").style.display = "none";
+        }
+
         qtyInput.value = minQty;
         qtyInput.min = minQty;
         decBtn.disabled = true;

@@ -64,6 +64,16 @@ const CartManager = {
 
   addItem(product, requestedQty) {
     if (!product || !product.id) return;
+
+    // Prevent out-of-stock products from being added to the cart
+    const catalogProduct =
+      typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[product.id] : null;
+
+    if (product.inStock === false || catalogProduct?.inStock === false) {
+      this.showToast("Товару немає в наявності");
+      return;
+    }
+
     const cart = this.getCart();
     const existing = cart.find((item) => item.id === product.id);
     const numericPrice = product.numericPrice || this.parsePrice(product.price);
@@ -74,7 +84,7 @@ const CartManager = {
       const increment = requestedQty ? requestedQty : 1;
       existing.qty = Math.max(minQty, existing.qty + increment);
     } else {
-      // First time adding to cart: start at minQty (10 for wholesale, 1 for retail)
+      // First time adding to cart: start at minQty
       const initialQty = requestedQty ? Math.max(minQty, requestedQty) : minQty;
       cart.push({
         id: product.id,

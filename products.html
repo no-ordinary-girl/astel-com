@@ -1299,7 +1299,12 @@
           const titleLink = card.querySelector(".product-card__title");
           const footerBox = card.querySelector(".product-card__footer");
           if (!cartBtn || !titleLink || !footerBox) return;
-
+          if (card.dataset.instock === "false") {
+            cartBtn.disabled = true;
+            cartBtn.title = "Немає в наявності";
+            cartBtn.setAttribute("aria-label", "Немає в наявності");
+            return;
+          }
           const urlParams = new URLSearchParams(
             titleLink.getAttribute("href").split("?")[1],
           );

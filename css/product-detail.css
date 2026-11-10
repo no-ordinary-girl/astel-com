@@ -277,6 +277,15 @@
   transform: scale(0.98);
 }
 
+.btn-primary:disabled,
+.btn-primary:disabled:hover,
+.btn-primary:disabled:active {
+  background-color: var(--gray-200);
+  color: var(--gray-600);
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* Content Sections (Description, Tables, Docs) */
 .product-sections {
   display: flex;

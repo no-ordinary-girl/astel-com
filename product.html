@@ -269,7 +269,6 @@
         </div>
       </div>
     </footer>
-
     <script src="js/products-data.js"></script>
     <script src="js/cart.js"></script>
     <script>
@@ -313,6 +312,11 @@
           galleryImages.length > 1
             ? `
             <div class="product-hero__thumbs" id="product-thumbs">
+              <button type="button" class="gallery-arrow gallery-arrow--prev" id="gallery-prev" aria-label="Попереднє фото">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
               ${galleryImages
                 .map(
                   (imgSrc, idx) => `
@@ -327,6 +331,11 @@
               `,
                 )
                 .join("")}
+              <button type="button" class="gallery-arrow gallery-arrow--next" id="gallery-next" aria-label="Наступне фото">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
             </div>`
             : "";
 
@@ -402,7 +411,7 @@
 
           <div class="product-hero">
             <div class="product-hero__gallery">
-              <div class="product-hero__main-img-wrap">
+              <div class="product-hero__main-img-wrap" id="main-img-wrap">
                 <img
                   src="${galleryImages[0]}"
                   alt="${product.title}"
@@ -414,45 +423,45 @@
             </div>
 
             <div class="product-hero__info">
-            <!-- Top Group (Badges + Title) -->
-            <div class="product-hero__top-content" style="display: flex; flex-direction: column; gap: 12px;">
-              <div class="product-hero__badges">
-                <span class="badge ${product.inStock ? "badge--instock" : "badge--outstock"}">
-                  ${product.stockText}
-                </span>
-                <span class="badge badge--terms">${product.saleTerms}</span>
-              </div>
-
-              <h1 class="product-hero__title">${product.title}</h1>
-            </div>
-
-            <!-- Bottom Group (Price Box pushed down via space-between) -->
-            <div class="product-hero__price-box">
-              <div class="product-hero__price-row">
-                <span class="product-hero__price">${product.price}</span>
-                <span class="product-hero__vat">${product.vatNote}</span>
-              </div>
-              ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
-
-              <button type="button" class="wholesale-toggle" id="wholesale-btn">
-                Показати оптові ціни
-              </button>
-              <div class="wholesale-box" id="wholesale-box">
-                Для уточнення індивідуальних оптових цін залежно від обсягу партії зв'яжіться з відділом продажу: <strong>+380 (50) 444-33-55</strong> або <strong>astelkom@gmail.com</strong>.
-              </div>
-
-              <div class="product-hero__actions">
-                <div class="product-detail-qty">
-                  <button type="button" class="product-detail-qty__btn" id="qty-dec" disabled aria-label="Зменшити">−</button>
-                  <input type="number" class="product-detail-qty__input" id="qty-input" value="10" min="10" aria-label="Кількість" />
-                  <button type="button" class="product-detail-qty__btn" id="qty-inc" aria-label="Збільшити">+</button>
+              <!-- Top Group (Badges + Title) -->
+              <div class="product-hero__top-content" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="product-hero__badges">
+                  <span class="badge ${product.inStock ? "badge--instock" : "badge--outstock"}">
+                    ${product.stockText}
+                  </span>
+                  <span class="badge badge--terms">${product.saleTerms}</span>
                 </div>
-                <button type="button" class="btn-primary" id="add-to-cart-btn" style="flex: 1;">
-                  Додати в кошик
+
+                <h1 class="product-hero__title">${product.title}</h1>
+              </div>
+
+              <!-- Bottom Group (Price Box) -->
+              <div class="product-hero__price-box">
+                <div class="product-hero__price-row">
+                  <span class="product-hero__price">${product.price}</span>
+                  <span class="product-hero__vat">${product.vatNote}</span>
+                </div>
+                ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
+
+                <button type="button" class="wholesale-toggle" id="wholesale-btn">
+                  Показати оптові ціни
                 </button>
+                <div class="wholesale-box" id="wholesale-box">
+                  Для уточнення індивідуальних оптових цін залежно від обсягу партії зв'яжіться з відділом продажу: <strong>+380 (50) 444-33-55</strong> або <strong>astelkom@gmail.com</strong>.
+                </div>
+
+                <div class="product-hero__actions">
+                  <div class="product-detail-qty">
+                    <button type="button" class="product-detail-qty__btn" id="qty-dec" disabled aria-label="Зменшити">−</button>
+                    <input type="number" class="product-detail-qty__input" id="qty-input" value="10" min="10" aria-label="Кількість" />
+                    <button type="button" class="product-detail-qty__btn" id="qty-inc" aria-label="Збільшити">+</button>
+                  </div>
+                  <button type="button" class="btn-primary" id="add-to-cart-btn" style="flex: 1;">
+                    Додати в кошик
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
           </div>
 
           <div class="product-sections">
@@ -468,6 +477,7 @@
           </div>
         `;
 
+        // Fallback for Cyrillic/Latin "COM-" image filenames
         container.querySelectorAll("img").forEach((img) => {
           img.addEventListener("error", function () {
             if (!this.dataset.retried) {
@@ -482,22 +492,110 @@
           });
         });
 
-        // Gallery Thumbnail Switcher Logic
+        // --- Unified Gallery & Full-Screen Lightbox Navigation ---
         const mainImg = document.getElementById("main-product-img");
+        const mainImgWrap = document.getElementById("main-img-wrap");
         const thumbButtons = document.querySelectorAll(
           ".product-hero__thumb-btn",
         );
+        const galleryPrev = document.getElementById("gallery-prev");
+        const galleryNext = document.getElementById("gallery-next");
 
-        if (mainImg && thumbButtons.length > 0) {
-          thumbButtons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-              const newSrc = btn.getAttribute("data-src");
-              if (newSrc && mainImg.getAttribute("src") !== newSrc) {
-                mainImg.setAttribute("src", newSrc);
-              }
-              thumbButtons.forEach((b) => b.classList.remove("is-active"));
-              btn.classList.add("is-active");
-            });
+        const lightbox = document.getElementById("product-lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+        const lightboxClose = document.getElementById("lightbox-close");
+        const lightboxPrev = document.getElementById("lightbox-prev");
+        const lightboxNext = document.getElementById("lightbox-next");
+        const lightboxCounter = document.getElementById("lightbox-counter");
+
+        let currentImageIndex = 0;
+
+        function setActiveImage(index) {
+          if (!galleryImages || galleryImages.length === 0) return;
+          currentImageIndex =
+            (index + galleryImages.length) % galleryImages.length;
+          const activeSrc = galleryImages[currentImageIndex];
+
+          if (mainImg) mainImg.setAttribute("src", activeSrc);
+          if (lightboxImg) lightboxImg.setAttribute("src", activeSrc);
+          if (lightboxCounter) {
+            lightboxCounter.textContent = `${currentImageIndex + 1} / ${galleryImages.length}`;
+          }
+
+          thumbButtons.forEach((btn, idx) => {
+            btn.classList.toggle("is-active", idx === currentImageIndex);
+          });
+
+          const hasMultiple = galleryImages.length > 1;
+          if (galleryPrev)
+            galleryPrev.style.display = hasMultiple ? "flex" : "none";
+          if (galleryNext)
+            galleryNext.style.display = hasMultiple ? "flex" : "none";
+          if (lightboxPrev)
+            lightboxPrev.style.display = hasMultiple ? "flex" : "none";
+          if (lightboxNext)
+            lightboxNext.style.display = hasMultiple ? "flex" : "none";
+          if (lightboxCounter)
+            lightboxCounter.style.display = hasMultiple ? "block" : "none";
+        }
+
+        // Initialize arrows visibility on load
+        setActiveImage(0);
+
+        // Thumbnail clicks
+        thumbButtons.forEach((btn, idx) => {
+          btn.addEventListener("click", () => setActiveImage(idx));
+        });
+
+        // Inline gallery < > arrows
+        if (galleryPrev && galleryNext) {
+          galleryPrev.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setActiveImage(currentImageIndex - 1);
+          });
+          galleryNext.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setActiveImage(currentImageIndex + 1);
+          });
+        }
+
+        // Open Full-Screen Lightbox on main image click
+        if (mainImgWrap && lightbox) {
+          mainImgWrap.addEventListener("click", () => {
+            setActiveImage(currentImageIndex);
+            lightbox.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+          });
+
+          const closeLightbox = () => {
+            lightbox.classList.remove("is-open");
+            document.body.style.overflow = "";
+          };
+
+          lightboxClose.addEventListener("click", closeLightbox);
+          lightboxPrev.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setActiveImage(currentImageIndex - 1);
+          });
+          lightboxNext.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setActiveImage(currentImageIndex + 1);
+          });
+
+          lightbox.addEventListener("click", (e) => {
+            if (
+              e.target === lightbox ||
+              e.target.classList.contains("product-lightbox__content")
+            ) {
+              closeLightbox();
+            }
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("is-open")) return;
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowLeft") setActiveImage(currentImageIndex - 1);
+            if (e.key === "ArrowRight") setActiveImage(currentImageIndex + 1);
           });
         }
 
@@ -548,5 +646,66 @@
         }
       });
     </script>
+
+    <!-- Full-Screen Lightbox Overlay -->
+    <div class="product-lightbox" id="product-lightbox">
+      <button
+        type="button"
+        class="product-lightbox__close"
+        id="lightbox-close"
+        aria-label="Закрити"
+      >
+        ×
+      </button>
+      <button
+        type="button"
+        class="product-lightbox__arrow product-lightbox__prev"
+        id="lightbox-prev"
+        aria-label="Попереднє фото"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="product-lightbox__content">
+        <img
+          src=""
+          alt="Збільшене фото товару"
+          class="product-lightbox__img"
+          id="lightbox-img"
+        />
+      </div>
+
+      <button
+        type="button"
+        class="product-lightbox__arrow product-lightbox__next"
+        id="lightbox-next"
+        aria-label="Наступне фото"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      <div class="product-lightbox__counter" id="lightbox-counter">1 / 1</div>
+    </div>
   </body>
 </html>

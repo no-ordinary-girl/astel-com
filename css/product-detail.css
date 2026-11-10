@@ -389,6 +389,71 @@
   color: var(--gray-900);
 }
 
+/* Quantity control inside product detail action row */
+.product-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.product-detail-qty {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 4px 6px;
+  height: 52px; /* Matches standard button height */
+  flex-shrink: 0;
+}
+
+.product-detail-qty__btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.product-detail-qty__btn:hover:not(:disabled) {
+  background-color: var(--gray-100);
+}
+
+.product-detail-qty__btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.product-detail-qty__input {
+  width: 40px;
+  height: 32px;
+  border: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  background: transparent;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.product-detail-qty__input::-webkit-outer-spin-button,
+.product-detail-qty__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* ===========================
    DESKTOP & 4K MEDIA QUERIES
    =========================== */

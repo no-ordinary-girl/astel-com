@@ -442,8 +442,13 @@
               </div>
 
               <div class="product-hero__actions">
-                <button type="button" class="btn-primary" id="add-to-cart-btn">
-                  Замовити / Додати в кошик
+                <div class="product-detail-qty">
+                  <button type="button" class="product-detail-qty__btn" id="qty-dec" disabled aria-label="Зменшити">−</button>
+                  <input type="number" class="product-detail-qty__input" id="qty-input" value="10" min="10" aria-label="Кількість" />
+                  <button type="button" class="product-detail-qty__btn" id="qty-inc" aria-label="Збільшити">+</button>
+                </div>
+                <button type="button" class="btn-primary" id="add-to-cart-btn" style="flex: 1;">
+                  Додати в кошик
                 </button>
               </div>
             </div>
@@ -505,10 +510,40 @@
           });
         }
 
+        // --- Quantity Selector & Add to Cart Logic ---
+        const minQty = CartManager.getMinQty(product.id);
+        const qtyInput = document.getElementById("qty-input");
+        const decBtn = document.getElementById("qty-dec");
+        const incBtn = document.getElementById("qty-inc");
         const addToCartBtn = document.getElementById("add-to-cart-btn");
+
+        qtyInput.value = minQty;
+        qtyInput.min = minQty;
+        decBtn.disabled = true;
+
+        function syncDetailQty(val) {
+          const cleanQty = Math.max(minQty, parseInt(val, 10) || minQty);
+          qtyInput.value = cleanQty;
+          decBtn.disabled = cleanQty <= minQty;
+          return cleanQty;
+        }
+
+        decBtn.addEventListener("click", () => {
+          syncDetailQty(parseInt(qtyInput.value, 10) - 1);
+        });
+
+        incBtn.addEventListener("click", () => {
+          syncDetailQty(parseInt(qtyInput.value, 10) + 1);
+        });
+
+        qtyInput.addEventListener("change", () => {
+          syncDetailQty(qtyInput.value);
+        });
+
         if (addToCartBtn && product) {
           addToCartBtn.addEventListener("click", () => {
-            CartManager.addItem(product);
+            const chosenQty = syncDetailQty(qtyInput.value);
+            CartManager.addItem(product, chosenQty);
           });
         }
       });

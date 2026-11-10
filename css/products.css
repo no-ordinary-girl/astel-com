@@ -176,6 +176,7 @@
 }
 .filter-price-row input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* --- Range Slider CSS --- */
@@ -381,7 +382,8 @@
   color: var(--gray-900);
   text-decoration: none;
   margin-bottom: 24px;
-  padding: 0 8px;
+  /* padding: 0 8px; */
+  padding: 0 2px;
   flex-grow: 1;
 }
 
@@ -394,7 +396,8 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
-  padding: 0 8px;
+  /* padding: 0 8px; */
+  padding: 0 2px;
 }
 
 .product-card__price {
@@ -430,21 +433,28 @@
   color: #6b7280;
 }
 
-/* Floating "- 10 +" Pill on Bottom Center of Image */
+/* Product Card Footer Row (Ціна без ПДВ on left, Quantity Pill on right) */
+.product-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  font-size: 13px;
+  color: #9ca3af;
+  padding-top: 16px;
+  /* margin: 0 8px; */
+  margin: 0 2px;
+  border-top: 1px solid var(--gray-200);
+}
+
 .product-card__qty-control {
-  position: absolute;
-  /* bottom: -14px; */
-  bottom: -7px;
-  left: 50%;
-  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   background-color: #ffffff;
-  border: 1px solid var(--gray-200);
-  border-radius: 10px;
-  padding: 2px 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  z-index: 10;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 3px 6px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); */
 }
 
 .product-card__qty-btn {
@@ -474,7 +484,7 @@
 }
 
 .product-card__qty-input {
-  width: 36px;
+  width: 30px;
   height: 28px;
   border: none;
   text-align: center;
@@ -491,14 +501,6 @@
 .product-card__qty-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-.product-card__footer {
-  font-size: 13px;
-  color: #9ca3af;
-  padding-top: 16px;
-  margin: 0 8px;
-  border-top: 1px solid var(--gray-200);
 }
 
 /* ===========================

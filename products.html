@@ -1297,8 +1297,8 @@
         document.querySelectorAll(".product-card").forEach((card) => {
           const cartBtn = card.querySelector(".product-card__cart");
           const titleLink = card.querySelector(".product-card__title");
-          const imageWrap = card.querySelector(".product-card__image-wrap");
-          if (!cartBtn || !titleLink || !imageWrap) return;
+          const footerBox = card.querySelector(".product-card__footer");
+          if (!cartBtn || !titleLink || !footerBox) return;
 
           const urlParams = new URLSearchParams(
             titleLink.getAttribute("href").split("?")[1],
@@ -1306,25 +1306,19 @@
           const productId = urlParams.get("id");
           const minQty = CartManager.getMinQty(productId);
 
-          // Inject floating "- 10 +" pill at the bottom-center of .product-card__image-wrap
-          const qtyControl = document.createElement("div");
-          qtyControl.className = "product-card__qty-control";
-          qtyControl.innerHTML = `
-            <button type="button" class="product-card__qty-btn" data-action="dec" disabled aria-label="Зменшити">−</button>
-            <input type="number" class="product-card__qty-input" value="${minQty}" min="${minQty}" aria-label="Кількість" />
-            <button type="button" class="product-card__qty-btn" data-action="inc" aria-label="Збільшити">+</button>
+          // Save the text "Ціна без ПДВ" and append the quantity pill into the footer box
+          footerBox.innerHTML = `
+            <span>Ціна без ПДВ</span>
+            <div class="product-card__qty-control">
+              <button type="button" class="product-card__qty-btn" data-action="dec" disabled aria-label="Зменшити">−</button>
+              <input type="number" class="product-card__qty-input" value="${minQty}" min="${minQty}" aria-label="Кількість" />
+              <button type="button" class="product-card__qty-btn" data-action="inc" aria-label="Збільшити">+</button>
+            </div>
           `;
-          imageWrap.appendChild(qtyControl);
 
-          // Prevent clicks inside the pill from triggering the parent <a class="product-card__image-wrap"> link
-          qtyControl.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          });
-
-          const decBtn = qtyControl.querySelector('[data-action="dec"]');
-          const incBtn = qtyControl.querySelector('[data-action="inc"]');
-          const qtyInput = qtyControl.querySelector(".product-card__qty-input");
+          const decBtn = footerBox.querySelector('[data-action="dec"]');
+          const incBtn = footerBox.querySelector('[data-action="inc"]');
+          const qtyInput = footerBox.querySelector(".product-card__qty-input");
 
           function syncCardQty(val) {
             const cleanQty = Math.max(minQty, parseInt(val, 10) || minQty);

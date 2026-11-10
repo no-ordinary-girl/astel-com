@@ -432,8 +432,8 @@ const PRODUCTS_DATA = {
     image: "assets/images/items/СОМ-900-NBI-ext.png",
     images: [
       "assets/images/items/СОМ-900-NBI-ext.png",
-      "assets/images/items/COM-900-NBI-ext(2).png",
-      "assets/images/items/COM-900-NBI-ext(3).png",
+      "assets/images/items/СОМ-900-NBI-ext(2).png",
+      "assets/images/items/СОМ-900-NBI-ext(3).png",
     ],
     description: [
       "NBIoT-модем COM-900-NBI-ext призначений для використання в автоматизованих системах дистанційного зчитування даних у стільниковій мережі NBIoT. Завдяки технології OpenCPU та використанню суперконденсатора має наднизьке енергоспоживання і здатний працювати автономно декілька років без заміни батареї.",

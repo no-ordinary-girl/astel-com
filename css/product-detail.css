@@ -489,6 +489,10 @@
   transition: opacity 0.2s ease;
 }
 
+.product-hero__img:hover {
+  cursor: zoom-in;
+}
+
 .product-hero__thumbs {
   display: flex;
   gap: 12px;

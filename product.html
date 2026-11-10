@@ -466,21 +466,6 @@
           </div>
         `;
 
-        // Fallback for Cyrillic/Latin "COM-" image filenames
-        container.querySelectorAll("img").forEach((img) => {
-          img.addEventListener("error", function () {
-            if (!this.dataset.retried) {
-              this.dataset.retried = "true";
-              const src = this.getAttribute("src");
-              this.src = src.includes("СОМ-")
-                ? src.replace("СОМ-", "COM-")
-                : src.replace("COM-", "СОМ-");
-              const btn = this.closest(".product-hero__thumb-btn");
-              if (btn) btn.setAttribute("data-src", this.src);
-            }
-          });
-        });
-
         // --- Clean Gallery & Lightbox Script ---
         const mainImg = document.getElementById("main-product-img");
         const mainImgWrap = document.getElementById("main-img-wrap");
@@ -566,46 +551,6 @@
             if (e.key === "ArrowRight") setActiveImage(currentImageIndex + 1);
           });
         }
-        // Open Full-Screen Lightbox on main image click
-        if (mainImgWrap && lightbox) {
-          mainImgWrap.addEventListener("click", () => {
-            setActiveImage(currentImageIndex);
-            lightbox.classList.add("is-open");
-            document.body.style.overflow = "hidden";
-          });
-
-          const closeLightbox = () => {
-            lightbox.classList.remove("is-open");
-            document.body.style.overflow = "";
-          };
-
-          lightboxClose.addEventListener("click", closeLightbox);
-          lightboxPrev.addEventListener("click", (e) => {
-            e.stopPropagation();
-            setActiveImage(currentImageIndex - 1);
-          });
-          lightboxNext.addEventListener("click", (e) => {
-            e.stopPropagation();
-            setActiveImage(currentImageIndex + 1);
-          });
-
-          lightbox.addEventListener("click", (e) => {
-            if (
-              e.target === lightbox ||
-              e.target.classList.contains("product-lightbox__content")
-            ) {
-              closeLightbox();
-            }
-          });
-
-          document.addEventListener("keydown", (e) => {
-            if (!lightbox.classList.contains("is-open")) return;
-            if (e.key === "Escape") closeLightbox();
-            if (e.key === "ArrowLeft") setActiveImage(currentImageIndex - 1);
-            if (e.key === "ArrowRight") setActiveImage(currentImageIndex + 1);
-          });
-        }
-
         // Wholesale Toggle Logic
         const wholesaleBtn = document.getElementById("wholesale-btn");
         const wholesaleBox = document.getElementById("wholesale-box");

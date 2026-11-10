@@ -455,46 +455,81 @@
 }
 
 /* ===========================
-   BOTTOM CAROUSEL ARROWS (< >)
+   CLEAN STACKED PRODUCT GALLERY
    =========================== */
-.product-hero__main-img-wrap {
-  position: relative;
+.product-hero__gallery {
+  background-color: #fafafa;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* .product-hero__main-img-wrap {
+  width: 100%;
+  height: 360px;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   cursor: zoom-in;
+  padding: 16px;
+} */
+
+.product-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: opacity 0.2s ease;
 }
 
 .product-hero__thumbs {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 12px;
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
 }
 
-.gallery-arrow {
-  position: static;
-  transform: none;
-  width: 38px;
-  height: 38px;
+.product-hero__thumb-btn {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  padding: 6px;
+  border-radius: 10px;
   background-color: #ffffff;
   border: 1.5px solid var(--gray-200);
-  border-radius: 50%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-900);
   cursor: pointer;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-.gallery-arrow:hover {
-  background-color: var(--gray-900);
-  color: #ffffff;
+.product-hero__thumb-btn:hover {
+  border-color: var(--gray-400);
+}
+
+.product-hero__thumb-btn.is-active {
   border-color: var(--gray-900);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.gallery-arrow:active {
-  transform: scale(0.95);
+.product-hero__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 /* ===========================

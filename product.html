@@ -312,11 +312,6 @@
           galleryImages.length > 1
             ? `
             <div class="product-hero__thumbs" id="product-thumbs">
-              <button type="button" class="gallery-arrow gallery-arrow--prev" id="gallery-prev" aria-label="Попереднє фото">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
               ${galleryImages
                 .map(
                   (imgSrc, idx) => `
@@ -331,14 +326,8 @@
               `,
                 )
                 .join("")}
-              <button type="button" class="gallery-arrow gallery-arrow--next" id="gallery-next" aria-label="Наступне фото">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
             </div>`
             : "";
-
         const renderTableRows = (rows) =>
           rows
             .map(
@@ -410,7 +399,7 @@
           </nav>
 
           <div class="product-hero">
-            <div class="product-hero__gallery">
+           <div class="product-hero__gallery">
               <div class="product-hero__main-img-wrap" id="main-img-wrap">
                 <img
                   src="${galleryImages[0]}"
@@ -492,14 +481,12 @@
           });
         });
 
-        // --- Unified Gallery & Full-Screen Lightbox Navigation ---
+        // --- Clean Gallery & Lightbox Script ---
         const mainImg = document.getElementById("main-product-img");
         const mainImgWrap = document.getElementById("main-img-wrap");
         const thumbButtons = document.querySelectorAll(
           ".product-hero__thumb-btn",
         );
-        const galleryPrev = document.getElementById("gallery-prev");
-        const galleryNext = document.getElementById("gallery-next");
 
         const lightbox = document.getElementById("product-lightbox");
         const lightboxImg = document.getElementById("lightbox-img");
@@ -527,10 +514,6 @@
           });
 
           const hasMultiple = galleryImages.length > 1;
-          if (galleryPrev)
-            galleryPrev.style.display = hasMultiple ? "flex" : "none";
-          if (galleryNext)
-            galleryNext.style.display = hasMultiple ? "flex" : "none";
           if (lightboxPrev)
             lightboxPrev.style.display = hasMultiple ? "flex" : "none";
           if (lightboxNext)
@@ -539,26 +522,50 @@
             lightboxCounter.style.display = hasMultiple ? "block" : "none";
         }
 
-        // Initialize arrows visibility on load
         setActiveImage(0);
 
-        // Thumbnail clicks
         thumbButtons.forEach((btn, idx) => {
           btn.addEventListener("click", () => setActiveImage(idx));
         });
 
-        // Inline gallery < > arrows
-        if (galleryPrev && galleryNext) {
-          galleryPrev.addEventListener("click", (e) => {
+        if (mainImgWrap && lightbox) {
+          mainImgWrap.addEventListener("click", () => {
+            setActiveImage(currentImageIndex);
+            lightbox.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+          });
+
+          const closeLightbox = () => {
+            lightbox.classList.remove("is-open");
+            document.body.style.overflow = "";
+          };
+
+          lightboxClose.addEventListener("click", closeLightbox);
+          lightboxPrev.addEventListener("click", (e) => {
             e.stopPropagation();
             setActiveImage(currentImageIndex - 1);
           });
-          galleryNext.addEventListener("click", (e) => {
+          lightboxNext.addEventListener("click", (e) => {
             e.stopPropagation();
             setActiveImage(currentImageIndex + 1);
           });
-        }
 
+          lightbox.addEventListener("click", (e) => {
+            if (
+              e.target === lightbox ||
+              e.target.classList.contains("product-lightbox__content")
+            ) {
+              closeLightbox();
+            }
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("is-open")) return;
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowLeft") setActiveImage(currentImageIndex - 1);
+            if (e.key === "ArrowRight") setActiveImage(currentImageIndex + 1);
+          });
+        }
         // Open Full-Screen Lightbox on main image click
         if (mainImgWrap && lightbox) {
           mainImgWrap.addEventListener("click", () => {

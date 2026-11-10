@@ -220,6 +220,22 @@
   background-color: var(--gray-100);
 }
 
+.radio-card.is-disabled {
+  opacity: 0.45;
+  background-color: var(--gray-100);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.radio-card.is-disabled:hover {
+  border-color: var(--gray-200);
+}
+
+.radio-card.is-disabled *,
+.radio-card.is-disabled input[type="radio"] {
+  cursor: not-allowed;
+}
+
 .radio-card__top {
   display: flex;
   align-items: center;

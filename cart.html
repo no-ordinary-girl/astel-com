@@ -888,6 +888,66 @@
           });
         });
 
+        // --- Sync Payment Options with Відділення / Поштомат ---
+        const cashRadio = document.querySelector(
+          '#payment-group input[value="Готівка"]',
+        );
+        const cardRadio = document.querySelector(
+          '#payment-group input[value="Оплата банківською картою"]',
+        );
+        const cashCard = cashRadio ? cashRadio.closest(".radio-card") : null;
+
+        function syncPaymentWithDeliveryType(triggeredByTypeChange = false) {
+          const activeCarrierCard = document.querySelector(
+            "#delivery-group .radio-card.is-selected",
+          );
+          if (!activeCarrierCard || !cashRadio || !cardRadio || !cashCard)
+            return;
+
+          const carrierKey = activeCarrierCard.getAttribute("data-carrier");
+          const selectedTypeRadio = activeCarrierCard.querySelector(
+            `input[name="${carrierKey}_type"]:checked`,
+          );
+          const isLocker =
+            selectedTypeRadio && selectedTypeRadio.value === "Поштомат";
+
+          if (isLocker) {
+            // Block "Готівка" and jump to "Оплата банківською картою"
+            cashRadio.disabled = true;
+            cashCard.classList.add("is-disabled");
+            cashCard.classList.remove("is-selected");
+
+            if (cashRadio.checked || triggeredByTypeChange) {
+              cardRadio.checked = true;
+              paymentCards.forEach((c) => c.classList.remove("is-selected"));
+              cardRadio.closest(".radio-card").classList.add("is-selected");
+            }
+          } else {
+            // Re-enable "Готівка" and select it when switching back to "Відділення"
+            cashRadio.disabled = false;
+            cashCard.classList.remove("is-disabled");
+
+            if (triggeredByTypeChange) {
+              cashRadio.checked = true;
+              paymentCards.forEach((c) => c.classList.remove("is-selected"));
+              cashCard.classList.add("is-selected");
+            }
+          }
+        }
+
+        // Trigger when switching between Відділення and Поштомат
+        document
+          .querySelectorAll('#delivery-group input[type="radio"]')
+          .forEach((radio) => {
+            radio.addEventListener("change", (e) => {
+              const isSubType = e.target.name.endsWith("_type");
+              syncPaymentWithDeliveryType(isSubType);
+            });
+          });
+
+        // Run once on initial load
+        syncPaymentWithDeliveryType(false);
+
         // --- Form Validation Helpers ---
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         const phoneRegex =

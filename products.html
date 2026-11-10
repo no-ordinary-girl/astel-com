@@ -1297,29 +1297,73 @@
         document.querySelectorAll(".product-card").forEach((card) => {
           const cartBtn = card.querySelector(".product-card__cart");
           const titleLink = card.querySelector(".product-card__title");
-          if (!cartBtn || !titleLink) return;
+          const bottomBox = card.querySelector(".product-card__bottom");
+          if (!cartBtn || !titleLink || !bottomBox) return;
 
           const urlParams = new URLSearchParams(
             titleLink.getAttribute("href").split("?")[1],
           );
           const productId = urlParams.get("id");
+          const minQty = CartManager.getMinQty(productId);
 
+          // Inject "- +" quantity control & min quantity label right under .product-card__status
+          const qtyRow = document.createElement("div");
+          qtyRow.className = "product-card__qty-row";
+          qtyRow.innerHTML = `
+            <!-- <span class="product-card__min-note">Мін. замовлення: ${minQty} шт.</span> -->
+            <div class="product-card__qty-control">
+              <button type="button" class="product-card__qty-btn" data-action="dec" disabled aria-label="Зменшити">−</button>
+              <input type="number" class="product-card__qty-input" value="${minQty}" min="${minQty}" aria-label="Кількість" />
+              <button type="button" class="product-card__qty-btn" data-action="inc" aria-label="Збільшити">+</button>
+            </div>
+          `;
+          bottomBox.appendChild(qtyRow);
+
+          const decBtn = qtyRow.querySelector('[data-action="dec"]');
+          const incBtn = qtyRow.querySelector('[data-action="inc"]');
+          const qtyInput = qtyRow.querySelector(".product-card__qty-input");
+
+          function syncCardQty(val) {
+            const cleanQty = Math.max(minQty, parseInt(val, 10) || minQty);
+            qtyInput.value = cleanQty;
+            decBtn.disabled = cleanQty <= minQty;
+            return cleanQty;
+          }
+
+          decBtn.addEventListener("click", () => {
+            syncCardQty(parseInt(qtyInput.value, 10) - 1);
+          });
+
+          incBtn.addEventListener("click", () => {
+            syncCardQty(parseInt(qtyInput.value, 10) + 1);
+          });
+
+          qtyInput.addEventListener("change", () => {
+            syncCardQty(qtyInput.value);
+          });
+
+          // Add the selected quantity to cart when clicking the cart icon
           cartBtn.addEventListener("click", (e) => {
             e.preventDefault();
+            const chosenQty = syncCardQty(qtyInput.value);
+
             if (
               typeof PRODUCTS_DATA !== "undefined" &&
               PRODUCTS_DATA[productId]
             ) {
-              CartManager.addItem(PRODUCTS_DATA[productId]);
+              CartManager.addItem(PRODUCTS_DATA[productId], chosenQty);
             } else {
-              CartManager.addItem({
-                id: productId || titleLink.textContent.trim(),
-                title: titleLink.textContent.trim(),
-                price: parseFloat(card.getAttribute("data-price")) || 0,
-                image: card
-                  .querySelector(".product-card__img")
-                  .getAttribute("src"),
-              });
+              CartManager.addItem(
+                {
+                  id: productId || titleLink.textContent.trim(),
+                  title: titleLink.textContent.trim(),
+                  price: parseFloat(card.getAttribute("data-price")) || 0,
+                  image: card
+                    .querySelector(".product-card__img")
+                    .getAttribute("src"),
+                },
+                chosenQty,
+              );
             }
           });
         });

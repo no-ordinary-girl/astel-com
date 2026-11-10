@@ -414,6 +414,76 @@
   color: #dc2626;
 }
 
+/* Quantity Selector inside Product Card */
+.product-card__qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.product-card__min-note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.product-card__qty-control {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--gray-200);
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.product-card__qty-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.product-card__qty-btn:hover:not(:disabled) {
+  background-color: var(--gray-200);
+}
+
+.product-card__qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.product-card__qty-input {
+  width: 38px;
+  height: 28px;
+  border: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+  background: transparent;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.product-card__qty-input::-webkit-outer-spin-button,
+.product-card__qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .product-card__footer {
   font-size: 13px;
   color: #9ca3af;

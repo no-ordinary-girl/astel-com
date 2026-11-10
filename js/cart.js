@@ -86,10 +86,14 @@ const CartManager = {
       });
     }
 
+    const addedCount = existing
+      ? requestedQty || 1
+      : requestedQty
+        ? Math.max(minQty, requestedQty)
+        : minQty;
+
     this.saveCart(cart);
-    this.showToast(
-      `Додано в кошик: ${product.title} (${existing ? "+1" : minQty + " шт."})`,
-    );
+    this.showToast(`Додано в кошик: ${product.title} (+${addedCount} шт.)`);
   },
 
   updateQty(id, newQty) {

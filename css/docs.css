@@ -221,6 +221,14 @@
   color: #ffffff;
 }
 
+.docs-file-link .docs-file-link__icon {
+  transition: filter 0.2s ease;
+}
+
+.docs-file-link:hover .docs-file-link__icon {
+  filter: invert(1);
+}
+
 .docs-file-link__left {
   display: flex;
   align-items: center;

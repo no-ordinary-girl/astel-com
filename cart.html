@@ -976,9 +976,71 @@
         const checkoutForm = document.getElementById("checkout-form");
         const orderSuccess = document.getElementById("order-success");
 
+        // --- Pre-fill Checkout Form if Returning to Edit an Active Order ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const isEditingOrder = urlParams.get("edit") === "true";
+        const savedOrderRaw = localStorage.getItem("astelkom_active_order");
+
+        if (isEditingOrder && savedOrderRaw) {
+          try {
+            const savedOrder = JSON.parse(savedOrderRaw);
+            if (Date.now() < savedOrder.expiresAt) {
+              document.getElementById("firstName").value =
+                savedOrder.customer.firstName || "";
+              document.getElementById("lastName").value =
+                savedOrder.customer.lastName || "";
+              document.getElementById("phone").value =
+                savedOrder.customer.phone || "";
+              document.getElementById("email").value =
+                savedOrder.customer.email || "";
+              document.getElementById("city").value =
+                savedOrder.delivery.city || "";
+
+              // Restore carrier selection
+              const targetCarrierCard = document.querySelector(
+                `#delivery-group .radio-card[data-carrier="${savedOrder.delivery.carrierKey}"]`,
+              );
+              if (targetCarrierCard) {
+                const carrierRadio = targetCarrierCard.querySelector(
+                  'input[name="carrier"]',
+                );
+                carrierRadio.checked = true;
+                carrierRadio.dispatchEvent(new Event("change"));
+
+                // Restore Відділення / Поштомат radio
+                const typeRadio = targetCarrierCard.querySelector(
+                  `input[name="${savedOrder.delivery.carrierKey}_type"][value="${savedOrder.delivery.type}"]`,
+                );
+                if (typeRadio) {
+                  typeRadio.checked = true;
+                  typeRadio.dispatchEvent(new Event("change"));
+                }
+
+                // Restore branch input text
+                const branchInp =
+                  targetCarrierCard.querySelector(".branch-input");
+                if (branchInp)
+                  branchInp.value = savedOrder.delivery.branch || "";
+              }
+
+              // Restore payment method
+              const payRadio = document.querySelector(
+                `#payment-group input[name="payment"][value="${savedOrder.payment}"]`,
+              );
+              if (payRadio && !payRadio.disabled) {
+                payRadio.checked = true;
+                payRadio.dispatchEvent(new Event("change"));
+              }
+
+              document.getElementById("place-order-btn").textContent =
+                "Зберегти зміни у замовленні";
+            }
+          } catch (e) {}
+        }
+
+        // --- Submit Handler: Save Order & Redirect to order-status.html ---
         checkoutForm.addEventListener("submit", (e) => {
           e.preventDefault();
-          orderSuccess.classList.remove("is-visible");
 
           if (CartManager.getCart().length === 0) {
             alert(
@@ -1000,7 +1062,6 @@
           if (!setFieldError("field-lastName", lastName.length < 2))
             isValid = false;
 
-          // Phone is optional per label ("Телефон"), but if entered or empty we validate format
           if (phone.length > 0 && !phoneRegex.test(phone)) {
             setFieldError(
               "field-phone",
@@ -1016,7 +1077,6 @@
             isValid = false;
           if (!setFieldError("field-city", city.length < 2)) isValid = false;
 
-          // Validate active carrier branch / locker field
           const selectedCarrierCard = document.querySelector(
             "#delivery-group .radio-card.is-selected",
           );
@@ -1041,7 +1101,6 @@
             return;
           }
 
-          // Gather selected delivery & payment details
           const carrierName = selectedCarrierCard.querySelector(
             'input[name="carrier"]',
           ).value;
@@ -1051,22 +1110,49 @@
           const paymentMethod = document.querySelector(
             'input[name="payment"]:checked',
           ).value;
-          const totalFormatted = CartManager.formatPrice(
-            CartManager.getSubtotal(),
+
+          // Keep original order ID and timer if editing, otherwise create new 15-min window
+          let existingOrder = null;
+          try {
+            existingOrder = JSON.parse(
+              localStorage.getItem("astelkom_active_order"),
+            );
+          } catch (err) {}
+
+          const EDIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+          const now = Date.now();
+
+          const orderPayload = {
+            orderId:
+              isEditingOrder && existingOrder
+                ? existingOrder.orderId
+                : "AK-" + String(now).slice(-6),
+            createdAt:
+              isEditingOrder && existingOrder ? existingOrder.createdAt : now,
+            expiresAt:
+              isEditingOrder && existingOrder && existingOrder.expiresAt > now
+                ? existingOrder.expiresAt
+                : now + EDIT_WINDOW_MS,
+            locked: false,
+            customer: { firstName, lastName, phone, email },
+            delivery: {
+              city,
+              carrierKey,
+              carrierName,
+              type: deliveryType,
+              branch: branchInput.value.trim(),
+            },
+            payment: paymentMethod,
+            items: CartManager.getCart(),
+            subtotal: CartManager.getSubtotal(),
+          };
+
+          localStorage.setItem(
+            "astelkom_active_order",
+            JSON.stringify(orderPayload),
           );
-
-          orderSuccess.innerHTML = `
-            <strong>Дякуємо за замовлення, ${firstName} ${lastName}!</strong><br />
-            Сума замовлення: <strong>${totalFormatted}</strong><br />
-            Доставка: <strong>${carrierName} (${deliveryType}: ${branchInput.value.trim()}, м. ${city})</strong><br />
-            Спосіб оплати: <strong>${paymentMethod}</strong><br />
-            Підтвердження відправлено на <strong>${email}</strong>. Наш менеджер зв'яжеться з вами найближчим часом.
-          `;
-          orderSuccess.classList.add("is-visible");
-
           CartManager.clearCart();
-          renderCart();
-          checkoutForm.reset();
+          window.location.href = "order-status.html";
         });
 
         // --- Validate "Я постійний клієнт" Login Form ---

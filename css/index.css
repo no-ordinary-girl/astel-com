@@ -503,8 +503,27 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .features-image {
+    max-width: 440px;
+  }
+
+  .features-copy {
+    flex: 0 0 64vw;
+    width: 64vw;
+  }
+
+  .features-copy:first-child {
+    margin-left: 18vw; /* (100vw - 64vw) / 2 = 18vw */
+  }
+
+  .features-copy:last-child {
+    margin-right: 18vw;
+  }
+}
+
 /* --- MODEM FEATURES SCROLL & ABOUT TECH (DESKTOP ONLY) --- */
-@media (min-width: 960px) {
+@media (min-width: 960px) and (orientation: landscape), (min-width: 1025px) {
   .features-scroll {
     height: 400vh;
     max-height: 3200px;

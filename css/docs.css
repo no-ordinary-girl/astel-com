@@ -103,6 +103,7 @@
   /* object-fit: contain; */
   object-fit: cover;
   flex-shrink: 0;
+  display: none;
 }
 
 .docs-item__meta {
@@ -287,6 +288,12 @@
 /* .docs-item__product-link:hover .hero__link-icon {
   transform: translateX(6px);
 } */
+
+@media (min-width: 380px) {
+  .docs-item__thumb {
+    display: flex;
+  }
+}
 
 /* ===========================
    DESKTOP & 4K MEDIA QUERIES

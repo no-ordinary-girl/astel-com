@@ -312,26 +312,23 @@
             ? product.images
             : [product.image];
 
-        const thumbsHtml =
-          galleryImages.length > 1
-            ? `
-            <div class="product-hero__thumbs" id="product-thumbs">
-              ${galleryImages
-                .map(
-                  (imgSrc, idx) => `
-                <button
-                  type="button"
-                  class="product-hero__thumb-btn ${idx === 0 ? "is-active" : ""}"
-                  data-src="${imgSrc}"
-                  aria-label="Фото ${idx + 1}"
-                >
-                  <img src="${imgSrc}" alt="${product.title} - фото ${idx + 1}" class="product-hero__thumb-img" />
-                </button>
-              `,
-                )
-                .join("")}
-            </div>`
-            : "";
+        const thumbsHtml = `
+          <div class="product-hero__thumbs" id="product-thumbs">
+            ${galleryImages
+              .map(
+                (imgSrc, idx) => `
+              <button
+                type="button"
+                class="product-hero__thumb-btn ${idx === 0 ? "is-active" : ""}"
+                data-src="${imgSrc}"
+                aria-label="Фото ${idx + 1}"
+              >
+                <img src="${imgSrc}" alt="${product.title} - фото ${idx + 1}" class="product-hero__thumb-img" />
+              </button>
+            `,
+              )
+              .join("")}
+          </div>`;
         const renderTableRows = (rows) =>
           rows
             .map(

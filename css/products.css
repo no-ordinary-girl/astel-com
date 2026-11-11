@@ -402,6 +402,7 @@
 
 .product-card__title:hover {
   color: #4b5563;
+  text-decoration: underline;
 }
 
 .product-card__bottom {

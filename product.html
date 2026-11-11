@@ -560,7 +560,10 @@
         const wholesaleBox = document.getElementById("wholesale-box");
         if (wholesaleBtn && wholesaleBox) {
           wholesaleBtn.addEventListener("click", () => {
-            wholesaleBox.classList.toggle("is-open");
+            const isOpen = wholesaleBox.classList.toggle("is-open");
+            wholesaleBtn.textContent = isOpen
+              ? "Приховати оптові ціни"
+              : "Показати оптові ціни";
           });
         }
 

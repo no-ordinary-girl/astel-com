@@ -214,7 +214,7 @@
   font-weight: 500;
 }
 
-/* Wholesale Accordion */
+/* Wholesale Accordion with Smooth Transition */
 .wholesale-toggle {
   display: inline-flex;
   align-items: center;
@@ -225,20 +225,39 @@
   color: var(--gray-900);
   text-decoration: underline;
   width: fit-content;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.wholesale-toggle:hover {
+  opacity: 0.7;
 }
 
 .wholesale-box {
-  display: none;
   background-color: var(--gray-100);
   border-radius: 10px;
-  padding: 14px 16px;
   font-size: 14px;
   color: #374151;
   line-height: 1.5;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 16px;
+  margin-top: -16px; /* Cancels out parent's 16px flex gap while closed */
+  pointer-events: none;
+  transition:
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s ease,
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .wholesale-box.is-open {
-  display: block;
+  max-height: 160px;
+  opacity: 1;
+  padding: 14px 16px;
+  margin-top: 0;
+  pointer-events: auto;
 }
 
 /* Action Buttons */
@@ -686,6 +705,7 @@
 /* ===========================
    DESKTOP & 4K MEDIA QUERIES
    =========================== */
+/* Inside @media (min-width: 960px) in css/product-detail.css */
 @media (min-width: 960px) {
   .product-page {
     padding: 56px 0 120px 0;
@@ -693,22 +713,25 @@
 
   .product-hero {
     flex-direction: row;
-    align-items: stretch; /* Forces both columns to be the exact same height */
+    /* align-items: flex-start; */ /* Prevents gallery from stretching when wholesale box opens */
+    align-items: center;
     gap: 48px;
   }
 
   .product-hero__gallery {
     flex: 0 0 44%;
     padding: 28px;
-    height: 480px; /* Locked height */
+    height: 480px; /* Keeps the image gallery card locked at 480px */
   }
 
   .product-hero__info {
     flex: 1;
-    height: 480px; /* MUST match the gallery height so space-between pins to the bottom */
+    min-height: 480px; /* Matches gallery height when closed, but expands downward when opened */
+    height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* space-between Pins price-box to the bottom */
+    justify-content: space-between; /* Pins badges to top and price-box to bottom */
+    gap: 24px;
   }
 
   .product-hero__actions {

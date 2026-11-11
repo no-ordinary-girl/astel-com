@@ -420,6 +420,11 @@
   color: var(--gray-900);
 }
 
+.product-card__item {
+  font-size: 14px;
+  font-family: var(--font-mono);
+}
+
 .product-card__status {
   font-size: 13px;
   font-weight: 500;

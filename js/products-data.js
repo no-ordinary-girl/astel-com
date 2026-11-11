@@ -10,7 +10,7 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/СОМ-900-485.png",
+    image: "assets/images/items/mini_СОМ-900-485.png",
     images: [
       "assets/images/items/СОМ-900-485.png",
       "assets/images/items/СОМ-900-485(2).png",
@@ -109,7 +109,7 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/СОМ-900-ITR-4G.png",
+    image: "assets/images/items/mini_СОМ-900-ITR-4G.png",
     images: [
       "assets/images/items/СОМ-900-ITR-4G.png",
       "assets/images/items/СОМ-900-ITR-4G(2).png",
@@ -200,7 +200,7 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/СОМ-900-PSG-4G.png",
+    image: "assets/images/items/mini_СОМ-900-PSG-4G.png",
     images: [
       "assets/images/items/СОМ-900-PSG-4G.png",
       "assets/images/items/СОМ-900-PSG-4G(2).png",
@@ -292,7 +292,7 @@ const PRODUCTS_DATA = {
     stockText: "Немає в наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/СОМ-900-ITR-rev-B.png",
+    image: "assets/images/items/mini_СОМ-900-ITR-rev-B.png",
     images: [
       "assets/images/items/СОМ-900-ITR-rev-B.png",
       "assets/images/items/СОМ-900-ITR-rev-B(2).png",
@@ -351,7 +351,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/СОМ-900-NBI-int.png",
+    image: "assets/images/items/mini_СОМ-900-NBI-int.png",
+    images: ["assets/images/items/СОМ-900-NBI-int.png"],
     description: [
       "NBIoT-модем COM-900-NBI-int призначений для використання в автоматизованих системах дистанційного зчитування даних із використанням стільникової мережі NBIoT. Завдяки оригінальному дизайну (технологія OpenCPU, відсутність зовнішнього процесора, використання суперконденсатора) модем має екстремально низьке споживання і здатний працювати автономно до декількох років без заміни батареї.",
       "Виробляється в безкорпусному виконанні («int» — internal) для встановлення всередині теплових лічильників як вбудований модуль зв'язку. Адаптований для роботи з лічильниками тепла Multical 66, Multical 601/602, Multical 603, SKS-3, Ultraheat T550/UH50, Ultraheat TB-07-K7. У лічильники Multical 66 та 601/602 встановлюється як штатний модуль «низа» разом із батареєю розміру 14500 без додаткових перетворювачів інтерфейсу.",
@@ -429,7 +430,7 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/СОМ-900-NBI-ext.png",
+    image: "assets/images/items/mini_СОМ-900-NBI-ext.png",
     images: [
       "assets/images/items/СОМ-900-NBI-ext.png",
       "assets/images/items/СОМ-900-NBI-ext(2).png",
@@ -514,7 +515,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/GSM-antenna-3dBi-SMA.png",
+    image: "assets/images/items/mini_GSM-antenna-3dBi-SMA.png",
+    images: ["assets/images/items/GSM-antenna-3dBi-SMA.png"],
     description: [
       "Зовнішня герметична всеспрямована антена, яка працює на частотах 900/1800 МГц (у діапазонах 2G/4G).",
       "Характеризується високою механічною міцністю та зручним кріпленням за допомогою магнітної основи. Коефіцієнт підсилення — до 2–3 dBi, ступінь захисту — не гірший за IP54. Довжина кабелю становить 3 метри, прямий роз'єм SMA.",
@@ -546,7 +548,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/GSM-antenna-3.5dBi-SMA.png",
+    image: "assets/images/items/mini_GSM-antenna-3.5dBi-SMA.png",
+    images: ["assets/images/items/GSM-antenna-3.5dBi-SMA.png"],
     description: [
       "Зовнішня герметична всеспрямована антена, яка працює на частотах 900/1800 МГц (у діапазонах 2G/4G).",
       "Характеризується високою механічною міцністю, зручним кріпленням за допомогою магнітної основи та практичним кутовим роз'ємом SMA. Коефіцієнт підсилення — до 3.5–5 dBi, ступінь захисту — не гірший за IP54. Довжина кабелю — 3 метри.",
@@ -577,7 +580,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/usb-pos-terminal.png",
+    image: "assets/images/items/mini_usb-pos-terminal.png",
+    images: ["assets/images/items/usb-pos-terminal.png"],
     description: [
       "Спеціалізований інтерфейсний кабель для під'єднання банківського PoS-терміналу Ingenico iCT220 через інтерфейс USB. Довжина кабелю становить 3 метри.",
     ],
@@ -604,7 +608,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/battery-PoS-Ingenico-Move-2500.png",
+    image: "assets/images/items/mini_battery-PoS-Ingenico-Move-2500.png",
+    images: ["assets/images/items/battery-PoS-Ingenico-Move-2500.png"],
     description: [
       "Надійна акумуляторна батарея для мобільних банківських PoS-терміналів серії Ingenico iWL220, iWL250, iWL220 GPRS, iWL250 Bluetooth та iWL250 GPRS.",
     ],
@@ -635,7 +640,8 @@ const PRODUCTS_DATA = {
     stockText: "В наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/battery-PoS-Ingenico-Move-2500.png",
+    image: "assets/images/items/mini_battery-PoS-Ingenico-Move-2500.png",
+    images: ["assets/images/items/battery-PoS-Ingenico-Move-2500.png"],
     description: [
       "Акумуляторна батарея для мобільного банківського PoS-терміналу Ingenico Move 2500. Забезпечує тривалу автономну роботу терміналу.",
     ],
@@ -663,7 +669,8 @@ const PRODUCTS_DATA = {
     stockText: "Немає в наявності",
     saleTerms: "Тільки оптом",
     minOrder: "Мінімальне замовлення — 10 шт.",
-    image: "assets/images/items/cable-PoS-Ingenico-iCT220.png",
+    image: "assets/images/items/mini_cable-PoS-Ingenico-iCT220.png",
+    images: ["assets/images/items/cable-PoS-Ingenico-iCT220.png"],
     description: [
       "Кабель для підключення зовнішнього пінпада типу iPP2xx до PoS-терміналу Ingenico iCT220 по інтерфейсу USB.",
       "Кабель м'який, еластичний, міцний і стійкий до інтенсивної експлуатації. Провідники виконані з чистої міді перерізом 22AWG. На терміналі вставляється в роз'єм USB HOST, на пінпаді — у гніздо типу RJ45.",
@@ -694,7 +701,8 @@ const PRODUCTS_DATA = {
     stockText: "Немає в наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/cable-2,1х5,5.png",
+    image: "assets/images/items/mini_cable-2,1х5,5.png",
+    images: ["assets/images/items/cable-2,1х5,5.png"],
     description: [
       "Високоякісний кабель низьковольтного живлення (DC-кабель) з гнучким введенням і кутовим роз'ємом 2,1×5,5 мм.",
       "Провід коаксіального типу, дуже міцний та зносостійкий, розрахований на струм до 4 А, кінці дроту облуджені. Довжина кабелю — 1,5 м, довжина контактної частини — 10 мм. Широко використовується в джерелах живлення для світлодіодних (LED) освітлювальних пристроїв, систем охорони та телекомунікаційного обладнання.",
@@ -724,7 +732,8 @@ const PRODUCTS_DATA = {
     stockText: "Немає в наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/cable-1,4х3,4.png",
+    image: "assets/images/items/mini_cable-1,4х3,4.png",
+    images: ["assets/images/items/cable-1,4х3,4.png"],
     description: [
       "Високоякісний кабель низьковольтного живлення (DC-кабель) з гнучким введенням і кутовим роз'ємом 1,4×3,4 мм.",
       "Провід планарного типу з чистої міді (переріз 18AWG), дуже міцний, розрахований на струм до 4 А, кінці дроту облуджені. Довжина кабелю — 1,8 м, довжина контактної частини — 9 мм. Використовується в джерелах живлення для автомобільних пристроїв (відеореєстратори, радар-детектори) та зв'язкового обладнання.",
@@ -758,7 +767,8 @@ const PRODUCTS_DATA = {
     stockText: "Немає в наявності",
     saleTerms: "Оптом і в роздріб",
     minOrder: "",
-    image: "assets/images/items/cable-2,1х5,5-with-filter.png",
+    image: "assets/images/items/mini_cable-2,1х5,5-with-filter.png",
+    images: ["assets/images/items/cable-2,1х5,5-with-filter.png"],
     description: [
       "Високоякісний кабель низьковольтного живлення (DC-кабель) з феритовим фільтром для захисту від високочастотних завад, гнучким введенням і прямим роз'ємом 2,1×5,5 мм.",
       "Провід коаксіального типу, міцний і зносостійкий, розрахований на струм до 3 А, кінці дроту облуджені. Довжина кабелю — 1,0 м, довжина контактної частини — 9 мм. Широко застосовується в джерелах живлення для LED-освітлення, систем охорони та модемів.",

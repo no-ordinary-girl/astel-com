@@ -334,9 +334,9 @@
 
 .cart-item {
   display: grid;
-  grid-template-columns: 64px 1fr auto;
-  gap: 14px;
-  align-items: center;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px 14px;
+  align-items: start;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--gray-200);
 }
@@ -351,6 +351,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .cart-item__img {
@@ -363,7 +364,8 @@
 .cart-item__details {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .cart-item__title {
@@ -371,6 +373,7 @@
   font-weight: 600;
   line-height: 1.35;
   color: var(--gray-900);
+  overflow-wrap: break-word;
 }
 
 .cart-item__title:hover {
@@ -383,11 +386,15 @@
   color: #6b7280;
 }
 
+/* Mobile Base: Full-width row underneath image & title */
 .cart-item__controls {
+  grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  padding-top: 8px;
 }
 
 .qty-control {
@@ -440,6 +447,8 @@
   font-size: 15px;
   font-weight: 700;
   color: var(--gray-900);
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
 }
 
 .cart-item__remove {
@@ -589,6 +598,54 @@
   padding: 12px 14px;
   font-size: 13px;
   color: #6b7280;
+}
+
+/* Mobile & Tablet Adjustments */
+@media (max-width: 480px) {
+  .checkout-panel,
+  .order-summary {
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .checkout-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .forgot-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .summary-row {
+    font-size: 14px;
+    gap: 8px;
+  }
+}
+
+@media (min-width: 520px) {
+  .cart-item {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .cart-item__controls {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .cart-item__sum {
+    grid-column: 3; /* Places the item in the 3rd column (right side) */
+    align-self: start; /* Aligns to the top */
+    justify-self: end;
+    grid-row: 1;
+    margin-top: 12px;
+  }
 }
 
 /* ===========================

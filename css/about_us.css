@@ -7,10 +7,7 @@
   display: flex;
   align-items: center;
   /* Minimum height to ensure it looks balanced even if content is short */
-  /* min-height: calc(100vh - 100px); */
-  height: calc(100vh - 100px);
-  /* Stretches to fill the screen on normal devices... */
-  max-height: 1080px;
+  min-height: calc(100vh - 100px);
 }
 
 .about-hero__inner {
@@ -36,7 +33,7 @@
   line-height: 1.1;
   text-transform: uppercase;
   color: var(--gray-900);
-  margin-top: 120px;
+  /* margin-top: 120px; */
 }
 
 .about-hero__text {
@@ -74,7 +71,7 @@
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 48px;
-  margin-top: 120px;
+  /* margin-top: 120px; */
   color: var(--gray-900);
 }
 
@@ -83,7 +80,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  max-width: 900px;
+  max-width: 700px;
   margin: 0 auto;
   z-index: 1;
 }
@@ -235,12 +232,14 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 40px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .why__item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
 }
 
@@ -273,6 +272,9 @@
    =========================== */
 @media (min-width: 960px) {
   .about-hero {
+    height: calc(100vh - 100px);
+    /* Stretches to fill the screen on normal devices... */
+    max-height: 1080px;
     padding: 100px 0;
   }
 
@@ -386,6 +388,8 @@
   .why__grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 32px;
+    max-width: unset;
+    margin: 0;
   }
 
   .why__item {
@@ -652,5 +656,31 @@
 
   .why__text {
     font-size: 26px;
+  }
+}
+
+/* Stack vertically on portrait tablets (up to 1024px wide in portrait mode) */
+@media (min-width: 960px) and (max-width: 1024px) and (orientation: portrait) {
+  .about-hero__inner {
+    flex-direction: column;
+  }
+}
+
+@media (aspect-ratio: 16/9) {
+  .about-hero {
+    padding: 180px 0;
+    min-height: unset;
+  }
+}
+
+@media (width: 2560px) and (height: 1440px) {
+  .about-hero {
+    min-height: calc(100vh - 100px);
+  }
+}
+
+@media (min-width: 3840px) {
+  .about-hero {
+    min-height: unset;
   }
 }

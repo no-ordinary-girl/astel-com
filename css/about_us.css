@@ -284,6 +284,8 @@
   .about-hero__content {
     align-items: center;
     text-align: center;
+    /* align-items: start;
+    text-align: start; */
     max-width: 640px;
   }
 
@@ -560,6 +562,8 @@
   .about-hero__content {
     align-items: center;
     text-align: center;
+    /* align-items: start;
+    text-align: start; */
     max-width: 680px;
   }
 

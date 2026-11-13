@@ -283,7 +283,8 @@ body {
 .header__utils {
   display: flex;
   align-items: center;
-  gap: 24px;
+  /* gap: 24px; */
+  gap: 6px;
   flex-direction: column;
 }
 
@@ -439,6 +440,62 @@ body {
   color: var(--gray-900);
   font-weight: 700;
   background-color: var(--gray-200);
+}
+
+/* ===========================
+   HEADER ACCOUNT ICON & STATUS DOT
+   =========================== */
+.header__account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.header__account:hover {
+  transform: scale(1.1);
+}
+
+.header__account:active {
+  transform: scale(0.95);
+}
+
+.account-icon-black {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Green status dot when user is logged in */
+.header__account.is-logged-in::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #059669;
+  border: 1.5px solid var(--gray-100, #ffffff);
+}
+
+.header__account--desktop {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .header__account--mobile {
+    display: none;
+  }
+
+  .header__account--desktop {
+    display: inline-flex;
+  }
 }
 
 /* ===========================

@@ -1,0 +1,1022 @@
+/* ===========================
+   AUTH & ACCOUNT PAGES (Mobile Base)
+   =========================== */
+.auth-page,
+.account-page {
+  padding: 28px 0 80px 0;
+  background-color: var(--gray-100);
+  min-height: calc(100vh - 200px);
+}
+
+/* --- LOGIN / REGISTER PAGE --- */
+.auth-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-card {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 24px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.auth-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.auth-card__badge {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.auth-card__title {
+  font-size: clamp(24px, 6vw, 32px);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.auth-card__subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Auth Mode Switcher Tabs (Вхід / Реєстрація) */
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background-color: var(--gray-100);
+  padding: 5px;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+}
+
+.auth-tab {
+  padding: 11px 12px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-tab.is-active {
+  background-color: var(--gray-900);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.auth-panel {
+  display: none;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-panel.is-active {
+  display: flex;
+}
+
+/* Social / Modern OAuth Buttons (Google, Apple / Passkey) */
+.oauth-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.oauth-btn {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-base);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.oauth-btn:hover {
+  border-color: var(--gray-900);
+  background-color: var(--gray-100);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.oauth-btn:active {
+  transform: scale(0.99);
+}
+
+.oauth-btn__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--gray-200);
+}
+
+/* Shared Form Elements */
+.acct-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.acct-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acct-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+  display: inline-block;
+}
+
+.acct-label .req {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.acct-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.acct-input {
+  width: 100%;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  font-family: var(--font-base);
+  font-size: 15px;
+  color: var(--gray-900);
+  transition: border-color 0.2s ease;
+}
+
+.acct-input--with-toggle {
+  padding-right: 44px;
+}
+
+.acct-input:focus {
+  outline: none;
+  border-color: var(--gray-900);
+}
+
+.acct-pass-toggle {
+  position: absolute;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.acct-pass-toggle:hover {
+  color: var(--gray-900);
+  background-color: var(--gray-100);
+}
+
+.acct-field.has-error .acct-input {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.acct-error {
+  display: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #dc2626;
+  line-height: 1.35;
+}
+
+.acct-field.has-error .acct-error {
+  display: block;
+}
+
+.auth-row-between {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.auth-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.auth-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gray-900);
+}
+
+.auth-link-btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-900);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.auth-link-btn:hover {
+  opacity: 0.7;
+}
+
+/* Primary & Secondary Action Buttons */
+.acct-btn-primary {
+  width: 100%;
+  min-height: 50px;
+  padding: 14px 22px;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+  text-decoration: none;
+}
+
+.acct-btn-primary:hover {
+  background-color: #374151;
+}
+
+.acct-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.acct-btn-outline {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 18px;
+  background-color: #ffffff;
+  color: var(--gray-900);
+  border: 1.5px solid var(--gray-900);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.acct-btn-outline:hover {
+  background-color: var(--gray-900);
+  color: #ffffff;
+}
+
+.acct-feedback {
+  display: none;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: rgba(5, 150, 105, 0.12);
+  border: 1px solid #059669;
+  color: #065f46;
+}
+
+.acct-feedback.is-visible {
+  display: block;
+}
+
+/* ===========================
+   MY ACCOUNT DASHBOARD (account.html)
+   =========================== */
+.account-top-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.account-welcome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.account-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background-color: var(--gray-900);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-welcome__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.account-welcome__badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #059669;
+  letter-spacing: 0.04em;
+}
+
+.account-welcome__title {
+  font-size: clamp(22px, 5.5vw, 34px);
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.account-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Repeat Last Order Hero Banner */
+.repeat-order-banner {
+  background-color: var(--gray-900);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.repeat-order-banner__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.repeat-order-banner__tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.repeat-order-banner__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.repeat-order-banner__desc {
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.45;
+}
+
+.repeat-order-banner__btn {
+  background-color: #ffffff;
+  color: var(--gray-900);
+  border: none;
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease;
+}
+
+.repeat-order-banner__btn:hover {
+  background-color: var(--gray-200);
+}
+
+.repeat-order-banner__btn:active {
+  transform: scale(0.98);
+}
+
+/* Account Layout (Sidebar Nav + Main Content) */
+.account-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.account-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Horizontal scrollable pills on mobile, vertical menu on desktop */
+.account-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.account-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.account-nav__btn {
+  flex-shrink: 0;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background-color: #fafafa;
+  border: 1.5px solid var(--gray-200);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.account-nav__btn:hover {
+  border-color: var(--gray-400);
+  color: var(--gray-900);
+}
+
+.account-nav__btn.is-active {
+  background-color: var(--gray-900);
+  border-color: var(--gray-900);
+  color: #ffffff;
+}
+
+.account-nav__btn--logout {
+  color: #dc2626;
+}
+
+.account-nav__btn--logout:hover {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+/* Personal Manager B2B Support Card */
+.manager-card {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.manager-card__tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.manager-card__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.manager-card__links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.manager-card__links a {
+  color: var(--gray-900);
+  text-decoration: underline;
+}
+
+/* Account Main Content Sections */
+.account-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-section {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-section.is-active {
+  display: flex;
+}
+
+.account-card {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 22px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--gray-900);
+}
+
+.account-card__title {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-900);
+}
+
+/* Order History Cards */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-history-card {
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.order-history-card:hover {
+  border-color: var(--gray-400);
+}
+
+.order-history-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.order-history-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-history-card__id {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.order-history-card__date {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.order-status-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.order-status-pill--completed {
+  background-color: rgba(5, 150, 105, 0.12);
+  color: #059669;
+}
+
+.order-status-pill--processing,
+.order-status-pill--active {
+  background-color: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+}
+
+.order-history-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-history-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.order-history-item__img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  background-color: #fafafa;
+  padding: 4px;
+  object-fit: contain;
+}
+
+.order-history-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.order-history-item__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.order-history-item__title:hover {
+  text-decoration: underline;
+}
+
+.order-history-item__qty {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.order-history-item__sum {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.order-history-card__delivery {
+  background-color: var(--gray-100);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-history-card__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--gray-200);
+}
+
+.order-history-card__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.order-history-card__total strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.order-history-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Saved Address Preview Badge */
+.saved-address-banner {
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-900);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.saved-address-banner__tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #059669;
+}
+
+.saved-address-banner__val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.4;
+}
+
+/* Carrier Radio Cards inside Address Tab */
+.carrier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.carrier-option {
+  border: 1.5px solid var(--gray-200);
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carrier-option input[type="radio"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--gray-900);
+}
+
+.carrier-option.is-selected {
+  border-color: var(--gray-900);
+  background-color: var(--gray-100);
+}
+
+/* ===========================
+   TABLET MEDIA QUERIES (640px+)
+   =========================== */
+@media (min-width: 640px) {
+  .auth-page,
+  .account-page {
+    padding: 44px 0 100px 0;
+  }
+
+  .auth-card {
+    padding: 36px 32px;
+  }
+
+  .acct-form-grid--2col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .carrier-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .account-top-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .account-quick-actions {
+    flex-direction: row;
+    width: auto;
+  }
+
+  .repeat-order-banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px;
+  }
+
+  .repeat-order-banner__btn {
+    flex-shrink: 0;
+    width: auto;
+  }
+
+  .account-card {
+    padding: 28px 24px;
+  }
+
+  .order-history-item {
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 14px;
+  }
+
+  .order-history-item__sum {
+    grid-column: auto;
+    font-size: 14px;
+  }
+
+  .order-history-card__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .order-history-card__total {
+    gap: 12px;
+  }
+
+  .order-history-card__actions {
+    flex-direction: row;
+  }
+
+  .order-history-card__actions .acct-btn-primary,
+  .order-history-card__actions .acct-btn-outline {
+    width: auto;
+    min-height: 42px;
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+}
+
+/* ===========================
+   DESKTOP MEDIA QUERIES (960px+)
+   =========================== */
+@media (min-width: 960px) {
+  .auth-page,
+  .account-page {
+    padding: 56px 0 120px 0;
+  }
+
+  .account-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 36px;
+  }
+
+  .account-sidebar {
+    flex: 0 0 280px;
+    position: sticky;
+    top: 96px;
+    gap: 20px;
+  }
+
+  .account-nav {
+    flex-direction: column;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+
+  .account-nav__btn {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .account-card {
+    padding: 36px 32px;
+  }
+
+  .account-card__title {
+    font-size: 18px;
+  }
+
+  .order-history-card {
+    padding: 22px 24px;
+  }
+}
+
+/* ===========================
+   4K / ULTRAWIDE (1600px+)
+   =========================== */
+@media (min-width: 1600px) {
+  .auth-wrapper {
+    max-width: 580px;
+  }
+
+  .account-sidebar {
+    flex: 0 0 320px;
+  }
+
+  .account-layout {
+    gap: 48px;
+  }
+}

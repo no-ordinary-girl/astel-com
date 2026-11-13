@@ -59,6 +59,18 @@
                 alt="Кошик"
               />
             </a>
+            <a
+              href="login.html"
+              class="header__account header__account--mobile"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
             <button
               class="header__toggle"
               id="menu-toggle"
@@ -99,8 +111,46 @@
           </nav>
 
           <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
+            </div>
             <a
-              href="cart.html"
+              href="login.html"
+              class="header__account header__account--desktop"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
+            <a
+              href="#"
               class="header__cart header__cart--desktop"
               aria-label="Кошик"
             >
@@ -183,6 +233,7 @@
 
     <script src="js/products-data.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("order-status-container");

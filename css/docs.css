@@ -32,6 +32,7 @@
   text-transform: uppercase;
   color: var(--gray-900);
   margin-bottom: 12px;
+  text-align: center;
 }
 
 .docs-header__subtitle {
@@ -203,9 +204,10 @@
 /* Individual PDF / File Link */
 .docs-file-link {
   display: flex;
-  align-items: center;
+  flex-direction: column-reverse;
+  align-items: start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px;
   padding: 16px 18px;
   background-color: var(--gray-100);
   border: 1px solid var(--gray-200);
@@ -225,6 +227,7 @@
 
 .docs-file-link .docs-file-link__icon {
   transition: filter 0.2s ease;
+  display: none;
 }
 
 .docs-file-link:hover .docs-file-link__icon {
@@ -292,6 +295,20 @@
 @media (min-width: 380px) {
   .docs-item__thumb {
     display: flex;
+  }
+  .docs-file-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .docs-file-link .docs-file-link__icon {
+    display: flex;
+  }
+
+  .docs-header__title {
+    text-align: start;
   }
 }
 

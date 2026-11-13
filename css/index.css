@@ -185,8 +185,8 @@
   scroll-snap-type: x mandatory;
   width: 100%;
   gap: 16px;
-  /* ПРИБИРАЄМО padding з боків, центрування робитимуть margin у карток */
-  padding: 16px 0 40px 0;
+  /* 12vw з боків дозволяє першому і останньому клонам ставати рівно по центру */
+  padding: 16px 12vw 40px 12vw;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -508,17 +508,14 @@
     max-width: 440px;
   }
 
+  .features-carousel {
+    padding-left: 18vw;
+    padding-right: 18vw;
+  }
+
   .features-copy {
     flex: 0 0 64vw;
     width: 64vw;
-  }
-
-  .features-copy:first-child {
-    margin-left: 18vw; /* (100vw - 64vw) / 2 = 18vw */
-  }
-
-  .features-copy:last-child {
-    margin-right: 18vw;
   }
 }
 

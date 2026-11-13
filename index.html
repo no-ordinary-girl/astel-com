@@ -749,6 +749,12 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Matches css/index.css: true ONLY on desktop/landscape (960px+ landscape or 1025px+), false on mobile & iPad Pro portrait
+        const desktopQuery = window.matchMedia(
+          "(min-width: 960px) and (orientation: landscape), (min-width: 1025px)",
+        );
+        const isDesktopMode = () => desktopQuery.matches;
+
         // --- Hamburger Menu ---
         const toggleBtn = document.getElementById("menu-toggle");
         const collapseMenu = document.getElementById("menu-collapse");
@@ -764,10 +770,8 @@
           const copies = document.querySelectorAll(".features-copy");
 
           function updateScrollytelling() {
-            const isDesktop = window.innerWidth >= 960;
-
-            // Disable dynamic scroll classes completely on mobile
-            if (!isDesktop) {
+            // Disable dynamic scroll classes completely in carousel mode (mobile & portrait tablet)
+            if (!isDesktopMode()) {
               copies.forEach((c) => c.classList.remove("is-active"));
               return;
             }
@@ -802,7 +806,7 @@
           window.addEventListener("resize", updateScrollytelling, {
             passive: true,
           });
-          updateScrollytelling(); // Run once on load
+          updateScrollytelling();
         }
 
         // --- Close Mobile Menu on Link Click & Smooth Scroll ---
@@ -811,7 +815,6 @@
         );
         headerLinks.forEach((link) => {
           link.addEventListener("click", (e) => {
-            // 1. Закриваємо меню
             if (
               collapseMenu &&
               collapseMenu.classList.contains("header__collapse--open")
@@ -819,17 +822,12 @@
               collapseMenu.classList.remove("header__collapse--open");
             }
 
-            // 2. Якщо клік по контактах, плавно скролимо вниз
-            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
             const targetId = link.getAttribute("href");
             if (targetId === "#footer") {
-              e.preventDefault(); // Prevent instant jump
-
-              link.blur(); // ДОДАЙТЕ ЦЕЙ РЯДОК: знімає "залипання" підкреслення
-
+              e.preventDefault();
+              link.blur();
               const footerElement = document.getElementById("footer");
               if (footerElement) {
-                // Add a tiny delay so the menu closing animation can start before scrolling
                 setTimeout(() => {
                   footerElement.scrollIntoView({ behavior: "smooth" });
                 }, 100);
@@ -837,95 +835,157 @@
             }
           });
         });
+
+        // --- Header "MORE" Dropdown Logic (Mobile) ---
+        const moreToggle = document.getElementById("more-toggle");
+        const moreDropdown = document.getElementById("header-more-dropdown");
+
+        if (moreToggle && moreDropdown) {
+          moreToggle.addEventListener("click", (e) => {
+            if (window.innerWidth < 960) {
+              e.preventDefault();
+              moreDropdown.classList.toggle("is-open");
+            }
+          });
+        }
+
+        // --- Mobile & Portrait Tablet Infinite Carousel Logic ---
+        const carousel = document.getElementById("features-carousel");
+        const prevBtn = document.getElementById("carousel-prev");
+        const nextBtn = document.getElementById("carousel-next");
+
+        if (carousel && prevBtn && nextBtn) {
+          const originalCards = Array.from(
+            carousel.querySelectorAll(".features-copy"),
+          );
+          const count = originalCards.length; // 8 карток
+
+          // 1. Клонуємо повний набір (8 карток) на початок і повний набір (8 карток) у кінець.
+          // Це гарантує, що навіть при дуже швидкому свайпі справа і зліва ЗАВЖДИ є сусідня картка.
+          const prependFragment = document.createDocumentFragment();
+          const appendFragment = document.createDocumentFragment();
+
+          originalCards.forEach((card) => {
+            const cloneBefore = card.cloneNode(true);
+            const cloneAfter = card.cloneNode(true);
+            cloneBefore.classList.add("is-clone");
+            cloneAfter.classList.add("is-clone");
+            prependFragment.appendChild(cloneBefore);
+            appendFragment.appendChild(cloneAfter);
+          });
+
+          carousel.insertBefore(prependFragment, originalCards[0]);
+          carousel.appendChild(appendFragment);
+
+          const allCards = Array.from(
+            carousel.querySelectorAll(".features-copy"),
+          );
+          // Індекси: 0..7 (ліві клони) | 8..15 (реальні картки) | 16..23 (праві клони)
+          const FIRST_REAL_IDX = count; // 8
+
+          const getStepWidth = () => {
+            // Точна відстань між сусідніми картками (ширина картки + 16px gap)
+            return allCards[1].offsetLeft - allCards[0].offsetLeft;
+          };
+
+          const getCenteredScrollLeft = (idx) => {
+            const card = allCards[idx];
+            if (!card) return 0;
+            return (
+              card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2
+            );
+          };
+
+          const jumpInstantlyTo = (scrollPos) => {
+            carousel.classList.add("no-smooth");
+            carousel.scrollLeft = scrollPos;
+            void carousel.offsetHeight;
+            carousel.classList.remove("no-smooth");
+          };
+
+          // 2. Початкова позиція: одразу центруємо першу реальну картку (індекс 8)
+          const resetCarouselPosition = () => {
+            if (!isDesktopMode()) {
+              jumpInstantlyTo(getCenteredScrollLeft(FIRST_REAL_IDX));
+            }
+          };
+
+          requestAnimationFrame(resetCarouselPosition);
+
+          let resizeTimer;
+          window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resetCarouselPosition, 100);
+          });
+
+          // 3. Миттєве безшовне зациклення ПІД ЧАС скролу (без очікування зупинки!)
+          carousel.addEventListener(
+            "scroll",
+            () => {
+              if (isDesktopMode()) return;
+
+              const step = getStepWidth();
+              if (!step) return;
+
+              const singleSetWidth = step * count; // Точна ширина всіх 8 карток
+              const minBound = getCenteredScrollLeft(FIRST_REAL_IDX - 2);
+              const maxBound = getCenteredScrollLeft(
+                FIRST_REAL_IDX + count + 1,
+              );
+
+              // Якщо зайшли в зону лівих клонів — зміщуємо вперед рівно на 1 набір (8 карток)
+              if (carousel.scrollLeft <= minBound) {
+                jumpInstantlyTo(carousel.scrollLeft + singleSetWidth);
+              }
+              // Якщо зайшли в зону правих клонів — зміщуємо назад рівно на 1 набір (8 карток)
+              else if (carousel.scrollLeft >= maxBound) {
+                jumpInstantlyTo(carousel.scrollLeft - singleSetWidth);
+              }
+            },
+            { passive: true },
+          );
+
+          // 4. Кнопки < та >: перед кліком перевіряємо межі, щоб можна було клікати без пауз
+          const getClosestIndex = () => {
+            const center = carousel.scrollLeft + carousel.clientWidth / 2;
+            let closestIdx = FIRST_REAL_IDX;
+            let minDiff = Infinity;
+            allCards.forEach((card, idx) => {
+              const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+              const diff = Math.abs(center - cardCenter);
+              if (diff < minDiff) {
+                minDiff = diff;
+                closestIdx = idx;
+              }
+            });
+            return closestIdx;
+          };
+
+          prevBtn.addEventListener("click", () => {
+            let currentIdx = getClosestIndex();
+            if (currentIdx <= FIRST_REAL_IDX) {
+              currentIdx += count;
+              jumpInstantlyTo(getCenteredScrollLeft(currentIdx));
+            }
+            carousel.scrollTo({
+              left: getCenteredScrollLeft(currentIdx - 1),
+              behavior: "smooth",
+            });
+          });
+
+          nextBtn.addEventListener("click", () => {
+            let currentIdx = getClosestIndex();
+            if (currentIdx >= FIRST_REAL_IDX + count - 1) {
+              currentIdx -= count;
+              jumpInstantlyTo(getCenteredScrollLeft(currentIdx));
+            }
+            carousel.scrollTo({
+              left: getCenteredScrollLeft(currentIdx + 1),
+              behavior: "smooth",
+            });
+          });
+        }
       });
-
-      // --- Header "MORE" Dropdown Logic (Mobile) ---
-      const moreToggle = document.getElementById("more-toggle");
-      const moreDropdown = document.getElementById("header-more-dropdown");
-
-      if (moreToggle && moreDropdown) {
-        moreToggle.addEventListener("click", (e) => {
-          // Запобігаємо стандартній поведінці, якщо це десктоп і меню працює по hover
-          if (window.innerWidth < 960) {
-            e.preventDefault();
-            moreDropdown.classList.toggle("is-open");
-          }
-        });
-      }
-
-      // --- Mobile Infinite Carousel Logic ---
-      const carousel = document.getElementById("features-carousel");
-      const prevBtn = document.getElementById("carousel-prev");
-      const nextBtn = document.getElementById("carousel-next");
-
-      if (carousel && prevBtn && nextBtn) {
-        // 1. Створюємо клони першої та останньої карток
-        const originalCards = Array.from(
-          carousel.querySelectorAll(".features-copy"),
-        );
-        const firstClone = originalCards[0].cloneNode(true);
-        const lastClone =
-          originalCards[originalCards.length - 1].cloneNode(true);
-
-        // Додаємо їм спеціальний клас, щоб приховати на десктопі
-        firstClone.classList.add("is-clone");
-        lastClone.classList.add("is-clone");
-
-        // 2. Додаємо клони на початок і кінець каруселі
-        carousel.appendChild(firstClone);
-        carousel.insertBefore(lastClone, originalCards[0]);
-
-        // 3. Функція для розрахунку кроку скролу (ширина картки + gap)
-        const getCardWidth = () => {
-          const card = carousel.querySelector(".features-copy");
-          return card.offsetWidth + 16; // 16px - це gap між картками
-        };
-
-        // 4. Встановлюємо правильну початкову позицію (ховаємо клон, показуємо реальну 1-шу картку)
-        setTimeout(() => {
-          if (window.innerWidth < 960) {
-            carousel.classList.add("no-smooth"); // вимикаємо плавність для миттєвого стрибка
-            carousel.scrollLeft = getCardWidth();
-            setTimeout(() => carousel.classList.remove("no-smooth"), 50);
-          }
-        }, 100);
-
-        // 5. Логіка кнопок
-        prevBtn.addEventListener("click", () => {
-          carousel.scrollBy({ left: -getCardWidth(), behavior: "smooth" });
-        });
-
-        nextBtn.addEventListener("click", () => {
-          carousel.scrollBy({ left: getCardWidth(), behavior: "smooth" });
-        });
-
-        // 6. Безкінечний цикл: "Телепортація" під час зупинки скролу
-        let scrollTimeout;
-        carousel.addEventListener("scroll", () => {
-          if (window.innerWidth >= 960) return;
-
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            const cardWidth = getCardWidth();
-            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-
-            // Якщо доскролили до лівого краю (до клону останньої картки)
-            if (carousel.scrollLeft <= 10) {
-              carousel.classList.add("no-smooth");
-              // Непомітно стрибаємо до реальної останньої картки
-              carousel.scrollLeft = maxScroll - cardWidth;
-              setTimeout(() => carousel.classList.remove("no-smooth"), 20);
-            }
-            // Якщо доскролили до правого краю (до клону першої картки)
-            else if (carousel.scrollLeft >= maxScroll - 10) {
-              carousel.classList.add("no-smooth");
-              // Непомітно стрибаємо до реальної першої картки
-              carousel.scrollLeft = cardWidth;
-              setTimeout(() => carousel.classList.remove("no-smooth"), 20);
-            }
-          }, 150); // Чекаємо 150мс після закінчення свайпу, щоб не зламати інерцію
-        });
-      }
     </script>
     <script src="js/cart.js"></script>
   </body>

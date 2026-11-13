@@ -268,6 +268,136 @@
 }
 
 /* ===========================
+   TABLET (640px to 959px)
+   =========================== */
+@media (min-width: 640px) and (max-width: 959px) {
+  .about-hero {
+    min-height: auto;
+    /* padding: 80px 0 64px 0; */
+    padding: 80px 0;
+  }
+
+  .about-hero__inner {
+    gap: 48px;
+  }
+
+  .about-hero__content {
+    align-items: center;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  .about-hero__title {
+    font-size: 52px;
+  }
+
+  .about-hero__text {
+    font-size: 19px;
+    max-width: 580px;
+  }
+
+  .about-hero__image {
+    max-width: 500px;
+  }
+
+  .history {
+    padding: 72px 0 96px 0;
+  }
+
+  .history__title {
+    margin-bottom: 64px;
+    font-size: 36px;
+  }
+
+  .history__timeline {
+    max-width: 680px;
+    gap: 36px;
+  }
+
+  .history__item {
+    grid-template-columns: 56px 44px 140px 1fr;
+    grid-template-areas: "icon node year text";
+    align-items: center;
+    column-gap: 18px;
+    row-gap: 0;
+  }
+
+  .history__icon-box {
+    width: 56px;
+    height: 56px;
+  }
+
+  .history__node {
+    height: 56px;
+  }
+
+  .history__dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .history__year {
+    font-size: 18px;
+    align-self: center;
+  }
+
+  .history__text {
+    font-size: 16px;
+  }
+
+  .history__timeline::before {
+    top: 28px;
+    bottom: 28px;
+    left: 95px; /* 56px icon + 18px gap + 22px center of 44px node - 1px line offset */
+  }
+
+  .stats__inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 32px 24px;
+    padding: 72px 0;
+  }
+
+  .stats__icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .stats__value {
+    font-size: 50px;
+  }
+
+  .stats__value--text {
+    font-size: 24px;
+  }
+
+  .why {
+    padding: 72px 0 110px 0;
+  }
+
+  .why__title {
+    margin-bottom: 64px;
+    font-size: 36px;
+  }
+
+  .why__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 32px;
+    max-width: 720px;
+  }
+
+  .why__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .why__subtitle {
+    font-size: 19px;
+  }
+}
+
+/* ===========================
    DESKTOP (960px+)
    =========================== */
 @media (min-width: 960px) {
@@ -407,6 +537,50 @@
 
   .why__text {
     font-size: 16px;
+  }
+}
+
+/* ===========================
+   PORTRAIT TABLETS (iPad Pro 1024x1366)
+   =========================== */
+@media (min-width: 960px) and (max-width: 1024px) and (orientation: portrait) {
+  .about-hero {
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    padding: 96px 0 72px 0;
+  }
+
+  .about-hero__inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 56px;
+  }
+
+  .about-hero__content {
+    align-items: center;
+    text-align: center;
+    max-width: 680px;
+  }
+
+  .about-hero__title {
+    font-size: 56px;
+  }
+
+  .about-hero__text {
+    font-size: 20px;
+    max-width: 620px;
+  }
+
+  .about-hero__image {
+    max-width: 520px;
+  }
+
+  .why__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 40px;
+    max-width: 780px;
+    margin: 0 auto;
   }
 }
 
@@ -656,13 +830,6 @@
 
   .why__text {
     font-size: 26px;
-  }
-}
-
-/* Stack vertically on portrait tablets (up to 1024px wide in portrait mode) */
-@media (min-width: 960px) and (max-width: 1024px) and (orientation: portrait) {
-  .about-hero__inner {
-    flex-direction: column;
   }
 }
 

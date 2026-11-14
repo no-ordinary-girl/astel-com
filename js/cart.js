@@ -1,32 +1,23 @@
 // js/cart.js
 const CART_STORAGE_KEY = "astelkom_cart";
 
-// The 6 products allowed to be ordered from 1 pc ("Оптом і в роздріб")
-const RETAIL_ALLOWED_IDS = new Set([
-  "com-900-itr-rev-b",
-  "battery-iwl220",
-  "battery-move-2500",
-  "cable-dc-2-1x5-5-angled",
-  "cable-dc-1-4x3-4-angled",
-  "cable-dc-2-1x5-5-straight-filter",
-]);
-
+// Minimum quantities are product metadata, not translated UI strings.
+// Cart items retain minQty so the cart badge still works on pages that do not
+// load the full product catalog (and for carts saved before this change).
 const CartManager = {
   getMinQty(productOrId) {
     const id = typeof productOrId === "string" ? productOrId : productOrId?.id;
     if (!id) return 1;
-    if (RETAIL_ALLOWED_IDS.has(id)) return 1;
 
-    // Also check PRODUCTS_DATA if available
-    if (
-      typeof PRODUCTS_DATA !== "undefined" &&
-      PRODUCTS_DATA[id] &&
-      PRODUCTS_DATA[id].saleTerms === "Оптом і в роздріб"
-    ) {
-      return 1;
-    }
-
-    return 10;
+    const catalogProduct =
+      typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[id] : null;
+    const fallback = typeof productOrId === "object" ? productOrId : null;
+    const configuredMin = Number(
+      catalogProduct?.minOrderQty ?? fallback?.minOrderQty ?? fallback?.minQty,
+    );
+    return Number.isInteger(configuredMin) && configuredMin > 0
+      ? configuredMin
+      : 10; // Legacy wholesale default if an item has no explicit policy.
   },
 
   getCart() {
@@ -35,11 +26,12 @@ const CartManager = {
       const items = raw ? JSON.parse(raw) : [];
       // Ensure any existing items in localStorage respect their minQty
       return items.map((item) => {
-        const minQty = this.getMinQty(item.id);
+        const minQty = this.getMinQty(item);
+        const quantity = Number.parseInt(item.qty, 10);
         return {
           ...item,
           minQty,
-          qty: Math.max(minQty, item.qty || minQty),
+          qty: Math.max(minQty, Number.isFinite(quantity) ? quantity : minQty),
         };
       });
     } catch (e) {
@@ -111,8 +103,8 @@ const CartManager = {
     const item = cart.find((i) => i.id === id);
     if (!item) return;
 
-    const minQty = this.getMinQty(id);
-    // Block setting quantity below minQty (10 or 1)
+    const minQty = this.getMinQty(item);
+    // Block setting quantity below the product's configured minimum.
     item.qty = Math.max(minQty, parseInt(newQty, 10) || minQty);
     this.saveCart(cart);
   },

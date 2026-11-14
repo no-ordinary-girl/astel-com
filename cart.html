@@ -39,6 +39,7 @@
     <!-- ===========================
          HEADER
          =========================== -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
@@ -49,7 +50,6 @@
               alt="АСТЕЛ-КОМ"
             />
           </a>
-
           <div class="header__top-controls">
             <a
               href="login.html"
@@ -77,6 +77,9 @@
             <button
               class="header__toggle"
               id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
               aria-label="Toggle menu"
             >
               <svg
@@ -99,8 +102,11 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link">ГОЛОВНА</a>
+            <a href="index.html" class="header__link"
+              >ГОЛОВНА</a
+            >
             <a href="about_us.html" class="header__link">ПРО НАС</a>
+
             <a href="products.html" class="header__link hide-on-compact"
               >ТОВАРИ</a
             >
@@ -110,12 +116,18 @@
             <a href="docs.html" class="header__link hide-on-compact"
               >ДОКУМЕНТАЦІЯ</a
             >
+
             <a href="#footer" class="header__link">КОНТАКТИ</a>
 
-            <div class="header__more show-on-compact" id="header-more-dropdown">
+            <div
+              class="header__more show-on-compact"
+              id="header-more-dropdown"
+            >
               <button
                 class="header__link header__more-trigger"
                 id="more-toggle"
+                type="button"
+                aria-expanded="false"
               >
                 БІЛЬШЕ
                 <svg
@@ -141,7 +153,6 @@
               </div>
             </div>
           </nav>
-
           <div class="header__utils">
             <div class="header__lang">
               <div class="header__lang-trigger">
@@ -196,6 +207,7 @@
         </div>
       </div>
     </header>
+    <!-- SHARED:HEADER:END -->
 
     <!-- ===========================
          MAIN CART & CHECKOUT
@@ -647,6 +659,7 @@
     <!-- ===========================
          FOOTER
          =========================== -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
     <footer class="footer" id="footer">
       <div class="container footer__container">
         <div class="footer__contacts">
@@ -732,6 +745,8 @@
         </div>
       </div>
     </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
 
     <script src="js/products-data.js"></script>
     <script src="js/delivery-data.js"></script>
@@ -739,14 +754,6 @@
     <script src="js/account.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // --- Header Mobile Menu ---
-        const toggleBtn = document.getElementById("menu-toggle");
-        const collapseMenu = document.getElementById("menu-collapse");
-        if (toggleBtn && collapseMenu) {
-          toggleBtn.addEventListener("click", () => {
-            collapseMenu.classList.toggle("header__collapse--open");
-          });
-        }
 
         // --- Render Cart Items & Summary ---
         const cartListEl = document.getElementById("cart-items-list");

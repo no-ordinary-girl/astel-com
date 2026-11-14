@@ -1,0 +1,167 @@
+<header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="АСТЕЛ-КОМ"
+            />
+          </a>
+          <div class="header__top-controls">
+            <a
+              href="{{account_href}}"
+              class="header__account header__account--mobile{{account_active}}"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
+            <a
+              href="cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="index.html" class="header__link{{home_active}}"
+              >ГОЛОВНА</a
+            >
+            <a href="about_us.html" class="header__link{{about_active}}">ПРО НАС</a>
+
+            <a href="products.html" class="header__link hide-on-compact{{products_active}}"
+              >ТОВАРИ</a
+            >
+            <a href="downloads.html" class="header__link hide-on-compact{{downloads_active}}"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact{{docs_active}}"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div
+              class="header__more show-on-compact{{more_active}}"
+              id="header-more-dropdown"
+            >
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-expanded="false"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link{{more_products_active}}">ТОВАРИ</a>
+                <a href="downloads.html" class="header__more-link{{more_downloads_active}}"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link{{more_docs_active}}">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
+          </nav>
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
+            </div>
+            <a
+              href="{{account_href}}"
+              class="header__account header__account--desktop{{account_active}}"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
+            <a
+              href="cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>

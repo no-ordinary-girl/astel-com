@@ -37,6 +37,7 @@
   </head>
   <body>
     <!-- HEADER -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
@@ -74,6 +75,9 @@
             <button
               class="header__toggle"
               id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
               aria-label="Toggle menu"
             >
               <svg
@@ -96,8 +100,11 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link">ГОЛОВНА</a>
+            <a href="index.html" class="header__link"
+              >ГОЛОВНА</a
+            >
             <a href="about_us.html" class="header__link">ПРО НАС</a>
+
             <a href="products.html" class="header__link hide-on-compact"
               >ТОВАРИ</a
             >
@@ -107,9 +114,43 @@
             <a href="docs.html" class="header__link hide-on-compact"
               >ДОКУМЕНТАЦІЯ</a
             >
-            <a href="#footer" class="header__link">КОНТАКТИ</a>
-          </nav>
 
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div
+              class="header__more show-on-compact"
+              id="header-more-dropdown"
+            >
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-expanded="false"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a href="downloads.html" class="header__more-link"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+              </div>
+            </div>
+          </nav>
           <div class="header__utils">
             <div class="header__lang">
               <div class="header__lang-trigger">
@@ -150,7 +191,7 @@
               />
             </a>
             <a
-              href="#"
+              href="cart.html"
               class="header__cart header__cart--desktop"
               aria-label="Кошик"
             >
@@ -164,6 +205,7 @@
         </div>
       </div>
     </header>
+    <!-- SHARED:HEADER:END -->
 
     <!-- MAIN ORDER STATUS SECTION -->
     <main class="cart-page">
@@ -173,6 +215,7 @@
     </main>
 
     <!-- FOOTER -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
     <footer class="footer" id="footer">
       <div class="container footer__container">
         <div class="footer__contacts">
@@ -230,6 +273,8 @@
         </div>
       </div>
     </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
 
     <script src="js/products-data.js"></script>
     <script src="js/cart.js"></script>

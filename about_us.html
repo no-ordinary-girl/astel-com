@@ -69,16 +69,17 @@
     <!-- ===========================
          HEADER
          =========================== -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
     <header class="header">
       <div class="container header__inner">
         <div class="header__top">
-          <img
-            src="assets/images/logo-main.svg"
-            class="header__image"
-            alt="АСТЕЛ-КОМ"
-          />
-
-          <!-- Додано обгортку для мобільного кошика та меню -->
+          <a href="index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="АСТЕЛ-КОМ"
+            />
+          </a>
           <div class="header__top-controls">
             <a
               href="login.html"
@@ -93,7 +94,7 @@
               />
             </a>
             <a
-              href="#"
+              href="cart.html"
               class="header__cart header__cart--mobile"
               aria-label="Кошик"
             >
@@ -106,6 +107,9 @@
             <button
               class="header__toggle"
               id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
               aria-label="Toggle menu"
             >
               <svg
@@ -128,10 +132,10 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link">ГОЛОВНА</a>
-            <a href="about_us.html" class="header__link header__link--active"
-              >ПРО НАС</a
+            <a href="index.html" class="header__link"
+              >ГОЛОВНА</a
             >
+            <a href="about_us.html" class="header__link header__link--active">ПРО НАС</a>
 
             <a href="products.html" class="header__link hide-on-compact"
               >ТОВАРИ</a
@@ -146,12 +150,14 @@
             <a href="#footer" class="header__link">КОНТАКТИ</a>
 
             <div
-              class="header__more show-on-compact header__link--active"
+              class="header__more show-on-compact"
               id="header-more-dropdown"
             >
               <button
                 class="header__link header__more-trigger"
                 id="more-toggle"
+                type="button"
+                aria-expanded="false"
               >
                 БІЛЬШЕ
                 <svg
@@ -177,8 +183,6 @@
               </div>
             </div>
           </nav>
-
-          <!-- Додано обгортку utils для об'єднання мовного меню та десктопного кошика -->
           <div class="header__utils">
             <div class="header__lang">
               <div class="header__lang-trigger">
@@ -219,7 +223,7 @@
               />
             </a>
             <a
-              href="#"
+              href="cart.html"
               class="header__cart header__cart--desktop"
               aria-label="Кошик"
             >
@@ -233,6 +237,7 @@
         </div>
       </div>
     </header>
+    <!-- SHARED:HEADER:END -->
 
     <!-- ===========================
          MAIN CONTENT
@@ -456,6 +461,7 @@
     <!-- ===========================
          FOOTER 
          =========================== -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
     <footer class="footer" id="footer">
       <div class="container footer__container">
         <div class="footer__contacts">
@@ -541,52 +547,12 @@
         </div>
       </div>
     </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Hamburger Menu
-        const toggleBtn = document.getElementById("menu-toggle");
-        const collapseMenu = document.getElementById("menu-collapse");
 
-        if (toggleBtn && collapseMenu) {
-          toggleBtn.addEventListener("click", () => {
-            collapseMenu.classList.toggle("header__collapse--open");
-          });
-        }
-
-        // --- Close Mobile Menu on Link Click ---
-        const headerLinks = document.querySelectorAll(
-          ".header__nav .header__link",
-        );
-
-        headerLinks.forEach((link) => {
-          link.addEventListener("click", (e) => {
-            // 1. Close the menu
-            if (
-              collapseMenu &&
-              collapseMenu.classList.contains("header__collapse--open")
-            ) {
-              collapseMenu.classList.remove("header__collapse--open");
-            }
-
-            // 2. Smooth scroll to footer if the link is "КОНТАКТИ"
-            // If the link is "КОНТАКТИ" (points to #footer), do a smooth scroll
-            const targetId = link.getAttribute("href");
-            if (targetId === "#footer") {
-              e.preventDefault(); // Prevent instant jump
-
-              link.blur(); // ДОДАЙТЕ ЦЕЙ РЯДОК: знімає "залипання" підкреслення
-
-              const footerElement = document.getElementById("footer");
-              if (footerElement) {
-                // Add a tiny delay so the menu closing animation can start before scrolling
-                setTimeout(() => {
-                  footerElement.scrollIntoView({ behavior: "smooth" });
-                }, 100);
-              }
-            }
-          });
-        });
       });
     </script>
     <script src="js/cart.js"></script>

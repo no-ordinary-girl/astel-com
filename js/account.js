@@ -174,6 +174,8 @@ const AuthManager = (function () {
     if (!target || !target.items || target.items.length === 0) return false;
 
     if (typeof CartManager !== "undefined") {
+      // Очищаємо кошик перед повтором або додаємо позиції з точною кількістю замовлення
+      CartManager.clearCart();
       target.items.forEach((item) => {
         CartManager.addItem(
           {
@@ -186,6 +188,9 @@ const AuthManager = (function () {
         );
       });
     }
+
+    // Зберігаємо дані замовлення (доставку, оплату, контакти) для автозаповнення в cart.html
+    localStorage.setItem("astelkom_repeat_order", JSON.stringify(target));
     return target;
   }
 

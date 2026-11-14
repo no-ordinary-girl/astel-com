@@ -52,17 +52,6 @@
 
           <div class="header__top-controls">
             <a
-              href="cart.html"
-              class="header__cart header__cart--mobile"
-              aria-label="Кошик"
-            >
-              <img
-                src="assets/images/shopping_cart.svg"
-                class="cart-icon-black"
-                alt="Кошик"
-              />
-            </a>
-            <a
               href="login.html"
               class="header__account header__account--mobile"
               data-account-link
@@ -72,6 +61,17 @@
                 src="assets/images/account.svg"
                 class="account-icon-black"
                 alt="Кабінет"
+              />
+            </a>
+            <a
+              href="cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
               />
             </a>
             <button
@@ -1003,6 +1003,174 @@
         // --- Validate "Новий покупець" Checkout Form ---
         const checkoutForm = document.getElementById("checkout-form");
         const orderSuccess = document.getElementById("order-success");
+
+        // --- Helper: Заповнення всіх полів форми замовлення ---
+        function fillCheckoutFormData(data) {
+          if (!data) return;
+
+          if (data.firstName)
+            document.getElementById("firstName").value = data.firstName;
+          if (data.lastName)
+            document.getElementById("lastName").value = data.lastName;
+          if (data.phone) document.getElementById("phone").value = data.phone;
+          if (data.email) document.getElementById("email").value = data.email;
+
+          if (data.delivery) {
+            if (data.delivery.city) {
+              document.getElementById("city").value = data.delivery.city;
+            }
+
+            // Вибір служби доставки (Нова Пошта / Укрпошта / Meest)
+            const carrierKey = data.delivery.carrierKey || "nova";
+            const targetCarrierCard =
+              document.querySelector(
+                `#delivery-group .radio-card[data-carrier="${carrierKey}"]`,
+              ) ||
+              Array.from(
+                document.querySelectorAll("#delivery-group .radio-card"),
+              ).find(
+                (c) =>
+                  c.querySelector('input[name="carrier"]')?.value ===
+                  data.delivery.carrierName,
+              );
+
+            if (targetCarrierCard) {
+              const carrierRadio = targetCarrierCard.querySelector(
+                'input[name="carrier"]',
+              );
+              if (carrierRadio) {
+                carrierRadio.checked = true;
+                carrierRadio.dispatchEvent(new Event("change"));
+              }
+
+              const cKey = targetCarrierCard.getAttribute("data-carrier");
+              const delivType = data.delivery.type || "Відділення";
+              const typeRadio = targetCarrierCard.querySelector(
+                `input[name="${cKey}_type"][value="${delivType}"]`,
+              );
+              if (typeRadio) {
+                typeRadio.checked = true;
+                typeRadio.dispatchEvent(new Event("change"));
+              }
+
+              const branchInp =
+                targetCarrierCard.querySelector(".branch-input");
+              if (branchInp && data.delivery.branch) {
+                branchInp.value = data.delivery.branch;
+              }
+            }
+          }
+
+          // Вибір способу оплати
+          if (data.payment) {
+            let payRadio = document.querySelector(
+              `#payment-group input[name="payment"][value="${data.payment}"]`,
+            );
+            // Якщо в історії записано "Готівка (при отриманні)", шукаємо за входженням
+            if (!payRadio) {
+              payRadio = Array.from(
+                document.querySelectorAll(
+                  '#payment-group input[name="payment"]',
+                ),
+              ).find(
+                (r) =>
+                  data.payment.includes(r.value) ||
+                  r.value.includes(data.payment),
+              );
+            }
+            if (payRadio && !payRadio.disabled) {
+              payRadio.checked = true;
+              payRadio.dispatchEvent(new Event("change"));
+            }
+          }
+        }
+
+        // --- Авторизований режим вкладки "Я постійний клієнт" та Повтор замовлення ---
+        const isRepeatOrder =
+          new URLSearchParams(window.location.search).get("repeat") === "true";
+        const isUserAuthorized =
+          typeof AuthManager !== "undefined" && AuthManager.isLoggedIn();
+
+        if (isUserAuthorized || isRepeatOrder) {
+          const user =
+            (typeof AuthManager !== "undefined" && AuthManager.getUser()) || {};
+          let repeatOrder = null;
+
+          try {
+            const rawRepeat = localStorage.getItem("astelkom_repeat_order");
+            if (rawRepeat) repeatOrder = JSON.parse(rawRepeat);
+          } catch (e) {}
+
+          const returningTabPane = document.getElementById("returning-buyer");
+          const checkoutFormEl = document.getElementById("checkout-form");
+
+          if (returningTabPane && checkoutFormEl) {
+            // Ховаємо форму логіну у вкладці "Я постійний клієнт" і показуємо статус авторизації
+            returningTabPane.innerHTML = `
+              <div class="returning-info" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-left-color: #059669; background-color: rgba(5, 150, 105, 0.08); margin-bottom: 24px;">
+                <div>
+                  <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; color: #059669; display: block; margin-bottom: 2px;">
+                    ● Авторизований постійний клієнт
+                  </span>
+                  <span style="font-size: 14px; color: var(--gray-900);">
+                    Ваші особисті дані та параметри доставки підвантажено автоматично.
+                  </span>
+                </div>
+                <a href="account.html" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--gray-900); text-decoration: underline;">
+                  Особистий кабінет
+                </a>
+              </div>
+            `;
+
+            // Переносимо форму оформлення замовлення у вкладку "Я постійний клієнт"
+            returningTabPane.appendChild(checkoutFormEl);
+
+            // Якщо клієнт натисне "Новий покупець" — форма плавно відобразиться там, і навпаки
+            document
+              .getElementById("tab-new-btn")
+              .addEventListener("click", () => {
+                document
+                  .getElementById("new-buyer")
+                  .appendChild(checkoutFormEl);
+              });
+            document
+              .getElementById("tab-returning-btn")
+              .addEventListener("click", () => {
+                returningTabPane.appendChild(checkoutFormEl);
+              });
+
+            // Активуємо вкладку "Я постійний клієнт"
+            activateTab("returning-buyer");
+          }
+
+          // Формуємо об'єкт даних для автозаповнення (пріоритет: повторюване замовлення -> профіль клієнта)
+          const autofillPayload = {
+            firstName:
+              repeatOrder?.customer?.firstName || user.firstName || "Ім'я",
+            lastName:
+              repeatOrder?.customer?.lastName || user.lastName || "Прізвище",
+            phone:
+              repeatOrder?.customer?.phone || user.phone || "+380501234567",
+            email:
+              repeatOrder?.customer?.email || user.email || "example@gmail.com",
+            delivery: repeatOrder?.delivery ||
+              user.address || {
+                city: "Київ",
+                carrierKey: "nova",
+                carrierName: "Нова Пошта",
+                type: "Відділення",
+                branch: "Відділення №15: вул. Машинобудівна, 44",
+              },
+            payment: repeatOrder?.payment || "Готівка",
+          };
+
+          fillCheckoutFormData(autofillPayload);
+
+          // Очищаємо тимчасовий прапорець повтору після заповнення
+          if (isRepeatOrder) {
+            localStorage.removeItem("astelkom_repeat_order");
+          }
+        }
 
         // --- Pre-fill Checkout Form if Returning to Edit an Active Order ---
         const urlParams = new URLSearchParams(window.location.search);

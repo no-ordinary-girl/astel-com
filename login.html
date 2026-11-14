@@ -541,13 +541,43 @@
 
     <script src="js/products-data.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        if (typeof AuthManager !== "undefined" && AuthManager.isLoggedIn()) {
-          window.location.replace("account.html");
-          return;
-        }
+      // Built-in fallback so AuthManager works even if not added to js/cart.js
+      window.AuthManager = window.AuthManager || {
+        USER_KEY: "astelkom_auth_user",
+        getUser() {
+          try {
+            return JSON.parse(localStorage.getItem(this.USER_KEY));
+          } catch (e) {
+            return null;
+          }
+        },
+        isLoggedIn() {
+          return Boolean(this.getUser());
+        },
+        login(email, extra = {}) {
+          const existing = this.getUser() || {};
+          const user = {
+            firstName: extra.firstName || existing.firstName || "Ім'я",
+            lastName: extra.lastName || existing.lastName || "Прізвище",
+            email: email || existing.email || "example@gmail.com",
+            phone: extra.phone || existing.phone || "+380501234567",
+            authMethod: extra.authMethod || "E-mail",
+            address: existing.address || {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+          };
+          localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+          return user;
+        },
+      };
 
+      document.addEventListener("DOMContentLoaded", function () {
         // Mobile Header Menu
         const toggleBtn = document.getElementById("menu-toggle");
         const collapseMenu = document.getElementById("menu-collapse");
@@ -584,7 +614,6 @@
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         const MIN_PASS_LEN = 12;
 
-        // Clear validation errors on input
         document.querySelectorAll(".acct-input").forEach((inp) => {
           inp.addEventListener("input", () => {
             const field = inp.closest(".acct-field");
@@ -592,19 +621,20 @@
           });
         });
 
-        // Google OAuth Sign-In
-        document
-          .getElementById("google-auth-btn")
-          .addEventListener("click", () => {
-            AuthManager.login("user@gmail.com", {
+        // Google OAuth Sign-In -> Opens account.html
+        const googleBtn = document.getElementById("google-auth-btn");
+        if (googleBtn) {
+          googleBtn.addEventListener("click", () => {
+            AuthManager.login("example@gmail.com", {
               firstName: "Ім'я",
               lastName: "Прізвище",
               authMethod: "Google Account",
             });
             window.location.href = "account.html";
           });
+        }
 
-        // Standard Email + Password Login (Minimum 12 characters)
+        // Standard Email + Password Login
         const loginForm = document.getElementById("login-panel");
         const loginFeedback = document.getElementById("login-feedback-box");
 
@@ -629,7 +659,7 @@
           window.location.href = "account.html";
         });
 
-        // Forgot Password Flow
+        // Forgot Password
         document
           .getElementById("forgot-password-trigger")
           .addEventListener("click", () => {
@@ -643,11 +673,11 @@
               emailInput.focus();
               return;
             }
-            loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${email}</strong>. Перевірте вхідні повідомлення.`;
+            loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${email}</strong>.`;
             loginFeedback.classList.add("is-visible");
           });
 
-        // Registration Form Submit (Minimum 12 characters)
+        // Registration Form Submit
         const regForm = document.getElementById("register-panel");
         regForm.addEventListener("submit", (e) => {
           e.preventDefault();

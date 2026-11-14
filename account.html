@@ -208,13 +208,13 @@
         <!-- Top Welcome Header -->
         <div class="account-top-bar">
           <div class="account-welcome">
-            <div class="account-avatar" id="user-initials">ОК</div>
+            <div class="account-avatar" id="user-initials">ІП</div>
             <div class="account-welcome__meta">
               <span class="account-welcome__badge" id="user-auth-badge"
                 >● Авторизовано</span
               >
               <h1 class="account-welcome__title" id="user-fullname">
-                Олександр Коваленко
+                Ім'я Прізвище
               </h1>
             </div>
           </div>
@@ -229,7 +229,7 @@
         <!-- 1-Click Copy / Repeat Last Order Banner -->
         <div class="repeat-order-banner" id="repeat-last-banner">
           <div class="repeat-order-banner__info">
-            <span class="repeat-order-banner__tag">Швидке B2B-замовлення</span>
+            <span class="repeat-order-banner__tag">Швидке замовлення</span>
             <h2
               class="repeat-order-banner__title"
               id="last-order-summary-title"
@@ -299,10 +299,10 @@
               </button>
             </nav>
 
-            <!-- Personal B2B Manager Card -->
+            <!-- Support Contact Card -->
             <div class="manager-card">
-              <span class="manager-card__tag">Персональний менеджер</span>
-              <div class="manager-card__name">Сергій (Відділ опту та B2B)</div>
+              <span class="manager-card__tag">Консультація та підтримка</span>
+              <div class="manager-card__name">Сергій</div>
               <div class="manager-card__links">
                 <a href="tel:+380504443355">+380 (50) 444-33-55</a>
                 <a href="mailto:astelkom@gmail.com">astelkom@gmail.com</a>
@@ -588,7 +588,7 @@
                   <div style="margin-top: 18px">
                     <button
                       type="submit"
-                      class="acct-btn-outline"
+                      class="acct-btn-primary"
                       style="max-width: 280px"
                     >
                       Змінити пароль
@@ -699,13 +699,166 @@
     <script src="js/products-data.js"></script>
     <script src="js/delivery-data.js"></script>
     <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
     <script>
+      // Built-in fallback so account.html always works even if AuthManager is not in js/cart.js
+      window.AuthManager = window.AuthManager || {
+        USER_KEY: "astelkom_auth_user",
+        ORDERS_KEY: "astelkom_completed_orders",
+        DEFAULT_ORDERS: [
+          {
+            orderId: "AK-849210",
+            createdAt: Date.now() - 12 * 24 * 60 * 60 * 1000,
+            status: "Виконано",
+            statusCode: "completed",
+            ttn: "20450918273645",
+            payment: "Оплата банківською картою",
+            delivery: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+            subtotal: 60128,
+            items: [
+              {
+                id: "com-900-itr-4g",
+                title:
+                  "GSM/LTE-модем COM-900-ITR-4G для роботи з лічильниками ITRON (ACTARIS)",
+                price: 4300,
+                qty: 10,
+                image: "assets/images/items/СОМ-900-ITR-4G.png",
+              },
+              {
+                id: "com-900-nbi-int",
+                title:
+                  "NBIoT-модем COM-900-NBI-int для роботи з теплолічильниками",
+                price: 8064,
+                qty: 2,
+                image: "assets/images/items/СОМ-900-NBI-int.png",
+              },
+              {
+                id: "gsm-antenna-3dbi",
+                title:
+                  "GSM-антена 3dBi на магнітній основі з кабелем 3 метри і роз'ємом SMA",
+                price: 120,
+                qty: 8,
+                image: "assets/images/items/GSM-antenna-3dBi-SMA.png",
+              },
+            ],
+          },
+          {
+            orderId: "AK-793045",
+            createdAt: Date.now() - 38 * 24 * 60 * 60 * 1000,
+            status: "Виконано",
+            statusCode: "completed",
+            ttn: "20450883419022",
+            payment: "Готівка (при отриманні)",
+            delivery: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+            subtotal: 43000,
+            items: [
+              {
+                id: "com-900-485",
+                title: "Універсальний GSM/GPRS-модем COM-900/485",
+                price: 4300,
+                qty: 10,
+                image: "assets/images/items/СОМ-900-485.png",
+              },
+            ],
+          },
+        ],
+        getUser() {
+          try {
+            const raw = localStorage.getItem(this.USER_KEY);
+            if (raw) return JSON.parse(raw);
+          } catch (e) {}
+          // Default preview profile so account.html can be viewed directly at any time
+          return {
+            firstName: "Ім'я",
+            lastName: "Прізвище",
+            email: "example@gmail.com",
+            phone: "+380501234567",
+            authMethod: "E-mail",
+            address: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+          };
+        },
+        isLoggedIn() {
+          return true;
+        },
+        saveUser(data) {
+          const updated = { ...this.getUser(), ...data };
+          localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
+          return updated;
+        },
+        logout() {
+          localStorage.removeItem(this.USER_KEY);
+        },
+        getOrders() {
+          const list = [];
+          try {
+            const activeRaw = localStorage.getItem("astelkom_active_order");
+            if (activeRaw) {
+              const activeOrder = JSON.parse(activeRaw);
+              list.push({
+                ...activeOrder,
+                status: activeOrder.locked
+                  ? "Передано в обробку"
+                  : "Прийнято (редагування)",
+                statusCode: activeOrder.locked ? "processing" : "active",
+              });
+            }
+          } catch (e) {}
+
+          this.DEFAULT_ORDERS.forEach((ord) => {
+            if (!list.some((o) => o.orderId === ord.orderId)) {
+              list.push(ord);
+            }
+          });
+          return list;
+        },
+        copyOrderToCart(orderId) {
+          const orders = this.getOrders();
+          const target = orderId
+            ? orders.find((o) => o.orderId === orderId)
+            : orders[0];
+          if (!target || !target.items) return false;
+          if (typeof CartManager !== "undefined") {
+            target.items.forEach((item) => {
+              CartManager.addItem(
+                {
+                  id: item.id,
+                  title: item.title,
+                  price: item.price,
+                  image: item.image,
+                },
+                item.qty,
+              );
+            });
+          }
+          return target;
+        },
+      };
+
       document.addEventListener("DOMContentLoaded", function () {
-        // Redirect to login.html if not logged in
-        if (typeof AuthManager === "undefined" || !AuthManager.isLoggedIn()) {
-          window.location.replace("login.html");
-          return;
-        }
+        const formatMoney = (val) => {
+          if (typeof CartManager !== "undefined" && CartManager.formatPrice) {
+            return CartManager.formatPrice(val);
+          }
+          return Number(val || 0).toLocaleString("uk-UA") + " ₴";
+        };
 
         // Mobile Header Menu
         const toggleBtn = document.getElementById("menu-toggle");
@@ -721,43 +874,48 @@
           const user = AuthManager.getUser();
           if (!user) return;
 
-          const initials =
-            (user.firstName ? user.firstName[0] : "А") +
-            (user.lastName ? user.lastName[0] : "К");
+          const firstName = user.firstName || "Ім'я";
+          const lastName = user.lastName || "Прізвище";
+          const initials = (firstName[0] || "І") + (lastName[0] || "П");
+
           document.getElementById("user-initials").textContent =
             initials.toUpperCase();
           document.getElementById("user-fullname").textContent =
-            `${user.firstName} ${user.lastName}`;
+            `${firstName} ${lastName}`;
           document.getElementById("user-auth-badge").textContent =
             `● Авторизовано (${user.authMethod || "E-mail"})`;
 
-          document.getElementById("prof-fname").value = user.firstName || "";
-          document.getElementById("prof-lname").value = user.lastName || "";
-          document.getElementById("prof-email").value = user.email || "";
-          document.getElementById("prof-phone").value = user.phone || "";
+          document.getElementById("prof-fname").value = firstName;
+          document.getElementById("prof-lname").value = lastName;
+          document.getElementById("prof-email").value =
+            user.email || "example@gmail.com";
+          document.getElementById("prof-phone").value =
+            user.phone || "+380501234567";
 
-          if (user.address) {
-            document.getElementById("addr-city").value =
-              user.address.city || "Київ";
-            document.getElementById("addr-type").value =
-              user.address.type || "Відділення";
-            document.getElementById("addr-branch").value =
-              user.address.branch || "";
-            document.getElementById("saved-address-text").textContent =
-              `м. ${user.address.city} — ${user.address.carrierName} (${user.address.type}: ${user.address.branch})`;
+          const addr = user.address || {
+            city: "Київ",
+            carrierName: "Нова Пошта",
+            type: "Відділення",
+            branch: "Відділення №15: вул. Машинобудівна, 44",
+          };
 
-            const carrierRadios = document.querySelectorAll(
-              'input[name="acct_carrier"]',
-            );
-            carrierRadios.forEach((r) => {
-              const isMatch = r.value === user.address.carrierName;
+          document.getElementById("addr-city").value = addr.city || "Київ";
+          document.getElementById("addr-type").value =
+            addr.type || "Відділення";
+          document.getElementById("addr-branch").value = addr.branch || "";
+          document.getElementById("saved-address-text").textContent =
+            `м. ${addr.city} — ${addr.carrierName} (${addr.type}: ${addr.branch})`;
+
+          document
+            .querySelectorAll('input[name="acct_carrier"]')
+            .forEach((r) => {
+              const isMatch = r.value === addr.carrierName;
               r.checked = isMatch;
               r.closest(".carrier-option").classList.toggle(
                 "is-selected",
                 isMatch,
               );
             });
-          }
         }
 
         renderUserProfile();
@@ -796,7 +954,7 @@
         if (orders.length > 0) {
           const latest = orders[0];
           document.getElementById("last-order-summary-title").textContent =
-            `Повторити замовлення #${latest.orderId} (${CartManager.formatPrice(latest.subtotal)})`;
+            `Повторити замовлення #${latest.orderId} (${formatMoney(latest.subtotal)})`;
           document.getElementById("last-order-summary-desc").textContent =
             `У замовленні ${latest.items.length} поз. — натисніть, щоб миттєво скопіювати всі товари в кошик.`;
         }
@@ -824,9 +982,9 @@
                   <img src="${item.image}" alt="${item.title}" class="order-history-item__img" />
                   <div class="order-history-item__info">
                     <a href="product.html?id=${item.id}" class="order-history-item__title">${item.title}</a>
-                    <span class="order-history-item__qty">${item.qty} шт. × ${CartManager.formatPrice(item.price)}</span>
+                    <span class="order-history-item__qty">${item.qty} шт. × ${formatMoney(item.price)}</span>
                   </div>
-                  <div class="order-history-item__sum">${CartManager.formatPrice(item.price * item.qty)}</div>
+                  <div class="order-history-item__sum">${formatMoney(item.price * item.qty)}</div>
                 </div>
               `,
               )
@@ -855,7 +1013,7 @@
                 <div class="order-history-card__bottom">
                   <div class="order-history-card__total">
                     <span>Сума без ПДВ:</span>
-                    <strong>${CartManager.formatPrice(ord.subtotal)}</strong>
+                    <strong>${formatMoney(ord.subtotal)}</strong>
                   </div>
                   <div class="order-history-card__actions">
                     ${
@@ -868,7 +1026,7 @@
                       class="acct-btn-primary"
                       data-copy-order="${ord.orderId}"
                     >
-                      Скопіювати в кошик
+                      Повторити замовлення
                     </button>
                   </div>
                 </div>
@@ -1026,8 +1184,7 @@
             renderUserProfile();
 
             const fb = document.getElementById("address-feedback");
-            fb.textContent =
-              "Основну адресу доставки успішно оновлено! Вона автоматично підставлятиметься при оформленні замовлення.";
+            fb.textContent = "Основну адресу доставки успішно збережено!";
             fb.classList.add("is-visible");
           });
 
@@ -1038,22 +1195,21 @@
             e.preventDefault();
             AuthManager.saveUser({
               firstName:
-                document.getElementById("prof-fname").value.trim() ||
-                "Олександр",
+                document.getElementById("prof-fname").value.trim() || "Ім'я",
               lastName:
                 document.getElementById("prof-lname").value.trim() ||
-                "Коваленко",
+                "Прізвище",
               email: document.getElementById("prof-email").value.trim(),
               phone: document.getElementById("prof-phone").value.trim(),
             });
             renderUserProfile();
 
             const fb = document.getElementById("profile-feedback");
-            fb.textContent = "Особисті дані та реквізити успішно збережено.";
+            fb.textContent = "Особисті дані успішно оновлено.";
             fb.classList.add("is-visible");
           });
 
-        // Change Password & Forgot Password inside Account Settings
+        // Change Password (12+ chars) & Forgot Password
         const passFb = document.getElementById("password-feedback");
         document
           .getElementById("password-form")

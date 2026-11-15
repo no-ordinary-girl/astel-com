@@ -144,10 +144,7 @@
 
             <a href="#footer" class="header__link">КОНТАКТИ</a>
 
-            <div
-              class="header__more show-on-compact"
-              id="header-more-dropdown"
-            >
+            <div class="header__more show-on-compact" id="header-more-dropdown">
               <button
                 class="header__link header__more-trigger"
                 id="more-toggle"
@@ -786,7 +783,6 @@
         );
         const isDesktopMode = () => desktopQuery.matches;
 
-
         // --- Responsive Scrollytelling ---
         const track = document.getElementById("features-track");
         if (track) {
@@ -831,8 +827,6 @@
           });
           updateScrollytelling();
         }
-
-
 
         // --- Mobile & Portrait Tablet Infinite Carousel Logic ---
         const carousel = document.getElementById("features-carousel");
@@ -974,5 +968,6 @@
     </script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/i18n.js"></script>
   </body>
 </html>

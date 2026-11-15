@@ -132,12 +132,12 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link"
-              >ГОЛОВНА</a
-            >
+            <a href="index.html" class="header__link">ГОЛОВНА</a>
             <a href="about_us.html" class="header__link">ПРО НАС</a>
 
-            <a href="products.html" class="header__link hide-on-compact header__link--active"
+            <a
+              href="products.html"
+              class="header__link hide-on-compact header__link--active"
               >ТОВАРИ</a
             >
             <a href="downloads.html" class="header__link hide-on-compact"
@@ -175,7 +175,11 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <a href="products.html" class="header__more-link header__more-link--active">ТОВАРИ</a>
+                <a
+                  href="products.html"
+                  class="header__more-link header__more-link--active"
+                  >ТОВАРИ</a
+                >
                 <a href="downloads.html" class="header__more-link"
                   >ЗАВАНТАЖЕННЯ</a
                 >
@@ -1116,8 +1120,6 @@
     </button>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-
-
         // --- Mobile Filter Toggle Logic ---
         const filterToggleBtn = document.getElementById("filter-toggle");
         const sidebarElement = document.getElementById("sidebar");
@@ -1399,5 +1401,6 @@
         });
       });
     </script>
+    <script src="js/i18n.js"></script>
   </body>
 </html>

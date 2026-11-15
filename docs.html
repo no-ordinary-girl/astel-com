@@ -104,9 +104,7 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link"
-              >ГОЛОВНА</a
-            >
+            <a href="index.html" class="header__link">ГОЛОВНА</a>
             <a href="about_us.html" class="header__link">ПРО НАС</a>
 
             <a href="products.html" class="header__link hide-on-compact"
@@ -115,7 +113,9 @@
             <a href="downloads.html" class="header__link hide-on-compact"
               >ЗАВАНТАЖЕННЯ</a
             >
-            <a href="docs.html" class="header__link hide-on-compact header__link--active"
+            <a
+              href="docs.html"
+              class="header__link hide-on-compact header__link--active"
               >ДОКУМЕНТАЦІЯ</a
             >
 
@@ -151,7 +151,11 @@
                 <a href="downloads.html" class="header__more-link"
                   >ЗАВАНТАЖЕННЯ</a
                 >
-                <a href="docs.html" class="header__more-link header__more-link--active">ДОКУМЕНТАЦІЯ</a>
+                <a
+                  href="docs.html"
+                  class="header__more-link header__more-link--active"
+                  >ДОКУМЕНТАЦІЯ</a
+                >
               </div>
             </div>
           </nav>
@@ -325,8 +329,6 @@
     <script src="js/products-data.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-
-
         // --- Render Documentation Accordion from PRODUCTS_DATA ---
         const accordionContainer = document.getElementById("docs-accordion");
 
@@ -452,5 +454,6 @@
     </script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/i18n.js"></script>
   </body>
 </html>

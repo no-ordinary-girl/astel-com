@@ -746,8 +746,9 @@ body {
    CUSTOM DARK THEME (Anti-Forced Dark Mode + Manual data-theme="dark")
    ========================================================================== */
 /* In css/global.css — replace the top part of the dark theme section with just this: */
-:root {
-  color-scheme: light dark;
+:root,
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 html[data-theme="dark"] {

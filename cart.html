@@ -1086,7 +1086,7 @@
           }
         }
 
-        // --- Авторизований режим вкладки "Я постійний клієнт" та Повтор замовлення ---
+        // --- Авторизований режим та Повтор замовлення ---
         const isRepeatOrder =
           new URLSearchParams(window.location.search).get("repeat") === "true";
         const isUserAuthorized =
@@ -1102,11 +1102,17 @@
             if (rawRepeat) repeatOrder = JSON.parse(rawRepeat);
           } catch (e) {}
 
+          // Ховаємо перемикач вкладок "Новий покупець" / "Я постійний клієнт"
+          const checkoutTabsEl = document.querySelector(".checkout-tabs");
+          if (checkoutTabsEl) {
+            checkoutTabsEl.style.display = "none";
+          }
+
           const returningTabPane = document.getElementById("returning-buyer");
           const checkoutFormEl = document.getElementById("checkout-form");
 
           if (returningTabPane && checkoutFormEl) {
-            // Ховаємо форму логіну у вкладці "Я постійний клієнт" і показуємо статус авторизації
+            // Показуємо банер авторизованого клієнта
             returningTabPane.innerHTML = `
               <div class="returning-info" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-left-color: #059669; background-color: rgba(5, 150, 105, 0.08); margin-bottom: 24px;">
                 <div>
@@ -1123,24 +1129,8 @@
               </div>
             `;
 
-            // Переносимо форму оформлення замовлення у вкладку "Я постійний клієнт"
+            // Переносимо форму оформлення замовлення під банер і робимо блок видимим
             returningTabPane.appendChild(checkoutFormEl);
-
-            // Якщо клієнт натисне "Новий покупець" — форма плавно відобразиться там, і навпаки
-            document
-              .getElementById("tab-new-btn")
-              .addEventListener("click", () => {
-                document
-                  .getElementById("new-buyer")
-                  .appendChild(checkoutFormEl);
-              });
-            document
-              .getElementById("tab-returning-btn")
-              .addEventListener("click", () => {
-                returningTabPane.appendChild(checkoutFormEl);
-              });
-
-            // Активуємо вкладку "Я постійний клієнт"
             activateTab("returning-buyer");
           }
 
@@ -1167,7 +1157,6 @@
 
           fillCheckoutFormData(autofillPayload);
 
-          // Очищаємо тимчасовий прапорець повтору після заповнення
           if (isRepeatOrder) {
             localStorage.removeItem("astelkom_repeat_order");
           }

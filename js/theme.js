@@ -10,15 +10,15 @@ const ThemeManager = (function () {
 
   const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-  // Ensure <meta name="color-scheme" content="light dark"> exists so Samsung Internet
-  // disables its automatic ugly dark-mode filter and uses our custom CSS instead
-  function ensureColorSchemeMeta() {
-    if (!document.querySelector('meta[name="color-scheme"]')) {
-      const meta = document.createElement("meta");
+  // Sets <meta name="color-scheme"> to match the active theme ("dark" or "light")
+  function setColorSchemeMeta(isDark) {
+    let meta = document.querySelector('meta[name="color-scheme"]');
+    if (!meta) {
+      meta = document.createElement("meta");
       meta.name = "color-scheme";
-      meta.content = "light dark";
       document.head.appendChild(meta);
     }
+    meta.content = isDark ? "dark" : "light";
   }
 
   // Detects Samsung Internet (or Xiaomi MIUI Browser)
@@ -37,6 +37,7 @@ const ThemeManager = (function () {
       (effectiveMode === "auto" && isForcedDarkBrowser && darkQuery.matches);
 
     htmlEl.setAttribute("data-theme", isDark ? "dark" : "light");
+    setColorSchemeMeta(isDark);
 
     document.querySelectorAll(".features-image").forEach((img) => {
       const targetSrc = isDark
@@ -48,7 +49,6 @@ const ThemeManager = (function () {
     });
   }
 
-  ensureColorSchemeMeta();
   applyTheme(MANUAL_CODE_OVERRIDE);
 
   if (document.readyState === "loading") {

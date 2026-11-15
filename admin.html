@@ -793,24 +793,24 @@
                 const ttnWidgetHtml = isEditingTtn
                   ? `
                     <div class="ttn-inline-box">
-                      <div class="admin-control-group" style="max-width: 280px;">
-                        <label class="admin-control-label">Номер накладної (ТТН)</label>
+                      <label class="admin-control-label">Номер накладної (ТТН)</label>
+                      <div class="ttn-input-row">
                         <input
                           type="text"
                           class="admin-search-input order-ttn-input"
                           placeholder="Введіть ТТН (напр. 20450918273645)"
                           value="${ord.ttn || ""}"
                         />
+                        <button type="button" class="admin-btn admin-btn--outline" data-save-ttn="${ord.orderId}">
+                          Зберегти ТТН
+                        </button>
                       </div>
-                      <button type="button" class="admin-btn admin-btn--outline" data-save-ttn="${ord.orderId}" style="align-self: flex-end;">
-                        Зберегти ТТН
-                      </button>
                     </div>
                   `
                   : `
                     <div class="ttn-inline-box">
-                      <div class="admin-control-group">
-                        <label class="admin-control-label">Номер накладної (ТТН)</label>
+                      <label class="admin-control-label">Номер накладної (ТТН)</label>
+                      <div class="ttn-input-row">
                         <div class="ttn-saved-pill">
                           <span class="ttn-saved-pill__label">✓ ТТН</span>
                           <span class="ttn-saved-pill__val">${ord.ttn}</span>
@@ -975,6 +975,54 @@
           const advanceBtn = e.target.closest("[data-advance-status]");
           if (advanceBtn) {
             const nextCode = advanceBtn.getAttribute("data-advance-status");
+
+            // Require TTN before moving order to "shipped" ("Відправлено")
+            if (nextCode === "shipped") {
+              const allOrders = loadAllOrders();
+              const ord = allOrders.find((o) => String(o.orderId) === orderId);
+              const savedTtn = ord && ord.ttn ? ord.ttn.trim() : "";
+              const effectiveTtn =
+                currentTtn !== undefined ? currentTtn : savedTtn;
+
+              if (!effectiveTtn) {
+                if (ttnInput) {
+                  ttnInput.classList.remove("has-error");
+                  void ttnInput.offsetWidth; // Restart shake animation
+                  ttnInput.classList.add("has-error");
+                  ttnInput.focus();
+
+                  // Show inline error hint under the input if not already shown
+                  const group = ttnInput.closest(".ttn-inline-box");
+                  if (group && !group.querySelector(".ttn-error-hint")) {
+                    const hint = document.createElement("span");
+                    hint.className = "ttn-error-hint";
+                    hint.textContent =
+                      "Введіть номер ТТН перед відправкою замовлення";
+                    group.appendChild(hint);
+                  }
+
+                  ttnInput.addEventListener(
+                    "input",
+                    () => {
+                      ttnInput.classList.remove("has-error");
+                      const h = group && group.querySelector(".ttn-error-hint");
+                      if (h) h.remove();
+                    },
+                    { once: true },
+                  );
+                }
+                showUndoToast(
+                  `Вкажіть номер накладної (ТТН), щоб позначити замовлення #${orderId} відправленим`,
+                  null,
+                );
+                return;
+              }
+
+              editingTtnOrderIds.delete(orderId);
+              persistOrderUpdate(orderId, "shipped", effectiveTtn, true);
+              return;
+            }
+
             if (currentTtn) editingTtnOrderIds.delete(orderId);
             persistOrderUpdate(orderId, nextCode, currentTtn, true);
             return;

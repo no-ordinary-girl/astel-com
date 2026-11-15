@@ -1041,12 +1041,63 @@ const I18nManager = (function () {
       link.style.fontWeight = isCurrent ? "700" : "400";
     });
   }
+  function translateMediaAssets(lang) {
+    const isEn = lang === "en";
+
+    // 1. Swap Header Logo (.header__image)
+    document.querySelectorAll(".header__image").forEach((img) => {
+      const targetSrc = isEn
+        ? "assets/images/logo-main-english.svg"
+        : "assets/images/logo-main.svg";
+      if (img.getAttribute("src") !== targetSrc) {
+        img.setAttribute("src", targetSrc);
+      }
+    });
+
+    // 2. Swap Footer Map <picture> (<source srcset> + <img src>)
+    const mapAssetPairs = [
+      ["assets/images/map-wide.png", "assets/images/map-wide-english.png"],
+      ["assets/images/map-tablet.png", "assets/images/map-tablet-english.png"],
+      ["assets/images/map-mobile.png", "assets/images/map-mobile-english.png"],
+      ["assets/images/map.png", "assets/images/map-english.png"],
+    ];
+
+    document.querySelectorAll(".footer__map picture").forEach((pic) => {
+      // Update <source srcset="...">
+      pic.querySelectorAll("source").forEach((source) => {
+        const currentSrcset = source.getAttribute("srcset");
+        if (!currentSrcset) return;
+
+        for (const [uaPath, enPath] of mapAssetPairs) {
+          if (currentSrcset === uaPath || currentSrcset === enPath) {
+            const target = isEn ? enPath : uaPath;
+            if (currentSrcset !== target) {
+              source.setAttribute("srcset", target);
+            }
+            break;
+          }
+        }
+      });
+
+      // Update fallback <img class="footer__map-image" src="...">
+      const mapImg = pic.querySelector(".footer__map-image");
+      if (mapImg) {
+        const targetImgSrc = isEn
+          ? "assets/images/map-mobile-english.png"
+          : "assets/images/map-mobile.png";
+        if (mapImg.getAttribute("src") !== targetImgSrc) {
+          mapImg.setAttribute("src", targetImgSrc);
+        }
+      }
+    });
+  }
 
   function applyLanguage(lang) {
     if (observer) observer.disconnect();
 
     try {
       updateHeaderLangUI(lang);
+      translateMediaAssets(lang); // <-- Add this line here
 
       if (!document._origTitle) {
         document._origTitle = document.title;

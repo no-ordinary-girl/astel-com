@@ -17,7 +17,7 @@
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.4;
-  color: #7d7d7d;
+  color: #525252;
   margin-bottom: 20px;
 }
 
@@ -203,12 +203,12 @@
 .product-hero__vat {
   font-family: var(--font-mono);
   font-size: 13px;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .product-hero__min-order {
   font-size: 14px;
-  color: #7d7d7d;
+  color: #525252;
   font-weight: 500;
 }
 

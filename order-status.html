@@ -347,7 +347,7 @@
                 <span class="order-detail-block__label">Отримувач</span>
                 <span class="order-detail-block__value">
                   ${order.customer.firstName} ${order.customer.lastName}
-                  ${order.customer.phone ? `<br><span style="font-weight: 400; color: #7d7d7d;">${order.customer.phone}</span>` : ""}
+                  ${order.customer.phone ? `<br><span style="font-weight: 400; color: #525252;">${order.customer.phone}</span>` : ""}
                 </span>
               </div>
 
@@ -355,7 +355,7 @@
                 <span class="order-detail-block__label">Сума та спосіб оплати</span>
                 <span class="order-detail-block__value">
                   ${CartManager.formatPrice(order.subtotal)} (без ПДВ)<br>
-                  <span style="font-weight: 400; color: #7d7d7d;">${order.payment}</span>
+                  <span style="font-weight: 400; color: #525252;">${order.payment}</span>
                 </span>
               </div>
 

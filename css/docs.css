@@ -37,7 +37,7 @@
 
 .docs-header__subtitle {
   font-size: clamp(16px, 4vw, 18px);
-  color: #7d7d7d;
+  color: #525252;
   line-height: 1.5;
   max-width: 680px;
 }
@@ -119,7 +119,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .docs-item__title {
@@ -273,7 +273,7 @@
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
-  color: #7d7d7d;
+  color: #525252;
   transition: color 0.2s ease;
 }
 

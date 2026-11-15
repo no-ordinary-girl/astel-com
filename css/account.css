@@ -58,7 +58,7 @@
 
 .auth-card__subtitle {
   font-size: 14px;
-  color: #7d7d7d;
+  color: #525252;
   line-height: 1.5;
 }
 
@@ -80,7 +80,7 @@
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #7d7d7d;
+  color: #525252;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -157,7 +157,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .auth-divider::before,
@@ -227,7 +227,7 @@
   height: 30px;
   border: none;
   background: transparent;
-  color: #7d7d7d;
+  color: #525252;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -459,7 +459,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .repeat-order-banner__title {
@@ -539,7 +539,7 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #7d7d7d;
+  color: #525252;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -584,7 +584,7 @@
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .manager-card__name {
@@ -699,7 +699,7 @@
 
 .order-history-card__date {
   font-size: 12px;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .order-status-pill {
@@ -768,7 +768,7 @@
 .order-history-item__qty {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .order-history-item__sum {
@@ -784,7 +784,7 @@
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 12px;
-  color: #7d7d7d;
+  color: #525252;
   line-height: 1.45;
   display: flex;
   flex-direction: column;
@@ -804,7 +804,7 @@
   align-items: baseline;
   justify-content: space-between;
   font-size: 14px;
-  color: #7d7d7d;
+  color: #525252;
 }
 
 .order-history-card__total strong {

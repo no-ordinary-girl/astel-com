@@ -6,7 +6,7 @@ const ThemeManager = (function () {
   // "auto"  -> Uses dark theme only on dark-mode browsers (like Samsung Internet)
   // "dark"  -> Forces dark theme everywhere
   // "light" -> Forces light theme everywhere
-  const MANUAL_CODE_OVERRIDE = "light";
+  const MANUAL_CODE_OVERRIDE = "dark";
 
   const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 

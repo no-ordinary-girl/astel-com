@@ -80,7 +80,7 @@
 
 .kpi-card__value {
   font-family: var(--font-base);
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(16px, 4vw, 24px);
   font-weight: 700;
   color: var(--gray-900);
   line-height: 1.1;

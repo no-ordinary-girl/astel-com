@@ -350,7 +350,7 @@
 
 .product-card__cart:disabled,
 .product-card__cart:disabled:hover {
-  opacity: 0.4;
+  /* opacity: 0.4; */
   cursor: not-allowed;
   background-color: #ffffff;
   border-color: var(--gray-200);

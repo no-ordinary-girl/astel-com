@@ -1,0 +1,854 @@
+/* ===========================
+   ADMIN DASHBOARD (css/admin.css)
+   Matches admin.html + account.css aesthetic
+   =========================== */
+.admin-page {
+  padding: 36px 0 96px 0;
+  background-color: var(--gray-100);
+  min-height: calc(100vh - 180px);
+}
+
+/* --- Top Header Bar --- */
+.admin-topbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--gray-900);
+}
+
+.admin-topbar__left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-badge {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: rgba(5, 150, 105, 0.12);
+  color: #059669;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.admin-title {
+  font-size: clamp(24px, 5vw, 34px);
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.admin-topbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- 4 KPI Summary Cards --- */
+.admin-kpis {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+}
+
+.kpi-card__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.kpi-card__value {
+  font-family: var(--font-base);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.1;
+}
+
+.kpi-card__sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+}
+
+/* --- Navigation Tabs & Search Filter Bar --- */
+.admin-controls-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: #fafafa;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.admin-tab {
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-tab:hover {
+  color: var(--gray-900);
+  background-color: var(--gray-100);
+}
+
+.admin-tab.is-active {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.admin-tab__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background-color: var(--gray-200);
+  color: var(--gray-900);
+}
+
+.admin-tab.is-active .admin-tab__count {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: inherit;
+}
+
+.admin-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.admin-search-input,
+.admin-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  font-family: var(--font-base);
+  font-size: 14px;
+  color: var(--gray-900);
+  transition: border-color 0.2s ease;
+}
+
+.admin-search-input:focus,
+.admin-select:focus {
+  outline: none;
+  border-color: var(--gray-900);
+}
+
+/* --- Tab Panels --- */
+.admin-panel {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-panel.is-active {
+  display: flex;
+}
+
+/* --- Order Management Cards --- */
+.admin-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-order-card {
+  background-color: #fafafa;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease;
+}
+
+.admin-order-card:hover {
+  border-color: var(--gray-400);
+}
+
+.admin-order-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.admin-order-card__id-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.admin-order-card__id {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.admin-order-card__date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Status Badges */
+.status-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.status-pill--active,
+.status-pill--processing {
+  background-color: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+}
+
+.status-pill--shipped {
+  background-color: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.status-pill--completed {
+  background-color: rgba(5, 150, 105, 0.12);
+  color: #059669;
+}
+
+.status-pill--canceled {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+/* 2-Column Customer & Delivery Info Boxes */
+.admin-order-card__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.admin-info-box {
+  background-color: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.admin-info-box__title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+  border-bottom: 1px dashed var(--gray-200);
+}
+
+.admin-info-box strong {
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+/* Ordered Items List */
+.admin-order-items {
+  background-color: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-order-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--gray-200);
+}
+
+.admin-order-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.admin-order-item__img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  background-color: #ffffff;
+  padding: 4px;
+  object-fit: contain;
+}
+
+.admin-order-item__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.35;
+}
+
+.admin-order-item__meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.admin-order-item__sum {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+}
+
+/* Bottom Controls Row (Status Select + TTN Input + Buttons) */
+.admin-order-card__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.admin-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.admin-control-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.admin-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-btn {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+}
+
+.admin-btn--primary {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+}
+
+.admin-btn--primary:hover {
+  opacity: 0.88;
+}
+
+.admin-btn--outline {
+  background-color: #ffffff;
+  border-color: var(--gray-900);
+  color: var(--gray-900);
+}
+
+.admin-btn--outline:hover {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+}
+
+.admin-btn--danger {
+  background-color: #ffffff;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.admin-btn--danger:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+/* --- Clients & Catalog Tables --- */
+.admin-table-card {
+  background-color: #fafafa;
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  padding: 24px 20px;
+  overflow-x: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.admin-table th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  border-bottom: 2px solid var(--gray-900);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.client-avatar-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.client-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Stock Toggle Pill in Catalog Tab */
+.stock-toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.stock-toggle-btn.is-instock {
+  background-color: rgba(5, 150, 105, 0.12);
+  color: #059669;
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.stock-toggle-btn.is-outstock {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.admin-price-input {
+  width: 110px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  background-color: #ffffff;
+  color: var(--gray-900);
+}
+
+/* ===========================
+   DARK THEME OVERRIDES
+   =========================== */
+html[data-theme="dark"] .kpi-card,
+html[data-theme="dark"] .admin-order-card,
+html[data-theme="dark"] .admin-table-card,
+html[data-theme="dark"] .admin-tabs {
+  background-color: #242424;
+  border-color: #383838;
+}
+
+html[data-theme="dark"] .admin-info-box,
+html[data-theme="dark"] .admin-order-items,
+html[data-theme="dark"] .admin-search-input,
+html[data-theme="dark"] .admin-select,
+html[data-theme="dark"] .admin-price-input,
+html[data-theme="dark"] .admin-btn--outline,
+html[data-theme="dark"] .admin-btn--danger {
+  background-color: #303030;
+  border-color: #474747;
+  color: var(--gray-900);
+}
+
+html[data-theme="dark"] .admin-btn--danger {
+  border-color: #dc2626;
+  color: #f87171;
+}
+
+/* ===========================
+   TABLET & DESKTOP BREAKPOINTS
+   =========================== */
+@media (min-width: 640px) {
+  .admin-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-filters {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .admin-select {
+    max-width: 240px;
+  }
+
+  .admin-order-card__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 960px) {
+  .admin-topbar {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .admin-kpis {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .admin-controls-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .admin-filters {
+    max-width: 620px;
+  }
+
+  .admin-order-card {
+    padding: 28px;
+  }
+
+  .admin-order-card__controls {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+/* ===========================
+   UX UPGRADE: PIPELINE STEPPER, LOCKED STATE & UNDO TOAST
+   =========================== */
+
+/* Visual 4-Step Pipeline */
+.order-pipeline {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  background-color: var(--gray-100);
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+}
+
+.pipeline-step {
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: default;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.pipeline-step.is-passed {
+  color: #059669;
+  background-color: rgba(5, 150, 105, 0.06);
+}
+
+.pipeline-step.is-current {
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.pipeline-step.is-current.is-completed-step {
+  background-color: #059669;
+  color: #ffffff;
+}
+
+.pipeline-step:disabled {
+  /* opacity: 0.45; */
+  cursor: not-allowed;
+}
+
+/* TTN Inline Form */
+.ttn-inline-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.ttn-inline-box .admin-search-input {
+  max-width: 280px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* Locked Banner for Completed or Canceled Orders */
+.order-closed-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.order-closed-banner--completed {
+  background-color: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  color: #065f46;
+}
+
+.order-closed-banner--canceled {
+  background-color: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #991b1b;
+}
+
+/* Floating Undo Toast */
+.admin-undo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background-color: var(--gray-900);
+  color: var(--gray-100);
+  padding: 14px 20px;
+  border-radius: 12px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  max-width: 92vw;
+}
+
+.admin-undo-toast.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.admin-undo-toast__btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.16);
+  color: inherit;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-undo-toast__btn:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Dark Mode Adjustments for New UX Elements */
+html[data-theme="dark"] .order-pipeline {
+  background-color: #1d1d1d;
+  border-color: #383838;
+}
+
+html[data-theme="dark"] .pipeline-step:hover:not(:disabled):not(.is-current) {
+  background-color: #303030;
+}
+
+html[data-theme="dark"] .order-closed-banner--completed {
+  color: #34d399;
+}
+
+html[data-theme="dark"] .order-closed-banner--canceled {
+  color: #f87171;
+}
+
+@media (min-width: 640px) {
+  .order-pipeline {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Saved TTN Badge & Edit State */
+.ttn-saved-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1.5px solid var(--gray-900);
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-height: 44px;
+}
+
+.ttn-saved-pill__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #059669;
+}
+
+.ttn-saved-pill__val {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: 0.03em;
+}
+
+.ttn-edit-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: underline;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.ttn-edit-btn:hover {
+  color: var(--gray-900);
+}
+
+html[data-theme="dark"] .ttn-saved-pill {
+  background-color: #303030;
+  border-color: #f3f4f6;
+}

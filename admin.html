@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Панель адміністратора - АСТЕЛ-КОМ</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body>
+    <!-- SHARED:HEADER:START -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="АСТЕЛ-КОМ"
+            />
+          </a>
+          <div class="header__top-controls">
+            <a
+              href="account.html"
+              class="header__account header__account--mobile is-logged-in"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
+            <a
+              href="cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              type="button"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="index.html" class="header__link">ГОЛОВНА</a>
+            <a href="about_us.html" class="header__link">ПРО НАС</a>
+            <a href="products.html" class="header__link hide-on-compact"
+              >ТОВАРИ</a
+            >
+            <a href="downloads.html" class="header__link hide-on-compact"
+              >ЗАВАНТАЖЕННЯ</a
+            >
+            <a href="docs.html" class="header__link hide-on-compact"
+              >ДОКУМЕНТАЦІЯ</a
+            >
+            <a href="#footer" class="header__link">КОНТАКТИ</a>
+          </nav>
+
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                UA
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link">EN</a>
+                </li>
+              </ul>
+            </div>
+
+            <a
+              href="account.html"
+              class="header__account header__account--desktop is-logged-in"
+              data-account-link
+              aria-label="Особистий кабінет"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Кабінет"
+              />
+            </a>
+            <a
+              href="cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Кошик"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Кошик"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- SHARED:HEADER:END -->
+
+    <!-- ===========================
+         ADMIN BACK-OFFICE MAIN
+         =========================== -->
+    <main class="admin-page">
+      <div class="container">
+        <!-- Top Header -->
+        <div class="admin-topbar">
+          <div class="admin-topbar__left">
+            <span class="admin-badge">● Back-Office / Менеджер Сергій</span>
+            <h1 class="admin-title">Управління замовленнями та клієнтами</h1>
+          </div>
+          <div class="admin-topbar__actions">
+            <button
+              type="button"
+              class="admin-btn admin-btn--outline"
+              id="create-demo-order-btn"
+            >
+              + Тестове замовлення
+            </button>
+            <a href="account.html" class="admin-btn admin-btn--outline">
+              Вигляд кабінету клієнта
+            </a>
+          </div>
+        </div>
+
+        <!-- KPI Metrics -->
+        <div class="admin-kpis">
+          <div class="kpi-card">
+            <span class="kpi-card__label">Усього замовлень</span>
+            <span class="kpi-card__value" id="kpi-total-orders">0</span>
+            <span class="kpi-card__sub">Активні та архівні</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">Потребують обробки</span>
+            <span class="kpi-card__value" id="kpi-pending-orders">0</span>
+            <span class="kpi-card__sub" style="color: #b45309"
+              >Очікують ТТН / відправки</span
+            >
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">Сума виконаних (без ПДВ)</span>
+            <span class="kpi-card__value" id="kpi-revenue">0 ₴</span>
+            <span class="kpi-card__sub">Підтверджені замовлення</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-card__label">База клієнтів</span>
+            <span class="kpi-card__value" id="kpi-clients-count">0</span>
+            <span class="kpi-card__sub">Унікальні покупці</span>
+          </div>
+        </div>
+
+        <!-- Tabs & Search Bar -->
+        <div class="admin-controls-bar">
+          <div class="admin-tabs" role="tablist">
+            <button
+              type="button"
+              class="admin-tab is-active"
+              data-admin-tab="panel-orders"
+            >
+              <span>Замовлення</span>
+              <span class="admin-tab__count" id="tab-count-orders">0</span>
+            </button>
+            <button
+              type="button"
+              class="admin-tab"
+              data-admin-tab="panel-clients"
+            >
+              <span>Клієнти</span>
+              <span class="admin-tab__count" id="tab-count-clients">0</span>
+            </button>
+            <button
+              type="button"
+              class="admin-tab"
+              data-admin-tab="panel-products"
+            >
+              <span>Склад та ціни</span>
+              <span class="admin-tab__count" id="tab-count-products">15</span>
+            </button>
+          </div>
+
+          <div class="admin-filters" id="orders-filter-bar">
+            <input
+              type="search"
+              id="admin-search"
+              class="admin-search-input"
+              placeholder="Пошук за № замовлення, ім'ям, телефоном, ТТН..."
+            />
+            <select id="admin-status-filter" class="admin-select">
+              <option value="all">Усі статуси</option>
+              <option value="active">Прийнято (редагування)</option>
+              <option value="processing">Передано в обробку</option>
+              <option value="shipped">Відправлено</option>
+              <option value="completed">Виконано</option>
+              <option value="canceled">Скасовано</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PANEL 1: ЗАМОВЛЕННЯ -->
+        <section class="admin-panel is-active" id="panel-orders">
+          <div class="admin-orders-list" id="admin-orders-container">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+
+        <!-- PANEL 2: КЛІЄНТИ -->
+        <section class="admin-panel" id="panel-clients">
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Клієнт</th>
+                  <th>Телефон</th>
+                  <th>E-mail</th>
+                  <th>Основна адреса доставки</th>
+                  <th>Замовлень</th>
+                  <th>Загальна сума</th>
+                </tr>
+              </thead>
+              <tbody id="admin-clients-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- PANEL 3: СКЛАД ТА ЦІНИ -->
+        <section class="admin-panel" id="panel-products">
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Товар</th>
+                  <th>Категорія</th>
+                  <th>Умови продажу</th>
+                  <th>Ціна (грн без ПДВ)</th>
+                  <th>Наявність</th>
+                  <th>Дія</th>
+                </tr>
+              </thead>
+              <tbody id="admin-products-tbody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- SHARED:FOOTER:START -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">Компанія ТОВ "АСТЕЛ-КОМ"</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Сергій +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >вул. Солом'янська, 5, Київ, Україна</span
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- SHARED:FOOTER:END -->
+
+    <script src="js/site-nav.js"></script>
+    <script src="js/products-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const ACTIVE_ORDER_KEY = "astelkom_active_order";
+        const COMPLETED_ORDERS_KEY = "astelkom_completed_orders";
+        const STOCK_OVERRIDES_KEY = "astelkom_catalog_overrides";
+
+        const STATUS_LABELS = {
+          active: "Прийнято (редагування)",
+          processing: "Передано в обробку",
+          shipped: "Відправлено",
+          completed: "Виконано",
+          canceled: "Скасовано",
+        };
+
+        const PIPELINE_STEPS = [
+          { code: "active", label: "1. Прийнято" },
+          { code: "processing", label: "2. В обробці" },
+          { code: "shipped", label: "3. Відправлено" },
+          { code: "completed", label: "4. Виконано" },
+        ];
+
+        const NEXT_STEP_ACTION = {
+          active: { nextCode: "processing", btnText: "Прийняти в обробку" },
+          processing: {
+            nextCode: "shipped",
+            btnText: "Позначити відправленим",
+          },
+          shipped: { nextCode: "completed", btnText: "✓ Завершити (Виконано)" },
+        };
+
+        // Tracks which order IDs currently have their TTN input open for editing
+        const editingTtnOrderIds = new Set();
+        let lastActionUndo = null;
+        let undoToastTimer = null;
+
+        const formatMoney = (val) =>
+          Number(val || 0)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " ₴";
+
+        const formatDate = (ts) => {
+          const d = new Date(ts || Date.now());
+          return d.toLocaleDateString("uk-UA", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        };
+
+        // Seed default orders ONLY ONCE if localStorage is completely empty
+        if (
+          !localStorage.getItem(COMPLETED_ORDERS_KEY) &&
+          typeof AuthManager !== "undefined" &&
+          typeof AuthManager.getOrders === "function"
+        ) {
+          AuthManager.getOrders();
+        }
+
+        function resolveStatusCode(ord) {
+          if (ord.statusCode && STATUS_LABELS[ord.statusCode]) {
+            return ord.statusCode;
+          }
+          const s = String(ord.status || "").toLowerCase();
+          if (s.includes("скасов")) return "canceled";
+          if (s.includes("виконан")) return "completed";
+          if (s.includes("відправ")) return "shipped";
+          if (s.includes("оброб")) return "processing";
+          return ord.locked ? "processing" : "active";
+        }
+
+        function loadAllOrders() {
+          const map = new Map();
+          const now = Date.now();
+          let activeEditableOrderId = null;
+
+          const currentUser = (typeof AuthManager !== "undefined" &&
+            AuthManager.getUser()) || {
+            firstName: "Ім'я",
+            lastName: "Прізвище",
+            phone: "+380501234567",
+            email: "example@gmail.com",
+          };
+
+          // 1. Check astelkom_active_order timer state first
+          try {
+            const rawActive = localStorage.getItem(ACTIVE_ORDER_KEY);
+            if (rawActive) {
+              const act = JSON.parse(rawActive);
+              const id = String(act.orderId || act.id || "");
+
+              if (id) {
+                const isStillEditing =
+                  !act.locked && act.expiresAt && now < Number(act.expiresAt);
+
+                if (isStillEditing) {
+                  // Client still has time on the 15-minute timer -> hide from admin dashboard
+                  activeEditableOrderId = id;
+                } else {
+                  // Timer expired or client clicked "Передати в роботу зараз" -> lock & show as processing
+                  if (!act.locked) {
+                    act.locked = true;
+                    act.statusCode = "processing";
+                    act.status = STATUS_LABELS.processing;
+                    localStorage.setItem(ACTIVE_ORDER_KEY, JSON.stringify(act));
+                  }
+                  const code = resolveStatusCode(act);
+                  map.set(id, {
+                    ...act,
+                    orderId: id,
+                    statusCode: code,
+                    status: STATUS_LABELS[code],
+                    ttn: act.ttn || "",
+                    customer: act.customer || {
+                      firstName: currentUser.firstName || "Ім'я",
+                      lastName: currentUser.lastName || "Прізвище",
+                      phone: currentUser.phone || "+380501234567",
+                      email: currentUser.email || "example@gmail.com",
+                    },
+                  });
+                }
+              }
+            }
+          } catch (e) {}
+
+          // 2. Load archived/completed orders (excluding the one currently in the 15-min edit window)
+          try {
+            const rawCompleted = JSON.parse(
+              localStorage.getItem(COMPLETED_ORDERS_KEY) || "[]",
+            );
+            rawCompleted.forEach((ord) => {
+              const id = String(ord.orderId || ord.id || "");
+              if (!id || id === activeEditableOrderId) return;
+
+              const code = resolveStatusCode(ord);
+              map.set(id, {
+                ...ord,
+                orderId: id,
+                statusCode: code,
+                status: STATUS_LABELS[code],
+                ttn: ord.ttn || "",
+                customer: ord.customer || {
+                  firstName: currentUser.firstName || "Ім'я",
+                  lastName: currentUser.lastName || "Прізвище",
+                  phone: currentUser.phone || "+380501234567",
+                  email: currentUser.email || "example@gmail.com",
+                },
+              });
+            });
+          } catch (e) {}
+
+          return Array.from(map.values()).sort(
+            (a, b) => (b.createdAt || 0) - (a.createdAt || 0),
+          );
+        }
+
+        function showUndoToast(message, undoCallback) {
+          let toast = document.getElementById("admin-undo-toast");
+          if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "admin-undo-toast";
+            toast.className = "admin-undo-toast";
+            document.body.appendChild(toast);
+          }
+
+          lastActionUndo = undoCallback;
+          toast.innerHTML = `
+            <span id="admin-undo-msg">${message}</span>
+            ${
+              undoCallback
+                ? `<button type="button" class="admin-undo-toast__btn" id="admin-undo-btn">↺ Відмінити дію</button>`
+                : ""
+            }
+          `;
+
+          const btn = toast.querySelector("#admin-undo-btn");
+          if (btn) {
+            btn.onclick = () => {
+              if (typeof lastActionUndo === "function") {
+                const fn = lastActionUndo;
+                lastActionUndo = null;
+                fn();
+              }
+              toast.classList.remove("is-visible");
+            };
+          }
+
+          toast.classList.add("is-visible");
+          clearTimeout(undoToastTimer);
+          undoToastTimer = setTimeout(() => {
+            toast.classList.remove("is-visible");
+          }, 6000);
+        }
+
+        function persistOrderUpdate(
+          orderId,
+          newStatusCode,
+          newTtn,
+          recordUndo = true,
+        ) {
+          const cleanId = String(orderId);
+          const allOrders = loadAllOrders();
+          const targetOrd = allOrders.find(
+            (o) => String(o.orderId) === cleanId,
+          );
+          if (!targetOrd) return;
+
+          const prevStatusCode = targetOrd.statusCode;
+          const prevTtn = targetOrd.ttn || "";
+          const finalStatusCode = newStatusCode || prevStatusCode;
+          const finalTtn =
+            newTtn !== undefined ? String(newTtn).trim() : prevTtn;
+
+          const updatedOrd = {
+            ...targetOrd,
+            orderId: cleanId,
+            statusCode: finalStatusCode,
+            status: STATUS_LABELS[finalStatusCode] || "Виконано",
+            ttn: finalTtn,
+            locked: finalStatusCode !== "active",
+          };
+
+          // 1. Update active order in localStorage if it matches this orderId
+          try {
+            const rawActive = localStorage.getItem(ACTIVE_ORDER_KEY);
+            if (rawActive) {
+              const act = JSON.parse(rawActive);
+              if (String(act.orderId || act.id) === cleanId) {
+                localStorage.setItem(
+                  ACTIVE_ORDER_KEY,
+                  JSON.stringify(updatedOrd),
+                );
+              }
+            }
+          } catch (e) {}
+
+          // 2. Write complete list back to astelkom_completed_orders so it persists reliably
+          const updatedList = allOrders.map((o) =>
+            String(o.orderId) === cleanId ? updatedOrd : o,
+          );
+          localStorage.setItem(
+            COMPLETED_ORDERS_KEY,
+            JSON.stringify(updatedList),
+          );
+
+          renderDashboard();
+
+          if (recordUndo && prevStatusCode !== finalStatusCode) {
+            showUndoToast(
+              `Замовлення #${cleanId}: статус змінено на «${STATUS_LABELS[finalStatusCode]}»`,
+              () => {
+                persistOrderUpdate(cleanId, prevStatusCode, prevTtn, false);
+                showUndoToast(
+                  `Дію скасовано: замовлення #${cleanId} повернуто у «${STATUS_LABELS[prevStatusCode]}»`,
+                  null,
+                );
+              },
+            );
+          } else if (recordUndo && prevTtn !== finalTtn) {
+            showUndoToast(
+              finalTtn
+                ? `ТТН ${finalTtn} збережено для замовлення #${cleanId}`
+                : `ТТН видалено для замовлення #${cleanId}`,
+              () => {
+                persistOrderUpdate(cleanId, finalStatusCode, prevTtn, false);
+              },
+            );
+          }
+        }
+
+        function buildClientsList(orders) {
+          const clientsMap = new Map();
+
+          const upsertClient = (c, delivery, orderSubtotal, statusCode) => {
+            if (!c) return;
+            const key = (c.email || c.phone || "guest").toLowerCase();
+            const existing = clientsMap.get(key) || {
+              firstName: c.firstName || "Ім'я",
+              lastName: c.lastName || "Прізвище",
+              phone: c.phone || "—",
+              email: c.email || "—",
+              address: delivery
+                ? `м. ${delivery.city}, ${delivery.carrierName} (${delivery.branch})`
+                : "—",
+              ordersCount: 0,
+              totalSpent: 0,
+            };
+
+            if (orderSubtotal !== undefined) {
+              existing.ordersCount += 1;
+              if (statusCode !== "canceled") {
+                existing.totalSpent += Number(orderSubtotal || 0);
+              }
+            }
+            if (delivery && existing.address === "—") {
+              existing.address = `м. ${delivery.city}, ${delivery.carrierName} (${delivery.branch})`;
+            }
+            clientsMap.set(key, existing);
+          };
+
+          if (typeof AuthManager !== "undefined" && AuthManager.getUser()) {
+            const u = AuthManager.getUser();
+            upsertClient(u, u.address);
+          }
+
+          orders.forEach((ord) => {
+            upsertClient(
+              ord.customer,
+              ord.delivery,
+              ord.subtotal,
+              ord.statusCode,
+            );
+          });
+
+          return Array.from(clientsMap.values());
+        }
+
+        const ordersContainer = document.getElementById(
+          "admin-orders-container",
+        );
+        const clientsTbody = document.getElementById("admin-clients-tbody");
+        const searchInput = document.getElementById("admin-search");
+        const statusFilter = document.getElementById("admin-status-filter");
+
+        function renderDashboard() {
+          const allOrders = loadAllOrders();
+          const clients = buildClientsList(allOrders);
+
+          const pendingCount = allOrders.filter(
+            (o) =>
+              o.statusCode === "active" ||
+              o.statusCode === "processing" ||
+              o.statusCode === "shipped",
+          ).length;
+          const totalRevenue = allOrders
+            .filter((o) => o.statusCode === "completed")
+            .reduce((sum, o) => sum + Number(o.subtotal || 0), 0);
+
+          document.getElementById("kpi-total-orders").textContent =
+            allOrders.length;
+          document.getElementById("kpi-pending-orders").textContent =
+            pendingCount;
+          document.getElementById("kpi-revenue").textContent =
+            formatMoney(totalRevenue);
+          document.getElementById("kpi-clients-count").textContent =
+            clients.length;
+
+          document.getElementById("tab-count-orders").textContent =
+            allOrders.length;
+          document.getElementById("tab-count-clients").textContent =
+            clients.length;
+
+          const query = searchInput.value.trim().toLowerCase();
+          const statusVal = statusFilter.value;
+
+          const filteredOrders = allOrders.filter((ord) => {
+            if (statusVal !== "all" && ord.statusCode !== statusVal) {
+              return false;
+            }
+            if (!query) return true;
+            const hay = [
+              ord.orderId,
+              ord.ttn,
+              ord.customer?.firstName,
+              ord.customer?.lastName,
+              ord.customer?.phone,
+              ord.customer?.email,
+              ord.delivery?.city,
+              ord.delivery?.branch,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            return hay.includes(query);
+          });
+
+          if (filteredOrders.length === 0) {
+            ordersContainer.innerHTML = `
+              <div class="admin-table-card" style="text-align: center; padding: 48px 20px; color: #6b7280;">
+                Замовлень за вашим запитом не знайдено.
+              </div>
+            `;
+          } else {
+            ordersContainer.innerHTML = filteredOrders
+              .map((ord) => {
+                const isClosed =
+                  ord.statusCode === "completed" ||
+                  ord.statusCode === "canceled";
+                const currentStepIdx = PIPELINE_STEPS.findIndex(
+                  (s) => s.code === ord.statusCode,
+                );
+
+                // 1. Read-only Pipeline Stepper (Visual progress only)
+                const pipelineHtml = PIPELINE_STEPS.map((step, idx) => {
+                  let cls = "pipeline-step";
+                  if (ord.statusCode === step.code) {
+                    cls += " is-current";
+                    if (step.code === "completed") cls += " is-completed-step";
+                  } else if (currentStepIdx > idx && !isClosed) {
+                    cls += " is-passed";
+                  }
+                  return `
+                    <div class="${cls}">
+                      ${currentStepIdx > idx && !isClosed ? "✓ " : ""}${step.label}
+                    </div>
+                  `;
+                }).join("");
+
+                // 2. Order Items
+                const itemsHtml = (ord.items || [])
+                  .map(
+                    (item) => `
+                  <div class="admin-order-item">
+                    <img src="${item.image}" alt="${item.title}" class="admin-order-item__img" />
+                    <div>
+                      <div class="admin-order-item__title">${item.title}</div>
+                      <div class="admin-order-item__meta">${item.qty} шт. × ${formatMoney(item.price)}</div>
+                    </div>
+                    <div class="admin-order-item__sum">${formatMoney(item.price * item.qty)}</div>
+                  </div>
+                `,
+                  )
+                  .join("");
+
+                // 3. TTN Block: Show saved TTN badge + "Редагувати" button if TTN exists and is not being edited
+                const hasSavedTtn = Boolean(
+                  ord.ttn && ord.ttn.trim().length > 0,
+                );
+                const isEditingTtn =
+                  !hasSavedTtn || editingTtnOrderIds.has(String(ord.orderId));
+
+                const ttnWidgetHtml = isEditingTtn
+                  ? `
+                    <div class="ttn-inline-box">
+                      <div class="admin-control-group" style="max-width: 280px;">
+                        <label class="admin-control-label">Номер накладної (ТТН)</label>
+                        <input
+                          type="text"
+                          class="admin-search-input order-ttn-input"
+                          placeholder="Введіть ТТН (напр. 20450918273645)"
+                          value="${ord.ttn || ""}"
+                        />
+                      </div>
+                      <button type="button" class="admin-btn admin-btn--outline" data-save-ttn="${ord.orderId}" style="align-self: flex-end;">
+                        Зберегти ТТН
+                      </button>
+                    </div>
+                  `
+                  : `
+                    <div class="ttn-inline-box">
+                      <div class="admin-control-group">
+                        <label class="admin-control-label">Номер накладної (ТТН)</label>
+                        <div class="ttn-saved-pill">
+                          <span class="ttn-saved-pill__label">✓ ТТН</span>
+                          <span class="ttn-saved-pill__val">${ord.ttn}</span>
+                          <button type="button" class="ttn-edit-btn" data-edit-ttn="${ord.orderId}">
+                            Редагувати
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+
+                // 4. Bottom Controls Row
+                let bottomControlsHtml = "";
+                if (ord.statusCode === "completed") {
+                  bottomControlsHtml = `
+                    <div class="order-closed-banner order-closed-banner--completed">
+                      <span>✓ Замовлення успішно виконано та закрито ${ord.ttn ? `(ТТН: ${ord.ttn})` : ""}.</span>
+                      <button type="button" class="admin-btn admin-btn--outline" data-reopen-order="${ord.orderId}" style="height: 36px; padding: 0 14px;">
+                        ↺ Повернути в роботу
+                      </button>
+                    </div>
+                  `;
+                } else if (ord.statusCode === "canceled") {
+                  bottomControlsHtml = `
+                    <div class="order-closed-banner order-closed-banner--canceled">
+                      <span>✕ Замовлення скасовано.</span>
+                      <button type="button" class="admin-btn admin-btn--outline" data-reopen-order="${ord.orderId}" style="height: 36px; padding: 0 14px;">
+                        ↺ Відновити замовлення
+                      </button>
+                    </div>
+                  `;
+                } else {
+                  const nextAction = NEXT_STEP_ACTION[ord.statusCode];
+                  bottomControlsHtml = `
+                    ${ttnWidgetHtml}
+                    <div class="admin-btn-row">
+                      ${
+                        nextAction
+                          ? `<button type="button" class="admin-btn admin-btn--primary" data-advance-status="${nextAction.nextCode}">
+                              ${nextAction.btnText}
+                            </button>`
+                          : ""
+                      }
+                      <button type="button" class="admin-btn admin-btn--danger" data-cancel-order="${ord.orderId}">
+                        Скасувати замовлення
+                      </button>
+                    </div>
+                  `;
+                }
+
+                return `
+                  <article class="admin-order-card" data-order-id="${ord.orderId}">
+                    <div class="admin-order-card__header">
+                      <div class="admin-order-card__id-group">
+                        <span class="admin-order-card__id">Замовлення #${ord.orderId}</span>
+                        <span class="admin-order-card__date">від ${formatDate(ord.createdAt)}</span>
+                      </div>
+                      <span class="status-pill status-pill--${ord.statusCode}">
+                        ${STATUS_LABELS[ord.statusCode]}
+                      </span>
+                    </div>
+
+                    <div class="order-pipeline">
+                      ${pipelineHtml}
+                    </div>
+
+                    <div class="admin-order-card__grid">
+                      <div class="admin-info-box">
+                        <span class="admin-info-box__title">Дані клієнта</span>
+                        <div><strong>ПІБ:</strong> ${ord.customer.firstName} ${ord.customer.lastName}</div>
+                        <div><strong>Телефон:</strong> <a href="tel:${ord.customer.phone}" style="text-decoration:underline;">${ord.customer.phone || "—"}</a></div>
+                        <div><strong>E-mail:</strong> ${ord.customer.email || "—"}</div>
+                      </div>
+
+                      <div class="admin-info-box">
+                        <span class="admin-info-box__title">Доставка та оплата</span>
+                        <div><strong>Служба:</strong> м. ${ord.delivery.city}, ${ord.delivery.carrierName}</div>
+                        <div><strong>Точка видачі:</strong> ${ord.delivery.branch}</div>
+                        <div><strong>Оплата:</strong> ${ord.payment} | <strong>Сума:</strong> ${formatMoney(ord.subtotal)}</div>
+                        ${ord.ttn ? `<div><strong>ТТН:</strong> <span style="font-family: var(--font-mono); font-weight: 700; color: #059669;">${ord.ttn}</span></div>` : ""}
+                      </div>
+                    </div>
+
+                    <div class="admin-order-items">
+                      ${itemsHtml}
+                    </div>
+
+                    <div class="admin-order-card__controls">
+                      ${bottomControlsHtml}
+                    </div>
+                  </article>
+                `;
+              })
+              .join("");
+          }
+
+          // Render Clients Table
+          clientsTbody.innerHTML = clients
+            .map((c) => {
+              const initials =
+                ((c.firstName || "К")[0] || "К") +
+                ((c.lastName || "Л")[0] || "");
+              return `
+                <tr>
+                  <td>
+                    <div class="client-name-cell">
+                      <span class="client-avatar-sm">${initials.toUpperCase()}</span>
+                      <strong>${c.firstName} ${c.lastName}</strong>
+                    </div>
+                  </td>
+                  <td style="font-family: var(--font-mono);">${c.phone}</td>
+                  <td>${c.email}</td>
+                  <td>${c.address}</td>
+                  <td style="font-family: var(--font-mono); font-weight: 700;">${c.ordersCount}</td>
+                  <td style="font-family: var(--font-mono); font-weight: 700;">${formatMoney(c.totalSpent)}</td>
+                </tr>
+              `;
+            })
+            .join("");
+        }
+
+        // Order Actions Click Handler
+        ordersContainer.addEventListener("click", (e) => {
+          const card = e.target.closest(".admin-order-card");
+          if (!card) return;
+          const orderId = String(card.getAttribute("data-order-id"));
+          const ttnInput = card.querySelector(".order-ttn-input");
+          const currentTtn = ttnInput ? ttnInput.value.trim() : undefined;
+
+          // 1. Click "Редагувати" TTN button -> switch pill back to input
+          const editTtnBtn = e.target.closest("[data-edit-ttn]");
+          if (editTtnBtn) {
+            editingTtnOrderIds.add(orderId);
+            renderDashboard();
+            const newCard = ordersContainer.querySelector(
+              `[data-order-id="${orderId}"]`,
+            );
+            const inp = newCard && newCard.querySelector(".order-ttn-input");
+            if (inp) {
+              inp.focus();
+              inp.select();
+            }
+            return;
+          }
+
+          // 2. Click "Зберегти ТТН" button -> save TTN and switch to saved pill view
+          const saveTtnBtn = e.target.closest("[data-save-ttn]");
+          if (saveTtnBtn && ttnInput) {
+            const val = ttnInput.value.trim();
+            if (!val) {
+              ttnInput.focus();
+              return;
+            }
+            editingTtnOrderIds.delete(orderId);
+            persistOrderUpdate(orderId, null, val, true);
+            return;
+          }
+
+          // 3. Click Pipeline Step button (1. Прийнято / 2. В обробці / 3. Відправлено / 4. Виконано)
+
+          // 4. Click "Позначити відправленим →" / "Прийняти в обробку →" / "✓ Завершити (Виконано)"
+          const advanceBtn = e.target.closest("[data-advance-status]");
+          if (advanceBtn) {
+            const nextCode = advanceBtn.getAttribute("data-advance-status");
+            if (currentTtn) editingTtnOrderIds.delete(orderId);
+            persistOrderUpdate(orderId, nextCode, currentTtn, true);
+            return;
+          }
+
+          // 5. Click "Скасувати замовлення"
+          const cancelBtn = e.target.closest("[data-cancel-order]");
+          if (cancelBtn) {
+            editingTtnOrderIds.delete(orderId);
+            persistOrderUpdate(orderId, "canceled", currentTtn, true);
+            return;
+          }
+
+          // 6. Click "↺ Повернути в роботу" / "↺ Відновити замовлення"
+          const reopenBtn = e.target.closest("[data-reopen-order]");
+          if (reopenBtn) {
+            persistOrderUpdate(orderId, "processing", currentTtn, true);
+            return;
+          }
+        });
+
+        // Allow pressing Enter inside TTN input to save TTN immediately
+        ordersContainer.addEventListener("keydown", (e) => {
+          if (
+            e.key === "Enter" &&
+            e.target.classList.contains("order-ttn-input")
+          ) {
+            e.preventDefault();
+            const card = e.target.closest(".admin-order-card");
+            if (!card) return;
+            const orderId = String(card.getAttribute("data-order-id"));
+            const val = e.target.value.trim();
+            if (!val) return;
+            editingTtnOrderIds.delete(orderId);
+            persistOrderUpdate(orderId, null, val, true);
+          }
+        });
+
+        searchInput.addEventListener("input", renderDashboard);
+        statusFilter.addEventListener("change", renderDashboard);
+
+        // Catalog Stock & Prices Table
+        const productsTbody = document.getElementById("admin-products-tbody");
+
+        function getCatalogOverrides() {
+          try {
+            return JSON.parse(
+              localStorage.getItem(STOCK_OVERRIDES_KEY) || "{}",
+            );
+          } catch (e) {
+            return {};
+          }
+        }
+
+        function renderProductsTable() {
+          if (typeof PRODUCTS_DATA === "undefined") return;
+          const overrides = getCatalogOverrides();
+          const items = Object.values(PRODUCTS_DATA);
+          document.getElementById("tab-count-products").textContent =
+            items.length;
+
+          productsTbody.innerHTML = items
+            .map((p) => {
+              const ov = overrides[p.id] || {};
+              const inStock = ov.inStock !== undefined ? ov.inStock : p.inStock;
+              const numericPrice =
+                ov.price !== undefined
+                  ? ov.price
+                  : parseInt(String(p.price).replace(/[^\d]/g, ""), 10) || 0;
+
+              return `
+                <tr data-product-id="${p.id}">
+                  <td>
+                    <a href="product.html?id=${p.id}" style="font-weight: 600; text-decoration: underline;">
+                      ${p.title}
+                    </a>
+                  </td>
+                  <td>${p.categoryName}</td>
+                  <td>${p.saleTerms}</td>
+                  <td>
+                    <input
+                      type="number"
+                      class="admin-price-input"
+                      value="${numericPrice}"
+                      min="1"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="stock-toggle-btn ${inStock ? "is-instock" : "is-outstock"}"
+                      data-toggle-stock="${p.id}"
+                      data-current-stock="${inStock}"
+                    >
+                      ${inStock ? "● В наявності" : "○ Немає в наявності"}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="admin-btn admin-btn--outline"
+                      data-save-product="${p.id}"
+                      style="height: 36px; padding: 0 12px;"
+                    >
+                      Оновити
+                    </button>
+                  </td>
+                </tr>
+              `;
+            })
+            .join("");
+        }
+
+        productsTbody.addEventListener("click", (e) => {
+          const stockBtn = e.target.closest("[data-toggle-stock]");
+          const saveProdBtn = e.target.closest("[data-save-product]");
+
+          if (stockBtn) {
+            const id = stockBtn.getAttribute("data-toggle-stock");
+            const cur = stockBtn.getAttribute("data-current-stock") === "true";
+            const overrides = getCatalogOverrides();
+            overrides[id] = { ...(overrides[id] || {}), inStock: !cur };
+            localStorage.setItem(
+              STOCK_OVERRIDES_KEY,
+              JSON.stringify(overrides),
+            );
+            renderProductsTable();
+          } else if (saveProdBtn) {
+            const id = saveProdBtn.getAttribute("data-save-product");
+            const row = saveProdBtn.closest("tr");
+            const newPrice =
+              parseInt(row.querySelector(".admin-price-input").value, 10) || 0;
+            const overrides = getCatalogOverrides();
+            overrides[id] = { ...(overrides[id] || {}), price: newPrice };
+            localStorage.setItem(
+              STOCK_OVERRIDES_KEY,
+              JSON.stringify(overrides),
+            );
+            showUndoToast("Ціну товару успішно оновлено", null);
+            renderProductsTable();
+          }
+        });
+
+        // Create Demo Order Button
+        document
+          .getElementById("create-demo-order-btn")
+          .addEventListener("click", () => {
+            const now = Date.now();
+            const demoOrder = {
+              orderId: "AK-" + String(now).slice(-6),
+              createdAt: now,
+              expiresAt: now + 15 * 60 * 1000,
+              locked: true,
+              status: "Передано в обробку",
+              statusCode: "processing",
+              ttn: "",
+              customer: {
+                firstName: "Олександр",
+                lastName: "Ковальчук",
+                phone: "+380679876543",
+                email: "kovalchuk@energy.ua",
+              },
+              delivery: {
+                city: "Львів",
+                carrierKey: "nova",
+                carrierName: "Нова Пошта",
+                type: "Відділення",
+                branch: "Відділення №4: вул. Городоцька, 359",
+              },
+              payment: "Оплата банківською картою",
+              subtotal: 43000,
+              items: [
+                {
+                  id: "com-900-psg-4g",
+                  title: "GSM/LTE-модем COM-900-PSG-4G (для лічильників GAMA)",
+                  price: 4300,
+                  qty: 10,
+                  image: "assets/images/items/СОМ-900-PSG-4G.png",
+                },
+              ],
+            };
+            const currentList = loadAllOrders();
+            currentList.unshift(demoOrder);
+            localStorage.setItem(
+              COMPLETED_ORDERS_KEY,
+              JSON.stringify(currentList),
+            );
+            localStorage.setItem(ACTIVE_ORDER_KEY, JSON.stringify(demoOrder));
+            renderDashboard();
+            showUndoToast(
+              `Створено нове тестове замовлення #${demoOrder.orderId}`,
+              null,
+            );
+          });
+
+        // Switch Admin Tabs
+        const tabBtns = document.querySelectorAll("[data-admin-tab]");
+        const panels = document.querySelectorAll(".admin-panel");
+        const filterBar = document.getElementById("orders-filter-bar");
+
+        tabBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = btn.getAttribute("data-admin-tab");
+            tabBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+            panels.forEach((p) =>
+              p.classList.toggle("is-active", p.id === target),
+            );
+            filterBar.style.display =
+              target === "panel-orders" ? "flex" : "none";
+          });
+        });
+
+        renderDashboard();
+        renderProductsTable();
+      });
+    </script>
+  </body>
+</html>

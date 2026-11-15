@@ -146,7 +146,7 @@ const CartManager = {
           height: 18px;
           padding: 0 5px;
           background-color: var(--gray-900, #161617);
-          color: #ffffff;
+          color: var(--gray-100, #ffffff);
           border-radius: 999px;
           font-family: var(--font-mono, monospace);
           font-size: 11px;
@@ -179,7 +179,7 @@ const CartManager = {
         left: 50%;
         transform: translateX(-50%) translateY(20px);
         background-color: var(--gray-900, #161617);
-        color: #ffffff;
+        color: var(--gray-100, #ffffff);
         padding: 14px 24px;
         border-radius: 12px;
         font-family: var(--font-base, sans-serif);
@@ -200,7 +200,7 @@ const CartManager = {
 
     toast.innerHTML = `
       <span>${message}</span>
-      <a href="cart.html" style="font-family: var(--font-mono, monospace); font-weight: 700; text-decoration: underline; color: #ffffff; white-space: nowrap;">Оформити</a>
+      <a href="cart.html" style="font-family: var(--font-mono, monospace); font-weight: 700; text-decoration: underline; color: inherit; white-space: nowrap;">Оформити</a>
     `;
     toast.style.pointerEvents = "auto";
     toast.style.opacity = "1";

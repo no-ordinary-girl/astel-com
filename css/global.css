@@ -142,7 +142,7 @@ ul {
   border: 4px solid var(--gray-900);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
+  background-color: #7d7d7d;
 }
 
 /* ===========================
@@ -816,7 +816,7 @@ html[data-theme="dark"] .auth-card,
 html[data-theme="dark"] .account-card,
 html[data-theme="dark"] .manager-card,
 html[data-theme="dark"] .account-nav__btn:not(.is-active) {
-  background-color: #292929;
+  background-color: #242424;
   border-color: #262b36;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
@@ -838,13 +838,13 @@ html[data-theme="dark"] .product-detail-qty,
 html[data-theme="dark"] .product-card__qty-control,
 html[data-theme="dark"] .qty-control {
   background-color: #303030;
-  border-color: #2e3442;
+  border-color: #474747;
   color: var(--gray-900);
 }
 
 html[data-theme="dark"] .radio-card.is-selected,
 html[data-theme="dark"] .carrier-option.is-selected {
-  background-color: #252a36;
+  background-color: #494949;
   border-color: #f3f4f6;
 }
 
@@ -860,26 +860,52 @@ html[data-theme="dark"] .docs-item__thumb {
   padding: 8px;
 }
 
-/* Home Page Dark/Light Category Cards */
+/* FIX 1: Home Page Dark/Light Category Cards (.card--light keeps black title & arrow) */
 html[data-theme="dark"] .card--dark {
-  background-color: #181b22;
-  border: 1px solid #2a303c;
+  background-color: #141414;
+  border: 1px solid #2b2b2b;
   color: #f3f4f6;
 }
 
 html[data-theme="dark"] .card--light {
-  background-color: #232832;
-  border: 1px solid #323947;
-  color: #f3f4f6;
+  background-color: #e7e7e7;
+  border: 1px solid #d6d6d6;
+  color: #161617;
+}
+
+html[data-theme="dark"] .card--light .card__title,
+html[data-theme="dark"] .card--light .card__icon {
+  color: #161617;
 }
 
 html[data-theme="dark"] .carousel-arrow {
   background-color: #303030;
-  border-color: #323947;
+  border-color: #44464d;
   color: #f3f4f6;
 }
 
-/* Primary Buttons & Active Tabs (High-contrast light pill with dark text) */
+/* FIX 2: Back-to-top button arrow contrast in dark mode */
+html[data-theme="dark"] .back-to-top {
+  background-color: #f3f4f6;
+  color: #161617;
+}
+
+html[data-theme="dark"] .back-to-top:active {
+  background-color: #d1d5db;
+}
+
+html[data-theme="dark"] .back-to-top.back-to-top--inverted {
+  background-color: #2b2b2b;
+  color: #f3f4f6;
+  border: 1px solid #44464d;
+}
+
+/* FIX 3: "В наявності: Так" checkbox checkmark contrast */
+html[data-theme="dark"] .filter-checkbox input:checked + .checkmark::after {
+  border-color: #161617;
+}
+
+/* FIX 4 & 7: Primary Buttons, Badges & Hover States */
 html[data-theme="dark"] .btn-primary,
 html[data-theme="dark"] .submit-btn,
 html[data-theme="dark"] .acct-btn-primary,
@@ -894,10 +920,21 @@ html[data-theme="dark"] .about-tech__badge,
 html[data-theme="dark"] .checkout-step__num,
 html[data-theme="dark"] .account-avatar {
   background-color: #f3f4f6;
-  color: #0f1115;
+  color: #161617;
 }
 
-html[data-theme="dark"] .download-card__icon {
+html[data-theme="dark"] .btn-primary:hover:not(:disabled),
+html[data-theme="dark"] .submit-btn:hover:not(:disabled),
+html[data-theme="dark"] .acct-btn-primary:hover:not(:disabled),
+html[data-theme="dark"]
+  .download-card__btn:hover:not(.download-card__btn--disabled),
+html[data-theme="dark"] .catalog__filter-toggle:hover {
+  background-color: #d1d5db;
+  color: #161617;
+}
+
+html[data-theme="dark"] .download-card__icon,
+html[data-theme="dark"] .download-card__btn:hover .download-card__icon {
   filter: invert(0);
 }
 
@@ -911,7 +948,56 @@ html[data-theme="dark"] .acct-btn-outline {
 html[data-theme="dark"] .btn-outline:hover,
 html[data-theme="dark"] .acct-btn-outline:hover {
   background-color: #f3f4f6;
-  color: #0f1115;
+  color: #161617;
+}
+
+/* FIX 5: Docs accordion open chevron button contrast */
+html[data-theme="dark"] .docs-item.is-open .docs-item__chevron {
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #161617;
+}
+
+/* FIX 6 & 8: Docs & Product Specification PDF links hover states */
+html[data-theme="dark"] .docs-file-link,
+html[data-theme="dark"] .doc-item {
+  background-color: #222222;
+  border-color: #383838;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .docs-file-link:hover,
+html[data-theme="dark"] .doc-item:hover {
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #161617;
+}
+
+html[data-theme="dark"] .docs-file-link:hover span,
+html[data-theme="dark"] .doc-item:hover span {
+  color: #161617;
+}
+
+html[data-theme="dark"] .docs-file-link:hover .docs-file-link__icon,
+html[data-theme="dark"] .doc-item:hover .doc-item__icon {
+  filter: invert(0);
+}
+
+/* FIX 9: Cart Toast (#cart-toast) and Header Cart Counter Badge (.header__cart-badge) */
+html[data-theme="dark"] .header__cart-badge {
+  background-color: #f3f4f6 !important;
+  color: #161617 !important;
+}
+
+html[data-theme="dark"] #cart-toast {
+  background-color: #f3f4f6 !important;
+  color: #161617 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] #cart-toast span,
+html[data-theme="dark"] #cart-toast a {
+  color: #161617 !important;
 }
 
 /* Product Card Top-Right Cart Button */
@@ -933,7 +1019,7 @@ html[data-theme="dark"] .product-card__cart:hover img {
   filter: invert(1);
 }
 
-/* Muted & Body Copy Contrast Fixes (Replaces hardcoded #374151, #4b5563, #6b7280) */
+/* Muted & Body Copy Contrast Fixes */
 html[data-theme="dark"] .features-copy h2 {
   color: #f3f4f6;
 }
@@ -963,7 +1049,7 @@ html[data-theme="dark"] .order-history-card__delivery,
 html[data-theme="dark"] .order-history-card__total,
 html[data-theme="dark"] .auth-card__subtitle,
 html[data-theme="dark"] .auth-checkbox {
-  color: #9ca3af;
+  color: #7d7d7d;
 }
 
 /* Client Logos in "Trusted By" Section */

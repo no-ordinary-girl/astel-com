@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="uk" data-theme="dark">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -788,7 +788,7 @@
                     <span class="cart-item__price">${CartManager.formatPrice(item.price)} / шт.</span>
                     ${
                       minQty > 1
-                        ? `<span style="font-family: var(--font-mono); font-size: 11px; color: #6b7280;">Мін. замовлення: ${minQty} шт.</span>`
+                        ? `<span style="font-family: var(--font-mono); font-size: 11px; color: #7d7d7d;">Мін. замовлення: ${minQty} шт.</span>`
                         : ""
                     }
                     <button type="button" class="cart-item__remove" data-remove="${item.id}" style="width: fit-content;">

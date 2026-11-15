@@ -36,7 +36,7 @@
 
 .downloads-header__subtitle {
   font-size: clamp(16px, 4vw, 18px);
-  color: #4b5563;
+  color: #7d7d7d;
   line-height: 1.5;
   max-width: 680px;
 }
@@ -113,7 +113,7 @@
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: #7d7d7d;
 }
 
 .download-card__title {
@@ -125,14 +125,14 @@
 
 .download-card__desc {
   font-size: 15px;
-  color: #4b5563;
+  color: #7d7d7d;
   line-height: 1.55;
 }
 
 .download-card__filename {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: #6b7280;
+  color: #7d7d7d;
   background-color: var(--gray-100);
   border: 1px solid var(--gray-200);
   padding: 8px 12px;
@@ -184,7 +184,7 @@
 
 .download-card__btn--disabled {
   background-color: var(--gray-200);
-  color: #6b7280;
+  color: #7d7d7d;
   cursor: not-allowed;
   pointer-events: none;
 }

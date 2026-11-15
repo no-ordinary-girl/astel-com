@@ -6,7 +6,7 @@ const ThemeManager = (function () {
   // "auto"  -> Uses dark theme only on dark-mode browsers (like Samsung Internet)
   // "dark"  -> Forces dark theme everywhere
   // "light" -> Forces light theme everywhere
-  const MANUAL_CODE_OVERRIDE = "auto";
+  const MANUAL_CODE_OVERRIDE = "light";
 
   const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -21,18 +21,23 @@ const ThemeManager = (function () {
     }
   }
 
+  // Detects Samsung Internet (or Xiaomi MIUI Browser)
+  const isForcedDarkBrowser = /SamsungBrowser|MiuiBrowser/i.test(
+    navigator.userAgent,
+  );
+
   function applyTheme(mode) {
     const htmlEl = document.documentElement;
-    // Respect manual attribute on <html data-theme="..."> if you set it directly in HTML
     const effectiveMode = mode || MANUAL_CODE_OVERRIDE;
 
+    // If "auto": ONLY turn on dark mode if the browser is Samsung/MIUI AND in dark mode!
+    // Desktop and normal mobile browsers will stay in Light Mode.
     const isDark =
       effectiveMode === "dark" ||
-      (effectiveMode === "auto" && darkQuery.matches);
+      (effectiveMode === "auto" && isForcedDarkBrowser && darkQuery.matches);
 
     htmlEl.setAttribute("data-theme", isDark ? "dark" : "light");
 
-    // Swap com-900.png <-> com-900-white.png on index.html
     document.querySelectorAll(".features-image").forEach((img) => {
       const targetSrc = isDark
         ? "assets/images/com-900-white.png"

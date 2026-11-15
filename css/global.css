@@ -745,28 +745,17 @@ body {
 /* ==========================================================================
    CUSTOM DARK THEME (Anti-Forced Dark Mode + Manual data-theme="dark")
    ========================================================================== */
+/* In css/global.css — replace the top part of the dark theme section with just this: */
 :root {
   color-scheme: light dark;
 }
 
-/* 1. Manual Dark Theme via <html data-theme="dark"> */
 html[data-theme="dark"] {
   color-scheme: dark;
   --gray-100: #1d1d1d;
   --gray-200: #2b2b2b;
   --gray-400: #44464d;
   --gray-900: #f3f4f6;
-}
-
-/* 2. Automatic Dark Theme when OS / Samsung Internet is in Dark Mode (unless forced light) */
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) {
-    color-scheme: dark;
-    --gray-100: #1d1d1d;
-    --gray-200: #2b2b2b;
-    --gray-400: #44464d;
-    --gray-900: #f3f4f6;
-  }
 }
 
 /* --- Shared Dark Surface, Card, Text & Icon Overrides --- */

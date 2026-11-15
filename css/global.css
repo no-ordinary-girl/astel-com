@@ -741,3 +741,238 @@ body {
     max-width: 800px;
   }
 }
+
+/* ==========================================================================
+   CUSTOM DARK THEME (Anti-Forced Dark Mode + Manual data-theme="dark")
+   ========================================================================== */
+:root {
+  color-scheme: light dark;
+}
+
+/* 1. Manual Dark Theme via <html data-theme="dark"> */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --gray-100: #0f1115;
+  --gray-200: #1e222a;
+  --gray-400: #383e4c;
+  --gray-900: #f3f4f6;
+}
+
+/* 2. Automatic Dark Theme when OS / Samsung Internet is in Dark Mode (unless forced light) */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --gray-100: #0f1115;
+    --gray-200: #1e222a;
+    --gray-400: #383e4c;
+    --gray-900: #f3f4f6;
+  }
+}
+
+/* --- Shared Dark Surface, Card, Text & Icon Overrides --- */
+html[data-theme="dark"] .header,
+html[data-theme="dark"] .header__collapse,
+html[data-theme="dark"] .header__lang-menu,
+html[data-theme="dark"] .header__more-menu {
+  background-color: #0f1115;
+  border-color: #262b36;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Invert black SVG icons & logo to crisp white in dark mode */
+html[data-theme="dark"] .header__image,
+html[data-theme="dark"] .account-icon-black,
+html[data-theme="dark"] .app-card__icon,
+html[data-theme="dark"] .history__icon-box img,
+html[data-theme="dark"] .stats__icon,
+html[data-theme="dark"] .why__icon,
+html[data-theme="dark"] .doc-item__icon,
+html[data-theme="dark"] .docs-file-link__icon {
+  filter: invert(1) brightness(1.1);
+}
+
+/* .cart-icon-black already has filter: invert(1) in light mode, so invert(0) makes it white in dark mode */
+html[data-theme="dark"] .header__cart .cart-icon-black {
+  filter: invert(0);
+}
+
+/* Swap com-900.png to com-900-white.png via CSS content as an instant safeguard */
+html[data-theme="dark"] .features-image {
+  content: url("../assets/images/com-900-white.png");
+}
+
+/* Elevated Cards & Containers across all pages */
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .product-hero__gallery,
+html[data-theme="dark"] .product-hero__price-box,
+html[data-theme="dark"] .product-section,
+html[data-theme="dark"] .download-card,
+html[data-theme="dark"] .downloads-helper,
+html[data-theme="dark"] .docs-item,
+html[data-theme="dark"] .checkout-panel,
+html[data-theme="dark"] .order-summary,
+html[data-theme="dark"] .order-status-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .account-card,
+html[data-theme="dark"] .manager-card,
+html[data-theme="dark"] .account-nav__btn:not(.is-active) {
+  background-color: #161920;
+  border-color: #262b36;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Secondary Inner Cards, Inputs & Dropdowns */
+html[data-theme="dark"] .docs-item__panel,
+html[data-theme="dark"] .order-history-card,
+html[data-theme="dark"] .order-detail-block,
+html[data-theme="dark"] .saved-address-banner,
+html[data-theme="dark"] .radio-card,
+html[data-theme="dark"] .carrier-option,
+html[data-theme="dark"] .form-input,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .acct-input,
+html[data-theme="dark"] .oauth-btn,
+html[data-theme="dark"] .autocomplete-list,
+html[data-theme="dark"] .timer-box__clock,
+html[data-theme="dark"] .product-detail-qty,
+html[data-theme="dark"] .product-card__qty-control,
+html[data-theme="dark"] .qty-control {
+  background-color: #1c2029;
+  border-color: #2e3442;
+  color: var(--gray-900);
+}
+
+html[data-theme="dark"] .radio-card.is-selected,
+html[data-theme="dark"] .carrier-option.is-selected {
+  background-color: #252a36;
+  border-color: #f3f4f6;
+}
+
+/* Keep Product Photo Wells White so mix-blend-mode: multiply works cleanly */
+html[data-theme="dark"] .product-card__image-wrap,
+html[data-theme="dark"] .product-hero__main-img-wrap,
+html[data-theme="dark"] .product-hero__thumb-btn,
+html[data-theme="dark"] .cart-item__img-wrap,
+html[data-theme="dark"] .order-history-item__img,
+html[data-theme="dark"] .docs-item__thumb {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+/* Home Page Dark/Light Category Cards */
+html[data-theme="dark"] .card--dark {
+  background-color: #181b22;
+  border: 1px solid #2a303c;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .card--light {
+  background-color: #232832;
+  border: 1px solid #323947;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .carousel-arrow {
+  background-color: #1c2029;
+  border-color: #323947;
+  color: #f3f4f6;
+}
+
+/* Primary Buttons & Active Tabs (High-contrast light pill with dark text) */
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .submit-btn,
+html[data-theme="dark"] .acct-btn-primary,
+html[data-theme="dark"] .download-card__btn,
+html[data-theme="dark"] .catalog__filter-toggle,
+html[data-theme="dark"] .auth-tab.is-active,
+html[data-theme="dark"] .checkout-tab.is-active,
+html[data-theme="dark"] .account-nav__btn.is-active,
+html[data-theme="dark"] .docs-header__badge,
+html[data-theme="dark"] .downloads-header__badge,
+html[data-theme="dark"] .about-tech__badge,
+html[data-theme="dark"] .checkout-step__num,
+html[data-theme="dark"] .account-avatar {
+  background-color: #f3f4f6;
+  color: #0f1115;
+}
+
+html[data-theme="dark"] .download-card__icon {
+  filter: invert(0);
+}
+
+html[data-theme="dark"] .btn-outline,
+html[data-theme="dark"] .acct-btn-outline {
+  background-color: transparent;
+  border-color: #f3f4f6;
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .btn-outline:hover,
+html[data-theme="dark"] .acct-btn-outline:hover {
+  background-color: #f3f4f6;
+  color: #0f1115;
+}
+
+/* Product Card Top-Right Cart Button */
+html[data-theme="dark"] .product-card__cart {
+  background-color: #1c2029;
+  border-color: #2e3442;
+}
+
+html[data-theme="dark"] .product-card__cart img {
+  filter: invert(0);
+}
+
+html[data-theme="dark"] .product-card__cart:hover {
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+}
+
+html[data-theme="dark"] .product-card__cart:hover img {
+  filter: invert(1);
+}
+
+/* Muted & Body Copy Contrast Fixes (Replaces hardcoded #374151, #4b5563, #6b7280) */
+html[data-theme="dark"] .features-copy h2 {
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .features-copy p,
+html[data-theme="dark"] .app-card__text,
+html[data-theme="dark"] .about-tech__list li,
+html[data-theme="dark"] .tech-card__text,
+html[data-theme="dark"] .trusted__text,
+html[data-theme="dark"] .about-hero__text,
+html[data-theme="dark"] .history__text,
+html[data-theme="dark"] .why__text,
+html[data-theme="dark"] .product-description,
+html[data-theme="dark"] .specs-table td,
+html[data-theme="dark"] .product-hero__min-order,
+html[data-theme="dark"] .product-hero__vat,
+html[data-theme="dark"] .wholesale-box,
+html[data-theme="dark"] .downloads-header__subtitle,
+html[data-theme="dark"] .download-card__desc,
+html[data-theme="dark"] .downloads-helper__text,
+html[data-theme="dark"] .docs-header__subtitle,
+html[data-theme="dark"] .docs-item__product-link,
+html[data-theme="dark"] .summary-row:not(.summary-row--total),
+html[data-theme="dark"] .returning-info,
+html[data-theme="dark"] .order-status__lead,
+html[data-theme="dark"] .order-history-card__delivery,
+html[data-theme="dark"] .order-history-card__total,
+html[data-theme="dark"] .auth-card__subtitle,
+html[data-theme="dark"] .auth-checkbox {
+  color: #9ca3af;
+}
+
+/* Client Logos in "Trusted By" Section */
+html[data-theme="dark"] .trusted__logo {
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+html[data-theme="dark"] .footer {
+  background-color: #090a0d;
+  border-top: 1px solid #1e222a;
+}

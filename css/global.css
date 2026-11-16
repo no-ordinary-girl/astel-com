@@ -1044,10 +1044,11 @@ html[data-theme="dark"] .auth-checkbox {
   color: #7d7d7d;
 }
 
-/* Client Logos in "Trusted By" Section */
+/* Partner logos use dedicated white PNGs in the custom dark theme.
+   Do not invert them: inversion would turn the new white assets black. */
 html[data-theme="dark"] .trusted__logo {
-  filter: brightness(0) invert(1);
-  opacity: 0.85;
+  filter: none;
+  opacity: 1;
 }
 
 html[data-theme="dark"] .footer {

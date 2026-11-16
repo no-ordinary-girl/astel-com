@@ -67,7 +67,7 @@ function headMeta(file, language) {
   return [
     // Chrome/Google Translate must not layer machine translation on the site's own locales.
     `<meta name="google" content="notranslate" />`,
-    `<meta name="color-scheme" content="light dark" />`,
+    `<meta name="color-scheme" content="light" />`,
     `<meta name="description" content="${escapeAttr(description)}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:title" content="${escapeAttr(title)}" />`,

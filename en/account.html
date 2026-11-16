@@ -1,0 +1,1255 @@
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="../" />
+    <meta name="google" content="notranslate" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="View your order history and customer details in your ASTEL-COM account." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="My Account — ASTEL-COM" />
+    <meta property="og:description" content="View your order history and customer details in your ASTEL-COM account." />
+    <link rel="canonical" href="../en/account.html" />
+    <link rel="alternate" hreflang="uk" href="account.html" />
+    <link rel="alternate" hreflang="en" href="../en/account.html" />
+    <link rel="alternate" hreflang="x-default" href="account.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account — ASTEL-COM</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/cart.css" />
+    <link rel="stylesheet" href="css/account.css" />
+  </head>
+  <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="en/index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="ASTEL-COM"
+            />
+          </a>
+          <div class="header__top-controls">
+            <a
+              href="en/account.html"
+              class="header__account header__account--mobile is-logged-in"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
+            <a href="en/about_us.html" class="header__link" data-i18n="nav.about">ABOUT US</a>
+
+            <a href="en/products.html" class="header__link hide-on-compact"
+               data-i18n="nav.products">PRODUCTS</a
+            >
+            <a href="en/downloads.html" class="header__link hide-on-compact"
+               data-i18n="nav.downloads">DOWNLOADS</a
+            >
+            <a href="en/docs.html" class="header__link hide-on-compact"
+               data-i18n="nav.docs">DOCUMENTATION</a
+            >
+
+            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-expanded="false"
+               data-i18n="nav.more">
+                MORE
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="en/products.html" class="header__more-link" data-i18n="nav.products">PRODUCTS</a>
+                <a href="en/downloads.html" class="header__more-link"
+                   data-i18n="nav.downloads">DOWNLOADS</a
+                >
+                <a href="en/docs.html" class="header__more-link" data-i18n="nav.docs">DOCUMENTATION</a>
+              </div>
+            </div>
+          </nav>
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                EN
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                </li>
+              </ul>
+            </div>
+            <a
+              href="en/account.html"
+              class="header__account header__account--desktop is-logged-in"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- SHARED:HEADER:END -->
+
+    <!-- ===========================
+         MAIN MY ACCOUNT DASHBOARD
+         =========================== -->
+    <main class="account-page">
+      <div class="container">
+        <!-- Top Welcome Header -->
+        <div class="account-top-bar">
+          <div class="account-welcome">
+            <div class="account-avatar" id="user-initials">ІП</div>
+            <div class="account-welcome__meta">
+              <span class="account-welcome__badge" id="user-auth-badge"
+                >● Authorized</span
+              >
+              <h1 class="account-welcome__title" id="user-fullname">
+                First Last Name
+              </h1>
+            </div>
+          </div>
+
+          <div class="account-quick-actions">
+            <a href="en/products.html" class="acct-btn-outline">
+              Browse Catalog
+            </a>
+          </div>
+        </div>
+
+        <!-- 1-Click Copy / Repeat Last Order Banner -->
+        <div class="repeat-order-banner" id="repeat-last-banner">
+          <div class="repeat-order-banner__info">
+            <span class="repeat-order-banner__tag">Quick Reorder</span>
+            <h2
+              class="repeat-order-banner__title"
+              id="last-order-summary-title"
+            >
+              Repeat Last Order
+            </h2>
+            <p class="repeat-order-banner__desc" id="last-order-summary-desc">
+              Copy all items and quantities from your previous order directly into your cart.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="repeat-order-banner__btn"
+            id="copy-last-order-btn"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path
+                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              />
+            </svg>
+            <span>Copy Last Order</span>
+          </button>
+        </div>
+
+        <div class="account-layout">
+          <!-- LEFT SIDEBAR NAVIGATION -->
+          <aside class="account-sidebar">
+            <nav class="account-nav" role="tablist">
+              <button
+                type="button"
+                class="account-nav__btn is-active"
+                data-section="sec-orders"
+              >
+                My Orders
+              </button>
+              <button
+                type="button"
+                class="account-nav__btn"
+                data-section="sec-address"
+              >
+                My Delivery Address
+              </button>
+              <button
+                type="button"
+                class="account-nav__btn"
+                data-section="sec-settings"
+              >
+                Settings & Security
+              </button>
+              <button
+                type="button"
+                class="account-nav__btn account-nav__btn--logout"
+                id="logout-btn"
+              >
+                Log Out
+              </button>
+            </nav>
+
+            <!-- Support Contact Card -->
+            <div class="manager-card">
+              <span class="manager-card__tag">Support & Consultation</span>
+              <div class="manager-card__name">Serhii</div>
+              <div class="manager-card__links">
+                <a href="tel:+380504443355">+380 (50) 444-33-55</a>
+                <a href="mailto:astelkom@gmail.com">astelkom@gmail.com</a>
+              </div>
+            </div>
+          </aside>
+
+          <!-- RIGHT CONTENT AREA -->
+          <div class="account-main">
+            <!-- SECTION 1: МОЇ ЗАМОВЛЕННЯ -->
+            <section class="account-section is-active" id="sec-orders">
+              <div class="account-card">
+                <div class="account-card__header">
+                  <h2 class="account-card__title">
+                    Order History & Statuses
+                  </h2>
+                  <span
+                    style="
+                      font-family: var(--font-mono);
+                      font-size: 12px;
+                      color: #525252;
+                    "
+                    id="orders-count-label"
+                    >0 orders</span
+                  >
+                </div>
+
+                <div class="orders-list" id="account-orders-list">
+                  <!-- Populated via JS -->
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 2: МОЯ АДРЕСА ДОСТАВКИ -->
+            <section class="account-section" id="sec-address">
+              <div class="account-card">
+                <div class="account-card__header">
+                  <h2 class="account-card__title">Primary Delivery Address</h2>
+                </div>
+
+                <div class="saved-address-banner">
+                  <span class="saved-address-banner__tag"
+                    >Current saved address (default for checkout)</span
+                  >
+                  <div
+                    class="saved-address-banner__val"
+                    id="saved-address-text"
+                  >
+                    Kyiv — Nova Poshta (Branch #15: Mashynobudivna St,
+                    44)
+                  </div>
+                </div>
+
+                <form id="address-form" novalidate>
+                  <div class="acct-form-grid">
+                    <div class="acct-field">
+                      <label class="acct-label">Delivery Carrier</label>
+                      <div class="carrier-grid" id="acct-carrier-group">
+                        <label class="carrier-option is-selected">
+                          <input
+                            type="radio"
+                            name="acct_carrier"
+                            value="Нова Пошта"
+                            data-key="nova"
+                            checked
+                          />
+                          <span>Nova Poshta</span>
+                        </label>
+                        <label class="carrier-option">
+                          <input
+                            type="radio"
+                            name="acct_carrier"
+                            value="Укрпошта"
+                            data-key="ukr"
+                          />
+                          <span>Ukrposhta</span>
+                        </label>
+                        <label class="carrier-option">
+                          <input
+                            type="radio"
+                            name="acct_carrier"
+                            value="Meest ПОШТА"
+                            data-key="meest"
+                          />
+                          <span>Meest POSHTA</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="acct-form-grid acct-form-grid--2col">
+                      <div class="acct-field">
+                        <label class="acct-label" for="addr-city">
+                          City / Town<span class="req">*</span>
+                        </label>
+                        <div class="autocomplete-wrap">
+                          <input
+                            type="text"
+                            id="addr-city"
+                            class="acct-input"
+                            placeholder="e.g., Kyiv"
+                            autocomplete="off"
+                          />
+                          <div
+                            class="autocomplete-list"
+                            id="addr-city-dropdown"
+                          ></div>
+                        </div>
+                      </div>
+
+                      <div class="acct-field">
+                        <label class="acct-label" for="addr-type">
+                          Pickup Point Type
+                        </label>
+                        <select id="addr-type" class="acct-input">
+                          <option value="Відділення">Branch</option>
+                          <option value="Поштомат">Parcel Locker</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="acct-field">
+                      <label class="acct-label" for="addr-branch">
+                        Branch / Locker Number or Address<span class="req"
+                          >*</span
+                        >
+                      </label>
+                      <div class="autocomplete-wrap">
+                        <input
+                          type="text"
+                          id="addr-branch"
+                          class="acct-input"
+                          placeholder="Select from list or enter branch number"
+                          autocomplete="off"
+                        />
+                        <div
+                          class="autocomplete-list"
+                          id="addr-branch-dropdown"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 18px">
+                    <button
+                      type="submit"
+                      class="acct-btn-primary"
+                      style="max-width: 280px"
+                    >
+                      Save Address
+                    </button>
+                  </div>
+                  <div
+                    class="acct-feedback"
+                    id="address-feedback"
+                    style="margin-top: 14px"
+                  ></div>
+                </form>
+              </div>
+            </section>
+
+            <!-- SECTION 3: НАЛАШТУВАННЯ ПРОФІЛЮ ТА БЕЗПЕКА -->
+            <section class="account-section" id="sec-settings">
+              <!-- Personal Contact Details Card -->
+              <div class="account-card">
+                <div class="account-card__header">
+                  <h2 class="account-card__title">Recipient Personal Details</h2>
+                </div>
+
+                <form id="profile-form" novalidate>
+                  <div class="acct-form-grid acct-form-grid--2col">
+                    <div class="acct-field">
+                      <label class="acct-label" for="prof-fname"
+                        >First Name<span class="req">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="prof-fname"
+                        class="acct-input"
+                        placeholder="Введіть ваше ім'я"
+                      />
+                    </div>
+
+                    <div class="acct-field">
+                      <label class="acct-label" for="prof-lname"
+                        >Last Name<span class="req">*</span></label
+                      >
+                      <input
+                        type="text"
+                        id="prof-lname"
+                        class="acct-input"
+                        placeholder="Enter your last name"
+                      />
+                    </div>
+
+                    <div class="acct-field">
+                      <label class="acct-label" for="prof-email"
+                        >Personal E-mail<span class="req">*</span></label
+                      >
+                      <input
+                        type="email"
+                        id="prof-email"
+                        class="acct-input"
+                        placeholder="example@gmail.com"
+                      />
+                    </div>
+
+                    <div class="acct-field">
+                      <label class="acct-label" for="prof-phone"
+                        >Phone<span class="req">*</span></label
+                      >
+                      <input
+                        type="tel"
+                        id="prof-phone"
+                        class="acct-input"
+                        placeholder="+380 (XX) XXX-XX-XX"
+                      />
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 18px">
+                    <button
+                      type="submit"
+                      class="acct-btn-primary"
+                      style="max-width: 280px"
+                    >
+                      Update Profile
+                    </button>
+                  </div>
+                  <div
+                    class="acct-feedback"
+                    id="profile-feedback"
+                    style="margin-top: 14px"
+                  ></div>
+                </form>
+              </div>
+
+              <!-- Password & Forgot Password Card -->
+              <div class="account-card">
+                <div class="account-card__header">
+                  <h2 class="account-card__title">Change or Reset Password</h2>
+                  <button
+                    type="button"
+                    class="auth-link-btn"
+                    id="acct-forgot-pass-btn"
+                  >
+                    Forgot current password?
+                  </button>
+                </div>
+
+                <form id="password-form" novalidate>
+                  <div class="acct-form-grid acct-form-grid--2col">
+                    <div class="acct-field" id="cur-pass-field">
+                      <label class="acct-label" for="cur-pass"
+                        >Current Password<span class="req">*</span></label
+                      >
+                      <input
+                        type="password"
+                        id="cur-pass"
+                        class="acct-input"
+                        placeholder="••••••••••••"
+                      />
+                      <span class="acct-error">Please enter your current password.</span>
+                    </div>
+
+                    <div class="acct-field" id="new-pass-field">
+                      <label class="acct-label" for="new-pass"
+                        >New Password<span class="req">*</span></label
+                      >
+                      <input
+                        type="password"
+                        id="new-pass"
+                        class="acct-input"
+                        placeholder="Minimum 12 characters"
+                        minlength="12"
+                      />
+                      <span class="acct-error"
+                        >New password must be at least 12 characters long.</span
+                      >
+                    </div>
+                  </div>
+
+                  <div style="margin-top: 18px">
+                    <button
+                      type="submit"
+                      class="acct-btn-primary"
+                      style="max-width: 280px"
+                    >
+                      Change Password
+                    </button>
+                  </div>
+                  <div
+                    class="acct-feedback"
+                    id="password-feedback"
+                    style="margin-top: 14px"
+                  ></div>
+                </form>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===========================
+         FOOTER
+         =========================== -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">ASTEL-COM LLC</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Serhii +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >5 Solomianska St, Kyiv, Ukraine</span
+            >
+          </div>
+          <div class="footer__item footer__item--align-top">
+            <img
+              src="assets/images/phone.svg"
+              alt="Phone"
+              class="footer__icon"
+            />
+            <div class="footer__text-group">
+              <a href="tel:+380504443355" class="footer__link"
+                >+380 (50) 444-33-55</a
+              >
+              <a href="tel:+380443039551" class="footer__link"
+                >+380 (44) 303-95-51</a
+              >
+            </div>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/mail.svg"
+              alt="Email"
+              class="footer__icon"
+            />
+            <a href="mailto:astelkom@gmail.com" class="footer__link"
+              >astelkom@gmail.com</a
+            >
+          </div>
+        </div>
+
+        <div class="footer__map">
+          <a
+            href="https://www.google.com/maps/search/?api=1&amp;query=Київ%2C%20вулиця%20Солом%27янська%2C%205"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <picture>
+              <source
+                media="(min-width: 1440px)"
+                srcset="assets/images/map-wide.png"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcset="assets/images/map.png"
+              />
+              <source
+                media="(min-width: 500px)"
+                srcset="assets/images/map-tablet.png"
+              />
+              <img
+                src="assets/images/map-mobile.png"
+                alt="Location Map"
+                class="footer__map-image"
+              />
+            </picture>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
+
+    <script src="js/products-data.js"></script>
+    <script src="js/delivery-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
+    <script>
+      // Built-in fallback so account.html always works even if AuthManager is not in js/cart.js
+      /* window.AuthManager = window.AuthManager || {
+        USER_KEY: "astelkom_auth_user",
+        ORDERS_KEY: "astelkom_completed_orders",
+        DEFAULT_ORDERS: [
+          {
+            orderId: "AK-849210",
+            createdAt: Date.now() - 12 * 24 * 60 * 60 * 1000,
+            status: "Виконано",
+            statusCode: "completed",
+            ttn: "20450918273645",
+            payment: "Оплата банківською картою",
+            delivery: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+            subtotal: 60128,
+            items: [
+              {
+                id: "com-900-itr-4g",
+                title:
+                  "GSM/LTE-модем COM-900-ITR-4G для роботи з лічильниками ITRON (ACTARIS)",
+                price: 4300,
+                qty: 10,
+                image: "assets/images/items/СОМ-900-ITR-4G.png",
+              },
+              {
+                id: "com-900-nbi-int",
+                title:
+                  "NBIoT-модем COM-900-NBI-int для роботи з теплолічильниками",
+                price: 8064,
+                qty: 2,
+                image: "assets/images/items/СОМ-900-NBI-int.png",
+              },
+              {
+                id: "gsm-antenna-3dbi",
+                title:
+                  "GSM-антена 3dBi на магнітній основі з кабелем 3 метри і роз'ємом SMA",
+                price: 120,
+                qty: 8,
+                image: "assets/images/items/GSM-antenna-3dBi-SMA.png",
+              },
+            ],
+          },
+          {
+            orderId: "AK-793045",
+            createdAt: Date.now() - 38 * 24 * 60 * 60 * 1000,
+            status: "Виконано",
+            statusCode: "completed",
+            ttn: "20450883419022",
+            payment: "Готівка (при отриманні)",
+            delivery: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+            subtotal: 43000,
+            items: [
+              {
+                id: "com-900-485",
+                title: "Універсальний GSM/GPRS-модем COM-900/485",
+                price: 4300,
+                qty: 10,
+                image: "assets/images/items/СОМ-900-485.png",
+              },
+            ],
+          },
+        ],
+        getUser() {
+          try {
+            const raw = localStorage.getItem(this.USER_KEY);
+            if (raw) return JSON.parse(raw);
+          } catch (e) {}
+          // Default preview profile so account.html can be viewed directly at any time
+          return {
+            firstName: "Ім'я",
+            lastName: "Прізвище",
+            email: "example@gmail.com",
+            phone: "+380501234567",
+            authMethod: "E-mail",
+            address: {
+              city: "Київ",
+              carrierKey: "nova",
+              carrierName: "Нова Пошта",
+              type: "Відділення",
+              branch: "Відділення №15: вул. Машинобудівна, 44",
+            },
+          };
+        },
+        isLoggedIn() {
+          return true;
+        },
+        saveUser(data) {
+          const updated = { ...this.getUser(), ...data };
+          localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
+          return updated;
+        },
+        logout() {
+          localStorage.removeItem(this.USER_KEY);
+        },
+        getOrders() {
+          const list = [];
+          try {
+            const activeRaw = localStorage.getItem("astelkom_active_order");
+            if (activeRaw) {
+              const activeOrder = JSON.parse(activeRaw);
+              list.push({
+                ...activeOrder,
+                status: activeOrder.locked
+                  ? "Передано в обробку"
+                  : "Прийнято (редагування)",
+                statusCode: activeOrder.locked ? "processing" : "active",
+              });
+            }
+          } catch (e) {}
+
+          this.DEFAULT_ORDERS.forEach((ord) => {
+            if (!list.some((o) => o.orderId === ord.orderId)) {
+              list.push(ord);
+            }
+          });
+          return list;
+        },
+        copyOrderToCart(orderId) {
+          const orders = this.getOrders();
+          const target = orderId
+            ? orders.find((o) => o.orderId === orderId)
+            : orders[0];
+          if (!target || !target.items) return false;
+          if (typeof CartManager !== "undefined") {
+            target.items.forEach((item) => {
+              CartManager.addItem(
+                {
+                  id: item.id,
+                  title: item.title,
+                  price: item.price,
+                  image: item.image,
+                },
+                item.qty,
+              );
+            });
+          }
+          return target;
+        },
+      };
+    */
+      document.addEventListener("DOMContentLoaded", function () {
+        const formatMoney = (val) => {
+          if (typeof CartManager !== "undefined" && CartManager.formatPrice) {
+            return CartManager.formatPrice(val);
+          }
+          return Number(val || 0).toLocaleString("uk-UA") + " ₴";
+        };
+
+        // Populate User Header & Profile Fields
+        function renderUserProfile() {
+          const user = AuthManager.getUser();
+          if (!user) return;
+
+          const firstName = user.firstName || "Ім'я";
+          const lastName = user.lastName || "Прізвище";
+          const initials = (firstName[0] || "І") + (lastName[0] || "П");
+
+          document.getElementById("user-initials").textContent =
+            initials.toUpperCase();
+          document.getElementById("user-fullname").textContent =
+            `${firstName} ${lastName}`;
+          document.getElementById("user-auth-badge").textContent =
+            `● Авторизовано (${user.authMethod || "E-mail"})`;
+
+          document.getElementById("prof-fname").value = firstName;
+          document.getElementById("prof-lname").value = lastName;
+          document.getElementById("prof-email").value =
+            user.email || "example@gmail.com";
+          document.getElementById("prof-phone").value =
+            user.phone || "+380501234567";
+
+          const addr = user.address || {
+            city: "Київ",
+            carrierName: "Нова Пошта",
+            type: "Відділення",
+            branch: "Відділення №15: вул. Машинобудівна, 44",
+          };
+
+          document.getElementById("addr-city").value = addr.city || "Київ";
+          document.getElementById("addr-type").value =
+            addr.type || "Відділення";
+          document.getElementById("addr-branch").value = addr.branch || "";
+          document.getElementById("saved-address-text").textContent =
+            `м. ${addr.city} — ${addr.carrierName} (${addr.type}: ${addr.branch})`;
+
+          document
+            .querySelectorAll('input[name="acct_carrier"]')
+            .forEach((r) => {
+              const isMatch = r.value === addr.carrierName;
+              r.checked = isMatch;
+              r.closest(".carrier-option").classList.toggle(
+                "is-selected",
+                isMatch,
+              );
+            });
+        }
+
+        renderUserProfile();
+
+        // Sidebar Tab Navigation
+        const navButtons = document.querySelectorAll(
+          ".account-nav__btn[data-section]",
+        );
+        const sections = document.querySelectorAll(".account-section");
+
+        navButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-section");
+            navButtons.forEach((b) =>
+              b.classList.toggle("is-active", b === btn),
+            );
+            sections.forEach((sec) =>
+              sec.classList.toggle("is-active", sec.id === targetId),
+            );
+          });
+        });
+
+        // Logout Button
+        document.getElementById("logout-btn").addEventListener("click", () => {
+          AuthManager.logout();
+          window.location.href = "en/login.html";
+        });
+
+        // Render Orders List & Top Repeat Banner
+        const ordersListEl = document.getElementById("account-orders-list");
+        const ordersCountLabel = document.getElementById("orders-count-label");
+        const orders = AuthManager.getOrders();
+
+        ordersCountLabel.textContent = `${orders.length} замовлень`;
+
+        if (orders.length > 0) {
+          const latest = orders[0];
+          document.getElementById("last-order-summary-title").textContent =
+            `Повторити замовлення #${latest.orderId} (${formatMoney(latest.subtotal)})`;
+          document.getElementById("last-order-summary-desc").textContent =
+            `У замовленні ${latest.items.length} поз. — натисніть, щоб миттєво скопіювати всі товари в кошик.`;
+        }
+
+        const formatDate = (ts) => {
+          const d = new Date(ts || Date.now());
+          return d.toLocaleDateString("uk-UA", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+        };
+
+        ordersListEl.innerHTML = orders
+          .map((ord) => {
+            const pillClass =
+              ord.statusCode === "completed"
+                ? "order-status-pill--completed"
+                : "order-status-pill--processing";
+
+            const itemsHtml = (ord.items || [])
+              .map(
+                (item) => `
+                <div class="order-history-item">
+                  <img src="${item.image}" alt="${item.title}" class="order-history-item__img" />
+                  <div class="order-history-item__info">
+                    <a href="product.html?id=${item.id}" class="order-history-item__title">${item.title}</a>
+                    <span class="order-history-item__qty">${item.qty} шт. × ${formatMoney(item.price)}</span>
+                  </div>
+                  <div class="order-history-item__sum">${formatMoney(item.price * item.qty)}</div>
+                </div>
+              `,
+              )
+              .join("");
+
+            return `
+              <article class="order-history-card">
+                <div class="order-history-card__top">
+                  <div class="order-history-card__meta">
+                    <span class="order-history-card__id">Замовлення #${ord.orderId}</span>
+                    <span class="order-history-card__date">від ${formatDate(ord.createdAt)}</span>
+                  </div>
+                  <span class="order-status-pill ${pillClass}">${ord.status}</span>
+                </div>
+
+                <div class="order-history-items">
+                  ${itemsHtml}
+                </div>
+
+                <div class="order-history-card__delivery">
+                  <span><strong>Доставка:</strong> м. ${ord.delivery.city}, ${ord.delivery.carrierName} (${ord.delivery.branch})</span>
+                  <span><strong>Оплата:</strong> ${ord.payment}</span>
+                  ${ord.ttn ? `<span><strong>ТТН:</strong> ${ord.ttn}</span>` : ""}
+                </div>
+
+                <div class="order-history-card__bottom">
+                  <div class="order-history-card__total">
+                    <span>Сума без ПДВ:</span>
+                    <strong>${formatMoney(ord.subtotal)}</strong>
+                  </div>
+                  <div class="order-history-card__actions">
+                    ${
+                      ord.statusCode === "active"
+                        ? `<a href="order-status.html" class="acct-btn-outline">Статус / Таймер</a>`
+                        : ""
+                    }
+                    <button
+                      type="button"
+                      class="acct-btn-primary"
+                      data-copy-order="${ord.orderId}"
+                    >
+                      Повторити замовлення
+                    </button>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+
+        // Copy Last Order Hero Button
+        document
+          .getElementById("copy-last-order-btn")
+          .addEventListener("click", () => {
+            const copied = AuthManager.copyOrderToCart();
+            if (copied) {
+              window.location.href = "en/cart.html?repeat=true";
+            }
+          });
+
+        // Copy Specific Order Button inside Order History
+        ordersListEl.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-copy-order]");
+          if (!btn) return;
+          const orderId = btn.getAttribute("data-copy-order");
+          const copied = AuthManager.copyOrderToCart(orderId);
+          if (copied) {
+            btn.textContent = "Додано в кошик ✓";
+            setTimeout(() => {
+              window.location.href = "en/cart.html?repeat=true";
+            }, 350);
+          }
+        });
+        // Address Carrier Radio Selection & Autocomplete
+        const carrierRadios = document.querySelectorAll(
+          'input[name="acct_carrier"]',
+        );
+        carrierRadios.forEach((radio) => {
+          radio.addEventListener("change", () => {
+            document
+              .querySelectorAll("#acct-carrier-group .carrier-option")
+              .forEach((lbl) => lbl.classList.remove("is-selected"));
+            radio.closest(".carrier-option").classList.add("is-selected");
+            document.getElementById("addr-branch").value = "";
+          });
+        });
+
+        const addrCityInput = document.getElementById("addr-city");
+        const addrCityDropdown = document.getElementById("addr-city-dropdown");
+        const addrBranchInput = document.getElementById("addr-branch");
+        const addrBranchDropdown = document.getElementById(
+          "addr-branch-dropdown",
+        );
+        const addrTypeSelect = document.getElementById("addr-type");
+
+        if (typeof DeliveryDirectory !== "undefined") {
+          addrCityInput.addEventListener("focus", () => {
+            const matches = DeliveryDirectory.searchCities(addrCityInput.value);
+            addrCityDropdown.innerHTML = matches
+              .map(
+                (c) => `
+                <div class="autocomplete-item" data-city="${c.name}">
+                  <span class="autocomplete-item__main">м. ${c.name}</span>
+                  <span class="autocomplete-item__sub">${c.oblast}</span>
+                </div>`,
+              )
+              .join("");
+            addrCityDropdown.classList.add("is-open");
+          });
+
+          addrCityInput.addEventListener("input", () => {
+            const matches = DeliveryDirectory.searchCities(addrCityInput.value);
+            addrCityDropdown.innerHTML = matches
+              .map(
+                (c) => `
+                <div class="autocomplete-item" data-city="${c.name}">
+                  <span class="autocomplete-item__main">м. ${c.name}</span>
+                  <span class="autocomplete-item__sub">${c.oblast}</span>
+                </div>`,
+              )
+              .join("");
+            addrCityDropdown.classList.add("is-open");
+          });
+
+          addrCityDropdown.addEventListener("mousedown", (e) => {
+            const item = e.target.closest(".autocomplete-item");
+            if (!item) return;
+            addrCityInput.value = item.getAttribute("data-city");
+            addrCityDropdown.classList.remove("is-open");
+            addrBranchInput.value = "";
+          });
+
+          async function updateAccountBranches() {
+            const checkedCarrier = document.querySelector(
+              'input[name="acct_carrier"]:checked',
+            );
+            const carrierKey = checkedCarrier
+              ? checkedCarrier.getAttribute("data-key")
+              : "nova";
+            const branches = await DeliveryDirectory.getBranches(
+              carrierKey,
+              addrTypeSelect.value,
+              addrCityInput.value.trim() || "Київ",
+              addrBranchInput.value,
+            );
+            addrBranchDropdown.innerHTML = branches
+              .map(
+                (b) => `
+                <div class="autocomplete-item" data-branch="${b.title.replace(/"/g, "&quot;")}">
+                  <span class="autocomplete-item__main">${b.title}</span>
+                  <span class="autocomplete-item__sub">${b.subtitle}</span>
+                </div>`,
+              )
+              .join("");
+            addrBranchDropdown.classList.add("is-open");
+          }
+
+          addrBranchInput.addEventListener("focus", updateAccountBranches);
+          addrBranchInput.addEventListener("input", updateAccountBranches);
+          addrBranchDropdown.addEventListener("mousedown", (e) => {
+            const item = e.target.closest(".autocomplete-item");
+            if (!item) return;
+            addrBranchInput.value = item.getAttribute("data-branch");
+            addrBranchDropdown.classList.remove("is-open");
+          });
+
+          document.addEventListener("click", (e) => {
+            if (!e.target.closest(".autocomplete-wrap")) {
+              addrCityDropdown.classList.remove("is-open");
+              addrBranchDropdown.classList.remove("is-open");
+            }
+          });
+        }
+
+        // Save Address Form
+        document
+          .getElementById("address-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            const checkedCarrier = document.querySelector(
+              'input[name="acct_carrier"]:checked',
+            );
+            const newAddress = {
+              city: addrCityInput.value.trim() || "Київ",
+              carrierKey: checkedCarrier
+                ? checkedCarrier.getAttribute("data-key")
+                : "nova",
+              carrierName: checkedCarrier ? checkedCarrier.value : "Нова Пошта",
+              type: addrTypeSelect.value,
+              branch:
+                addrBranchInput.value.trim() ||
+                "Відділення №1 (за замовчуванням)",
+            };
+
+            AuthManager.saveUser({ address: newAddress });
+            renderUserProfile();
+
+            const fb = document.getElementById("address-feedback");
+            fb.textContent = "Основну адресу доставки успішно збережено!";
+            fb.classList.add("is-visible");
+          });
+
+        // Save Profile Form
+        document
+          .getElementById("profile-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            AuthManager.saveUser({
+              firstName:
+                document.getElementById("prof-fname").value.trim() || "Ім'я",
+              lastName:
+                document.getElementById("prof-lname").value.trim() ||
+                "Прізвище",
+              email: document.getElementById("prof-email").value.trim(),
+              phone: document.getElementById("prof-phone").value.trim(),
+            });
+            renderUserProfile();
+
+            const fb = document.getElementById("profile-feedback");
+            fb.textContent = "Особисті дані успішно оновлено.";
+            fb.classList.add("is-visible");
+          });
+
+        // Change Password (12+ chars) & Forgot Password
+        const passFb = document.getElementById("password-feedback");
+        document
+          .getElementById("password-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            const curP = document.getElementById("cur-pass").value.trim();
+            const newP = document.getElementById("new-pass").value.trim();
+
+            document
+              .getElementById("cur-pass-field")
+              .classList.toggle("has-error", curP.length < 1);
+            document
+              .getElementById("new-pass-field")
+              .classList.toggle("has-error", newP.length < 12);
+
+            if (curP.length < 1 || newP.length < 12) return;
+
+            document.getElementById("cur-pass").value = "";
+            document.getElementById("new-pass").value = "";
+            passFb.textContent = "Ваш пароль успішно змінено.";
+            passFb.classList.add("is-visible");
+          });
+
+        document
+          .getElementById("acct-forgot-pass-btn")
+          .addEventListener("click", () => {
+            const user = AuthManager.getUser();
+            passFb.innerHTML = `Посилання для скидання пароля надіслано на ваш E-mail: <strong>${user.email}</strong>.`;
+            passFb.classList.add("is-visible");
+          });
+      });
+    </script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+  </body>
+</html>

@@ -61,21 +61,21 @@
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
             <a href="index.html" class="header__link{{home_active}}"
-              >ГОЛОВНА</a
+               data-i18n="nav.home">ГОЛОВНА</a
             >
-            <a href="about_us.html" class="header__link{{about_active}}">ПРО НАС</a>
+            <a href="about_us.html" class="header__link{{about_active}}" data-i18n="nav.about">ПРО НАС</a>
 
             <a href="products.html" class="header__link hide-on-compact{{products_active}}"
-              >ТОВАРИ</a
+               data-i18n="nav.products">ТОВАРИ</a
             >
             <a href="downloads.html" class="header__link hide-on-compact{{downloads_active}}"
-              >ЗАВАНТАЖЕННЯ</a
+               data-i18n="nav.downloads">ЗАВАНТАЖЕННЯ</a
             >
             <a href="docs.html" class="header__link hide-on-compact{{docs_active}}"
-              >ДОКУМЕНТАЦІЯ</a
+               data-i18n="nav.docs">ДОКУМЕНТАЦІЯ</a
             >
 
-            <a href="#footer" class="header__link">КОНТАКТИ</a>
+            <a href="#footer" class="header__link" data-i18n="nav.contacts">КОНТАКТИ</a>
 
             <div
               class="header__more show-on-compact{{more_active}}"
@@ -86,7 +86,7 @@
                 id="more-toggle"
                 type="button"
                 aria-expanded="false"
-              >
+               data-i18n="nav.more">
                 БІЛЬШЕ
                 <svg
                   class="header__more-icon"
@@ -103,11 +103,11 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <a href="products.html" class="header__more-link{{more_products_active}}">ТОВАРИ</a>
+                <a href="products.html" class="header__more-link{{more_products_active}}" data-i18n="nav.products">ТОВАРИ</a>
                 <a href="downloads.html" class="header__more-link{{more_downloads_active}}"
-                  >ЗАВАНТАЖЕННЯ</a
+                   data-i18n="nav.downloads">ЗАВАНТАЖЕННЯ</a
                 >
-                <a href="docs.html" class="header__more-link{{more_docs_active}}">ДОКУМЕНТАЦІЯ</a>
+                <a href="docs.html" class="header__more-link{{more_docs_active}}" data-i18n="nav.docs">ДОКУМЕНТАЦІЯ</a>
               </div>
             </div>
           </nav>
@@ -131,10 +131,10 @@
               </div>
               <ul class="header__lang-menu">
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link">UA</a>
+                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
                 </li>
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link">EN</a>
+                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
                 </li>
               </ul>
             </div>

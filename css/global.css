@@ -489,7 +489,9 @@ body {
   display: none;
 }
 
-@media (min-width: 960px) {
+/* The header switches from mobile row to 3-column grid at 700px.
+   Move the account link into the utilities beside the cart at the same breakpoint. */
+@media (min-width: 700px) {
   .header__account--mobile {
     display: none;
   }
@@ -1052,3 +1054,19 @@ html[data-theme="dark"] .footer {
   background-color: #151515;
   border-top: 1px solid #1e222a;
 }
+
+/* Samsung Internet browser-dark fallback: compact optional theme control. */
+.theme-compat-toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--gray-400, #bbb);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+.theme-compat-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

@@ -4,6 +4,28 @@
 const I18nManager = (function () {
   const LANG_KEY = "astelkom_lang";
 
+  // Stable UI component IDs (use data-i18n="..." instead of relying on text matching).
+  const UI_MESSAGES = Object.freeze({
+    "nav.home": { uk: "ГОЛОВНА", en: "HOME" },
+    "nav.about": { uk: "ПРО НАС", en: "ABOUT US" },
+    "nav.products": { uk: "ТОВАРИ", en: "PRODUCTS" },
+    "nav.downloads": { uk: "ЗАВАНТАЖЕННЯ", en: "DOWNLOADS" },
+    "nav.docs": { uk: "ДОКУМЕНТАЦІЯ", en: "DOCUMENTATION" },
+    "nav.contacts": { uk: "КОНТАКТИ", en: "CONTACTS" },
+    "nav.more": { uk: "БІЛЬШЕ", en: "MORE" },
+    "docs.badge": { uk: "Технічна база", en: "Technical Library" },
+    "docs.heading": { uk: "СПЕЦИФІКАЦІЇ ТА ДОКУМЕНТАЦІЯ", en: "SPECIFICATIONS & DOCUMENTATION" },
+    "docs.productLink": { uk: "Перейти на сторінку товару", en: "View Product Page" },
+    "product.inStock": { uk: "В наявності", en: "In Stock" },
+    "product.wholesale": { uk: "Тільки оптом", en: "Wholesale Only" },
+    "product.showWholesale": { uk: "Показати оптові ціни", en: "Show Wholesale Prices" },
+    "product.hideWholesale": { uk: "Приховати оптові ціни", en: "Hide Wholesale Prices" },
+    "home.browseCatalog": { uk: "ПЕРЕГЛЯНУТИ КАТАЛОГ", en: "BROWSE CATALOG" },
+    "checkout.title": { uk: "ОФОРМЛЕННЯ ЗАМОВЛЕННЯ", en: "CHECKOUT" },
+    "checkout.submit": { uk: "ПІДТВЕРДИТИ ЗАМОВЛЕННЯ", en: "CONFIRM ORDER" },
+    "checkout.summary": { uk: "ВАШЕ ЗАМОВЛЕННЯ", en: "YOUR ORDER" },
+    "downloads.heading": { uk: "ДРАЙВЕРИ", en: "DRIVERS" },
+  });
   // Collapses inline spaces, normalizes apostrophes and Cyrillic "СОМ" -> Latin "COM"
   const norm = (s) =>
     String(s || "")
@@ -823,20 +845,7 @@ const I18nManager = (function () {
       replace: "Thank you for your order, $1",
     },
     { regex: /^Фото\s+(\d+)$/, replace: "Photo $1" },
-    // PDF & Document Titles (Matches "Паспорт модему", "Паспорт NBIoT-модему", "Паспорт COM-900-ITR...", etc.)
-    {
-      regex: /^Керівництво з монтажу та експлуатації\s+(?:модему\s+)?(.+)$/i,
-      replace: "Installation & Operation Manual — $1",
-    },
-    {
-      regex: /^Паспорт\s+(?:(?:NBIoT-)?модему[_\s]*)?(.+)$/i,
-      replace: "Technical Datasheet (Passport) — $1",
-    },
-    {
-      regex:
-        /^Незабаром буде доступне керівництво з монтажу та експлуатації\s+(?:модему\s+)?(.+)$/i,
-      replace: "Installation & Operation Manual coming soon — $1",
-    },
+    // Document titles are handled by documentTitle(doc), not filename regexes.
     {
       regex: /^(.+)\s+—\s+АСТЕЛ-КОМ$/,
       replace: (_, title) => `${TEXT_MAP[norm(title)] || title} — ASTEL-COM`,
@@ -889,6 +898,61 @@ const I18nManager = (function () {
     return chunk;
   }
 
+  function currentRouteLang() {
+    // Public English pages have their own URLs. The route is authoritative,
+    // not the language saved in another tab.
+    return /(?:^|\/)en\/(?:[^/]*\.html)?$/.test(location.pathname) ? "en" : "uk";
+  }
+
+  function translate(value) {
+    return getLang() === "en" ? translateSingleChunk(value) : value;
+  }
+
+  function documentTitle(doc) {
+    // Explicit document metadata; NEVER translate opaque filenames by regex.
+    return getLang() === "en" ? (doc.titleEn || doc.title) : doc.title;
+  }
+
+  function applyExplicitKeys(root, lang) {
+    if (!root) return;
+    const elements = [];
+    if (root.nodeType === 1 && root.matches?.("[data-i18n]")) elements.push(root);
+    if (root.querySelectorAll) elements.push(...root.querySelectorAll("[data-i18n]"));
+    elements.forEach((el) => {
+      const messages = UI_MESSAGES[el.getAttribute("data-i18n")];
+      if (!messages) return;
+      const value = messages[lang] || messages.uk;
+      // Change the label without destroying nested SVG icons or badges.
+      const textNode = Array.from(el.childNodes).find(n =>
+        n.nodeType === 3 && n.nodeValue.trim().length > 0
+      );
+      if (textNode) {
+        const spaceBefore = textNode.nodeValue.match(/^\s*/)[0];
+        const spaceAfter = textNode.nodeValue.match(/\s*$/)[0];
+        const next = spaceBefore + value + spaceAfter;
+        if (textNode.nodeValue !== next) textNode.nodeValue = next;
+      } else if (el.children.length === 0 && el.textContent !== value) {
+        el.textContent = value;
+      }
+    });
+  }
+
+  function updateLocalPageLinks(root, lang) {
+    if (!root) return;
+    const links = [];
+    if (root.nodeType === 1 && root.matches?.("a[href]")) links.push(root);
+    if (root.querySelectorAll) links.push(...root.querySelectorAll("a[href]"));
+    for (const link of links) {
+      const href = link.getAttribute("href") || "";
+      // External URLs, hash anchors, downloads and phone/email links stay untouched.
+      const match = href.match(/^(?:en\/)?([a-z_-]+\.html)([?#].*)?$/i);
+      if (!match || match[1] === "admin.html") continue;
+      const dest = lang === "en" ? `en/${match[1]}` : match[1];
+      const newHref = dest + (match[2] || "");
+      if (href !== newHref) link.setAttribute("href", newHref);
+    }
+  }
+
   function translateNodeString(rawStr, preserveNewlines) {
     if (!rawStr) return rawStr;
     // Try matching the entire string first (handles formatted HTML paragraphs)
@@ -916,7 +980,7 @@ const I18nManager = (function () {
   let observer = null;
 
   function getLang() {
-    return localStorage.getItem(LANG_KEY) === "en" ? "en" : "uk";
+    return currentRouteLang();
   }
 
   function translateTextNodes(root, lang) {
@@ -1034,11 +1098,16 @@ const I18nManager = (function () {
       }
     });
 
-    document.querySelectorAll(".header__lang-link").forEach((link) => {
-      const code = link.textContent.trim().toLowerCase();
-      const isCurrent =
-        (code === "en" && lang === "en") || (code === "ua" && lang === "uk");
-      link.style.fontWeight = isCurrent ? "700" : "400";
+    // Do not infer a language from visible text: browser translators can rewrite it.
+    const file = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".header__lang-link[data-lang]").forEach((link) => {
+      const code = link.dataset.lang;
+      link.style.fontWeight = code === lang ? "700" : "400";
+      link.setAttribute("href", (code === "en" ? "en/" : "") + file + location.search + location.hash);
+      link.setAttribute("hreflang", code);
+      if (link.textContent.trim() !== (code === "en" ? "EN" : "UA")) {
+        link.textContent = code === "en" ? "EN" : "UA";
+      }
     });
   }
   function translateMediaAssets(lang) {
@@ -1110,6 +1179,8 @@ const I18nManager = (function () {
       translateSpecialHtmlBlocks(lang);
       translateTextNodes(document.body, lang);
       translateAttributes(document.body, lang);
+      applyExplicitKeys(document.body, lang);
+      updateLocalPageLinks(document.body, lang);
     } finally {
       if (observer && document.body) {
         observer.observe(document.body, { childList: true, subtree: true });
@@ -1118,10 +1189,14 @@ const I18nManager = (function () {
   }
 
   function setLang(langCode) {
-    const normalized =
-      langCode && langCode.toLowerCase() === "en" ? "en" : "uk";
-    localStorage.setItem(LANG_KEY, normalized);
-    applyLanguage(normalized);
+    const lang = langCode && langCode.toLowerCase() === "en" ? "en" : "uk";
+    localStorage.setItem(LANG_KEY, lang);
+    if (lang === getLang()) return;
+    const pathname = location.pathname;
+    const file = pathname.split("/").pop() || "index.html";
+    const basePath = pathname.replace(/(?:en\/)?[^/]*$/, "");
+    const dest = (lang === "en" ? basePath + "en/" : basePath) + file;
+    location.assign(dest + location.search + location.hash);
   }
 
   function bindHeaderLangSwitcher() {
@@ -1140,9 +1215,9 @@ const I18nManager = (function () {
         link._i18nBound = true;
         link.addEventListener("click", (e) => {
           e.preventDefault();
-          const chosen = link.textContent.trim().toUpperCase();
+          const chosen = link.dataset.lang;
           langWrap.classList.remove("is-open");
-          setLang(chosen === "EN" ? "en" : "uk");
+          if (chosen === "en" || chosen === "uk") setLang(chosen);
         });
       });
     });
@@ -1173,6 +1248,8 @@ const I18nManager = (function () {
               if (added.nodeType === Node.ELEMENT_NODE) {
                 translateTextNodes(added, "en");
                 translateAttributes(added, "en");
+                applyExplicitKeys(added, "en");
+                updateLocalPageLinks(added, "en");
               } else if (
                 added.nodeType === Node.TEXT_NODE &&
                 added.parentElement
@@ -1190,15 +1267,19 @@ const I18nManager = (function () {
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initI18n);
-  } else {
-    initI18n();
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initI18n);
+    } else {
+      initI18n();
+    }
   }
 
   return {
-    getLang,
-    setLang,
-    applyLanguage,
+    getLang, setLang, applyLanguage, translate, documentTitle,
+    translateForBuild: (s) => translateNodeString(s, false),
+    attrForBuild: (s) => ATTR_MAP[norm(s)] || TEXT_MAP[norm(s)] || translateSingleChunk(s),
+    keyForBuild: (k, lang) => UI_MESSAGES[k]?.[lang] || null,
   };
 })();
+if (typeof module !== "undefined" && module.exports) module.exports = I18nManager;

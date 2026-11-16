@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="../" />
+    <meta name="google" content="notranslate" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Learn about ASTEL-COM: our history, engineering solutions and development of telecommunications technologies." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="About ASTEL-COM" />
+    <meta property="og:description" content="Learn about ASTEL-COM: our history, engineering solutions and development of telecommunications technologies." />
+    <link rel="canonical" href="../en/about_us.html" />
+    <link rel="alternate" hreflang="uk" href="about_us.html" />
+    <link rel="alternate" hreflang="en" href="../en/about_us.html" />
+    <link rel="alternate" hreflang="x-default" href="about_us.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About ASTEL-COM</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- Core global styles (Fonts, Scrollbar, Header, Footer) -->
+    <link rel="stylesheet" href="css/global.css" />
+    <!-- Specific styles for this page -->
+    <link rel="stylesheet" href="css/about_us.css" />
+  </head>
+  <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="en/index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="ASTEL-COM"
+            />
+          </a>
+          <div class="header__top-controls">
+            <a
+              href="en/login.html"
+              class="header__account header__account--mobile"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
+            <a href="en/about_us.html" class="header__link header__link--active"
+               data-i18n="nav.about">ABOUT US</a
+            >
+
+            <a href="en/products.html" class="header__link hide-on-compact"
+               data-i18n="nav.products">PRODUCTS</a
+            >
+            <a href="en/downloads.html" class="header__link hide-on-compact"
+               data-i18n="nav.downloads">DOWNLOADS</a
+            >
+            <a href="en/docs.html" class="header__link hide-on-compact"
+               data-i18n="nav.docs">DOCUMENTATION</a
+            >
+
+            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-expanded="false"
+               data-i18n="nav.more">
+                MORE
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="en/products.html" class="header__more-link" data-i18n="nav.products">PRODUCTS</a>
+                <a href="en/downloads.html" class="header__more-link"
+                   data-i18n="nav.downloads">DOWNLOADS</a
+                >
+                <a href="en/docs.html" class="header__more-link" data-i18n="nav.docs">DOCUMENTATION</a>
+              </div>
+            </div>
+          </nav>
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                EN
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                </li>
+              </ul>
+            </div>
+            <a
+              href="en/login.html"
+              class="header__account header__account--desktop"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- SHARED:HEADER:END -->
+
+    <!-- ===========================
+         MAIN CONTENT
+         =========================== -->
+    <main>
+      <section class="about-hero">
+        <div class="container about-hero__inner">
+          <!-- Text Content -->
+          <div class="about-hero__content">
+            <h1 class="about-hero__title">ABOUT<br />THE COMPANY</h1>
+            <p class="about-hero__text">
+              ASTEL-COM is a Ukrainian company specializing in supplying telecommunication equipment for business. We help our clients stay connected, automate processes, and grow with confidence.
+            </p>
+          </div>
+
+          <!-- Image -->
+          <div class="about-hero__visual">
+            <img
+              src="assets/images/about-no-bg2-exp.png"
+              alt="Модем АСТЕЛ-КОМ"
+              class="about-hero__image"
+            />
+          </div>
+        </div>
+      </section>
+      <!-- ===========================
+         HISTORY SECTION
+         =========================== -->
+      <section class="history">
+        <div class="container">
+          <h2 class="history__title">COMPANY HISTORY</h2>
+
+          <div class="history__timeline">
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2005.svg" alt="2005" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2005</div>
+              <div class="history__text">
+                Company founded; started supplying banking POS and telecommunication hardware.
+              </div>
+            </div>
+
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2009.svg" alt="2009" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2009</div>
+              <div class="history__text">Product lineup expansion.</div>
+            </div>
+
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2018.svg" alt="2018" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2018–2021</div>
+              <div class="history__text">
+                Launched specialized modems for solar power plant electricity metering.
+              </div>
+            </div>
+
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2023.svg" alt="2023" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2023</div>
+              <div class="history__text">
+                Introduced ultra-low-power battery technology in NBIoT modems.
+              </div>
+            </div>
+
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2024.svg" alt="2024" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2024</div>
+              <div class="history__text">Entered the industrial LTE 4G modem market.</div>
+            </div>
+
+            <div class="history__item">
+              <div class="history__icon-box">
+                <img src="assets/images/2026.svg" alt="2026" />
+              </div>
+              <div class="history__node">
+                <div class="history__dot"></div>
+              </div>
+              <div class="history__year">2026</div>
+              <div class="history__text">Development of next-generation telemetry solutions.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ===========================
+         STATS SECTION
+         =========================== -->
+      <section class="stats">
+        <div class="container stats__inner">
+          <div class="stats__item">
+            <img
+              src="assets/images/100_clients.svg"
+              alt="People"
+              class="stats__icon"
+            />
+            <div class="stats__content">
+              <div class="stats__value">20+</div>
+              <div class="stats__label">YEARS ON THE MARKET</div>
+            </div>
+          </div>
+
+          <div class="stats__item">
+            <img
+              src="assets/images/20_years_in_market.svg"
+              alt="Handshake"
+              class="stats__icon"
+            />
+            <div class="stats__content">
+              <div class="stats__value">100+</div>
+              <div class="stats__label">SATISFIED CLIENTS</div>
+            </div>
+          </div>
+
+          <div class="stats__item">
+            <img
+              src="assets/images/all_Ukraine.svg"
+              alt="Ukraine Map"
+              class="stats__icon"
+            />
+            <div class="stats__content">
+              <!-- Uses a modifier class because the text is visually smaller than the numbers -->
+              <div class="stats__value stats__value--text">ALL UKRAINE</div>
+              <div class="stats__label">DELIVERY COVERAGE</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ===========================
+         WHY CHOOSE US SECTION
+         =========================== -->
+      <section class="why">
+        <div class="container">
+          <h2 class="why__title">WHY CHOOSE US</h2>
+
+          <div class="why__grid">
+            <div class="why__item">
+              <img
+                src="assets/images/reliability.svg"
+                alt="Надійність"
+                class="why__icon"
+              />
+              <h3 class="why__subtitle">RELIABILITY</h3>
+              <p class="why__text">
+                We supply field-proven equipment that meets modern industrial standards.
+              </p>
+            </div>
+
+            <div class="why__item">
+              <img
+                src="assets/images/professionalism.svg"
+                alt="Професіоналізм"
+                class="why__icon"
+              />
+              <h3 class="why__subtitle">PROFESSIONALISM</h3>
+              <p class="why__text">
+                Our team's deep engineering expertise allows us to find optimal solutions for any telemetry task.
+              </p>
+            </div>
+
+            <div class="why__item">
+              <img
+                src="assets/images/support.svg"
+                alt="Підтримка"
+                class="why__icon"
+              />
+              <h3 class="why__subtitle">SUPPORT</h3>
+              <p class="why__text">
+                We support clients at every stage: from hardware selection to deployment and after-sales service.
+              </p>
+            </div>
+
+            <div class="why__item">
+              <img
+                src="assets/images/development.svg"
+                alt="Розвиток"
+                class="why__icon"
+              />
+              <h3 class="why__subtitle">INNOVATION</h3>
+              <p class="why__text">
+                We constantly track emerging technologies to offer up-to-date solutions for your business.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===========================
+         FOOTER 
+         =========================== -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">ASTEL-COM LLC</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Serhii +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >5 Solomianska St, Kyiv, Ukraine</span
+            >
+          </div>
+          <div class="footer__item footer__item--align-top">
+            <img
+              src="assets/images/phone.svg"
+              alt="Phone"
+              class="footer__icon"
+            />
+            <div class="footer__text-group">
+              <a href="tel:+380504443355" class="footer__link"
+                >+380 (50) 444-33-55</a
+              >
+              <a href="tel:+380443039551" class="footer__link"
+                >+380 (44) 303-95-51</a
+              >
+            </div>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/mail.svg"
+              alt="Email"
+              class="footer__icon"
+            />
+            <a href="mailto:astelkom@gmail.com" class="footer__link"
+              >astelkom@gmail.com</a
+            >
+          </div>
+        </div>
+
+        <div class="footer__map">
+          <a
+            href="https://www.google.com/maps/search/?api=1&amp;query=Київ%2C%20вулиця%20Солом%27янська%2C%205"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <picture>
+              <source
+                media="(min-width: 1440px)"
+                srcset="assets/images/map-wide.png"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcset="assets/images/map.png"
+              />
+              <source
+                media="(min-width: 500px)"
+                srcset="assets/images/map-tablet.png"
+              />
+              <img
+                src="assets/images/map-mobile.png"
+                alt="Location Map"
+                class="footer__map-image"
+              />
+            </picture>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {});
+    </script>
+    <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+  </body>
+</html>

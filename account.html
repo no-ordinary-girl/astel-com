@@ -1,9 +1,19 @@
 <!doctype html>
-<html lang="uk">
+<html lang="uk" translate="no" class="notranslate">
   <head>
     <meta charset="UTF-8" />
+    <meta name="google" content="notranslate" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Перегляд замовлень і даних покупця в особистому кабінеті АСТЕЛ-КОМ." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Особистий кабінет — АСТЕЛ-КОМ" />
+    <meta property="og:description" content="Перегляд замовлень і даних покупця в особистому кабінеті АСТЕЛ-КОМ." />
+    <link rel="canonical" href="account.html" />
+    <link rel="alternate" hreflang="uk" href="account.html" />
+    <link rel="alternate" hreflang="en" href="../en/account.html" />
+    <link rel="alternate" hreflang="x-default" href="account.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Особистий кабінет - АСТЕЛ-КОМ</title>
+    <title>Особистий кабінет — АСТЕЛ-КОМ</title>
     <link
       rel="preload"
       href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
@@ -103,20 +113,20 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="index.html" class="header__link">ГОЛОВНА</a>
-            <a href="about_us.html" class="header__link">ПРО НАС</a>
+            <a href="index.html" class="header__link" data-i18n="nav.home">ГОЛОВНА</a>
+            <a href="about_us.html" class="header__link" data-i18n="nav.about">ПРО НАС</a>
 
             <a href="products.html" class="header__link hide-on-compact"
-              >ТОВАРИ</a
+               data-i18n="nav.products">ТОВАРИ</a
             >
             <a href="downloads.html" class="header__link hide-on-compact"
-              >ЗАВАНТАЖЕННЯ</a
+               data-i18n="nav.downloads">ЗАВАНТАЖЕННЯ</a
             >
             <a href="docs.html" class="header__link hide-on-compact"
-              >ДОКУМЕНТАЦІЯ</a
+               data-i18n="nav.docs">ДОКУМЕНТАЦІЯ</a
             >
 
-            <a href="#footer" class="header__link">КОНТАКТИ</a>
+            <a href="#footer" class="header__link" data-i18n="nav.contacts">КОНТАКТИ</a>
 
             <div class="header__more show-on-compact" id="header-more-dropdown">
               <button
@@ -124,7 +134,7 @@
                 id="more-toggle"
                 type="button"
                 aria-expanded="false"
-              >
+               data-i18n="nav.more">
                 БІЛЬШЕ
                 <svg
                   class="header__more-icon"
@@ -141,11 +151,11 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <a href="products.html" class="header__more-link">ТОВАРИ</a>
+                <a href="products.html" class="header__more-link" data-i18n="nav.products">ТОВАРИ</a>
                 <a href="downloads.html" class="header__more-link"
-                  >ЗАВАНТАЖЕННЯ</a
+                   data-i18n="nav.downloads">ЗАВАНТАЖЕННЯ</a
                 >
-                <a href="docs.html" class="header__more-link">ДОКУМЕНТАЦІЯ</a>
+                <a href="docs.html" class="header__more-link" data-i18n="nav.docs">ДОКУМЕНТАЦІЯ</a>
               </div>
             </div>
           </nav>
@@ -169,10 +179,10 @@
               </div>
               <ul class="header__lang-menu">
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link">UA</a>
+                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
                 </li>
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link">EN</a>
+                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
                 </li>
               </ul>
             </div>

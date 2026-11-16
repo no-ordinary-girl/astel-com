@@ -1,108 +1,87 @@
-/* ===========================
-   THEME MANAGER (Samsung Internet Anti-Force-Dark + Manual Switch)
-   =========================== */
-const ThemeManager = (function () {
-  // "auto"  -> Light theme on normal browsers; Custom Dark theme on Samsung Internet / forced-dark browsers
-  // "dark"  -> Forces Custom Dark theme everywhere
-  // "light" -> Forces Light theme everywhere
-  const MANUAL_CODE_OVERRIDE = "auto";
+/*
+ * Android browser darkening compatibility.
+ * Samsung Internet's "Force Dark mode for web content" may not update
+ * prefers-color-scheme or expose transformed colors to getComputedStyle().
+ * There is no reliable web API to read that browser setting.
+ *
+ * In auto mode we therefore DEFAULT to the custom dark palette on Samsung
+ * Internet for Android, and offer a per-site Light/Dark override in the header.
+ * Ordinary desktop browsers always remain light unless explicitly overridden.
+ */
+const ThemeManager = (() => {
+  const KEY = 'astelkom_theme_preference';
+  const ua = navigator.userAgent || '';
+  const isAndroid = /Android/i.test(ua);
+  const isSamsung = isAndroid && /SamsungBrowser/i.test(ua);
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-  // 1. Tell the browser immediately that we support light & dark so Samsung Internet
-  // unlocks prefers-color-scheme: dark and disables its ugly auto-inversion filter
-  function setColorSchemeMeta(contentValue) {
+  function preference() {
+    try { const p = localStorage.getItem(KEY); return p === 'dark' || p === 'light' ? p : 'auto'; }
+    catch { return 'auto'; }
+  }
+
+  function isDark(mode = preference()) {
+    if (mode === 'dark') return true;
+    if (mode === 'light') return false;
+    // Samsung Internet's force-dark state is not reliably observable.
+    if (isSamsung) return true;
+    // Other mobile browsers honouring the media query (e.g. some MIUI/WebViews).
+    return isAndroid && /MiuiBrowser|wv\)/i.test(ua) && darkQuery.matches;
+  }
+
+  function setMeta(scheme) {
     let meta = document.querySelector('meta[name="color-scheme"]');
     if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "color-scheme";
-      document.head.appendChild(meta);
+      meta = document.createElement('meta');
+      meta.name = 'color-scheme';
+      document.head.prepend(meta);
     }
-    meta.content = contentValue;
+    meta.setAttribute('content', scheme);
   }
 
-  // Must be set to "light dark" BEFORE querying matchMedia in Samsung Internet
-  setColorSchemeMeta("light dark");
-
-  const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  const isForcedDarkBrowser = /SamsungBrowser|MiuiBrowser/i.test(
-    navigator.userAgent,
-  );
-
-  // 2. Hardware check: Detects if Samsung Internet / Android WebView is secretly
-  // darkening white backgrounds even when matchMedia('(prefers-color-scheme: dark)') reports false
-  function isBrowserAutoDarkening() {
-    if (!document.body) return false;
-    const probe = document.createElement("div");
-    probe.style.cssText =
-      "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;background-color:#ffffff;color-scheme:normal;pointer-events:none;";
-    document.body.appendChild(probe);
-    const computedBg = window.getComputedStyle(probe).backgroundColor;
-    document.body.removeChild(probe);
-
-    // If #ffffff was altered to something darker than rgb(250, 250, 250), Forced Dark Mode is active
-    const match = computedBg.match(/\d+/g);
-    if (match && match.length >= 3) {
-      const [r, g, b] = match.map(Number);
-      return r < 245 || g < 245 || b < 245;
-    }
-    return false;
-  }
-
-  function shouldUseDarkTheme(effectiveMode) {
-    if (effectiveMode === "dark") return true;
-    if (effectiveMode === "light") return false;
-
-    // In "auto" mode:
-    // Activate custom dark theme if on Samsung/MIUI browser in dark mode,
-    // OR if the browser is actively auto-darkening white backgrounds
-    if (isForcedDarkBrowser && darkQuery.matches) return true;
-    if (isBrowserAutoDarkening()) return true;
-
-    return false;
-  }
-
-  function applyTheme(mode) {
-    const htmlEl = document.documentElement;
-    const effectiveMode = mode || MANUAL_CODE_OVERRIDE;
-
-    // Temporarily allow "light dark" while probing on Samsung Internet
-    if (isForcedDarkBrowser && effectiveMode === "auto") {
-      setColorSchemeMeta("light dark");
-    }
-
-    const isDark = shouldUseDarkTheme(effectiveMode);
-
-    htmlEl.setAttribute("data-theme", isDark ? "dark" : "light");
-    // Lock form controls (radio buttons / inputs) to the chosen scheme
-    setColorSchemeMeta(isDark ? "dark" : "light");
-
-    // Swap com-900.png <-> com-900-white.png
-    document.querySelectorAll(".features-image").forEach((img) => {
-      const targetSrc = isDark
-        ? "assets/images/com-900-white.png"
-        : "assets/images/com-900.png";
-      if (img.getAttribute("src") !== targetSrc) {
-        img.setAttribute("src", targetSrc);
-      }
+  function apply(mode = preference()) {
+    const dark = isDark(mode);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'only light';
+    setMeta(dark ? 'dark' : 'only light');
+    document.querySelectorAll('.features-image').forEach(img => {
+      const src = dark ? 'assets/images/com-900-white.png' : 'assets/images/com-900.png';
+      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    });
+    document.querySelectorAll('.theme-compat-toggle').forEach(btn => {
+      const next = dark ? 'light' : 'dark';
+      btn.setAttribute('aria-label', next === 'light' ? 'Use light theme' : 'Use dark theme');
+      btn.setAttribute('title', next === 'light' ? 'Use light theme' : 'Use dark theme');
+      btn.setAttribute('aria-pressed', String(dark));
+      btn.textContent = dark ? '☀' : '☾';
     });
   }
 
-  applyTheme(MANUAL_CODE_OVERRIDE);
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () =>
-      applyTheme(MANUAL_CODE_OVERRIDE),
-    );
+  function setTheme(mode) {
+    if (!['auto', 'dark', 'light'].includes(mode)) return;
+    try { if (mode === 'auto') localStorage.removeItem(KEY); else localStorage.setItem(KEY, mode); }
+    catch { /* Still update the current page. */ }
+    apply(mode);
   }
 
-  darkQuery.addEventListener("change", () => {
-    if (MANUAL_CODE_OVERRIDE === "auto") {
-      applyTheme("auto");
-    }
-  });
+  function addSamsungOverride() {
+    // Only Samsung Internet needs the fallback override; desktop UI stays unchanged.
+    if (!isSamsung || document.querySelector('.theme-compat-toggle')) return;
+    const holder = document.querySelector('.header__utils') || document.querySelector('.header__top-controls');
+    if (!holder) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'theme-compat-toggle';
+    btn.addEventListener('click', () => setTheme(isDark() ? 'light' : 'dark'));
+    holder.prepend(btn);
+    apply();
+  }
 
-  return {
-    setTheme(mode) {
-      applyTheme(mode);
-    },
-  };
+  apply();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { apply(); addSamsungOverride(); }, { once: true });
+  } else addSamsungOverride();
+  if (darkQuery.addEventListener) darkQuery.addEventListener('change', () => { if (preference() === 'auto') apply(); });
+  else if (darkQuery.addListener) darkQuery.addListener(() => { if (preference() === 'auto') apply(); });
+  return { setTheme, getTheme: () => (isDark() ? 'dark' : 'light') };
 })();

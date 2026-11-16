@@ -1,0 +1,1527 @@
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="../" />
+    <meta name="google" content="notranslate" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Review your cart, choose delivery and payment, and place an order for ASTEL-COM equipment." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Cart &amp; Checkout — ASTEL-COM" />
+    <meta property="og:description" content="Review your cart, choose delivery and payment, and place an order for ASTEL-COM equipment." />
+    <link rel="canonical" href="../en/cart.html" />
+    <link rel="alternate" hreflang="uk" href="cart.html" />
+    <link rel="alternate" hreflang="en" href="../en/cart.html" />
+    <link rel="alternate" hreflang="x-default" href="cart.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart &amp; Checkout — ASTEL-COM</title>
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-mono-v6-cyrillic_latin/geist-mono-v6-cyrillic_latin-700.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/cart.css" />
+  </head>
+  <body>
+    <!-- ===========================
+         HEADER
+         =========================== -->
+    <!-- SHARED:HEADER:START — edit partials/header.html -->
+    <header class="header">
+      <div class="container header__inner">
+        <div class="header__top">
+          <a href="en/index.html">
+            <img
+              src="assets/images/logo-main.svg"
+              class="header__image"
+              alt="ASTEL-COM"
+            />
+          </a>
+          <div class="header__top-controls">
+            <a
+              href="en/login.html"
+              class="header__account header__account--mobile"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--mobile"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+            <button
+              class="header__toggle"
+              id="menu-toggle"
+              type="button"
+              aria-controls="menu-collapse"
+              aria-expanded="false"
+              aria-label="Toggle menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="header__collapse" id="menu-collapse">
+          <nav class="header__nav">
+            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
+            <a href="en/about_us.html" class="header__link" data-i18n="nav.about">ABOUT US</a>
+
+            <a href="en/products.html" class="header__link hide-on-compact"
+               data-i18n="nav.products">PRODUCTS</a
+            >
+            <a href="en/downloads.html" class="header__link hide-on-compact"
+               data-i18n="nav.downloads">DOWNLOADS</a
+            >
+            <a href="en/docs.html" class="header__link hide-on-compact"
+               data-i18n="nav.docs">DOCUMENTATION</a
+            >
+
+            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-expanded="false"
+               data-i18n="nav.more">
+                MORE
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu">
+                <a href="en/products.html" class="header__more-link" data-i18n="nav.products">PRODUCTS</a>
+                <a href="en/downloads.html" class="header__more-link"
+                   data-i18n="nav.downloads">DOWNLOADS</a
+                >
+                <a href="en/docs.html" class="header__more-link" data-i18n="nav.docs">DOCUMENTATION</a>
+              </div>
+            </div>
+          </nav>
+          <div class="header__utils">
+            <div class="header__lang">
+              <div class="header__lang-trigger">
+                EN
+                <svg
+                  class="header__lang-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </div>
+              <ul class="header__lang-menu">
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                </li>
+                <li class="header__lang-item">
+                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                </li>
+              </ul>
+            </div>
+            <a
+              href="en/login.html"
+              class="header__account header__account--desktop"
+              data-account-link
+              aria-label="My Account"
+            >
+              <img
+                src="assets/images/account.svg"
+                class="account-icon-black"
+                alt="Account"
+              />
+            </a>
+            <a
+              href="en/cart.html"
+              class="header__cart header__cart--desktop"
+              aria-label="Cart"
+            >
+              <img
+                src="assets/images/shopping_cart.svg"
+                class="cart-icon-black"
+                alt="Cart"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- SHARED:HEADER:END -->
+
+    <!-- ===========================
+         MAIN CART & CHECKOUT
+         =========================== -->
+    <main class="cart-page">
+      <div class="container">
+        <h1 class="cart-page__title">Checkout</h1>
+
+        <div class="cart-layout">
+          <!-- LEFT COLUMN: ОФОРМЛЕННЯ ЗАМОВЛЕННЯ -->
+          <section class="checkout-panel">
+            <h2 class="checkout-panel__heading">Checkout</h2>
+
+            <!-- Tabs -->
+            <div class="checkout-tabs" role="tablist">
+              <button
+                type="button"
+                class="checkout-tab is-active"
+                id="tab-new-btn"
+                data-tab="new-buyer"
+              >
+                New Customer
+              </button>
+              <button
+                type="button"
+                class="checkout-tab"
+                id="tab-returning-btn"
+                data-tab="returning-buyer"
+              >
+                Returning Customer
+              </button>
+            </div>
+
+            <!-- TAB 1: НОВИЙ ПОКУПЕЦЬ -->
+            <div class="tab-content is-active" id="new-buyer">
+              <form id="checkout-form" novalidate>
+                <!-- Step 1: Особисті дані -->
+                <div class="checkout-step">
+                  <div class="checkout-step__header">
+                    <span class="checkout-step__num">1</span>
+                    <h3 class="checkout-step__title">Personal Details</h3>
+                  </div>
+
+                  <div class="form-grid form-grid--2col">
+                    <div class="form-field" id="field-firstName">
+                      <label class="form-label" for="firstName">
+                        First Name<span class="req">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-input"
+                        placeholder="Введіть ваше ім'я"
+                      />
+                      <span class="form-error"
+                        >Please enter your first name (at least 2 letters).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-lastName">
+                      <label class="form-label" for="lastName">
+                        Last Name<span class="req">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="lastName"
+                        class="form-input"
+                        placeholder="Enter your last name"
+                      />
+                      <span class="form-error"
+                        >Please enter your last name (at least 2 letters).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-phone">
+                      <label class="form-label" for="phone">Phone</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        class="form-input"
+                        placeholder="+380 (XX) XXX-XX-XX"
+                      />
+                      <span class="form-error"
+                        >Invalid phone format (e.g., +380501234567).</span
+                      >
+                    </div>
+
+                    <div class="form-field" id="field-email">
+                      <label class="form-label" for="email">
+                        E-mail<span class="req">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="example@domain.com"
+                      />
+                      <span class="form-error"
+                        >Please enter a valid E-mail address.</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2: Інформація про доставку -->
+                <div class="checkout-step">
+                  <div class="checkout-step__header">
+                    <span class="checkout-step__num">2</span>
+                    <h3 class="checkout-step__title">
+                      Delivery Information
+                    </h3>
+                  </div>
+
+                  <!-- Inside Step 2: Інформація про доставку -->
+                  <div class="form-field" id="field-city">
+                    <label class="form-label" for="city">
+                      City<span class="req">*</span>
+                    </label>
+                    <div class="autocomplete-wrap">
+                      <input
+                        type="text"
+                        id="city"
+                        class="form-input"
+                        placeholder="Start typing city name (e.g., Kyiv)"
+                        autocomplete="off"
+                      />
+                      <div class="autocomplete-list" id="city-dropdown"></div>
+                    </div>
+                    <span class="form-error"
+                      >Please select a delivery city from the available locations.</span
+                    >
+                  </div>
+
+                  <!-- Варіанти доставки -->
+                  <div class="options-subtitle">Delivery Options</div>
+                  <div class="radio-group" id="delivery-group">
+                    <!-- Нова Пошта -->
+                    <div class="radio-card is-selected" data-carrier="nova">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="carrier"
+                            value="Нова Пошта"
+                            checked
+                          />
+                          <span>Nova Poshta (branch or locker)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="nova_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Branch
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="nova_type"
+                              value="Поштомат"
+                            />
+                            Parcel Locker
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-nova">
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Select from list or enter branch number / address*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
+                          <span class="form-error"
+                            >Please enter the Nova Poshta branch or locker number.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Укрпошта -->
+                    <div class="radio-card" data-carrier="ukr">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input type="radio" name="carrier" value="Укрпошта" />
+                          <span>Ukrposhta (branch or locker)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="ukr_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Branch
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="ukr_type"
+                              value="Поштомат"
+                            />
+                            Parcel Locker
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-ukr">
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Select from list or enter postal code / branch address*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
+                          <span class="form-error"
+                            >Please enter the Ukrposhta postal code or branch number.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Meest ПОШТА -->
+                    <div class="radio-card" data-carrier="meest">
+                      <div class="radio-card__top">
+                        <label class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="carrier"
+                            value="Meest ПОШТА"
+                          />
+                          <span>Meest POSHTA (branch or locker)</span>
+                        </label>
+                      </div>
+                      <div class="radio-card__sub">
+                        <div class="sub-type-row">
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="meest_type"
+                              value="Відділення"
+                              checked
+                            />
+                            Branch
+                          </label>
+                          <label class="sub-type-label">
+                            <input
+                              type="radio"
+                              name="meest_type"
+                              value="Поштомат"
+                            />
+                            Parcel Locker
+                          </label>
+                        </div>
+                        <div class="form-field" id="field-branch-meest">
+                          <div class="autocomplete-wrap">
+                            <input
+                              type="text"
+                              class="form-input branch-input"
+                              placeholder="Select from list or enter Meest branch / locker number*"
+                              autocomplete="off"
+                            />
+                            <div
+                              class="autocomplete-list branch-dropdown"
+                            ></div>
+                          </div>
+                          <span class="form-error"
+                            >Please enter the Meest POSHTA branch or locker number.</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Варіанти оплати -->
+                  <div class="options-subtitle">Payment Options</div>
+                  <div class="radio-group" id="payment-group">
+                    <label class="radio-card is-selected">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Готівка"
+                            checked
+                          />
+                          <span>Cash on delivery</span>
+                        </span>
+                      </div>
+                    </label>
+
+                    <label class="radio-card">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Оплата банківською картою"
+                          />
+                          <span
+                            >Bank Card (Visa / Mastercard)</span
+                          >
+                        </span>
+                      </div>
+                    </label>
+
+                    <label class="radio-card">
+                      <div class="radio-card__top">
+                        <span class="radio-card__left">
+                          <input
+                            type="radio"
+                            name="payment"
+                            value="Google Pay"
+                          />
+                          <span>Google Pay</span>
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="place-order-btn">
+                  Confirm Order
+                </button>
+
+                <div class="success-banner" id="order-success"></div>
+              </form>
+            </div>
+
+            <!-- TAB 2: Я ПОСТІЙНИЙ КЛІЄНТ -->
+            <div class="tab-content" id="returning-buyer">
+              <p class="returning-info">
+                If you are a registered customer, please enter your login/email and password. If you are new here, switch to the
+                <strong>"New Customer"</strong> tab and fill in the required information.
+              </p>
+
+              <form id="login-form" novalidate>
+                <div class="form-grid">
+                  <div class="form-field" id="field-login-email">
+                    <label class="form-label" for="loginEmail">
+                      Login / E-mail<span class="req">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="loginEmail"
+                      class="form-input"
+                      placeholder="Enter your E-mail"
+                    />
+                    <span class="form-error"
+                      >Please enter a valid login or E-mail.</span
+                    >
+                  </div>
+
+                  <div class="form-field" id="field-login-password">
+                    <label class="form-label" for="loginPassword">
+                      Password<span class="req">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      id="loginPassword"
+                      class="form-input"
+                      placeholder="Enter your password"
+                    />
+                    <span class="form-error"
+                      >Please enter your password (at least 6 characters).</span
+                    >
+                  </div>
+
+                  <div class="forgot-row">
+                    <button
+                      type="button"
+                      class="forgot-link"
+                      id="forgot-pass-btn"
+                    >
+                      Forgot password?
+                    </button>
+                    <button
+                      type="button"
+                      class="forgot-link"
+                      id="switch-to-new-btn"
+                    >
+                      Switch to "New Customer"
+                    </button>
+                  </div>
+
+                  <button type="submit" class="submit-btn">
+                    Sign In & Continue
+                  </button>
+                </div>
+
+                <div class="success-banner" id="login-feedback"></div>
+              </form>
+            </div>
+          </section>
+
+          <!-- RIGHT COLUMN: ВАШЕ ЗАМОВЛЕННЯ -->
+          <aside class="order-summary">
+            <h2 class="checkout-panel__heading" style="margin-bottom: 4px">
+              Your Order
+            </h2>
+
+            <div class="cart-items" id="cart-items-list">
+              <!-- Populated dynamically via JS -->
+            </div>
+
+            <div class="summary-totals" id="summary-totals">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="summary-subtotal">0 ₴</span>
+              </div>
+              <div class="summary-row">
+                <span
+                  >Delivery (<span id="summary-carrier">Nova Poshta</span
+                  >):</span
+                >
+                <span id="summary-shipping">free</span>
+              </div>
+              <div class="summary-row summary-row--total">
+                <span>Total:</span>
+                <span id="summary-total">0 ₴</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===========================
+         FOOTER
+         =========================== -->
+    <!-- SHARED:FOOTER:START — edit partials/footer.html -->
+    <footer class="footer" id="footer">
+      <div class="container footer__container">
+        <div class="footer__contacts">
+          <div class="footer__item">
+            <img
+              src="assets/images/enterprise.svg"
+              alt="Company"
+              class="footer__icon"
+            />
+            <span class="footer__text">ASTEL-COM LLC</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/person.svg"
+              alt="Contact Person"
+              class="footer__icon"
+            />
+            <span class="footer__text">Serhii +380504443355</span>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/location.svg"
+              alt="Location"
+              class="footer__icon"
+            />
+            <span class="footer__text"
+              >5 Solomianska St, Kyiv, Ukraine</span
+            >
+          </div>
+          <div class="footer__item footer__item--align-top">
+            <img
+              src="assets/images/phone.svg"
+              alt="Phone"
+              class="footer__icon"
+            />
+            <div class="footer__text-group">
+              <a href="tel:+380504443355" class="footer__link"
+                >+380 (50) 444-33-55</a
+              >
+              <a href="tel:+380443039551" class="footer__link"
+                >+380 (44) 303-95-51</a
+              >
+            </div>
+          </div>
+          <div class="footer__item">
+            <img
+              src="assets/images/mail.svg"
+              alt="Email"
+              class="footer__icon"
+            />
+            <a href="mailto:astelkom@gmail.com" class="footer__link"
+              >astelkom@gmail.com</a
+            >
+          </div>
+        </div>
+
+        <div class="footer__map">
+          <a
+            href="https://www.google.com/maps/search/?api=1&amp;query=Київ%2C%20вулиця%20Солом%27янська%2C%205"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <picture>
+              <source
+                media="(min-width: 1440px)"
+                srcset="assets/images/map-wide.png"
+              />
+              <source
+                media="(min-width: 1024px)"
+                srcset="assets/images/map.png"
+              />
+              <source
+                media="(min-width: 500px)"
+                srcset="assets/images/map-tablet.png"
+              />
+              <img
+                src="assets/images/map-mobile.png"
+                alt="Location Map"
+                class="footer__map-image"
+              />
+            </picture>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <!-- SHARED:FOOTER:END -->
+    <script src="js/site-nav.js"></script>
+
+    <script src="js/products-data.js"></script>
+    <script src="js/delivery-data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/account.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Render Cart Items & Summary ---
+        const cartListEl = document.getElementById("cart-items-list");
+        const subtotalEl = document.getElementById("summary-subtotal");
+        const totalEl = document.getElementById("summary-total");
+        const summaryTotalsEl = document.getElementById("summary-totals");
+
+        function renderCart() {
+          const cart = CartManager.getCart();
+
+          if (cart.length === 0) {
+            cartListEl.innerHTML = `
+              <div class="empty-cart-box">
+                <p style="margin-bottom: 16px;">Ваш кошик порожній.</p>
+                <a href="products.html" class="submit-btn" style="display: inline-block; width: auto; text-decoration: none;">
+                  Перейти до каталогу
+                </a>
+              </div>
+            `;
+            subtotalEl.textContent = "0 ₴";
+            totalEl.textContent = "0 ₴";
+            return;
+          }
+
+          cartListEl.innerHTML = cart
+            .map((item) => {
+              const minQty = CartManager.getMinQty(item.id);
+              const isAtMin = item.qty <= minQty;
+              const lineTotal = item.price * item.qty;
+
+              return `
+                <div class="cart-item" data-id="${item.id}">
+                  <a href="product.html?id=${item.id}" class="cart-item__img-wrap">
+                    <img src="${item.image}" alt="${item.title}" class="cart-item__img" />
+                  </a>
+                  <div class="cart-item__details">
+                    <a href="product.html?id=${item.id}" class="cart-item__title">${item.title}</a>
+                    <span class="cart-item__price">${CartManager.formatPrice(item.price)} / шт.</span>
+                    ${
+                      minQty > 1
+                        ? `<span style="font-family: var(--font-mono); font-size: 11px; color: #525252;">Мін. замовлення: ${minQty} шт.</span>`
+                        : ""
+                    }
+                    <button type="button" class="cart-item__remove" data-remove="${item.id}" style="width: fit-content;">
+                      Видалити
+                    </button>
+                  </div>
+                  <div class="cart-item__controls">
+                    <div class="qty-control">
+                      <button
+                        type="button"
+                        class="qty-btn"
+                        data-dec="${item.id}"
+                        aria-label="Зменшити"
+                        ${isAtMin ? 'disabled style="opacity: 0.35; cursor: not-allowed;"' : ""}
+                      >−</button>
+                      <input
+                        type="number"
+                        class="qty-input"
+                        value="${item.qty}"
+                        min="${minQty}"
+                        data-input="${item.id}"
+                      />
+                      <button type="button" class="qty-btn" data-inc="${item.id}" aria-label="Збільшити">+</button>
+                    </div>
+                    <div class="cart-item__sum">${CartManager.formatPrice(lineTotal)}</div>
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+
+          const subtotal = CartManager.getSubtotal();
+          subtotalEl.textContent = CartManager.formatPrice(subtotal);
+          totalEl.textContent = CartManager.formatPrice(subtotal);
+        }
+
+        // Delegate clicks for +, -, remove, and manual input inside cart list
+        cartListEl.addEventListener("click", (e) => {
+          const incId = e.target.getAttribute("data-inc");
+          const decId = e.target.getAttribute("data-dec");
+          const remId = e.target.getAttribute("data-remove");
+
+          if (incId) {
+            const item = CartManager.getCart().find((i) => i.id === incId);
+            if (item) CartManager.updateQty(incId, item.qty + 1);
+            renderCart();
+          } else if (decId) {
+            const item = CartManager.getCart().find((i) => i.id === decId);
+            const minQty = CartManager.getMinQty(decId);
+            if (item && item.qty > minQty) {
+              CartManager.updateQty(decId, item.qty - 1);
+              renderCart();
+            }
+          } else if (remId) {
+            CartManager.removeItem(remId);
+            renderCart();
+          }
+        });
+
+        cartListEl.addEventListener("change", (e) => {
+          const inputId = e.target.getAttribute("data-input");
+          if (inputId) {
+            const minQty = CartManager.getMinQty(inputId);
+            const val = parseInt(e.target.value, 10);
+            CartManager.updateQty(
+              inputId,
+              isNaN(val) || val < minQty ? minQty : val,
+            );
+            renderCart();
+          }
+        });
+
+        renderCart();
+
+        // --- Tabs Switching (Новий покупець / Я постійний клієнт) ---
+        const tabButtons = document.querySelectorAll(".checkout-tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        function activateTab(targetId) {
+          tabButtons.forEach((btn) => {
+            btn.classList.toggle(
+              "is-active",
+              btn.getAttribute("data-tab") === targetId,
+            );
+          });
+          tabContents.forEach((panel) => {
+            panel.classList.toggle("is-active", panel.id === targetId);
+          });
+        }
+
+        tabButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            activateTab(btn.getAttribute("data-tab"));
+          });
+        });
+
+        document
+          .getElementById("switch-to-new-btn")
+          .addEventListener("click", () => {
+            activateTab("new-buyer");
+          });
+
+        // --- Delivery & Payment Radio Card Selection ---
+        const carrierSummaryEl = document.getElementById("summary-carrier");
+        const deliveryCards = document.querySelectorAll(
+          "#delivery-group .radio-card",
+        );
+
+        deliveryCards.forEach((card) => {
+          const radio = card.querySelector('input[name="carrier"]');
+          radio.addEventListener("change", () => {
+            deliveryCards.forEach((c) => c.classList.remove("is-selected"));
+            card.classList.add("is-selected");
+            carrierSummaryEl.textContent = radio.value;
+          });
+        });
+
+        const paymentCards = document.querySelectorAll(
+          "#payment-group .radio-card",
+        );
+        paymentCards.forEach((card) => {
+          const radio = card.querySelector('input[name="payment"]');
+          radio.addEventListener("change", () => {
+            paymentCards.forEach((c) => c.classList.remove("is-selected"));
+            card.classList.add("is-selected");
+          });
+        });
+
+        // --- Sync Payment Options with Відділення / Поштомат ---
+        const cashRadio = document.querySelector(
+          '#payment-group input[value="Готівка"]',
+        );
+        const cardRadio = document.querySelector(
+          '#payment-group input[value="Оплата банківською картою"]',
+        );
+        const cashCard = cashRadio ? cashRadio.closest(".radio-card") : null;
+
+        function syncPaymentWithDeliveryType(triggeredByTypeChange = false) {
+          const activeCarrierCard = document.querySelector(
+            "#delivery-group .radio-card.is-selected",
+          );
+          if (!activeCarrierCard || !cashRadio || !cardRadio || !cashCard)
+            return;
+
+          const carrierKey = activeCarrierCard.getAttribute("data-carrier");
+          const selectedTypeRadio = activeCarrierCard.querySelector(
+            `input[name="${carrierKey}_type"]:checked`,
+          );
+          const isLocker =
+            selectedTypeRadio && selectedTypeRadio.value === "Поштомат";
+
+          if (isLocker) {
+            // Block "Готівка" and jump to "Оплата банківською картою"
+            cashRadio.disabled = true;
+            cashCard.classList.add("is-disabled");
+            cashCard.classList.remove("is-selected");
+
+            if (cashRadio.checked || triggeredByTypeChange) {
+              cardRadio.checked = true;
+              paymentCards.forEach((c) => c.classList.remove("is-selected"));
+              cardRadio.closest(".radio-card").classList.add("is-selected");
+            }
+          } else {
+            // Re-enable "Готівка" and select it when switching back to "Відділення"
+            cashRadio.disabled = false;
+            cashCard.classList.remove("is-disabled");
+
+            if (triggeredByTypeChange) {
+              cashRadio.checked = true;
+              paymentCards.forEach((c) => c.classList.remove("is-selected"));
+              cashCard.classList.add("is-selected");
+            }
+          }
+        }
+
+        // Trigger when switching between Відділення and Поштомат
+        document
+          .querySelectorAll('#delivery-group input[type="radio"]')
+          .forEach((radio) => {
+            radio.addEventListener("change", (e) => {
+              const isSubType = e.target.name.endsWith("_type");
+              syncPaymentWithDeliveryType(isSubType);
+            });
+          });
+
+        // Run once on initial load
+        syncPaymentWithDeliveryType(false);
+
+        // --- Form Validation Helpers ---
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const phoneRegex =
+          /^(\+?38)?\s?\(?0\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}$/;
+
+        function setFieldError(fieldId, isInvalid, customMsg) {
+          const field = document.getElementById(fieldId);
+          if (!field) return false;
+          if (customMsg) {
+            const errSpan = field.querySelector(".form-error");
+            if (errSpan) errSpan.textContent = customMsg;
+          }
+          field.classList.toggle("has-error", isInvalid);
+          return !isInvalid;
+        }
+
+        // Clear error state on input
+        document.querySelectorAll(".form-input").forEach((input) => {
+          input.addEventListener("input", () => {
+            const parentField = input.closest(".form-field");
+            if (parentField) parentField.classList.remove("has-error");
+          });
+        });
+
+        // --- Validate "Новий покупець" Checkout Form ---
+        const checkoutForm = document.getElementById("checkout-form");
+        const orderSuccess = document.getElementById("order-success");
+
+        // --- Helper: Заповнення всіх полів форми замовлення ---
+        function fillCheckoutFormData(data) {
+          if (!data) return;
+
+          if (data.firstName)
+            document.getElementById("firstName").value = data.firstName;
+          if (data.lastName)
+            document.getElementById("lastName").value = data.lastName;
+          if (data.phone) document.getElementById("phone").value = data.phone;
+          if (data.email) document.getElementById("email").value = data.email;
+
+          if (data.delivery) {
+            if (data.delivery.city) {
+              document.getElementById("city").value = data.delivery.city;
+            }
+
+            // Вибір служби доставки (Нова Пошта / Укрпошта / Meest)
+            const carrierKey = data.delivery.carrierKey || "nova";
+            const targetCarrierCard =
+              document.querySelector(
+                `#delivery-group .radio-card[data-carrier="${carrierKey}"]`,
+              ) ||
+              Array.from(
+                document.querySelectorAll("#delivery-group .radio-card"),
+              ).find(
+                (c) =>
+                  c.querySelector('input[name="carrier"]')?.value ===
+                  data.delivery.carrierName,
+              );
+
+            if (targetCarrierCard) {
+              const carrierRadio = targetCarrierCard.querySelector(
+                'input[name="carrier"]',
+              );
+              if (carrierRadio) {
+                carrierRadio.checked = true;
+                carrierRadio.dispatchEvent(new Event("change"));
+              }
+
+              const cKey = targetCarrierCard.getAttribute("data-carrier");
+              const delivType = data.delivery.type || "Відділення";
+              const typeRadio = targetCarrierCard.querySelector(
+                `input[name="${cKey}_type"][value="${delivType}"]`,
+              );
+              if (typeRadio) {
+                typeRadio.checked = true;
+                typeRadio.dispatchEvent(new Event("change"));
+              }
+
+              const branchInp =
+                targetCarrierCard.querySelector(".branch-input");
+              if (branchInp && data.delivery.branch) {
+                branchInp.value = data.delivery.branch;
+              }
+            }
+          }
+
+          // Вибір способу оплати
+          if (data.payment) {
+            let payRadio = document.querySelector(
+              `#payment-group input[name="payment"][value="${data.payment}"]`,
+            );
+            // Якщо в історії записано "Готівка (при отриманні)", шукаємо за входженням
+            if (!payRadio) {
+              payRadio = Array.from(
+                document.querySelectorAll(
+                  '#payment-group input[name="payment"]',
+                ),
+              ).find(
+                (r) =>
+                  data.payment.includes(r.value) ||
+                  r.value.includes(data.payment),
+              );
+            }
+            if (payRadio && !payRadio.disabled) {
+              payRadio.checked = true;
+              payRadio.dispatchEvent(new Event("change"));
+            }
+          }
+        }
+
+        // --- Авторизований режим та Повтор замовлення ---
+        const isRepeatOrder =
+          new URLSearchParams(window.location.search).get("repeat") === "true";
+        const isUserAuthorized =
+          typeof AuthManager !== "undefined" && AuthManager.isLoggedIn();
+
+        if (isUserAuthorized || isRepeatOrder) {
+          const user =
+            (typeof AuthManager !== "undefined" && AuthManager.getUser()) || {};
+          let repeatOrder = null;
+
+          try {
+            const rawRepeat = localStorage.getItem("astelkom_repeat_order");
+            if (rawRepeat) repeatOrder = JSON.parse(rawRepeat);
+          } catch (e) {}
+
+          // Ховаємо перемикач вкладок "Новий покупець" / "Я постійний клієнт"
+          const checkoutTabsEl = document.querySelector(".checkout-tabs");
+          if (checkoutTabsEl) {
+            checkoutTabsEl.style.display = "none";
+          }
+
+          const returningTabPane = document.getElementById("returning-buyer");
+          const checkoutFormEl = document.getElementById("checkout-form");
+
+          if (returningTabPane && checkoutFormEl) {
+            // Показуємо банер авторизованого клієнта
+            returningTabPane.innerHTML = `
+              <div class="returning-info" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-left-color: #059669; background-color: rgba(5, 150, 105, 0.08); margin-bottom: 24px;">
+                <div>
+                  <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; color: #059669; display: block; margin-bottom: 2px;">
+                    ● Авторизований постійний клієнт
+                  </span>
+                  <span style="font-size: 14px; color: var(--gray-900);">
+                    Ваші особисті дані та параметри доставки підвантажено автоматично.
+                  </span>
+                </div>
+                <a href="account.html" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--gray-900); text-decoration: underline;">
+                  Особистий кабінет
+                </a>
+              </div>
+            `;
+
+            // Переносимо форму оформлення замовлення під банер і робимо блок видимим
+            returningTabPane.appendChild(checkoutFormEl);
+            activateTab("returning-buyer");
+          }
+
+          // Формуємо об'єкт даних для автозаповнення (пріоритет: повторюване замовлення -> профіль клієнта)
+          const autofillPayload = {
+            firstName:
+              repeatOrder?.customer?.firstName || user.firstName || "Ім'я",
+            lastName:
+              repeatOrder?.customer?.lastName || user.lastName || "Прізвище",
+            phone:
+              repeatOrder?.customer?.phone || user.phone || "+380501234567",
+            email:
+              repeatOrder?.customer?.email || user.email || "example@gmail.com",
+            delivery: repeatOrder?.delivery ||
+              user.address || {
+                city: "Київ",
+                carrierKey: "nova",
+                carrierName: "Нова Пошта",
+                type: "Відділення",
+                branch: "Відділення №15: вул. Машинобудівна, 44",
+              },
+            payment: repeatOrder?.payment || "Готівка",
+          };
+
+          fillCheckoutFormData(autofillPayload);
+
+          if (isRepeatOrder) {
+            localStorage.removeItem("astelkom_repeat_order");
+          }
+        }
+
+        // --- Pre-fill Checkout Form if Returning to Edit an Active Order ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const isEditingOrder = urlParams.get("edit") === "true";
+        const savedOrderRaw = localStorage.getItem("astelkom_active_order");
+
+        if (isEditingOrder && savedOrderRaw) {
+          try {
+            const savedOrder = JSON.parse(savedOrderRaw);
+            if (Date.now() < savedOrder.expiresAt) {
+              document.getElementById("firstName").value =
+                savedOrder.customer.firstName || "";
+              document.getElementById("lastName").value =
+                savedOrder.customer.lastName || "";
+              document.getElementById("phone").value =
+                savedOrder.customer.phone || "";
+              document.getElementById("email").value =
+                savedOrder.customer.email || "";
+              document.getElementById("city").value =
+                savedOrder.delivery.city || "";
+
+              // Restore carrier selection
+              const targetCarrierCard = document.querySelector(
+                `#delivery-group .radio-card[data-carrier="${savedOrder.delivery.carrierKey}"]`,
+              );
+              if (targetCarrierCard) {
+                const carrierRadio = targetCarrierCard.querySelector(
+                  'input[name="carrier"]',
+                );
+                carrierRadio.checked = true;
+                carrierRadio.dispatchEvent(new Event("change"));
+
+                // Restore Відділення / Поштомат radio
+                const typeRadio = targetCarrierCard.querySelector(
+                  `input[name="${savedOrder.delivery.carrierKey}_type"][value="${savedOrder.delivery.type}"]`,
+                );
+                if (typeRadio) {
+                  typeRadio.checked = true;
+                  typeRadio.dispatchEvent(new Event("change"));
+                }
+
+                // Restore branch input text
+                const branchInp =
+                  targetCarrierCard.querySelector(".branch-input");
+                if (branchInp)
+                  branchInp.value = savedOrder.delivery.branch || "";
+              }
+
+              // Restore payment method
+              const payRadio = document.querySelector(
+                `#payment-group input[name="payment"][value="${savedOrder.payment}"]`,
+              );
+              if (payRadio && !payRadio.disabled) {
+                payRadio.checked = true;
+                payRadio.dispatchEvent(new Event("change"));
+              }
+
+              document.getElementById("place-order-btn").textContent =
+                "Зберегти зміни у замовленні";
+            }
+          } catch (e) {}
+        }
+
+        // --- Submit Handler: Save Order & Redirect to order-status.html ---
+        checkoutForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          if (CartManager.getCart().length === 0) {
+            alert(
+              "Ваш кошик порожній! Додайте товари перед оформленням замовлення.",
+            );
+            return;
+          }
+
+          const firstName = document.getElementById("firstName").value.trim();
+          const lastName = document.getElementById("lastName").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const city = document.getElementById("city").value.trim();
+
+          let isValid = true;
+
+          if (!setFieldError("field-firstName", firstName.length < 2))
+            isValid = false;
+          if (!setFieldError("field-lastName", lastName.length < 2))
+            isValid = false;
+
+          if (phone.length > 0 && !phoneRegex.test(phone)) {
+            setFieldError(
+              "field-phone",
+              true,
+              "Невірний формат телефону (введіть номер у форматі +380XXXXXXXXX).",
+            );
+            isValid = false;
+          } else {
+            setFieldError("field-phone", false);
+          }
+
+          if (!setFieldError("field-email", !emailRegex.test(email)))
+            isValid = false;
+          if (!setFieldError("field-city", city.length < 2)) isValid = false;
+
+          const selectedCarrierCard = document.querySelector(
+            "#delivery-group .radio-card.is-selected",
+          );
+          const carrierKey = selectedCarrierCard.getAttribute("data-carrier");
+          const branchFieldId = `field-branch-${carrierKey}`;
+          const branchInput =
+            selectedCarrierCard.querySelector(".branch-input");
+
+          if (
+            !setFieldError(branchFieldId, branchInput.value.trim().length < 1)
+          ) {
+            isValid = false;
+          }
+
+          if (!isValid) {
+            const firstErr = checkoutForm.querySelector(
+              ".form-field.has-error",
+            );
+            if (firstErr) {
+              firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            return;
+          }
+
+          const carrierName = selectedCarrierCard.querySelector(
+            'input[name="carrier"]',
+          ).value;
+          const deliveryType = selectedCarrierCard.querySelector(
+            `input[name="${carrierKey}_type"]:checked`,
+          ).value;
+          const paymentMethod = document.querySelector(
+            'input[name="payment"]:checked',
+          ).value;
+
+          // Keep original order ID and timer if editing, otherwise create new 15-min window
+          let existingOrder = null;
+          try {
+            existingOrder = JSON.parse(
+              localStorage.getItem("astelkom_active_order"),
+            );
+          } catch (err) {}
+
+          const EDIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+          const now = Date.now();
+
+          const orderPayload = {
+            orderId:
+              isEditingOrder && existingOrder
+                ? existingOrder.orderId
+                : "AK-" + String(now).slice(-6),
+            createdAt:
+              isEditingOrder && existingOrder ? existingOrder.createdAt : now,
+            expiresAt:
+              isEditingOrder && existingOrder && existingOrder.expiresAt > now
+                ? existingOrder.expiresAt
+                : now + EDIT_WINDOW_MS,
+            locked: false,
+            customer: { firstName, lastName, phone, email },
+            delivery: {
+              city,
+              carrierKey,
+              carrierName,
+              type: deliveryType,
+              branch: branchInput.value.trim(),
+            },
+            payment: paymentMethod,
+            items: CartManager.getCart(),
+            subtotal: CartManager.getSubtotal(),
+          };
+
+          localStorage.setItem(
+            "astelkom_active_order",
+            JSON.stringify(orderPayload),
+          );
+          CartManager.clearCart();
+          window.location.href = "en/order-status.html";
+        });
+
+        // --- Validate "Я постійний клієнт" Login Form ---
+        const loginForm = document.getElementById("login-form");
+        const loginFeedback = document.getElementById("login-feedback");
+
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          loginFeedback.classList.remove("is-visible");
+
+          const loginEmail = document.getElementById("loginEmail").value.trim();
+          const loginPassword = document
+            .getElementById("loginPassword")
+            .value.trim();
+
+          let loginValid = true;
+          if (!setFieldError("field-login-email", !emailRegex.test(loginEmail)))
+            loginValid = false;
+          if (!setFieldError("field-login-password", loginPassword.length < 6))
+            loginValid = false;
+
+          if (!loginValid) return;
+
+          loginFeedback.innerHTML = `
+            Обліковий запис <strong>${loginEmail}</strong> успішно авторизовано. Ваші контактні дані підвантажено у форму замовлення.
+          `;
+          loginFeedback.classList.add("is-visible");
+
+          // Pre-fill email in checkout tab and switch to it after a short pause
+          document.getElementById("email").value = loginEmail;
+          setTimeout(() => {
+            activateTab("new-buyer");
+          }, 1200);
+        });
+
+        // Forgot Password Handler
+        document
+          .getElementById("forgot-pass-btn")
+          .addEventListener("click", () => {
+            const loginEmail = document
+              .getElementById("loginEmail")
+              .value.trim();
+            if (!emailRegex.test(loginEmail)) {
+              setFieldError(
+                "field-login-email",
+                true,
+                "Введіть ваш E-mail у це поле, щоб ми надіслали посилання для відновлення пароля.",
+              );
+              return;
+            }
+            setFieldError("field-login-email", false);
+            loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${loginEmail}</strong>.`;
+            loginFeedback.classList.add("is-visible");
+          });
+        // --- City & Branch Hint Dropdown Autocomplete Logic ---
+        const cityInput = document.getElementById("city");
+        const cityDropdown = document.getElementById("city-dropdown");
+
+        function closeAllDropdowns() {
+          document
+            .querySelectorAll(".autocomplete-list.is-open")
+            .forEach((el) => el.classList.remove("is-open"));
+        }
+
+        function renderCityDropdown(query) {
+          const matches = DeliveryDirectory.searchCities(query);
+          if (matches.length === 0) {
+            cityDropdown.innerHTML = `<div class="autocomplete-empty">Населений пункт не знайдено або доставка тимчасово недоступна</div>`;
+          } else {
+            cityDropdown.innerHTML = matches
+              .map(
+                (c) => `
+              <div class="autocomplete-item" data-city="${c.name}">
+                <span class="autocomplete-item__main">м. ${c.name}</span>
+                <span class="autocomplete-item__sub">${c.oblast}</span>
+              </div>
+            `,
+              )
+              .join("");
+          }
+          cityDropdown.classList.add("is-open");
+        }
+
+        cityInput.addEventListener("focus", () => {
+          closeAllDropdowns();
+          renderCityDropdown(cityInput.value);
+        });
+
+        cityInput.addEventListener("input", () => {
+          renderCityDropdown(cityInput.value);
+        });
+
+        cityDropdown.addEventListener("mousedown", (e) => {
+          const item = e.target.closest(".autocomplete-item");
+          if (!item) return;
+          const selectedCity = item.getAttribute("data-city");
+          cityInput.value = selectedCity;
+          document.getElementById("field-city").classList.remove("has-error");
+          cityDropdown.classList.remove("is-open");
+
+          // Clear existing branch inputs when city changes so user picks a branch in the new city
+          document.querySelectorAll(".branch-input").forEach((inp) => {
+            inp.value = "";
+          });
+        });
+
+        // Branch / Locker Autocomplete for all 3 carriers
+        document
+          .querySelectorAll("#delivery-group .radio-card")
+          .forEach((card) => {
+            const carrierKey = card.getAttribute("data-carrier");
+            const branchInput = card.querySelector(".branch-input");
+            const branchDropdown = card.querySelector(".branch-dropdown");
+            const typeRadios = card.querySelectorAll(
+              `input[name="${carrierKey}_type"]`,
+            );
+
+            async function updateBranchDropdown() {
+              const activeType = card.querySelector(
+                `input[name="${carrierKey}_type"]:checked`,
+              ).value;
+              const currentCity = cityInput.value.trim() || "Київ";
+              const items = await DeliveryDirectory.getBranches(
+                carrierKey,
+                activeType,
+                currentCity,
+                branchInput.value,
+              );
+
+              if (items.length === 0) {
+                branchDropdown.innerHTML = `<div class="autocomplete-empty">Відділень за цим запитом не знайдено</div>`;
+              } else {
+                branchDropdown.innerHTML = items
+                  .map(
+                    (b) => `
+                <div class="autocomplete-item" data-branch="${b.title.replace(/"/g, "&quot;")}">
+                  <span class="autocomplete-item__main">${b.title}</span>
+                  <span class="autocomplete-item__sub">${b.subtitle}</span>
+                </div>
+              `,
+                  )
+                  .join("");
+              }
+              branchDropdown.classList.add("is-open");
+            }
+
+            branchInput.addEventListener("focus", () => {
+              closeAllDropdowns();
+              updateBranchDropdown();
+            });
+
+            branchInput.addEventListener("input", () => {
+              updateBranchDropdown();
+            });
+
+            branchDropdown.addEventListener("mousedown", (e) => {
+              const item = e.target.closest(".autocomplete-item");
+              if (!item) return;
+              branchInput.value = item.getAttribute("data-branch");
+              branchInput.closest(".form-field").classList.remove("has-error");
+              branchDropdown.classList.remove("is-open");
+            });
+
+            // Clear branch input when switching between Відділення and Поштомат
+            typeRadios.forEach((r) => {
+              r.addEventListener("change", () => {
+                branchInput.value = "";
+              });
+            });
+          });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".autocomplete-wrap")) {
+            closeAllDropdowns();
+          }
+        });
+      });
+    </script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+  </body>
+</html>

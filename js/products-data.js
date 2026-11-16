@@ -88,11 +88,13 @@ const PRODUCTS_DATA = {
       {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-485-4G.pdf",
+        titleEn: "Installation & Operation Manual — COM-900/485 (Ukrainian PDF)",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_485_4g.pdf",
         download: "Керівництво_СОМ-900-485-4G.pdf",
       },
       {
         title: "Паспорт модему СОМ-900-485-4G_new.pdf",
+        titleEn: "Technical Datasheet — COM-900/485 (Ukrainian PDF)",
         url: "assets/downloads/pasport_modemu_som_900_485_4g_new.pdf",
         download: "Паспорт_СОМ-900-485-4G.pdf",
       },
@@ -187,6 +189,7 @@ const PRODUCTS_DATA = {
       {
         title:
           "Незабаром буде доступне керівництво з монтажу та експлуатації модему СОМ-900-ITR-4G.pdf",
+        titleEn: "Installation & Operation Manual — COM-900-ITR-4G (coming soon)",
         url: "#",
         download: "Керівництво_СОМ-900-ITR-4G.pdf",
       },
@@ -276,6 +279,7 @@ const PRODUCTS_DATA = {
       {
         title:
           "Керівництво з монтажу та експлуатації модему СОМ-900-PSG-4G.pdf",
+        titleEn: "Installation & Operation Manual — COM-900-PSG-4G (Ukrainian PDF)",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__modemu_som_900_psg_4g.pdf",
         download: "Керівництво_СОМ-900-PSG-4G.pdf",
       },
@@ -333,11 +337,13 @@ const PRODUCTS_DATA = {
       {
         title:
           "Керівництво з монтажу та експлуатації модему COM-900-ITR-rev.B_укр.pdf",
+        titleEn: "Installation & Operation Manual — COM-900-ITR rev.B (Ukrainian PDF)",
         url: "assets/downloads/kerivnitstvo_z_montazhu_t__com_900_itr_rev.b_ukr.pdf",
         download: "Керівництво_COM-900-ITR-rev.B_укр.pdf",
       },
       {
         title: "Паспорт COM-900-ITR rev.B_укр.pdf",
+        titleEn: "Technical Datasheet — COM-900-ITR rev.B (Ukrainian PDF)",
         url: "assets/downloads/pasport_com_900_itr_rev.b_ukr.pdf",
         download: "Паспорт_COM-900-ITR-rev.B_укр.pdf",
       },
@@ -423,6 +429,7 @@ const PRODUCTS_DATA = {
     docs: [
       {
         title: "Паспорт NBIoT-модему_укр.pdf",
+        titleEn: "Technical Datasheet — COM-900-NBI-int (Ukrainian PDF)",
         url: "assets/downloads/pasport_nbiot_modemu_ukr.pdf",
         download: "Паспорт_NBIoT-модему_укр.pdf",
       },
@@ -509,6 +516,7 @@ const PRODUCTS_DATA = {
     docs: [
       {
         title: "Паспорт NBIoT-модему COM-900-NBI-ext.pdf",
+        titleEn: "Technical Datasheet — COM-900-NBI-ext (Ukrainian PDF)",
         url: "assets/downloads/pasport_nbiot_modemu_com_900_nbi_ext.pdf",
         download: "Паспорт_NBIoT-модему_COM-900-NBI-ext.pdf",
       },

@@ -19,12 +19,13 @@
 - Product pages are still parameterized (`product.html?id=...`), so their metadata is a localized generic product description, not a separately prerendered page for each SKU. If individual product SEO becomes a priority, add product-specific generated URLs and metadata in the later backend/site-build phase.
 - The admin dashboard is deliberately not localized or modified in this pass.
 
-## Samsung Internet
+## Samsung Internet (native forced-dark behavior restored)
 
-- `theme.js` no longer relies on reading a computed-color probe. Samsung Internet does **not reliably expose whether its Force Dark feature is on** through web APIs, and it can ignore site-supplied color-scheme settings.
-- To ensure the custom dark styles appear in the Samsung case the previous detection missed, Samsung Internet on Android **defaults to custom dark**, even if the browser is actually in light mode. A small sun/moon button is added **only** to the Samsung header for per-site light/dark override (`astelkom_theme_preference` in localStorage).
-- Ordinary desktop browsers stay light in automatic mode, even when the OS uses dark mode.
-- Site CSS declares a theme via `data-theme`, `color-scheme`, and an early `<meta name="color-scheme">`. Samsung Internet may nevertheless apply its own transformations depending on version/settings; this cannot be guaranteed from web code. Test the actual device and Settings → Webpage view and scrolling → Dark mode → Force Dark mode for web content.
+- Samsung Internet users control forced website darkening in their browser settings. There is **no site-specific light/dark button**, no persistent `astelkom_theme_preference`, and no automatic custom-dark override based solely on the Samsung browser's user agent.
+- In automatic mode, Samsung Internet receives the original light-page CSS and applies its own force-dark conversion **only if the visitor enabled it in the browser**. The site does not attempt to detect that private browser setting, because `prefers-color-scheme` and computed colors are not reliable indicators of Samsung's forced inversion.
+- The original custom `html[data-theme="dark"]` CSS palette remains unchanged. Non-Samsung Android browsers that report a dark preference through the existing MIUI/WebView branch may still use it; normal desktop browsers stay light by default.
+- The existing `<meta name="color-scheme" content="light dark">` remains in place for Samsung. We deliberately avoid writing `color-scheme: only light`, which may block browser-provided darkening.
+- Samsung may invert or retain images unpredictably. Check product imagery, trust logos and icons on a real Samsung device with **Force Dark mode for web content** on and off. There is no portable browser API that can force Samsung's rendering to be identical to a custom CSS palette.
 
 ## Checks
 

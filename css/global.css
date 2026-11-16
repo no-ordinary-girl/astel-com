@@ -152,15 +152,6 @@ html {
   scroll-behavior: smooth;
 }
 
-html {
-  -webkit-tap-highlight-color: transparent;
-}
-
-:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-
 body {
   font-family: var(--font-base);
   background-color: var(--gray-100);
@@ -1063,4 +1054,23 @@ html[data-theme="dark"] .trusted__logo {
 html[data-theme="dark"] .footer {
   background-color: #151515;
   border-top: 1px solid #1e222a;
+}
+
+
+/*
+ * Android browser forced-dark compatibility (experimental).
+ * The preceding light/dark palette and all component styles are unchanged.
+ * Request that supported engines do not automatically remap colors that
+ * Astel-Com has already authored. Samsung's force-dark option may ignore it.
+ */
+html[data-theme-browser="samsung"][data-theme="light"],
+html[data-theme-browser="xiaomi"][data-theme="light"] {
+  color-scheme: light; /* older engine fallback */
+  color-scheme: only light;
+}
+
+html[data-theme-browser="samsung"][data-theme="dark"],
+html[data-theme-browser="xiaomi"][data-theme="dark"] {
+  color-scheme: dark; /* older engine fallback */
+  color-scheme: only dark;
 }

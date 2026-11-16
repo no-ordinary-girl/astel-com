@@ -1,50 +1,52 @@
 /*
- * Android theme compatibility.
+ * Android authored-theme compatibility experiment.
  *
- * Use the device/browser-exposed color-scheme preference, including in
- * Samsung Internet. Never force dark mode merely because Samsung Internet
- * is installed: visitors using a light preference must see the light site.
+ * Samsung Internet and Xiaomi's Mi Browser sometimes apply their own darkening
+ * even when the website has authored dark CSS. We cannot read or override those
+ * browsers' force-dark preferences reliably. Keep the standard declaration
+ * <meta name="color-scheme" content="light dark"> intact; when the reported
+ * user preference is dark, use Astel-Com's original [data-theme="dark"] CSS.
  *
- * Samsung Internet's separate "Force Dark mode for web content" setting
- * is not reliably exposed to JavaScript; it can still recolor the website
- * independently of the custom CSS. The website cannot reliably override
- * that browser setting.
+ * A CSS-only "only dark"/"only light" safeguard is scoped to the two affected
+ * browsers. Unsupported browsers safely ignore the "only" keyword. This is
+ * best effort, not a way to defeat browser-enforced recoloring.
  */
 const ThemeManager = (() => {
   const ua = navigator.userAgent || '';
   const isAndroid = /Android/i.test(ua);
   const isSamsungInternet = isAndroid && /SamsungBrowser/i.test(ua);
+  const isXiaomiBrowser = isAndroid && /MiuiBrowser|XiaoMiBrowser/i.test(ua);
+  const isAndroidWebView = isAndroid && /; wv\)/i.test(ua);
   const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
   let currentMode = 'auto';
+
+  // Applied before CSS loads because this script is already in <head>.
+  // The browser signal is for a CSS compatibility rule, never for UI changes.
+  if (isSamsungInternet) {
+    document.documentElement.setAttribute('data-theme-browser', 'samsung');
+  } else if (isXiaomiBrowser) {
+    document.documentElement.setAttribute('data-theme-browser', 'xiaomi');
+  }
 
   function shouldUseCustomDark(mode) {
     if (mode === 'dark') return true;
     if (mode === 'light') return false;
-
-    // Only use the authored dark palette when Android reports a dark
-    // preference. Do not force dark on Samsung Internet in phone light mode.
-    const isSupportedAndroidBrowser = isSamsungInternet || /MiuiBrowser|wv\)/i.test(ua);
-    return isAndroid && isSupportedAndroidBrowser && darkQuery.matches;
+    // Do not turn Samsung's light-phone appearance dark automatically.
+    return (isSamsungInternet || isXiaomiBrowser || isAndroidWebView) && darkQuery.matches;
   }
 
   function applyTheme() {
     const dark = shouldUseCustomDark(currentMode);
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 
-    // Tell browsers this page ALREADY supplies its dark colors, so they can
-    // prefer the authored palette to automatic recoloring when supported.
-    const scheme = document.querySelector('meta[name="color-scheme"]');
-    if (scheme) scheme.setAttribute('content', dark ? 'dark' : 'light');
-
+    // Do NOT rewrite the two-scheme <meta> to just "dark" or "light": Samsung
+    // uses that early declaration when deciding whether authored CSS is present.
     document.querySelectorAll('.features-image').forEach((img) => {
-      const src = dark
-        ? 'assets/images/com-900-white.png'
-        : 'assets/images/com-900.png';
+      const src = dark ? 'assets/images/com-900-white.png' : 'assets/images/com-900.png';
       if (img.getAttribute('src') !== src) img.setAttribute('src', src);
     });
 
-    // Use real white logo assets rather than a CSS invert filter. Source
-    // paths are relative to the document's <base> so this also works in /en/.
+    // Use the existing supplied white partner logos, without color filters.
     document.querySelectorAll('.trusted__logo[data-dark-src][data-light-src]').forEach((img) => {
       const src = dark ? img.dataset.darkSrc : img.dataset.lightSrc;
       if (img.getAttribute('src') !== src) img.setAttribute('src', src);
@@ -66,7 +68,7 @@ const ThemeManager = (() => {
   }
 
   return {
-    // Kept for internal/dev compatibility; no theme control is shown to visitors.
+    // For dev/testing only; intentionally no visitor-facing theme switcher.
     setTheme(mode = 'auto') {
       if (!['auto', 'dark', 'light'].includes(mode)) return;
       currentMode = mode;

@@ -1,15 +1,13 @@
 /*
  * Theme compatibility for Android browsers.
  *
- * Samsung Internet has its own user-controlled "Force Dark mode for web content"
- * feature. It can darken pages independently of CSS and does not reliably expose
- * that switch to JavaScript. Do not force the site's custom dark CSS merely
- * because Samsung Internet is detected: this can lead to double-darkening and
- * make images or logos unreadable.
- *
- * On Samsung Internet, leave the site's light palette alone and let the
- * browser honor the visitor's own dark-mode setting. No site theme toggle.
- * The original custom dark palette is left intact for browsers that support it.
+ * Restore the site's ORIGINAL custom dark theme on Samsung Internet.
+ * Samsung Internet does not reliably report its "Force Dark mode for web content"
+ * setting via prefers-color-scheme, so without a user-facing toggle we favor
+ * displaying the custom theme on Samsung Internet rather than letting the
+ * browser recolor the light theme. This is a browser-wide fallback: Samsung
+ * Internet users who disable force-dark will also see the custom dark theme.
+ * The CSS palette, image overrides and other styles are unchanged.
  */
 const ThemeManager = (() => {
   const ua = navigator.userAgent || '';
@@ -22,9 +20,9 @@ const ThemeManager = (() => {
     if (mode === 'dark') return true;
     if (mode === 'light') return false;
 
-    // Samsung handles forced darkening itself. User-agent detection cannot tell
-    // whether the visitor enabled it. Do not apply a second dark theme.
-    if (isSamsungInternet) return false;
+    // Favor the site's custom authored dark CSS in Samsung Internet. Its
+    // force-dark switch is not reliably observable through browser APIs.
+    if (isSamsungInternet) return true;
 
     // Other Android browsers can opt into the site's original dark palette.
     return isAndroid && /MiuiBrowser|wv\)/i.test(ua) && darkQuery.matches;
@@ -34,12 +32,10 @@ const ThemeManager = (() => {
     const dark = shouldUseCustomDark(currentMode);
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 
-    // Keep Samsung Internet's native color handling in control. In particular,
-    // don't set `only light`, which can suppress browser-provided darkening.
+    // Tell browsers this page ALREADY supplies its dark colors, so they can
+    // prefer the authored palette to automatic recoloring when supported.
     const scheme = document.querySelector('meta[name="color-scheme"]');
-    if (scheme && !isSamsungInternet) {
-      scheme.setAttribute('content', dark ? 'dark' : 'light dark');
-    }
+    if (scheme) scheme.setAttribute('content', dark ? 'dark' : 'light');
 
     document.querySelectorAll('.features-image').forEach((img) => {
       const src = dark

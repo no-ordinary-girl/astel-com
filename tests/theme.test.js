@@ -31,18 +31,21 @@ function simulate(ua, prefersDark) {
 
 for (const prefersDark of [false, true]) {
   const samsung = simulate('Mozilla/5.0 (Linux; Android 15) SamsungBrowser/28.0 Chrome/125 Mobile', prefersDark);
-  assert.equal(samsung.html.attrs['data-theme'], 'light', 'Samsung must not be forced into custom dark mode');
-  assert.equal(samsung.meta.attrs.content, 'light dark', 'Leave Samsung color-scheme metadata untouched');
+  assert.equal(samsung.html.attrs['data-theme'], 'dark', 'Samsung must render the custom dark theme');
+  assert.equal(samsung.meta.attrs.content, 'dark', 'Indicate authored dark palette to browser');
+  assert.equal(samsung.images[0].src, 'assets/images/com-900-white.png', 'Use the white line drawing');
+  assert.equal(samsung.manager.getTheme(), 'dark');
+  samsung.manager.setTheme('light');
+  assert.equal(samsung.manager.getTheme(), 'light', 'Explicit programmatic light mode remains available');
+  assert.equal(samsung.meta.attrs.content, 'light');
   assert.equal(samsung.images[0].src, 'assets/images/com-900.png');
-  assert.equal(samsung.manager.getTheme(), 'light');
-  samsung.manager.setTheme('dark');
-  assert.equal(samsung.manager.getTheme(), 'dark', 'Explicit programmatic dark mode is available');
   samsung.manager.setTheme('auto');
-  assert.equal(samsung.manager.getTheme(), 'light', 'Auto returns Samsung to its own rendering');
+  assert.equal(samsung.manager.getTheme(), 'dark', 'Auto restores authored dark on Samsung');
 }
 
 const desktop = simulate('Mozilla/5.0 (Windows NT 10.0) Chrome/126', true);
 assert.equal(desktop.manager.getTheme(), 'light');
+assert.equal(desktop.meta.attrs.content, 'light');
 const miui = simulate('Mozilla/5.0 (Linux; Android 14) MiuiBrowser/17', true);
 assert.equal(miui.manager.getTheme(), 'dark');
 assert.equal(miui.images[0].src, 'assets/images/com-900-white.png');
@@ -50,4 +53,5 @@ assert.equal(miui.images[0].src, 'assets/images/com-900-white.png');
 assert(!source.includes('theme-compat-toggle'), 'No injected Samsung theme toggle');
 assert(!css.includes('.theme-compat-toggle'), 'No unused toggle styling');
 assert(!source.includes("'only light'"), 'No forced only-light scheme override');
-console.log('PASS: Samsung native forced-dark behavior, no toggle, desktop and Android theme branches');
+assert(css.includes('html[data-theme="dark"] .trusted__logo'), 'Preserve original partner logo contrast rules');
+console.log('PASS: Samsung custom dark theme, no toggle, desktop and Android theme branches');

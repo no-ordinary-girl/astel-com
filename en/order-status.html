@@ -285,6 +285,7 @@
     <script src="js/products-data.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/order-lifecycle.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("order-status-container");
@@ -409,9 +410,10 @@
         const lockBtn = document.getElementById("lock-order-btn");
 
         function lockOrderUI() {
-          order.locked = true;
-          order.expiresAt = Date.now() - 1000;
-          localStorage.setItem("astelkom_active_order", JSON.stringify(order));
+          if (!order.locked) {
+            Object.assign(order, OrderLifecycle.release(order));
+            localStorage.setItem("astelkom_active_order", JSON.stringify(order));
+          }
 
           timerBox.classList.add("is-locked");
           timerClock.textContent = "00:00";
@@ -467,62 +469,7 @@
         });
       });
     </script>
-    <script>
-      // --- Auto-Send / Finalize Order if User Exits Page Mid-Timer ---
-      function finalizeOrderOnExit() {
-        const raw = localStorage.getItem("astelkom_active_order");
-        if (!raw) return;
-
-        try {
-          const order = JSON.parse(raw);
-          if (!order.locked && Date.now() < order.expiresAt) {
-            // Mark order as locked/finalized
-            order.locked = true;
-            localStorage.setItem(
-              "astelkom_active_order",
-              JSON.stringify(order),
-            );
-
-            // WHEN YOU CONNECT YOUR BACKEND:
-            // Use navigator.sendBeacon() to reliably send data to your server
-            // even as the browser tab is closing:
-            /*
-              navigator.sendBeacon(
-                "https://api.astelkom.com/orders/finalize", 
-                JSON.stringify(order)
-              );
-              */
-
-            // For now, you can also store it into a "completed_orders" list in localStorage
-            // so your admin/manager dashboard can see it immediately:
-            const history = JSON.parse(
-              localStorage.getItem("astelkom_completed_orders") || "[]",
-            );
-            history.push({
-              ...order,
-              finalizedAt: Date.now(),
-              exitMethod: "navigated_away",
-            });
-            localStorage.setItem(
-              "astelkom_completed_orders",
-              JSON.stringify(history),
-            );
-          }
-        } catch (e) {}
-      }
-
-      // Triggered when user switches tabs, minimizes window, or closes the tab
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") {
-          finalizeOrderOnExit();
-        }
-      });
-
-      // Triggered right before the page unloads
-      window.addEventListener("beforeunload", () => {
-        finalizeOrderOnExit();
-      });
-    </script>
+    <!-- Leaving the page does not finalize an order; the expiry timestamp controls release. -->
     <script src="js/i18n.js"></script>
     <script src="js/theme.js"></script>
   </body>

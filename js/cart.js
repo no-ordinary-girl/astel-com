@@ -28,8 +28,13 @@ const CartManager = {
       return items.map((item) => {
         const minQty = this.getMinQty(item);
         const quantity = Number.parseInt(item.qty, 10);
+        const catalogProduct =
+          typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[item.id] : null;
         return {
           ...item,
+          // Display current catalog price instead of stale saved cart price.
+          price: catalogProduct?.numericPrice ?? item.price,
+          inStock: catalogProduct?.inStock ?? item.inStock ?? true,
           minQty,
           qty: Math.max(minQty, Number.isFinite(quantity) ? quantity : minQty),
         };
@@ -61,17 +66,19 @@ const CartManager = {
     const catalogProduct =
       typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[product.id] : null;
 
-    if (product.inStock === false || catalogProduct?.inStock === false) {
+    if (catalogProduct?.inStock === false || (!catalogProduct && product.inStock === false)) {
       this.showToast("Товару немає в наявності");
       return;
     }
 
     const cart = this.getCart();
     const existing = cart.find((item) => item.id === product.id);
-    const numericPrice = product.numericPrice || this.parsePrice(product.price);
+    const numericPrice = catalogProduct?.numericPrice ?? product.numericPrice ?? this.parsePrice(product.price);
     const minQty = this.getMinQty(product);
 
     if (existing) {
+      existing.price = numericPrice;
+      existing.inStock = catalogProduct?.inStock ?? product.inStock ?? true;
       // If already in cart, add 1 (or requestedQty)
       const increment = requestedQty ? requestedQty : 1;
       existing.qty = Math.max(minQty, existing.qty + increment);
@@ -82,6 +89,7 @@ const CartManager = {
         id: product.id,
         title: product.title,
         price: numericPrice,
+        inStock: catalogProduct?.inStock ?? product.inStock ?? true,
         image: product.image,
         minQty: minQty,
         qty: initialQty,
@@ -199,9 +207,10 @@ const CartManager = {
     }
 
     toast.innerHTML = `
-      <span>${message}</span>
+      <span></span>
       <a href="cart.html" style="font-family: var(--font-mono, monospace); font-weight: 700; text-decoration: underline; color: inherit; white-space: nowrap;">Оформити</a>
     `;
+    toast.querySelector("span").textContent = message;
     toast.style.pointerEvents = "auto";
     toast.style.opacity = "1";
     toast.style.transform = "translateX(-50%) translateY(0)";

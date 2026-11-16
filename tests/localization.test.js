@@ -29,13 +29,13 @@ for (const file of Object.keys(PAGES)) {
   assert.match(uk, /<meta name="google" content="notranslate"\s*\/>/);
   assert.match(en, /<meta name="google" content="notranslate"\s*\/>/);
   for (const [locale, label] of [['uk', 'UA'], ['en', 'EN']]) {
-    const pattern = new RegExp(`<a[^>]*class="header__lang-link"[^>]*data-lang="${locale}"[^>]*>${label}<\\/a>`);
+    const pattern = new RegExp(`<a(?=[^>]*class="header__lang-link")(?=[^>]*data-lang="${locale}")[^>]*>\\s*${label}\\s*<\\/a\\s*>`);
     assert.match(uk, pattern);
     assert.match(en, pattern);
   }
   assert.match(en, /<base href="\.\.\/"\s*\/>/);
-  assert.match(en, /<meta name="description" content="[^"]+"/);
-  assert.match(uk, /<meta name="description" content="[^"]+"/);
+  assert.match(en, /<meta\s+name="description"\s+content="[^"]+"/);
+  assert.match(uk, /<meta\s+name="description"\s+content="[^"]+"/);
   assert.match(en, /<link rel="canonical"/);
   assert.match(en, /<link rel="alternate" hreflang="uk"/);
   assert.match(en, /<link rel="alternate" hreflang="en"/);

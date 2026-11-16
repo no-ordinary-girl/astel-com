@@ -826,3 +826,103 @@ const PRODUCTS_DATA = {
     docs: [],
   },
 };
+
+
+// Local-only catalog overrides, shared by the storefront and administrator.
+// Production prices and stock MUST eventually be validated by the backend.
+const CatalogManager = (() => {
+  const STORAGE_KEY = "astelkom_catalog_overrides";
+  const base = new Map(Object.values(PRODUCTS_DATA).map((product) => [product.id, {
+    price: product.price,
+    numericPrice: Number(String(product.price).replace(/[^\d]/g, "")),
+    inStock: product.inStock,
+    stockText: product.stockText,
+  }]));
+
+  function validPrice(value) {
+    const raw = String(value).trim();
+    if (!/^[1-9]\d{0,7}$/.test(raw)) return null;
+    const price = Number(raw);
+    return Number.isSafeInteger(price) && price <= 99999999 ? price : null;
+  }
+
+  function readOverrides() {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      return stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+    } catch (_) { return {}; }
+  }
+
+  function getOriginalPrice(id) { return base.get(id)?.numericPrice ?? null; }
+
+  function applyOverrides() {
+    const overrides = readOverrides();
+    for (const product of Object.values(PRODUCTS_DATA)) {
+      const original = base.get(product.id);
+      const ov = Object.prototype.hasOwnProperty.call(overrides, product.id)
+        ? overrides[product.id] : null;
+      const parsed = ov && validPrice(ov.price);
+      const amount = parsed === null ? original.numericPrice : parsed;
+      product.numericPrice = amount;
+      product.price = ov && parsed !== null ? amount.toLocaleString("uk-UA") + " ₴" : original.price;
+      product.inStock = ov && typeof ov.inStock === "boolean" ? ov.inStock : original.inStock;
+      product.stockText = product.inStock ? "В наявності" : "Немає в наявності";
+    }
+  }
+
+  function updateProduct(id, patch) {
+    if (!Object.prototype.hasOwnProperty.call(PRODUCTS_DATA, id))
+      throw new Error("Невідомий товар");
+    if (Object.prototype.hasOwnProperty.call(patch, "price") && validPrice(patch.price) === null)
+      throw new Error("Вкажіть цілу ціну від 1 до 99 999 999 грн");
+    if (Object.prototype.hasOwnProperty.call(patch, "inStock") && typeof patch.inStock !== "boolean")
+      throw new Error("Невірне значення наявності");
+    const overrides = readOverrides();
+    const previous = overrides[id] && typeof overrides[id] === "object" ? overrides[id] : {};
+    overrides[id] = { ...previous, ...patch };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
+    applyOverrides();
+    // Same-tab consumers can immediately update their views if necessary.
+    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function")
+      window.dispatchEvent(new CustomEvent("astel:catalog-updated", { detail: { id } }));
+  }
+
+  function syncProductCards(root = document) {
+    const cards = root.querySelectorAll(".product-card");
+    cards.forEach((card) => {
+      const link = card.querySelector(".product-card__title[href]");
+      if (!link) return;
+      const id = new URLSearchParams((link.getAttribute("href") || "").split("?")[1] || "").get("id");
+      const product = PRODUCTS_DATA[id];
+      if (!product) return;
+      card.dataset.price = String(product.numericPrice);
+      card.dataset.instock = String(product.inStock);
+      const priceNode = card.querySelector(".product-card__price");
+      if (priceNode) {
+        const perItem = priceNode.querySelector(".product-card__item");
+        // Preserve the "from" label used by variable-price products.
+        const existing = priceNode.textContent.trim();
+        const prefix = /^від\s/i.test(existing) ? "від "
+          : /^from\s/i.test(existing) ? "from " : "";
+        priceNode.replaceChildren(document.createTextNode(prefix + product.price));
+        if (perItem) priceNode.appendChild(perItem);
+      }
+      const status = card.querySelector(".product-card__status");
+      if (status) {
+        status.textContent = `${product.stockText} | ${product.saleTerms}`;
+        status.classList.toggle("product-card__status--instock", product.inStock);
+        status.classList.toggle("product-card__status--outstock", !product.inStock);
+      }
+      const cartButton = card.querySelector(".product-card__cart");
+      if (cartButton) {
+        cartButton.disabled = !product.inStock;
+        cartButton.title = product.inStock ? "Додати в кошик" : "Немає в наявності";
+        cartButton.setAttribute("aria-label", cartButton.title);
+      }
+    });
+  }
+
+  applyOverrides();
+  return Object.freeze({ STORAGE_KEY, validPrice, readOverrides, getOriginalPrice,
+    applyOverrides, updateProduct, syncProductCards });
+})();

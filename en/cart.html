@@ -750,6 +750,7 @@
     <script src="js/delivery-data.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/order-lifecycle.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // --- Render Cart Items & Summary ---
@@ -775,6 +776,15 @@
             return;
           }
 
+          const unavailableItems = cart.filter((item) => item.inStock === false);
+          const submitBtn = document.getElementById("place-order-btn");
+          if (submitBtn) {
+            submitBtn.disabled = unavailableItems.length > 0;
+            submitBtn.title = unavailableItems.length
+              ? "Видаліть товари, яких немає в наявності, перед оформленням"
+              : "";
+          }
+
           cartListEl.innerHTML = cart
             .map((item) => {
               const minQty = CartManager.getMinQty(item.id);
@@ -789,6 +799,7 @@
                   <div class="cart-item__details">
                     <a href="product.html?id=${item.id}" class="cart-item__title">${item.title}</a>
                     <span class="cart-item__price">${CartManager.formatPrice(item.price)} / шт.</span>
+                    ${item.inStock === false ? '<span style="color:#c53030; font-size:12px;">Немає в наявності — видаліть товар для оформлення замовлення</span>' : ''}
                     ${
                       minQty > 1
                         ? `<span style="font-family: var(--font-mono); font-size: 11px; color: #525252;">Мін. замовлення: ${minQty} шт.</span>`
@@ -1173,7 +1184,7 @@
         if (isEditingOrder && savedOrderRaw) {
           try {
             const savedOrder = JSON.parse(savedOrderRaw);
-            if (Date.now() < savedOrder.expiresAt) {
+            if (OrderLifecycle.isEditable(savedOrder)) {
               document.getElementById("firstName").value =
                 savedOrder.customer.firstName || "";
               document.getElementById("lastName").value =
@@ -1231,6 +1242,10 @@
         checkoutForm.addEventListener("submit", (e) => {
           e.preventDefault();
 
+          if (CartManager.getCart().some((item) => item.inStock === false)) {
+            alert("У кошику є товари, яких немає в наявності. Видаліть їх перед оформленням замовлення.");
+            return;
+          }
           if (CartManager.getCart().length === 0) {
             alert(
               "Ваш кошик порожній! Додайте товари перед оформленням замовлення.",
@@ -1308,8 +1323,12 @@
             );
           } catch (err) {}
 
-          const EDIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
           const now = Date.now();
+          if (isEditingOrder && !OrderLifecycle.isEditable(existingOrder, now)) {
+            alert("Час редагування замовлення минув. Замовлення вже передано в обробку.");
+            window.location.href = "order-status.html";
+            return;
+          }
 
           const orderPayload = {
             orderId:
@@ -1321,7 +1340,7 @@
             expiresAt:
               isEditingOrder && existingOrder && existingOrder.expiresAt > now
                 ? existingOrder.expiresAt
-                : now + EDIT_WINDOW_MS,
+                : now + OrderLifecycle.EDIT_WINDOW_MS,
             locked: false,
             customer: { firstName, lastName, phone, email },
             delivery: {

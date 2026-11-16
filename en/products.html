@@ -1146,11 +1146,24 @@
           ".sidebar__link[data-target]",
         );
         const cards = document.querySelectorAll(".product-card");
+        if (typeof CatalogManager !== "undefined") CatalogManager.syncProductCards();
         const counterElement = document.getElementById("product-counter");
 
-        const MIN_PRICE = 40;
-        const MAX_PRICE = 9360;
-        const PRICE_GAP = 100;
+        const catalogPrices = Array.from(cards, (card) => Number(card.dataset.price));
+        const MIN_PRICE = Math.min(...catalogPrices);
+        const MAX_PRICE = Math.max(...catalogPrices);
+        const PRICE_GAP = Math.min(100, Math.max(0, MAX_PRICE - MIN_PRICE));
+        // Avoid hiding products when an administrator changes the price range.
+        [filterMin, filterMax, rangeMin, rangeMax].forEach((input) => {
+          input.min = MIN_PRICE;
+          input.max = MAX_PRICE;
+        });
+        filterMin.value = rangeMin.value = MIN_PRICE;
+        filterMax.value = rangeMax.value = MAX_PRICE;
+        const stockCount = document.querySelector(".filter-checkbox .count");
+        if (stockCount) {
+          stockCount.textContent = `(${Array.from(cards).filter((card) => card.dataset.instock === "true").length})`;
+        }
 
         let activeCategory = "all";
 

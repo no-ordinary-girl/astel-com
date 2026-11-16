@@ -14,6 +14,9 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const PARTIALS = path.join(ROOT, 'partials');
 
+// Intentional page exceptions: the admin has a compact, bespoke layout.
+const PAGE_LAYOUT = Object.freeze({ 'admin.html': { header: 'preserve', footer: 'preserve' } });
+
 const ACTIVE_PAGE = {
   'index.html': 'home',
   'about_us.html': 'about',
@@ -67,6 +70,21 @@ function renderFooter(pageName) {
   return template;
 }
 
+// Only compare meaningful markup. Prettier-like indentation, line wraps, and
+// spaces between tags should not trigger a template rewrite.
+function normalizeMarkup(markup) {
+  return String(markup)
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/\s*=\s*/g, '=')
+    .replace(/\s+\/>/g, '/>')
+    .replace(/\s+>/g, '>')
+    .replace(/\s+/g, ' ')
+    .replace(/>\s+</g, '><')
+    .replace(/>\s+/g, '>')
+    .replace(/\s+</g, '<')
+    .trim();
+}
+
 function syncBlock(html, part, content) {
   const tag = part.toLowerCase();
   const markerStart = `<!-- SHARED:${part}:START — edit partials/${tag}.html -->`;
@@ -78,6 +96,9 @@ function syncBlock(html, part, content) {
     'm',
   );
   if (existingGenerated.test(html)) {
+    const current = html.match(existingGenerated)[0];
+    // If generated HTML is semantically equivalent, leave exact bytes intact.
+    if (normalizeMarkup(current) === normalizeMarkup(generated)) return html;
     return html.replace(existingGenerated, generated);
   }
 
@@ -89,11 +110,12 @@ function syncBlock(html, part, content) {
 }
 
 function renderPage(html, pageName) {
-  return syncBlock(
-    syncBlock(html, 'HEADER', renderHeader(pageName)),
-    'FOOTER',
-    renderFooter(pageName),
-  );
+  let updated = html;
+  if (PAGE_LAYOUT[pageName]?.header !== 'preserve')
+    updated = syncBlock(updated, 'HEADER', renderHeader(pageName));
+  if (PAGE_LAYOUT[pageName]?.footer !== 'preserve')
+    updated = syncBlock(updated, 'FOOTER', renderFooter(pageName));
+  return updated;
 }
 
 function main() {
@@ -123,4 +145,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { renderHeader, renderFooter, syncBlock, renderPage };
+module.exports = { PAGE_LAYOUT, renderHeader, renderFooter, syncBlock, renderPage, normalizeMarkup };

@@ -109,6 +109,10 @@
   max-height: 85%;
 }
 
+.card__image-white {
+  mix-blend-mode: normal;
+}
+
 /* ===========================
    MODEM FEATURES (Mobile Base)
    =========================== */

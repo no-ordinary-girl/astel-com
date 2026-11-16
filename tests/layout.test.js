@@ -6,7 +6,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { renderPage } = require('../scripts/sync-layout.js');
+const { renderPage, PAGE_LAYOUT, normalizeMarkup } = require('../scripts/sync-layout.js');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -31,6 +31,9 @@ function main() {
     .filter((file) => file.endsWith('.html') && fs.statSync(path.join(ROOT, file)).isFile())
     .sort();
   assert.ok(pages.length > 0, 'No HTML pages found');
+  assert.equal(normalizeMarkup('<a   href="cart.html" > Cart </a>'),
+    normalizeMarkup('<a href="cart.html">Cart</a>'),
+    'insignificant formatting should not trigger layout regeneration');
 
   for (const pageName of pages) {
     const html = fs.readFileSync(path.join(ROOT, pageName), 'utf8');
@@ -42,7 +45,13 @@ function main() {
       assert.equal(html.split(`SHARED:${part}:END`).length - 1, 1, `${pageName}: missing/duplicate ${part} end`);
     }
     // Catch a page whose generated markup is out of sync with its templates.
-    assert.equal(html, renderPage(html, pageName), `${pageName}: rerun node scripts/sync-layout.js`);
+    const expected = renderPage(html, pageName);
+    assert.equal(normalizeMarkup(html), normalizeMarkup(expected), `${pageName}: rerun node scripts/sync-layout.js`);
+    if (pageName === 'admin.html') {
+      assert.equal(PAGE_LAYOUT[pageName].footer, 'preserve');
+      assert.equal(PAGE_LAYOUT[pageName].header, 'preserve');
+      assert.equal(html, expected, 'admin layout must be preserved byte for byte');
+    }
     console.log(`PASS ${pageName}`);
   }
 }

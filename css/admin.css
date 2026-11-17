@@ -838,7 +838,11 @@ html[data-theme="dark"] .order-closed-banner--canceled {
   }
 
   .admin-kpis {
-    grid-template-columns: repeat(4, 1fr);
+    display: grid;
+    grid-template-columns:
+      1fr 1fr
+      minmax(clamp(12.906rem, -2.094rem + 25vw, 16.656rem), max-content)
+      1fr;
     gap: 18px;
   }
 
@@ -865,5 +869,16 @@ html[data-theme="dark"] .order-closed-banner--canceled {
   /* Perfectly aligns the right-side action buttons with the 44px TTN input row */
   .admin-order-card__controls > .admin-btn-row {
     margin-top: 21px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .admin-kpis {
+    display: grid;
+    grid-template-columns:
+      1fr 1fr
+      minmax(clamp(21.656rem, -3.344rem + 25vw, 27.906rem), max-content)
+      1fr;
+    gap: 18px;
   }
 }

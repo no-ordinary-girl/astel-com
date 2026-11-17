@@ -886,10 +886,9 @@ html[data-theme="dark"] .order-closed-banner--canceled {
 /* Order payment state and manager editing controls */
 .admin-payment-status { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .admin-payment-select { width:auto; min-width:148px; height:36px; padding:0 10px; }
-.pipeline-step.is-neutral-passed { background-color:var(--gray-200); color:#525252; }
-.pipeline-step.is-unpaid-acceptance:not(.is-current) { color:#6b7280; }
-.status-pill--active:not(.is-payment-ready) { background:#eeeeee; color:#6b7280; }
-.status-pill--active.is-payment-ready { background:rgba(5,150,105,.12); color:#059669; }
+/* The first order step is informational, not an indication of payment. */
+.status-pill--active { background:#eeeeee; color:#6b7280; }
+.admin-order-card__badges { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px; }
 .admin-edit-actions { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; }
 .admin-order-editor { padding:20px; border:1px solid var(--gray-200); border-radius:14px; background:#fff; display:flex; flex-direction:column; gap:18px; }
 .admin-order-editor h3 {font-size:17px;font-weight:700}
@@ -935,7 +934,6 @@ html[data-theme="dark"] .order-closed-banner--canceled {
 html[data-theme="dark"] .admin-order-editor,html[data-theme="dark"] .admin-new-product-form {background:#242424;border-color:#383838}
 html[data-theme="dark"] .admin-edit-field input,html[data-theme="dark"] .admin-photo-item,html[data-theme="dark"] .admin-new-product-form input,html[data-theme="dark"] .admin-new-product-form select,html[data-theme="dark"] .admin-new-product-form textarea {background:#303030;color:#fff;border-color:#474747}
 
-.pipeline-step.is-current.is-payment-ready {background:rgba(5,150,105,.12); color:#059669;box-shadow:none}
 
 /* Editing and shipping controls are mutually exclusive. */
 .admin-order-card {scroll-margin-top:100px;}

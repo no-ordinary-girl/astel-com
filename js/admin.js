@@ -23,7 +23,21 @@ const AdminSafety = Object.freeze({
       ? src : "assets/images/logo-main.svg";
   },
 });
-if (typeof module !== "undefined") module.exports = AdminSafety;
+// Payment and order-progress are independent dimensions of the admin filter.
+// A localStorage payment flag alone is not proof: use OrderFinance.paymentStatus().
+const AdminOrderFilters = Object.freeze({
+  matches(order, selectedValue, finance) {
+    if (selectedValue === "all") return true;
+    if (selectedValue.startsWith("payment:")) {
+      return finance.paymentStatus(order) === selectedValue.slice("payment:".length);
+    }
+    return order.statusCode === selectedValue;
+  },
+});
+if (typeof module !== "undefined") module.exports = {
+  ...AdminSafety,
+  matchesOrderFilter: AdminOrderFilters.matches,
+};
 
 if (typeof document !== "undefined") {
       document.addEventListener("DOMContentLoaded", function () {
@@ -33,7 +47,7 @@ if (typeof document !== "undefined") {
         const esc = AdminSafety.escapeHtml;
 
         const STATUS_LABELS = {
-          active: "Прийнято",
+          active: "Оформлено",
           processing: "Передано в обробку",
           shipped: "Відправлено",
           completed: "Виконано",
@@ -41,7 +55,7 @@ if (typeof document !== "undefined") {
         };
 
         const PIPELINE_STEPS = [
-          { code: "active", label: "1. Прийнято" },
+          { code: "active", label: "1. Оформлено" },
           { code: "processing", label: "2. В обробці" },
           { code: "shipped", label: "3. Відправлено" },
           { code: "completed", label: "4. Виконано" },
@@ -415,6 +429,14 @@ if (typeof document !== "undefined") {
             <button class="admin-btn admin-btn--outline" data-cancel-order-edit type="button">Скасувати редагування</button></div>
           </form>`;
         }
+        function scrollToOrderCard(orderId) {
+          // After renderDashboard() replaces the card node, scroll to its replacement.
+          requestAnimationFrame(() => {
+            const card = [...ordersContainer.querySelectorAll('.admin-order-card')]
+              .find((element) => element.dataset.orderId === orderId);
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
         function saveOrderEditor(form) {
           const id=form.dataset.orderEditor;
           const ord=loadAllOrders().find(o=>String(o.orderId)===id);
@@ -446,12 +468,9 @@ if (typeof document !== "undefined") {
           const updated={...ord,customer,delivery,payment,items,subtotal,
             ...(changedPayment ? {paymentStatus:'unpaid',paymentVerification:null} : {})};
           writeOrder(updated);
-          editingOrderIds.delete(id);renderDashboard();
-          requestAnimationFrame(()=>{
-            const current=[...ordersContainer.querySelectorAll('.admin-order-card')]
-              .find(card=>card.dataset.orderId===id);
-            if(current) current.scrollIntoView({behavior:'smooth',block:'start'});
-          });
+          editingOrderIds.delete(id);
+          renderDashboard();
+          scrollToOrderCard(id);
           showUndoToast(`Дані замовлення #${id} оновлено`,()=>writeOrder(ord));
         }
 
@@ -486,7 +505,7 @@ if (typeof document !== "undefined") {
           const statusVal = statusFilter.value;
 
           const filteredOrders = allOrders.filter((ord) => {
-            if (statusVal !== "all" && ord.statusCode !== statusVal) {
+            if (!AdminOrderFilters.matches(ord, statusVal, OrderFinance)) {
               return false;
             }
             if (!query) return true;
@@ -515,28 +534,22 @@ if (typeof document !== "undefined") {
           } else {
             ordersContainer.innerHTML = filteredOrders
               .map((ord) => {
-                const isClosed =
-                  ord.statusCode === "completed" ||
-                  ord.statusCode === "canceled";
                 const currentStepIdx = PIPELINE_STEPS.findIndex(
-                  (s) => s.code === ord.statusCode,
+                  (step) => step.code === ord.statusCode,
                 );
 
-                // 1. Read-only Pipeline Stepper (Visual progress only)
+                // A stage marks fulfillment progress, never payment confirmation.
+                // The customer-editing stage is hidden from managers until released.
                 const pipelineHtml = PIPELINE_STEPS.map((step, idx) => {
+                  const passed = ord.statusCode !== "canceled" && currentStepIdx > idx;
                   let cls = "pipeline-step";
                   if (ord.statusCode === step.code) {
                     cls += " is-current";
                     if (step.code === "completed") cls += " is-completed-step";
-                  } else if (currentStepIdx > idx && (!isClosed || (idx === 0 && ord.statusCode === 'completed'))) {
-                    cls += idx === 0 && !OrderFinance.acceptedGreen(ord) ? " is-neutral-passed" : " is-passed";
+                  } else if (passed) {
+                    cls += " is-passed";
                   }
-                  if(idx===0) cls += OrderFinance.acceptedGreen(ord) ? ' is-payment-ready' : ' is-unpaid-acceptance';
-                  return `
-                    <div class="${cls}">
-                      ${currentStepIdx > idx && (!isClosed || (idx === 0 && ord.statusCode === 'completed')) && (idx !== 0 || OrderFinance.acceptedGreen(ord)) ? "✓ " : ""}${step.label}
-                    </div>
-                  `;
+                  return `<div class="${cls}">${passed ? "✓ " : ""}${step.label}</div>`;
                 }).join("");
 
                 // 2. Order Items
@@ -641,9 +654,14 @@ if (typeof document !== "undefined") {
                         <span class="admin-order-card__id">Замовлення #${esc(ord.orderId)}</span>
                         <span class="admin-order-card__date">від ${formatDate(ord.createdAt)}</span>
                       </div>
-                      <span class="status-pill status-pill--${ord.statusCode} ${ord.statusCode === 'active' && OrderFinance.acceptedGreen(ord) ? 'is-payment-ready' : ''}">
-                        ${STATUS_LABELS[ord.statusCode]}
-                      </span>
+                      <div class="admin-order-card__badges">
+                        <span class="status-pill status-pill--${ord.statusCode}">
+                          ${STATUS_LABELS[ord.statusCode]}
+                        </span>
+                        <span class="admin-payment-state admin-payment-state--${OrderFinance.paymentStatus(ord)}">
+                          ${esc(OrderFinance.paymentLabel(ord))}
+                        </span>
+                      </div>
                     </div>
 
                     <div class="order-pipeline">
@@ -663,10 +681,6 @@ if (typeof document !== "undefined") {
                         <div><strong>Служба:</strong> м. ${esc(ord.delivery?.city)}, ${esc(ord.delivery?.carrierName)}</div>
                         <div><strong>Точка видачі:</strong> ${esc(ord.delivery?.type||'Відділення')}, ${esc(ord.delivery?.branch)}</div>
                         <div><strong>Оплата:</strong> ${esc(ord.payment)} | <strong>Сума:</strong> ${formatMoney(ord.subtotal)}</div>
-                        <div class="admin-payment-status">
-                          <strong>Статус оплати:</strong>
-                          <span class="admin-payment-state admin-payment-state--${OrderFinance.paymentStatus(ord)}">${esc(OrderFinance.paymentLabel(ord))}</span>
-                        </div>
                         ${ord.ttn ? `<div><strong>ТТН:</strong> <span style="font-family: var(--font-mono); font-weight: 700; color: #059669;">${esc(ord.ttn)}</span></div>` : ""}
                       </div>
                     </div>
@@ -796,7 +810,12 @@ if (typeof document !== "undefined") {
             if(newlyOpened)refreshAdminBranches(newlyOpened);
             return;
           }
-          if(e.target.closest('[data-cancel-order-edit]')) {editingOrderIds.delete(orderId);renderDashboard();return;}
+          if (e.target.closest('[data-cancel-order-edit]')) {
+            editingOrderIds.delete(orderId);
+            renderDashboard();
+            scrollToOrderCard(orderId);
+            return;
+          }
           const addLineBtn=e.target.closest('[data-add-order-line]');
           if(addLineBtn) {
             const editor=card.querySelector('[data-order-editor]');
@@ -843,7 +862,7 @@ if (typeof document !== "undefined") {
             return;
           }
 
-          // 3. Click Pipeline Step button (1. Прийнято / 2. В обробці / 3. Відправлено / 4. Виконано)
+          // Pipeline steps are read-only; payment status is displayed and filtered separately.
 
           // 4. Click "Позначити відправленим →" / "Прийняти в обробку →" / "✓ Завершити (Виконано)"
           const advanceBtn = e.target.closest("[data-advance-status]");

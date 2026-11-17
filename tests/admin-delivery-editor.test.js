@@ -19,7 +19,8 @@ assert.equal(delivery.uniqueBranches(['1','1',' 2 ']).length,2);
 (async()=>{
   assert.equal(await delivery.fetchVerifiedBranches('Львів','nova','Відділення'),null,'No API endpoint configured: no fabricated branches');
   const script=fs.readFileSync(path.join(root,'js/admin.js'),'utf8');
-  assert.match(script,/scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
+  assert.match(script,/function scrollToOrderCard\(orderId\)/);
+  assert.match(script,/scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/);
   assert.match(script,/data-admin-city/);
   assert.match(script,/data-admin-branch-select/);
   assert.match(script,/!editingOrderIds\.has\(String\(ord\.orderId\)\)/);

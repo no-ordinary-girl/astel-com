@@ -264,12 +264,18 @@
               placeholder="Пошук за № замовлення, ім'ям, телефоном, ТТН..."
             />
             <select id="admin-status-filter" class="admin-select">
-              <option value="all">Усі статуси</option>
-              <option value="active">Прийнято</option>
-              <option value="processing">Передано в обробку</option>
-              <option value="shipped">Відправлено</option>
-              <option value="completed">Виконано</option>
-              <option value="canceled">Скасовано</option>
+              <option value="all">Усі замовлення</option>
+              <optgroup label="Етап замовлення">
+                <option value="processing">Передано в обробку</option>
+                <option value="shipped">Відправлено</option>
+                <option value="completed">Виконано</option>
+                <option value="canceled">Скасовано</option>
+              </optgroup>
+              <optgroup label="Статус оплати">
+                <option value="payment:unpaid">Картка / Google Pay — очікує підтвердження</option>
+                <option value="payment:paid">Сплачено (підтверджено)</option>
+                <option value="payment:cash-on-delivery">Готівка — оплата при отриманні</option>
+              </optgroup>
             </select>
           </div>
         </div>

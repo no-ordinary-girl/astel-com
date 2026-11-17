@@ -828,101 +828,117 @@ const PRODUCTS_DATA = {
 };
 
 
-// Local-only catalog overrides, shared by the storefront and administrator.
-// Production prices and stock MUST eventually be validated by the backend.
+// Browser-local catalog data layer. Replace with server-owned data before launch.
 const CatalogManager = (() => {
-  const STORAGE_KEY = "astelkom_catalog_overrides";
-  const base = new Map(Object.values(PRODUCTS_DATA).map((product) => [product.id, {
-    price: product.price,
-    numericPrice: Number(String(product.price).replace(/[^\d]/g, "")),
-    inStock: product.inStock,
-    stockText: product.stockText,
-  }]));
-
+  const STORAGE_KEY = 'astelkom_catalog_overrides';
+  const CUSTOM_KEY = 'astelkom_catalog_custom_products';
+  const CATEGORIES = Object.freeze({
+    gsm: 'GSM/LTE-модеми', nbiot: 'NBIoT-модеми',
+    pos: 'Аксесуари для банківських терміналів',
+    antenna: 'Антени', cables: 'Кабелі низьковольтного живлення',
+  });
+  const SALE_TERMS = Object.freeze({wholesale: 'Тільки оптом', retail: 'Оптом і в роздріб'});
+  const base = Object.fromEntries(Object.entries(PRODUCTS_DATA).map(([id,p]) => [id, JSON.parse(JSON.stringify(p))]));
+  const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
   function validPrice(value) {
-    const raw = String(value).trim();
-    if (!/^[1-9]\d{0,7}$/.test(raw)) return null;
-    const price = Number(raw);
-    return Number.isSafeInteger(price) && price <= 99999999 ? price : null;
+    const s=String(value).trim();
+    return /^[1-9]\d{0,7}$/.test(s) && Number(s)<=99999999 ? Number(s) : null;
   }
-
-  function readOverrides() {
-    try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      return stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
-    } catch (_) { return {}; }
+  function validImageSource(src) {
+    return typeof src === 'string' && src.length <= 400000 && (
+      (/^assets\/images\/[\p{L}\p{N} _.,()\-\/]+\.(?:png|webp|jpe?g|svg)$/u.test(src) && !src.includes('..')) ||
+      /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(src)
+    );
   }
-
-  function getOriginalPrice(id) { return base.get(id)?.numericPrice ?? null; }
-
+  function readStore(key, fallback) {
+    try { const value=JSON.parse(localStorage.getItem(key)||'null'); return value && typeof value==='object' && !Array.isArray(value) ? value : fallback; }
+    catch { return fallback; }
+  }
+  function readOverrides(){return readStore(STORAGE_KEY,{});}
+  function readCustom(){return readStore(CUSTOM_KEY,{});}
+  function notify(id) {
+    if(typeof window!=='undefined' && typeof window.dispatchEvent==='function')
+      window.dispatchEvent(new CustomEvent('astel:catalog-updated',{detail:{id}}));
+  }
+  function decorate(p) {
+    const amount=validPrice(p.numericPrice ?? String(p.price).replace(/[^\d]/g,'')) ?? 1;
+    p.numericPrice=amount; p.price=amount.toLocaleString('uk-UA')+' ₴';
+    p.stockText=p.inStock ? 'В наявності' : 'Немає в наявності';
+    p.categoryName=CATEGORIES[p.category] || CATEGORIES.gsm;
+    p.saleTerms=SALE_TERMS[p.saleTermsCode] || SALE_TERMS.wholesale;
+    p.minOrderQty=p.saleTermsCode==='retail' ? 1 : 10;
+    p.minOrder=p.minOrderQty===1 ? '' : 'Мінімальне замовлення — 10 шт.';
+    if(!Array.isArray(p.images)) p.images=[];
+    p.images=p.images.filter(validImageSource).slice(0,12);
+    if(p.images.length) p.image=p.images[0];
+    else if(!validImageSource(p.image)) p.image='assets/images/logo-main.svg';
+    return p;
+  }
   function applyOverrides() {
-    const overrides = readOverrides();
-    for (const product of Object.values(PRODUCTS_DATA)) {
-      const original = base.get(product.id);
-      const ov = Object.prototype.hasOwnProperty.call(overrides, product.id)
-        ? overrides[product.id] : null;
-      const parsed = ov && validPrice(ov.price);
-      const amount = parsed === null ? original.numericPrice : parsed;
-      product.numericPrice = amount;
-      product.price = ov && parsed !== null ? amount.toLocaleString("uk-UA") + " ₴" : original.price;
-      product.inStock = ov && typeof ov.inStock === "boolean" ? ov.inStock : original.inStock;
-      product.stockText = product.inStock ? "В наявності" : "Немає в наявності";
+    for(const id of Object.keys(PRODUCTS_DATA)) delete PRODUCTS_DATA[id];
+    for(const [id,p] of Object.entries(base)) PRODUCTS_DATA[id]=decorate(JSON.parse(JSON.stringify(p)));
+    for(const [id,p] of Object.entries(readCustom())) {
+      if(own(base,id) || !p || typeof p!=='object') continue;
+      if(!/^[a-z0-9-]{3,70}$/.test(id) || validPrice(p.numericPrice)==null || !CATEGORIES[p.category]) continue;
+      PRODUCTS_DATA[id]=decorate({ ...p, id, title:String(p.title||'').slice(0,200),
+        titleEn:String(p.titleEn||'').slice(0,200),
+        description:Array.isArray(p.description) ? p.description.slice(0,20) : [],
+        techSpecs:[], generalSpecs:[], docs:[] });
     }
+    for(const [id,ov] of Object.entries(readOverrides())) {
+      const p=PRODUCTS_DATA[id]; if(!p || !ov || typeof ov!=='object') continue;
+      if(validPrice(ov.price)!==null) p.numericPrice=Number(ov.price);
+      if(typeof ov.inStock==='boolean') p.inStock=ov.inStock;
+      if(CATEGORIES[ov.category]) p.category=ov.category;
+      if(SALE_TERMS[ov.saleTermsCode]) p.saleTermsCode=ov.saleTermsCode;
+      if(Array.isArray(ov.images) && ov.images.length<=12 && ov.images.every(validImageSource)) p.images=[...ov.images];
+      decorate(p);
+    }
+    return PRODUCTS_DATA;
   }
-
-  function updateProduct(id, patch) {
-    if (!Object.prototype.hasOwnProperty.call(PRODUCTS_DATA, id))
-      throw new Error("Невідомий товар");
-    if (Object.prototype.hasOwnProperty.call(patch, "price") && validPrice(patch.price) === null)
-      throw new Error("Вкажіть цілу ціну від 1 до 99 999 999 грн");
-    if (Object.prototype.hasOwnProperty.call(patch, "inStock") && typeof patch.inStock !== "boolean")
-      throw new Error("Невірне значення наявності");
-    const overrides = readOverrides();
-    const previous = overrides[id] && typeof overrides[id] === "object" ? overrides[id] : {};
-    overrides[id] = { ...previous, ...patch };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
-    applyOverrides();
-    // Same-tab consumers can immediately update their views if necessary.
-    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function")
-      window.dispatchEvent(new CustomEvent("astel:catalog-updated", { detail: { id } }));
+  function getOriginalPrice(id){ return base[id] ? validPrice(String(base[id].price).replace(/[^\d]/g,'')) : null; }
+  function updateProduct(id,patch) {
+    if(!own(PRODUCTS_DATA,id)) throw new Error('Невідомий товар');
+    if(own(patch,'price') && validPrice(patch.price)===null) throw new Error('Вкажіть цілу ціну від 1 до 99 999 999 грн');
+    if(own(patch,'inStock') && typeof patch.inStock!=='boolean') throw new Error('Невірне значення наявності');
+    if(own(patch,'category') && !CATEGORIES[patch.category]) throw new Error('Невірна категорія');
+    if(own(patch,'saleTermsCode') && !SALE_TERMS[patch.saleTermsCode]) throw new Error('Невірні умови продажу');
+    if(own(patch,'images') && (!Array.isArray(patch.images) || !patch.images.length || patch.images.length>12 || !patch.images.every(validImageSource)))
+      throw new Error('Підтримуються до 12 зображень PNG, JPG, WebP');
+    const overrides=readOverrides(); overrides[id]={...(overrides[id]||{}),...patch};
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(overrides));
+    applyOverrides();notify(id);return PRODUCTS_DATA[id];
   }
-
-  function syncProductCards(root = document) {
-    const cards = root.querySelectorAll(".product-card");
-    cards.forEach((card) => {
-      const link = card.querySelector(".product-card__title[href]");
-      if (!link) return;
-      const id = new URLSearchParams((link.getAttribute("href") || "").split("?")[1] || "").get("id");
-      const product = PRODUCTS_DATA[id];
-      if (!product) return;
-      card.dataset.price = String(product.numericPrice);
-      card.dataset.instock = String(product.inStock);
-      const priceNode = card.querySelector(".product-card__price");
-      if (priceNode) {
-        const perItem = priceNode.querySelector(".product-card__item");
-        // Preserve the "from" label used by variable-price products.
-        const existing = priceNode.textContent.trim();
-        const prefix = /^від\s/i.test(existing) ? "від "
-          : /^from\s/i.test(existing) ? "from " : "";
-        priceNode.replaceChildren(document.createTextNode(prefix + product.price));
-        if (perItem) priceNode.appendChild(perItem);
-      }
-      const status = card.querySelector(".product-card__status");
-      if (status) {
-        status.textContent = `${product.stockText} | ${product.saleTerms}`;
-        status.classList.toggle("product-card__status--instock", product.inStock);
-        status.classList.toggle("product-card__status--outstock", !product.inStock);
-      }
-      const cartButton = card.querySelector(".product-card__cart");
-      if (cartButton) {
-        cartButton.disabled = !product.inStock;
-        cartButton.title = product.inStock ? "Додати в кошик" : "Немає в наявності";
-        cartButton.setAttribute("aria-label", cartButton.title);
-      }
+  function addProduct(payload) {
+    const title=String(payload.title||'').trim();
+    const titleEn=String(payload.titleEn||'').trim();
+    const id=String(payload.id||'').trim().toLowerCase();
+    if(!/^[a-z0-9-]{3,70}$/.test(id) || own(PRODUCTS_DATA,id)) throw new Error('Унікальний ID: 3–70 латинських літер, цифр або дефісів');
+    if(title.length<3 || title.length>200) throw new Error('Назва товару: від 3 до 200 символів');
+    if(validPrice(payload.price)===null) throw new Error('Некоректна ціна');
+    if(!CATEGORIES[payload.category] || !SALE_TERMS[payload.saleTermsCode]) throw new Error('Оберіть категорію та умови продажу');
+    const images=Array.isArray(payload.images) ? payload.images : [];
+    if(!images.length || images.length>12 || !images.every(validImageSource)) throw new Error('Додайте принаймні одне коректне фото');
+    const p={id,title,titleEn,category:payload.category,saleTermsCode:payload.saleTermsCode,
+      numericPrice:Number(payload.price),inStock:payload.inStock===true,
+      image:images[0], images:[...images],
+      description:[String(payload.description||'').trim()].filter(Boolean),
+      techSpecs:[],generalSpecs:[],docs:[],vatNote:'Ціна без ПДВ'};
+    const custom=readCustom(); custom[id]=p;
+    localStorage.setItem(CUSTOM_KEY,JSON.stringify(custom));
+    applyOverrides();notify(id);return PRODUCTS_DATA[id];
+  }
+  function syncProductCards(root=document) {
+    // Catalog cards are rendered by js/products-catalog.js from this data source.
+    root.querySelectorAll('.product-card[data-product-id]').forEach(card => {
+      const p=PRODUCTS_DATA[card.dataset.productId];
+      if(p) {card.dataset.price=p.numericPrice;card.dataset.instock=String(p.inStock);card.dataset.category=p.category;}
     });
   }
-
   applyOverrides();
-  return Object.freeze({ STORAGE_KEY, validPrice, readOverrides, getOriginalPrice,
-    applyOverrides, updateProduct, syncProductCards });
+  if(typeof window!=='undefined') window.addEventListener('storage',(e)=>{
+    if([STORAGE_KEY,CUSTOM_KEY].includes(e.key)){applyOverrides();notify('all');}
+  });
+  return Object.freeze({STORAGE_KEY,CUSTOM_KEY,CATEGORIES,SALE_TERMS,validPrice,validImageSource,
+    readOverrides,readCustom,getOriginalPrice,applyOverrides,updateProduct,addProduct,syncProductCards});
 })();

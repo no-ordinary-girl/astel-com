@@ -4,11 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="google" content="notranslate" />
     <meta name="color-scheme" content="light" />
+    <meta name="description" content="Перевірте кошик, оберіть доставку та спосіб оплати й оформіть замовлення обладнання АСТЕЛ-КОМ." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Кошик та оформлення замовлення — АСТЕЛ-КОМ" />
+    <meta property="og:description" content="Перевірте кошик, оберіть доставку та спосіб оплати й оформіть замовлення обладнання АСТЕЛ-КОМ." />
+    <link rel="canonical" href="cart.html" />
+    <link rel="alternate" hreflang="uk" href="cart.html" />
+    <link rel="alternate" hreflang="en" href="../en/cart.html" />
+    <link rel="alternate" hreflang="x-default" href="cart.html" />
     <meta
       name="description"
       content="Перевірте кошик, оберіть доставку та спосіб оплати й оформіть замовлення обладнання АСТЕЛ-КОМ."
     />
-    <meta property="og:type" content="website" />
     <meta
       property="og:title"
       content="Кошик та оформлення замовлення — АСТЕЛ-КОМ"
@@ -17,10 +24,6 @@
       property="og:description"
       content="Перевірте кошик, оберіть доставку та спосіб оплати й оформіть замовлення обладнання АСТЕЛ-КОМ."
     />
-    <link rel="canonical" href="cart.html" />
-    <link rel="alternate" hreflang="uk" href="cart.html" />
-    <link rel="alternate" hreflang="en" href="../en/cart.html" />
-    <link rel="alternate" hreflang="x-default" href="cart.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Кошик та оформлення замовлення — АСТЕЛ-КОМ</title>
     <!-- Favicons -->
@@ -1416,6 +1419,7 @@
               branch: branchInput.value.trim(),
             },
             payment: paymentMethod,
+            paymentStatus: isEditingOrder && existingOrder?.paymentStatus === 'paid' ? 'paid' : 'unpaid',
             items: CartManager.getCart(),
             subtotal: CartManager.getSubtotal(),
           };

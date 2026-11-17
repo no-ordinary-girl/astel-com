@@ -34,6 +34,8 @@ const CartManager = {
           ...item,
           // Display current catalog price instead of stale saved cart price.
           price: catalogProduct?.numericPrice ?? item.price,
+          image: catalogProduct?.image ?? item.image,
+          title: catalogProduct?.title ?? item.title,
           inStock: catalogProduct?.inStock ?? item.inStock ?? true,
           minQty,
           qty: Math.max(minQty, Number.isFinite(quantity) ? quantity : minQty),

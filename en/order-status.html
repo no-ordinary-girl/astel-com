@@ -13,8 +13,20 @@
     <link rel="alternate" hreflang="uk" href="order-status.html" />
     <link rel="alternate" hreflang="en" href="../en/order-status.html" />
     <link rel="alternate" hreflang="x-default" href="order-status.html" />
+    <meta
+      property="og:description"
+      content="Перевірте статус замовлення АСТЕЛ-КОМ."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order Status — ASTEL-COM</title>
+    <!-- Favicons -->
+    <link rel="icon" href="assets/favicons/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="assets/favicons/astel-com-favicon.svg"
+    />
+    <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png" />
     <link
       rel="preload"
       href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
@@ -111,20 +123,35 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
-            <a href="en/about_us.html" class="header__link" data-i18n="nav.about">ABOUT US</a>
-
-            <a href="en/products.html" class="header__link hide-on-compact"
-               data-i18n="nav.products">PRODUCTS</a
+            <a href="en/index.html" class="header__link" data-i18n="nav.home"
+              >HOME</a
             >
-            <a href="en/downloads.html" class="header__link hide-on-compact"
-               data-i18n="nav.downloads">DOWNLOADS</a
-            >
-            <a href="en/docs.html" class="header__link hide-on-compact"
-               data-i18n="nav.docs">DOCUMENTATION</a
+            <a href="en/about_us.html" class="header__link" data-i18n="nav.about"
+              >ABOUT US</a
             >
 
-            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+            <a
+              href="en/products.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.products"
+              >PRODUCTS</a
+            >
+            <a
+              href="en/downloads.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.downloads"
+              >DOWNLOADS</a
+            >
+            <a
+              href="en/docs.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.docs"
+              >DOCUMENTATION</a
+            >
+
+            <a href="#footer" class="header__link" data-i18n="nav.contacts"
+              >CONTACTS</a
+            >
 
             <div class="header__more show-on-compact" id="header-more-dropdown">
               <button
@@ -132,7 +159,8 @@
                 id="more-toggle"
                 type="button"
                 aria-expanded="false"
-               data-i18n="nav.more">
+                data-i18n="nav.more"
+              >
                 MORE
                 <svg
                   class="header__more-icon"
@@ -149,11 +177,24 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <a href="en/products.html" class="header__more-link" data-i18n="nav.products">PRODUCTS</a>
-                <a href="en/downloads.html" class="header__more-link"
-                   data-i18n="nav.downloads">DOWNLOADS</a
+                <a
+                  href="en/products.html"
+                  class="header__more-link"
+                  data-i18n="nav.products"
+                  >PRODUCTS</a
                 >
-                <a href="en/docs.html" class="header__more-link" data-i18n="nav.docs">DOCUMENTATION</a>
+                <a
+                  href="en/downloads.html"
+                  class="header__more-link"
+                  data-i18n="nav.downloads"
+                  >DOWNLOADS</a
+                >
+                <a
+                  href="en/docs.html"
+                  class="header__more-link"
+                  data-i18n="nav.docs"
+                  >DOCUMENTATION</a
+                >
               </div>
             </div>
           </nav>
@@ -177,10 +218,22 @@
               </div>
               <ul class="header__lang-menu">
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="uk"
+                    translate="no"
+                    >UA</a
+                  >
                 </li>
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="en"
+                    translate="no"
+                    >EN</a
+                  >
                 </li>
               </ul>
             </div>
@@ -286,6 +339,7 @@
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
     <script src="js/order-lifecycle.js"></script>
+    <script src="js/order-finance.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("order-status-container");
@@ -305,6 +359,9 @@
         }
 
         const order = JSON.parse(rawOrder);
+        const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        const safeImage=value=>CatalogManager.validImageSource(value)?value:'assets/images/logo-main.svg';
+        const paymentLabel = ()=>OrderFinance.paymentLabel(order, document.documentElement.lang);
         const totalDuration = 15 * 60 * 1000;
 
         const itemsHtml = order.items
@@ -312,10 +369,10 @@
             (item) => `
             <div class="cart-item">
               <div class="cart-item__img-wrap">
-                <img src="${item.image}" alt="${item.title}" class="cart-item__img" />
+                <img src="${esc(safeImage(item.image))}" alt="${esc(item.title)}" class="cart-item__img" />
               </div>
               <div class="cart-item__details">
-                <span class="cart-item__title">${item.title}</span>
+                <span class="cart-item__title">${esc(item.title)}</span>
                 <span class="cart-item__price">${item.qty} шт. × ${CartManager.formatPrice(item.price)}</span>
               </div>
               <div class="cart-item__sum">${CartManager.formatPrice(item.price * item.qty)}</div>
@@ -327,16 +384,16 @@
         container.innerHTML = `
           <div class="order-status-card">
             <div class="order-status__top">
-              <span class="order-status__badge" id="status-badge">Прийнято (доступне редагування)</span>
-              <span class="order-status__id">Замовлення #${order.orderId}</span>
+              <span class="order-status__badge ${OrderFinance.acceptedGreen(order)?'':'is-unpaid'}" id="status-badge">Прийнято</span>
+              <span class="order-status__id">Замовлення #${esc(order.orderId)}</span>
             </div>
 
             <div>
               <h1 class="order-status__title" style="margin-bottom: 10px;">
-                Дякуємо за замовлення, ${order.customer.firstName} ${order.customer.lastName}!
+                Дякуємо за замовлення, ${esc(order.customer.firstName)} ${esc(order.customer.lastName)}!
               </h1>
               <p class="order-status__lead">
-                Підтвердження відправлено на <strong>${order.customer.email}</strong>. Наш менеджер зв'яжеться з вами найближчим часом.
+                Підтвердження відправлено на <strong>${esc(order.customer.email)}</strong>. Наш менеджер зв'яжеться з вами найближчим часом.
               </p>
             </div>
 
@@ -358,8 +415,8 @@
               <div class="order-detail-block">
                 <span class="order-detail-block__label">Отримувач</span>
                 <span class="order-detail-block__value">
-                  ${order.customer.firstName} ${order.customer.lastName}
-                  ${order.customer.phone ? `<br><span style="font-weight: 400; color: #525252;">${order.customer.phone}</span>` : ""}
+                  ${esc(order.customer.firstName)} ${esc(order.customer.lastName)}
+                  ${order.customer.phone ? `<br><span style="font-weight: 400; color: #525252;">${esc(order.customer.phone)}</span>` : ""}
                 </span>
               </div>
 
@@ -367,14 +424,15 @@
                 <span class="order-detail-block__label">Сума та спосіб оплати</span>
                 <span class="order-detail-block__value">
                   ${CartManager.formatPrice(order.subtotal)} (без ПДВ)<br>
-                  <span style="font-weight: 400; color: #525252;">${order.payment}</span>
+                  <span style="font-weight: 400; color: #525252;">${esc(order.payment)}</span>
+                  <br><span style="font-weight:400;color:#525252;">Статус оплати: <span>${paymentLabel()}</span></span>
                 </span>
               </div>
 
               <div class="order-detail-block" style="grid-column: 1 / -1;">
                 <span class="order-detail-block__label">Доставка</span>
                 <span class="order-detail-block__value">
-                  ${order.delivery.carrierName} (${order.delivery.type}: ${order.delivery.branch}, м. ${order.delivery.city})
+                  ${esc(order.delivery.carrierName)} (${order.delivery.type}: ${esc(order.delivery.branch)}, м. ${esc(order.delivery.city)})
                 </span>
               </div>
             </div>
@@ -421,6 +479,8 @@
           timerLabel.textContent =
             "Замовлення передано в обробку менеджеру. Редагування завершено.";
           statusBadge.textContent = "Передано в обробку";
+          statusBadge.classList.remove('is-unpaid');
+          statusBadge.classList.add('is-processing');
           editBtn.disabled = true;
           lockBtn.textContent = "Повернутися до каталогу";
         }

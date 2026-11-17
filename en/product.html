@@ -13,8 +13,24 @@
     <link rel="alternate" hreflang="uk" href="product.html" />
     <link rel="alternate" hreflang="en" href="../en/product.html" />
     <link rel="alternate" hreflang="x-default" href="product.html" />
+    <meta
+      name="description"
+      content="Ціна, характеристики, технічна документація та умови замовлення обладнання АСТЕЛ-КОМ."
+    />
+    <meta
+      property="og:description"
+      content="Ціна, характеристики, технічна документація та умови замовлення обладнання АСТЕЛ-КОМ."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">Product Details — ASTEL-COM</title>
+    <!-- Favicons -->
+    <link rel="icon" href="assets/favicons/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="assets/favicons/astel-com-favicon.svg"
+    />
+    <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png" />
     <link
       rel="preload"
       href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
@@ -111,22 +127,35 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
-            <a href="en/about_us.html" class="header__link" data-i18n="nav.about">ABOUT US</a>
+            <a href="en/index.html" class="header__link" data-i18n="nav.home"
+              >HOME</a
+            >
+            <a href="en/about_us.html" class="header__link" data-i18n="nav.about"
+              >ABOUT US</a
+            >
 
             <a
               href="en/products.html"
               class="header__link hide-on-compact header__link--active"
-               data-i18n="nav.products">PRODUCTS</a
+              data-i18n="nav.products"
+              >PRODUCTS</a
             >
-            <a href="en/downloads.html" class="header__link hide-on-compact"
-               data-i18n="nav.downloads">DOWNLOADS</a
+            <a
+              href="en/downloads.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.downloads"
+              >DOWNLOADS</a
             >
-            <a href="en/docs.html" class="header__link hide-on-compact"
-               data-i18n="nav.docs">DOCUMENTATION</a
+            <a
+              href="en/docs.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.docs"
+              >DOCUMENTATION</a
             >
 
-            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+            <a href="#footer" class="header__link" data-i18n="nav.contacts"
+              >CONTACTS</a
+            >
 
             <div
               class="header__more show-on-compact header__link--active"
@@ -137,7 +166,8 @@
                 id="more-toggle"
                 type="button"
                 aria-expanded="false"
-               data-i18n="nav.more">
+                data-i18n="nav.more"
+              >
                 MORE
                 <svg
                   class="header__more-icon"
@@ -157,12 +187,21 @@
                 <a
                   href="en/products.html"
                   class="header__more-link header__more-link--active"
-                   data-i18n="nav.products">PRODUCTS</a
+                  data-i18n="nav.products"
+                  >PRODUCTS</a
                 >
-                <a href="en/downloads.html" class="header__more-link"
-                   data-i18n="nav.downloads">DOWNLOADS</a
+                <a
+                  href="en/downloads.html"
+                  class="header__more-link"
+                  data-i18n="nav.downloads"
+                  >DOWNLOADS</a
                 >
-                <a href="en/docs.html" class="header__more-link" data-i18n="nav.docs">DOCUMENTATION</a>
+                <a
+                  href="en/docs.html"
+                  class="header__more-link"
+                  data-i18n="nav.docs"
+                  >DOCUMENTATION</a
+                >
               </div>
             </div>
           </nav>
@@ -186,10 +225,22 @@
               </div>
               <ul class="header__lang-menu">
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="uk"
+                    translate="no"
+                    >UA</a
+                  >
                 </li>
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="en"
+                    translate="no"
+                    >EN</a
+                  >
                 </li>
               </ul>
             </div>
@@ -340,8 +391,12 @@
           return;
         }
 
+        const esc = value => String(value ?? "").replace(/[&<>"']/g, ch =>
+          ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        const en = document.documentElement.lang === 'en';
+        const productTitle = en && product.titleEn ? product.titleEn : product.title;
         document.getElementById("page-title").textContent =
-          `${product.title} — АСТЕЛ-КОМ`;
+          `${productTitle} — АСТЕЛ-КОМ`;
 
         // Gallery Images Array (falls back to single product.image)
         const galleryImages =
@@ -357,10 +412,10 @@
               <button
                 type="button"
                 class="product-hero__thumb-btn ${idx === 0 ? "is-active" : ""}"
-                data-src="${imgSrc}"
+                data-src="${esc(imgSrc)}"
                 aria-label="Фото ${idx + 1}"
               >
-                <img src="${imgSrc}" alt="${product.title} - фото ${idx + 1}" class="product-hero__thumb-img" />
+                <img src="${esc(imgSrc)}" alt="${esc(productTitle)} - фото ${idx + 1}" class="product-hero__thumb-img" />
               </button>
             `,
               )
@@ -371,14 +426,14 @@
             .map(
               (r) => `
               <tr>
-                <th>${r.label}</th>
-                <td>${r.value}</td>
+                <th>${esc(r.label)}</th>
+                <td>${esc(r.value)}</td>
               </tr>`,
             )
             .join("");
 
         const descriptionHtml = product.description
-          .map((p) => `<p>${p}</p>`)
+          .map((p) => `<p>${esc(p)}</p>`)
           .join("");
 
         const techSpecsSection =
@@ -431,17 +486,17 @@
             <span class="breadcrumbs__sep">/</span>
             <a href="products.html" class="breadcrumbs__link">Товари</a>
             <span class="breadcrumbs__sep">/</span>
-            <a href="products.html?category=${product.category}" class="breadcrumbs__link">${product.categoryName}</a>
+            <a href="products.html?category=${encodeURIComponent(product.category)}" class="breadcrumbs__link">${esc(product.categoryName)}</a>
             <span class="breadcrumbs__sep">/</span>
-            <span class="breadcrumbs__current">${product.title}</span>
+            <span class="breadcrumbs__current">${esc(productTitle)}</span>
           </nav>
 
           <div class="product-hero">
            <div class="product-hero__gallery">
               <div class="product-hero__main-img-wrap" id="main-img-wrap">
                 <img
-                  src="${galleryImages[0]}"
-                  alt="${product.title}"
+                  src="${esc(galleryImages[0])}"
+                  alt="${esc(productTitle)}"
                   class="product-hero__img"
                   id="main-product-img"
                 />
@@ -454,21 +509,21 @@
               <div class="product-hero__top-content" style="display: flex; flex-direction: column; gap: 12px;">
                 <div class="product-hero__badges">
                   <span class="badge ${product.inStock ? "badge--instock" : "badge--outstock"}">
-                    ${product.stockText}
+                    ${esc(product.stockText)}
                   </span>
-                  <span class="badge badge--terms">${product.saleTerms}</span>
+                  <span class="badge badge--terms">${esc(product.saleTerms)}</span>
                 </div>
 
-                <h1 class="product-hero__title">${product.title}</h1>
+                <h1 class="product-hero__title">${esc(productTitle)}</h1>
               </div>
 
               <!-- Bottom Group (Price Box) -->
               <div class="product-hero__price-box">
                 <div class="product-hero__price-row">
-                  <span class="product-hero__price">${product.price}</span>
-                  <span class="product-hero__vat">${product.vatNote}</span>
+                  <span class="product-hero__price">${esc(product.price)}</span>
+                  <span class="product-hero__vat">${esc(product.vatNote)}</span>
                 </div>
-                ${product.minOrder ? `<div class="product-hero__min-order">${product.minOrder}</div>` : ""}
+                ${product.minOrder ? `<div class="product-hero__min-order">${esc(product.minOrder)}</div>` : ""}
 
                 <button type="button" class="wholesale-toggle" id="wholesale-btn">
                   Показати оптові ціни

@@ -629,6 +629,10 @@ const I18nManager = (function () {
     "Активне замовлення не знайдено": "No active order found",
     "Ви ще не оформили замовлення або перейшли за застарілим посиланням.":
       "You haven't placed an order yet or followed an expired link.",
+    "Прийнято": "Accepted",
+    "Статус оплати:": "Payment status:",
+    "Сплачено": "Paid",
+    "Не сплачено": "Unpaid",
     "Прийнято (доступне редагування)": "Accepted (editable)",
     "Прийнято (редагування)": "Accepted (editable)",
     "Передано в обробку": "In Processing",

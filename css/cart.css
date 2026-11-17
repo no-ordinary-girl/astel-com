@@ -876,3 +876,7 @@
     flex-direction: row;
   }
 }
+
+/* Acceptance is green only for cash or already-paid orders. */
+.order-status__badge.is-unpaid {background-color:#ececec;color:#6b7280}
+.order-status__badge.is-processing {background-color:rgba(217,119,6,.14);color:#b45309}

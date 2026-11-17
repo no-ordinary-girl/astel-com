@@ -265,7 +265,7 @@
             />
             <select id="admin-status-filter" class="admin-select">
               <option value="all">Усі статуси</option>
-              <option value="active">Прийнято (редагування)</option>
+              <option value="active">Прийнято</option>
               <option value="processing">Передано в обробку</option>
               <option value="shipped">Відправлено</option>
               <option value="completed">Виконано</option>
@@ -321,6 +321,34 @@
               </tbody>
             </table>
           </div>
+          <form id="admin-new-product-form" class="admin-new-product-form">
+            <h2>+ Додати новий товар</h2>
+            <p>Новий товар одразу з'явиться у каталозі цього браузера. Фотографії зберігаються локально до підключення сервера.</p>
+            <div class="admin-new-product-grid">
+              <label>ID латиницею (унікальний) <input name="id" type="text" pattern="[a-z0-9-]{3,70}" placeholder="new-modem-model" required /></label>
+              <label>Назва українською <input name="title" type="text" minlength="3" maxlength="200" required /></label>
+              <label>Назва англійською <input name="titleEn" type="text" maxlength="200" /></label>
+              <label>Ціна без ПДВ, грн <input name="price" type="number" min="1" max="99999999" step="1" required /></label>
+              <label>Категорія
+                <select name="category" required>
+                  <option value="gsm">GSM/LTE-модеми</option><option value="nbiot">NBIoT-модеми</option>
+                  <option value="pos">Аксесуари для банківських терміналів</option>
+                  <option value="antenna">Антени</option><option value="cables">Кабелі живлення</option>
+                </select>
+              </label>
+              <label>Умови продажу
+                <select name="saleTermsCode" required><option value="wholesale">Тільки оптом</option><option value="retail">Оптом і в роздріб</option></select>
+              </label>
+              <label class="admin-new-product-checkbox"><input name="inStock" type="checkbox" checked /> В наявності</label>
+              <label>Фотографії (одна або більше)
+                <input name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required />
+              </label>
+            </div>
+            <label class="admin-new-product-description">Опис товару
+              <textarea name="description" rows="3" placeholder="Короткий технічний опис"></textarea>
+            </label>
+            <button class="admin-btn admin-btn--primary" type="submit">+ Додати товар до каталогу</button>
+          </form>
         </section>
       </div>
     </main>
@@ -367,6 +395,9 @@
     <script src="js/i18n.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/order-lifecycle.js"></script>
+    <script src="js/order-finance.js"></script>
+    <script src="js/delivery-data.js"></script>
+    <script src="js/admin-delivery.js"></script>
     <script src="js/admin.js"></script>
   </body>
 </html>

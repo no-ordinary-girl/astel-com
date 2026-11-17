@@ -18,6 +18,7 @@ const AdminSafety = Object.freeze({
   },
   safeImageUrl(value) {
     const src = String(value ?? "");
+    if (typeof CatalogManager !== 'undefined' && CatalogManager.validImageSource(src)) return src;
     return /^assets\/images\/[\p{L}\p{N} _.,()\-\/]+\.(?:png|webp|jpg|jpeg|svg)$/u.test(src) && !src.includes("..")
       ? src : "assets/images/logo-main.svg";
   },
@@ -32,7 +33,7 @@ if (typeof document !== "undefined") {
         const esc = AdminSafety.escapeHtml;
 
         const STATUS_LABELS = {
-          active: "Прийнято (редагування)",
+          active: "Прийнято",
           processing: "Передано в обробку",
           shipped: "Відправлено",
           completed: "Виконано",
@@ -57,6 +58,7 @@ if (typeof document !== "undefined") {
 
         // Tracks which order IDs currently have their TTN input open for editing
         const editingTtnOrderIds = new Set();
+        const editingOrderIds = new Set();
         let lastActionUndo = null;
         let undoToastTimer = null;
 
@@ -228,6 +230,21 @@ if (typeof document !== "undefined") {
           }, 6000);
         }
 
+        function writeOrder(updatedOrd) {
+          const cleanId=String(updatedOrd.orderId);
+          const orders=loadAllOrders();
+          const list=orders.some(o=>String(o.orderId)===cleanId)
+            ? orders.map(o=>String(o.orderId)===cleanId ? updatedOrd : o)
+            : [updatedOrd,...orders];
+          localStorage.setItem(COMPLETED_ORDERS_KEY,JSON.stringify(list));
+          try {
+            const active=JSON.parse(localStorage.getItem(ACTIVE_ORDER_KEY)||'null');
+            if(active && String(active.orderId||active.id)===cleanId)
+              localStorage.setItem(ACTIVE_ORDER_KEY,JSON.stringify(updatedOrd));
+          } catch(_){}
+          renderDashboard();
+        }
+
         function persistOrderUpdate(
           orderId,
           newStatusCode,
@@ -257,44 +274,18 @@ if (typeof document !== "undefined") {
           }
 
           const updatedOrd = {
-            ...targetOrd,
-            orderId: cleanId,
-            statusCode: finalStatusCode,
-            status: STATUS_LABELS[finalStatusCode] || "Виконано",
-            ttn: finalTtn,
-            locked: finalStatusCode !== "active",
+            ...OrderFinance.transition(targetOrd,finalStatusCode),
+            orderId:cleanId,
+            status:STATUS_LABELS[finalStatusCode],
+            ttn:finalTtn,
           };
-
-          // 1. Update active order in localStorage if it matches this orderId
-          try {
-            const rawActive = localStorage.getItem(ACTIVE_ORDER_KEY);
-            if (rawActive) {
-              const act = JSON.parse(rawActive);
-              if (String(act.orderId || act.id) === cleanId) {
-                localStorage.setItem(
-                  ACTIVE_ORDER_KEY,
-                  JSON.stringify(updatedOrd),
-                );
-              }
-            }
-          } catch (e) {}
-
-          // 2. Write complete list back to astelkom_completed_orders so it persists reliably
-          const updatedList = allOrders.map((o) =>
-            String(o.orderId) === cleanId ? updatedOrd : o,
-          );
-          localStorage.setItem(
-            COMPLETED_ORDERS_KEY,
-            JSON.stringify(updatedList),
-          );
-
-          renderDashboard();
+          writeOrder(updatedOrd);
 
           if (recordUndo && prevStatusCode !== finalStatusCode) {
             showUndoToast(
               `Замовлення #${cleanId}: статус змінено на «${STATUS_LABELS[finalStatusCode]}»`,
               () => {
-                persistOrderUpdate(cleanId, prevStatusCode, prevTtn, false);
+                writeOrder(targetOrd); // Restore the entire snapshot including revenue.
                 showUndoToast(
                   `Дію скасовано: замовлення #${cleanId} повернуто у «${STATUS_LABELS[prevStatusCode]}»`,
                   null,
@@ -307,7 +298,7 @@ if (typeof document !== "undefined") {
                 ? `ТТН ${finalTtn} збережено для замовлення #${cleanId}`
                 : `ТТН видалено для замовлення #${cleanId}`,
               () => {
-                persistOrderUpdate(cleanId, finalStatusCode, prevTtn, false);
+                writeOrder(targetOrd);
               },
             );
           }
@@ -369,7 +360,99 @@ if (typeof document !== "undefined") {
 
         let lastOrderFingerprint = "";
         function getOrderFingerprint(orders) {
-          return JSON.stringify(orders.map((o) => [o.orderId, o.statusCode, o.ttn, o.subtotal, o.locked, o.finalizedAt]));
+          return JSON.stringify(orders.map((o) => [o.orderId, o.statusCode, o.ttn, o.subtotal, o.locked, o.finalizedAt, o.paymentStatus, o.paymentVerification, o.payment, o.recognizedRevenue, o.customer, o.delivery, o.items]));
+        }
+
+        const CARRIERS={nova:'Нова Пошта',ukr:'Укрпошта',meest:'Meest пошта'};
+        const payMethods=['Готівка','Оплата банківською картою','Google Pay'];
+        function renderOrderLine(item) {
+          const product=PRODUCTS_DATA[item.id];
+          const min=product ? CartManager.getMinQty(product) : 1;
+          return `<div class="admin-edit-line" data-line-id="${esc(item.id)}" data-line-price="${Number(item.price)||0}">
+            <span class="admin-edit-line__title">${esc(item.title)}</span>
+            <span class="admin-edit-line__price">${formatMoney(item.price)} / шт.</span>
+            <label>Кількість <input class="admin-edit-qty" type="number" min="${min}" max="1000000" step="1" value="${Number(item.qty)||min}"></label>
+            <button type="button" class="admin-btn admin-btn--danger" data-remove-order-line>Видалити</button>
+          </div>`;
+        }
+        function renderOrderEditor(ord) {
+          const field=(name,value,label,type='text')=>`<label class="admin-edit-field">${label}<input name="${name}" type="${type}" value="${esc(value||'')}" required></label>`;
+          const select=(name,value,opts)=>`<label class="admin-edit-field">${name==='carrierKey'?'Служба доставки':'Спосіб оплати'}<select name="${name}" class="admin-select">${opts.map(([key,label])=>`<option value="${esc(key)}" ${key===value?'selected':''}>${esc(label)}</option>`).join('')}</select></label>`;
+          return `<form class="admin-order-editor" data-order-editor="${esc(ord.orderId)}">
+            <h3>Редагування замовлення #${esc(ord.orderId)}</h3>
+            <div class="admin-edit-grid">
+              ${field('firstName',ord.customer?.firstName,'Ім’я')}
+              ${field('lastName',ord.customer?.lastName,'Прізвище')}
+              ${field('phone',ord.customer?.phone,'Телефон','tel')}
+              ${field('email',ord.customer?.email,'E-mail','email')}
+              <label class="admin-edit-field">Місто
+                <input name="city" list="admin-city-list-${esc(ord.orderId)}" value="${esc(ord.delivery?.city||'')}" autocomplete="off" required data-admin-city>
+                <datalist id="admin-city-list-${esc(ord.orderId)}">${AdminDelivery.cityOptions().map(city=>`<option value="${esc(city)}"></option>`).join('')}</datalist>
+              </label>
+              <label class="admin-edit-field">Відділення / адреса
+                <select name="branchChoice" class="admin-select" data-admin-branch-select required></select>
+                <input name="branchManual" type="text" placeholder="Введіть фактичну адресу вручну" data-admin-branch-manual hidden>
+                <span class="admin-delivery-hint" data-admin-delivery-hint aria-live="polite"></span>
+              </label>
+              ${select('carrierKey',ord.delivery?.carrierKey,Object.entries(CARRIERS))}
+              <label class="admin-edit-field">Тип доставки
+                <select name="deliveryType" class="admin-select">
+                  <option value="Відділення" ${ord.delivery?.type==='Відділення'?'selected':''}>Відділення</option>
+                  <option value="Поштомат" ${ord.delivery?.type==='Поштомат'?'selected':''}>Поштомат</option>
+                </select>
+              </label>
+              ${select('payment',ord.payment,payMethods.map(x=>[x,x]))}
+            </div>
+            <h4>Товари замовлення</h4>
+            <div class="admin-edit-lines">${(ord.items||[]).map(renderOrderLine).join('')}</div>
+            <div class="admin-edit-add-row">
+              <select class="admin-select" data-add-product-select>
+                ${Object.values(PRODUCTS_DATA).filter(p=>p.inStock).map(p=>`<option value="${esc(p.id)}">${esc(p.title)} — ${formatMoney(p.numericPrice)}</option>`).join('')}
+              </select>
+              <button type="button" class="admin-btn admin-btn--outline" data-add-order-line>+ Додати товар</button>
+            </div>
+            <div class="admin-edit-actions"><button class="admin-btn admin-btn--primary" type="submit">Зберегти зміни</button>
+            <button class="admin-btn admin-btn--outline" data-cancel-order-edit type="button">Скасувати редагування</button></div>
+          </form>`;
+        }
+        function saveOrderEditor(form) {
+          const id=form.dataset.orderEditor;
+          const ord=loadAllOrders().find(o=>String(o.orderId)===id);
+          if(!ord || ord.statusCode!=='processing') throw new Error('Редагування дозволено лише на стадії «В обробці»');
+          const data=new FormData(form);
+          const customer={firstName:String(data.get('firstName')||'').trim(), lastName:String(data.get('lastName')||'').trim(),phone:String(data.get('phone')||'').trim(), email:String(data.get('email')||'').trim()};
+          const carrierKey=String(data.get('carrierKey')||'');
+          const deliveryType=String(data.get('deliveryType')||'');
+          if(!['Відділення','Поштомат'].includes(deliveryType)) throw new Error('Невірний тип доставки');
+          const branchChoice=String(data.get('branchChoice')||'');
+          const branch=branchChoice==='__manual__' ? String(data.get('branchManual')||'').trim() : branchChoice;
+          const delivery={...ord.delivery,city:String(data.get('city')||'').trim(),branch,type:deliveryType,carrierKey,carrierName:CARRIERS[carrierKey]||''};
+          const payment=String(data.get('payment')||'');
+          if(!payMethods.includes(payment)) throw new Error('Некоректний спосіб оплати');
+          const items=[...form.querySelectorAll('[data-line-id]')].map(el=>{
+            const product=PRODUCTS_DATA[el.dataset.lineId];
+            const original=(ord.items||[]).find(i=>i.id===el.dataset.lineId);
+            if(!product && !original) throw new Error('Товар не знайдено');
+            const qty=Number(el.querySelector('.admin-edit-qty').value);
+            const min=product ? CartManager.getMinQty(product) : 1;
+            if(!Number.isInteger(qty) || qty<min) throw new Error(`Мінімальна кількість для ${product?.title||original?.title}: ${min}`);
+            const price=Number(el.dataset.linePrice);
+            return {id:el.dataset.lineId,title:product?.title||original.title,price,qty,image:product?.image||original.image};
+          });
+          if(new Set(items.map(i=>i.id)).size!==items.length) throw new Error('Товар повторюється в замовленні');
+          const subtotal=OrderFinance.validateEdits(customer,delivery,items);
+          // Switching payment method invalidates any previously verified payment for this method.
+          const changedPayment=payment!==ord.payment || subtotal!==Number(ord.subtotal);
+          const updated={...ord,customer,delivery,payment,items,subtotal,
+            ...(changedPayment ? {paymentStatus:'unpaid',paymentVerification:null} : {})};
+          writeOrder(updated);
+          editingOrderIds.delete(id);renderDashboard();
+          requestAnimationFrame(()=>{
+            const current=[...ordersContainer.querySelectorAll('.admin-order-card')]
+              .find(card=>card.dataset.orderId===id);
+            if(current) current.scrollIntoView({behavior:'smooth',block:'start'});
+          });
+          showUndoToast(`Дані замовлення #${id} оновлено`,()=>writeOrder(ord));
         }
 
         function renderDashboard() {
@@ -383,9 +466,7 @@ if (typeof document !== "undefined") {
               o.statusCode === "processing" ||
               o.statusCode === "shipped",
           ).length;
-          const totalRevenue = allOrders
-            .filter((o) => o.statusCode === "completed")
-            .reduce((sum, o) => sum + Number(o.subtotal || 0), 0);
+          const totalRevenue = OrderFinance.total(allOrders);
 
           document.getElementById("kpi-total-orders").textContent =
             allOrders.length;
@@ -447,12 +528,13 @@ if (typeof document !== "undefined") {
                   if (ord.statusCode === step.code) {
                     cls += " is-current";
                     if (step.code === "completed") cls += " is-completed-step";
-                  } else if (currentStepIdx > idx && !isClosed) {
-                    cls += " is-passed";
+                  } else if (currentStepIdx > idx && (!isClosed || (idx === 0 && ord.statusCode === 'completed'))) {
+                    cls += idx === 0 && !OrderFinance.acceptedGreen(ord) ? " is-neutral-passed" : " is-passed";
                   }
+                  if(idx===0) cls += OrderFinance.acceptedGreen(ord) ? ' is-payment-ready' : ' is-unpaid-acceptance';
                   return `
                     <div class="${cls}">
-                      ${currentStepIdx > idx && !isClosed ? "✓ " : ""}${step.label}
+                      ${currentStepIdx > idx && (!isClosed || (idx === 0 && ord.statusCode === 'completed')) && (idx !== 0 || OrderFinance.acceptedGreen(ord)) ? "✓ " : ""}${step.label}
                     </div>
                   `;
                 }).join("");
@@ -518,9 +600,10 @@ if (typeof document !== "undefined") {
                   bottomControlsHtml = `
                     <div class="order-closed-banner order-closed-banner--completed">
                       <span>✓ Замовлення успішно виконано та закрито ${ord.ttn ? `(ТТН: ${esc(ord.ttn)})` : ""}.</span>
-                      <button type="button" class="admin-btn admin-btn--outline" data-reopen-order="${esc(ord.orderId)}" style="height: 36px; padding: 0 14px;">
-                        ↺ Повернути в роботу
-                      </button>
+                      <div class="admin-btn-row">
+                        <button type="button" class="admin-btn admin-btn--outline" data-reopen-order="${esc(ord.orderId)}" style="height:36px">↺ Повернути в роботу</button>
+                        <button type="button" class="admin-btn admin-btn--danger" data-cancel-order="${esc(ord.orderId)}" style="height:36px">Скасувати замовлення</button>
+                      </div>
                     </div>
                   `;
                 } else if (ord.statusCode === "canceled") {
@@ -558,7 +641,7 @@ if (typeof document !== "undefined") {
                         <span class="admin-order-card__id">Замовлення #${esc(ord.orderId)}</span>
                         <span class="admin-order-card__date">від ${formatDate(ord.createdAt)}</span>
                       </div>
-                      <span class="status-pill status-pill--${ord.statusCode}">
+                      <span class="status-pill status-pill--${ord.statusCode} ${ord.statusCode === 'active' && OrderFinance.acceptedGreen(ord) ? 'is-payment-ready' : ''}">
                         ${STATUS_LABELS[ord.statusCode]}
                       </span>
                     </div>
@@ -578,8 +661,12 @@ if (typeof document !== "undefined") {
                       <div class="admin-info-box">
                         <span class="admin-info-box__title">Доставка та оплата</span>
                         <div><strong>Служба:</strong> м. ${esc(ord.delivery?.city)}, ${esc(ord.delivery?.carrierName)}</div>
-                        <div><strong>Точка видачі:</strong> ${esc(ord.delivery?.branch)}</div>
+                        <div><strong>Точка видачі:</strong> ${esc(ord.delivery?.type||'Відділення')}, ${esc(ord.delivery?.branch)}</div>
                         <div><strong>Оплата:</strong> ${esc(ord.payment)} | <strong>Сума:</strong> ${formatMoney(ord.subtotal)}</div>
+                        <div class="admin-payment-status">
+                          <strong>Статус оплати:</strong>
+                          <span class="admin-payment-state admin-payment-state--${OrderFinance.paymentStatus(ord)}">${esc(OrderFinance.paymentLabel(ord))}</span>
+                        </div>
                         ${ord.ttn ? `<div><strong>ТТН:</strong> <span style="font-family: var(--font-mono); font-weight: 700; color: #059669;">${esc(ord.ttn)}</span></div>` : ""}
                       </div>
                     </div>
@@ -587,10 +674,18 @@ if (typeof document !== "undefined") {
                     <div class="admin-order-items">
                       ${itemsHtml}
                     </div>
+                    ${ord.statusCode==='processing' ? `
+                      <div class="admin-edit-actions">
+                        <button class="admin-btn admin-btn--outline" data-edit-order="${esc(ord.orderId)}" type="button">
+                          ${editingOrderIds.has(String(ord.orderId)) ? 'Закрити редагування' : 'Редагувати дані, доставку й товари'}
+                        </button>
+                      </div>
+                      ${editingOrderIds.has(String(ord.orderId)) ? renderOrderEditor(ord) : ''}
+                    ` : ''}
 
-                    <div class="admin-order-card__controls">
+                    ${!editingOrderIds.has(String(ord.orderId)) ? `<div class="admin-order-card__controls">
                       ${bottomControlsHtml}
-                    </div>
+                    </div>` : ''}
                   </article>
                 `;
               })
@@ -622,6 +717,66 @@ if (typeof document !== "undefined") {
             .join("");
         }
 
+        // Dependent city / carrier / delivery-type branch dropdown.
+        async function refreshAdminBranches(form) {
+          const city=form.elements.city.value.trim();
+          const carrier=form.elements.carrierKey.value;
+          const type=form.elements.deliveryType.value;
+          const branchSelect=form.querySelector('[data-admin-branch-select]');
+          const manual=form.querySelector('[data-admin-branch-manual]');
+          const hint=form.querySelector('[data-admin-delivery-hint]');
+          if(!branchSelect || !manual || !hint) return;
+          const revision=String(Number(form.dataset.deliveryRevision||0)+1);
+          form.dataset.deliveryRevision=revision;
+          const order=loadAllOrders().find(o=>String(o.orderId)===form.dataset.orderEditor);
+          const previousValue=branchSelect.value || order?.delivery?.branch || '';
+          const sameDestination=city===order?.delivery?.city && carrier===order?.delivery?.carrierKey && type===(order?.delivery?.type||'Відділення');
+          const suggestions=AdminDelivery.orderBranches(loadAllOrders(),city,carrier,type);
+          const original=sameDestination ? (order?.delivery?.branch||'') : '';
+          const entries=AdminDelivery.uniqueBranches([original,...suggestions]);
+          function populate(options,verified=false){
+            const chosen=options.includes(previousValue) && sameDestination ? previousValue : original;
+            branchSelect.replaceChildren();
+            const addOption=(value,label)=>{
+              const opt=document.createElement('option');opt.value=value;opt.textContent=label;branchSelect.append(opt);
+            };
+            addOption('','Оберіть відділення / адресу');
+            options.forEach(x=>addOption(x,x));
+            addOption('__manual__','Ввести адресу вручну');
+            branchSelect.value=chosen && options.includes(chosen) ? chosen : '__manual__';
+            manual.value=branchSelect.value==='__manual__' ? (sameDestination?previousValue:'') : '';
+            manual.hidden=branchSelect.value!=='__manual__';
+            manual.required=!manual.hidden;
+            if(!verified)hint.textContent=options.length?'Адреси з попередніх замовлень (актуальність не перевірена).':'Довідник відділень не підключено. Введіть адресу вручну.';
+          }
+          populate(entries);
+          try {
+            const verified=await AdminDelivery.fetchVerifiedBranches(city,carrier,type);
+            if(form.dataset.deliveryRevision!==revision || !form.isConnected)return;
+            if(verified?.length){
+              const typedManual=branchSelect.value==='__manual__'?manual.value.trim():'';
+              populate(AdminDelivery.uniqueBranches(verified),true);
+              if(typedManual){branchSelect.value='__manual__';manual.hidden=false;manual.required=true;manual.value=typedManual;}
+              hint.textContent='Актуальні адреси від служби доставки.';
+            }
+          }catch(err){ if(form.dataset.deliveryRevision===revision)hint.textContent='Довідник недоступний. Перевірте адресу вручну.'; }
+        }
+        ordersContainer.addEventListener('change',e=>{
+          const form=e.target.closest('[data-order-editor]');if(!form)return;
+          if(e.target.matches('[name="branchChoice"]')){
+            const manual=form.querySelector('[data-admin-branch-manual]');
+            manual.hidden=e.target.value!=='__manual__';
+            manual.required=!manual.hidden;
+            if(!manual.hidden)manual.focus();
+          }
+          if(e.target.matches('[name="city"], [name="carrierKey"], [name="deliveryType"]'))refreshAdminBranches(form);
+        });
+        ordersContainer.addEventListener('input',e=>{
+          if(!e.target.matches('[data-admin-city]'))return;
+          const form=e.target.closest('[data-order-editor]');
+          if(form) refreshAdminBranches(form);
+        });
+
         // Order Actions Click Handler
         ordersContainer.addEventListener("click", (e) => {
           const card = e.target.closest(".admin-order-card");
@@ -629,6 +784,33 @@ if (typeof document !== "undefined") {
           const orderId = String(card.getAttribute("data-order-id"));
           const ttnInput = card.querySelector(".order-ttn-input");
           const currentTtn = ttnInput ? ttnInput.value.trim() : undefined;
+
+          const editOrderBtn=e.target.closest('[data-edit-order]');
+          if(editOrderBtn) {
+            if(!loadAllOrders().some(o=>String(o.orderId)===orderId&&o.statusCode==='processing')) return;
+            if(editingOrderIds.has(orderId)) editingOrderIds.delete(orderId);
+            else editingOrderIds.add(orderId);
+            renderDashboard();
+            const newlyOpened=[...ordersContainer.querySelectorAll('[data-order-editor]')]
+              .find(form=>form.dataset.orderEditor===orderId);
+            if(newlyOpened)refreshAdminBranches(newlyOpened);
+            return;
+          }
+          if(e.target.closest('[data-cancel-order-edit]')) {editingOrderIds.delete(orderId);renderDashboard();return;}
+          const addLineBtn=e.target.closest('[data-add-order-line]');
+          if(addLineBtn) {
+            const editor=card.querySelector('[data-order-editor]');
+            const id=editor?.querySelector('[data-add-product-select]')?.value;
+            const product=PRODUCTS_DATA[id];
+            if(!editor||!product||!product.inStock) return;
+            const existing=Array.from(editor.querySelectorAll('[data-line-id]')).find(el=>el.dataset.lineId===id);
+            const min=CartManager.getMinQty(product);
+            if(existing) existing.querySelector('.admin-edit-qty').value=Number(existing.querySelector('.admin-edit-qty').value)+min;
+            else editor.querySelector('.admin-edit-lines').insertAdjacentHTML('beforeend',renderOrderLine({id,title:product.title,price:product.numericPrice,qty:min}));
+            return;
+          }
+          const removeLineBtn=e.target.closest('[data-remove-order-line]');
+          if(removeLineBtn){removeLineBtn.closest('[data-line-id]')?.remove();return;}
 
           // 1. Click "Редагувати" TTN button -> switch pill back to input
           const editTtnBtn = e.target.closest("[data-edit-ttn]");
@@ -736,6 +918,13 @@ if (typeof document !== "undefined") {
           }
         });
 
+        ordersContainer.addEventListener('submit',(e)=>{
+          const form=e.target.closest('[data-order-editor]');if(!form)return;
+          e.preventDefault();
+          try{saveOrderEditor(form);}catch(err){showUndoToast(err.message,null);}
+        });
+
+
         // Allow pressing Enter inside TTN input to save TTN immediately
         ordersContainer.addEventListener("keydown", (e) => {
           if (
@@ -761,98 +950,143 @@ if (typeof document !== "undefined") {
         searchInput.addEventListener("input", renderDashboard);
         statusFilter.addEventListener("change", renderDashboard);
 
-        // Catalog Stock & Prices Table
-        const productsTbody = document.getElementById("admin-products-tbody");
-
-        function renderProductsTable() {
-          if (typeof PRODUCTS_DATA === "undefined") return;
-          const items = Object.values(PRODUCTS_DATA);
-          document.getElementById("tab-count-products").textContent =
-            items.length;
-
-          productsTbody.innerHTML = items
-            .map((p) => {
-              const inStock = p.inStock;
-              const numericPrice = p.numericPrice;
-
-              return `
-                <tr data-product-id="${esc(p.id)}">
-                  <td>
-                    <a href="product.html?id=${esc(p.id)}" style="font-weight: 600; text-decoration: underline;">
-                      ${esc(p.title)}
-                    </a>
-                  </td>
-                  <td>${esc(p.categoryName)}</td>
-                  <td>${esc(p.saleTerms)}</td>
-                  <td>
-                    <input
-                      type="number"
-                      class="admin-price-input"
-                      value="${numericPrice}"
-                      min="1"
-                      max="99999999"
-                      step="1"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="stock-toggle-btn ${inStock ? "is-instock" : "is-outstock"}"
-                      data-toggle-stock="${esc(p.id)}"
-                      data-current-stock="${inStock}"
-                    >
-                      ${inStock ? "● В наявності" : "○ Немає в наявності"}
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="admin-btn admin-btn--outline"
-                      data-save-product="${esc(p.id)}"
-                      style="height: 36px; padding: 0 12px;"
-                    >
-                      Оновити
-                    </button>
-                  </td>
-                </tr>
-              `;
-            })
-            .join("");
+        // Catalog Inventory / Media (localStorage prototype).
+        const productsTbody=document.getElementById('admin-products-tbody');
+        const addProductForm=document.getElementById('admin-new-product-form');
+        let editingPhotosId=null;
+        const options=(items,selected)=>Object.entries(items).map(([key,label])=>
+          `<option value="${esc(key)}" ${key===selected?'selected':''}>${esc(label)}</option>`).join('');
+        function renderPhotoEditor(p) {
+          return `<tr class="admin-photo-editor-row"><td colspan="6">
+            <div class="admin-photo-editor">
+              <h4>Фотографії: ${esc(p.title)} <small>Зображення 1 — головне</small></h4>
+              <div class="admin-photo-list">${(p.images||[]).map((src,i)=>`
+                <div class="admin-photo-item">
+                  <img src="${esc(src)}" alt="Фото ${i+1}" />
+                  <span>${i+1}</span>
+                  <button type="button" data-photo-move="up" data-photo-index="${i}" ${i===0?'disabled':''} title="Вище">↑</button>
+                  <button type="button" data-photo-move="down" data-photo-index="${i}" ${i===p.images.length-1?'disabled':''} title="Нижче">↓</button>
+                  <button type="button" data-photo-remove="${i}" title="Видалити">×</button>
+                </div>`).join('')}</div>
+              <label class="admin-photo-upload">Додати фото (PNG, JPG або WebP; максимум 12)
+                <input type="file" accept="image/png,image/jpeg,image/webp" multiple data-photo-upload="${esc(p.id)}" />
+              </label>
+              <p class="admin-photo-warning">Файли зберігаються лише в цьому браузері. Для іншого пристрою потрібен сервер.</p>
+            </div>
+          </td></tr>`;
         }
-
-        productsTbody.addEventListener("click", (e) => {
-          const stockBtn = e.target.closest("[data-toggle-stock]");
-          const saveProdBtn = e.target.closest("[data-save-product]");
-
-          if (stockBtn) {
-            const id = stockBtn.getAttribute("data-toggle-stock");
-            const cur = stockBtn.getAttribute("data-current-stock") === "true";
-            try {
-              CatalogManager.updateProduct(id, { inStock: !cur });
-              renderProductsTable();
-            } catch (error) {
-              showUndoToast(error.message, null);
+        function renderProductsTable() {
+          const items=Object.values(PRODUCTS_DATA);
+          document.getElementById('tab-count-products').textContent=items.length;
+          productsTbody.innerHTML=items.map(p=>`
+            <tr data-product-id="${esc(p.id)}">
+              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a></td>
+              <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES,p.category)}</select></td>
+              <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS,p.saleTermsCode)}</select></td>
+              <td><input type="number" class="admin-price-input" value="${p.numericPrice}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
+              <td><button type="button" class="stock-toggle-btn ${p.inStock?'is-instock':'is-outstock'}" data-toggle-stock="${esc(p.id)}" data-current-stock="${p.inStock}">${p.inStock?'● В наявності':'○ Немає в наявності'}</button></td>
+              <td><div class="admin-inventory-actions">
+                <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}">Оновити</button>
+                <button type="button" class="admin-btn admin-btn--outline" data-edit-photos="${esc(p.id)}">Фото (${p.images?.length||0})</button>
+              </div></td>
+            </tr>
+            ${editingPhotosId===p.id?renderPhotoEditor(p):''}`
+          ).join('');
+        }
+        async function compressImage(file) {
+          if(!['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Підтримуються PNG, JPG та WebP');
+          if(file.size>6*1024*1024) throw new Error('Фото не може перевищувати 6 МБ');
+          const objectUrl=URL.createObjectURL(file);
+          try {
+            const img=new Image();
+            await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('Не вдалося відкрити зображення'));img.src=objectUrl;});
+            for(const dimension of [1200,960,720,560]) {
+              const scale=Math.min(1,dimension/Math.max(img.naturalWidth,img.naturalHeight));
+              const canvas=document.createElement('canvas');
+              canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+              canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+              const ctx=canvas.getContext('2d');
+              ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
+              ctx.drawImage(img,0,0,canvas.width,canvas.height);
+              for(const quality of [.8,.67,.5]) {
+                const data=canvas.toDataURL('image/jpeg',quality);
+                if(CatalogManager.validImageSource(data)) return data;
+              }
             }
-          } else if (saveProdBtn) {
-            const id = saveProdBtn.getAttribute("data-save-product");
-            const row = saveProdBtn.closest("tr");
-            const priceInput = row?.querySelector(".admin-price-input");
-            const newPrice = priceInput?.value.trim() || "";
-            if (CatalogManager.validPrice(newPrice) === null) {
-              priceInput?.focus();
-              priceInput?.setAttribute("aria-invalid", "true");
-              showUndoToast("Вкажіть цілу ціну від 1 до 99 999 999 грн", null);
-              return;
+            throw new Error('Фото завелике для локального збереження');
+          } finally{URL.revokeObjectURL(objectUrl);}
+        }
+        async function imagesFromInput(input) {
+          const files=Array.from(input.files||[]);
+          const images=[];
+          for(const file of files) images.push(await compressImage(file));
+          return images;
+        }
+        productsTbody.addEventListener('click',(e)=>{
+          const btn=e.target.closest('button');if(!btn)return;
+          const row=btn.closest('tr[data-product-id]');
+          if(btn.hasAttribute('data-toggle-stock')) {
+            const id=btn.dataset.toggleStock;const p=PRODUCTS_DATA[id];
+            try{CatalogManager.updateProduct(id,{inStock:!p.inStock});renderProductsTable();}
+            catch(err){showUndoToast(err.message,null);}
+          } else if(btn.hasAttribute('data-save-product') && row){
+            const id=row.dataset.productId;
+            const input=row.querySelector('.admin-price-input');
+            const price=CatalogManager.validPrice(input.value);
+            if(price==null){input.focus();input.setAttribute('aria-invalid','true');showUndoToast('Вкажіть цілу ціну від 1 до 99 999 999 грн',null);return;}
+            try{CatalogManager.updateProduct(id,{price,category:row.querySelector('[data-product-category]').value,saleTermsCode:row.querySelector('[data-product-terms]').value});renderProductsTable();showUndoToast('Товар оновлено',null);}
+            catch(err){showUndoToast(err.message,null);}
+          } else if(btn.hasAttribute('data-edit-photos')) {
+            const id=btn.dataset.editPhotos;
+            editingPhotosId=editingPhotosId===id?null:id;renderProductsTable();
+          } else if(btn.hasAttribute('data-photo-move')||btn.hasAttribute('data-photo-remove')) {
+            const id=editingPhotosId,p=PRODUCTS_DATA[id];if(!p)return;
+            const imgs=[...p.images];
+            const index=Number(btn.dataset.photoIndex ?? btn.dataset.photoRemove);
+            if(!Number.isInteger(index)||index<0||index>=imgs.length)return;
+            if(btn.hasAttribute('data-photo-remove')) {
+              if(imgs.length===1){showUndoToast('Потрібно залишити хоча б одне фото',null);return;}
+              imgs.splice(index,1);
             }
-            try {
-              CatalogManager.updateProduct(id, { price: Number(newPrice) });
-              showUndoToast("Ціну товару успішно оновлено", null);
-              renderProductsTable();
-            } catch (error) {
-              showUndoToast(error.message, null);
+            else {
+              const other=index+(btn.dataset.photoMove==='up'?-1:1);
+              if(other<0||other>=imgs.length)return;
+              [imgs[index],imgs[other]]=[imgs[other],imgs[index]];
             }
+            try{CatalogManager.updateProduct(id,{images:imgs});renderProductsTable();}
+            catch(err){showUndoToast(err.message,null);}
           }
         });
+        productsTbody.addEventListener('change',async(e)=>{
+          const input=e.target.closest('[data-photo-upload]');if(!input)return;
+          const id=input.dataset.photoUpload,p=PRODUCTS_DATA[id];if(!p)return;
+          try{
+            const files=await imagesFromInput(input);
+            const images=[...p.images,...files];
+            if(images.length>12) throw new Error('Максимум 12 фото');
+            CatalogManager.updateProduct(id,{images});renderProductsTable();
+            showUndoToast('Фото додано та збережено',null);
+          }catch(err){showUndoToast(err.name==='QuotaExceededError'?'Недостатньо місця у localStorage. Видаліть частину фото.':err.message,null);}
+        });
+        addProductForm?.addEventListener('submit',async(e)=>{
+          e.preventDefault();
+          const button=addProductForm.querySelector('[type="submit"]');button.disabled=true;
+          try {
+            const data=new FormData(addProductForm);
+            const photos=await imagesFromInput(addProductForm.querySelector('[name="photos"]'));
+            const newProduct=CatalogManager.addProduct({
+              id:String(data.get('id')||'').trim(),title:String(data.get('title')||'').trim(),
+              titleEn:String(data.get('titleEn')||'').trim(),
+              description:String(data.get('description')||'').trim(),
+              price:String(data.get('price')||'').trim(),category:String(data.get('category')||''),
+              saleTermsCode:String(data.get('saleTermsCode')||''),inStock:!!data.get('inStock'),images:photos,
+            });
+            addProductForm.reset();renderProductsTable();
+            showUndoToast(`Додано товар: ${newProduct.title}`,null);
+          }catch(err){showUndoToast(err.name==='QuotaExceededError'?'Бракує місця в localStorage для фотографій':err.message,null);}
+          finally{button.disabled=false;}
+        });
+        window.addEventListener('astel:catalog-updated',()=>renderProductsTable());
 
         // Create Demo Order Button
         document
@@ -881,6 +1115,7 @@ if (typeof document !== "undefined") {
                 branch: "Відділення №4: вул. Городоцька, 359",
               },
               payment: "Оплата банківською картою",
+              paymentStatus: "unpaid",
               subtotal: 43000,
               items: [
                 {

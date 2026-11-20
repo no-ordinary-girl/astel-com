@@ -460,11 +460,11 @@
         // New products may contain multiple independently ordered specification tables.
         const extraSpecsSection = Array.isArray(product.specSections)
           ? product.specSections.map((section) => {
-              const uk = section.type === 'general' ? 'Основні характеристики' : 'Технічні характеристики';
-              const en = section.type === 'general' ? 'General Specifications' : 'Technical Specifications';
+              const uk = section.type === 'custom' ? section.title : (section.type === 'general' ? 'Основні характеристики' : 'Технічні характеристики');
+              const en = section.type === 'custom' ? (section.titleEn || section.title) : (section.type === 'general' ? 'General Specifications' : 'Technical Specifications');
               const isEnglish = document.documentElement.lang === 'en';
               return `<section class="product-section">
-                <h2 class="product-section__title">${isEnglish ? en : uk}</h2>
+                <h2 class="product-section__title">${esc(isEnglish ? en : uk)}</h2>
                 <table class="specs-table"><tbody>${renderTableRows(section.rows || [])}</tbody></table>
               </section>`;
             }).join('') : '';
@@ -497,7 +497,7 @@
             <span class="breadcrumbs__sep">/</span>
             <a href="products.html" class="breadcrumbs__link">Товари</a>
             <span class="breadcrumbs__sep">/</span>
-            <a href="products.html?category=${encodeURIComponent(product.category)}" class="breadcrumbs__link">${esc(product.categoryName)}</a>
+            <a href="products.html?category=${encodeURIComponent(product.category)}" class="breadcrumbs__link">${esc(CatalogManager.getCategoryName(product.category, document.documentElement.lang==='en'))}</a>
             <span class="breadcrumbs__sep">/</span>
             <span class="breadcrumbs__current">${esc(productTitle)}</span>
           </nav>

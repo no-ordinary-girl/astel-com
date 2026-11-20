@@ -1048,10 +1048,47 @@ if (typeof document !== "undefined") {
             </td>
           </tr>`;
         }
+        function renderCategoryManager() {
+          const list=document.getElementById('admin-category-list');
+          if(list) list.innerHTML=Object.entries(CatalogManager.CATEGORIES).map(([key,name])=>{
+            const count=Object.values(PRODUCTS_DATA).filter(p=>p.category===key).length;
+            return `<div class="admin-category-chip">
+              <span>${esc(name)} <small>${count}</small></span>
+              <button type="button" data-delete-category="${esc(key)}" aria-label="Видалити категорію ${esc(name)}"
+                title="${count?'Спочатку перенесіть товари до іншої категорії':'Видалити категорію'}" ${count?'disabled':''}>×</button>
+            </div>`;
+          }).join('');
+          const select=addProductForm?.querySelector('[name="category"]');
+          if(select) {
+            const selected=select.value;
+            select.innerHTML=options(CatalogManager.CATEGORIES,selected);
+            if(CatalogManager.CATEGORIES[selected])select.value=selected;
+          }
+        }
+        document.getElementById('admin-add-category-form')?.addEventListener('submit',e=>{
+          e.preventDefault();
+          const form=e.currentTarget;
+          try {
+            CatalogManager.addCategory(form.elements.uk.value,form.elements.en.value);
+            form.reset();renderProductsTable();showUndoToast('Категорію додано',null);
+          }catch(err){showUndoToast(err.message,null);}
+        });
+        document.getElementById('admin-category-list')?.addEventListener('click',e=>{
+          const btn=e.target.closest('[data-delete-category]');if(!btn)return;
+          const code=btn.dataset.deleteCategory;
+          if([...productDrafts.values()].some(d=>d.category===code)) {
+            showUndoToast('Є незбережені зміни категорії в таблиці товарів',null);return;
+          }
+          const name=CatalogManager.CATEGORIES[code];
+          if(!window.confirm(`Видалити категорію «${name}»?`))return;
+          try{CatalogManager.deleteCategory(code);renderProductsTable();showUndoToast('Категорію видалено',null);}
+          catch(err){showUndoToast(err.message,null);}
+        });
         function renderProductsTable() {
           const items=Object.values(PRODUCTS_DATA);
           for(const id of productDrafts.keys()) if(!PRODUCTS_DATA[id]) productDrafts.delete(id);
           document.getElementById('tab-count-products').textContent=items.length;
+          renderCategoryManager();
           productsTbody.innerHTML=items.map(p=>{
             const draft=getDraft(p.id),dirty=productDrafts.has(p.id);
             return `<tr class="admin-inventory-product-row ${dirty?'has-pending-changes':''}" data-product-id="${esc(p.id)}">
@@ -1168,7 +1205,9 @@ if (typeof document !== "undefined") {
             const data=new FormData(addProductForm);
             const specSections=AstelProductEditor.extractSections(addProductForm);
             const docs=await AstelProductEditor.extractDocuments(addProductForm);
-            const photos=await imagesFromInput(addProductForm.querySelector('[name="photos"]'));
+            const photoFiles=AstelProductEditor.getPhotos(addProductForm);
+            if(!photoFiles.length) throw new Error('Додайте принаймні одну фотографію');
+            const photos=[];for(const file of photoFiles)photos.push(await compressImage(file));
             const newProduct=CatalogManager.addProduct({
               id:String(data.get('id')||'').trim(),title:String(data.get('title')||'').trim(),
               titleEn:String(data.get('titleEn')||'').trim(),

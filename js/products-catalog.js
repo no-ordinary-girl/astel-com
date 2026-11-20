@@ -8,7 +8,8 @@
     const minInput=$('filter-min'), maxInput=$('filter-max'),rMin=$('range-min'),rMax=$('range-max');
     const progress=$('range-progress'),stockOnly=$('filter-instock'),counter=$('product-counter');
     const sidebar=$('sidebar');
-    const links=[...document.querySelectorAll('.sidebar__link[data-target]')];
+    const categoriesList=sidebar.querySelector('.sidebar__list');
+    let links=[];
     const en=document.documentElement.lang==='en'||/\/en\//.test(location.pathname);
     const loc=(uk,english)=>en?english:uk;
     let category=new URLSearchParams(location.search).get('category')||'all';
@@ -41,8 +42,20 @@
         <div class="product-card__footer"><span>${loc('Ціна без ПДВ','Price excluding VAT')}</span>${qty}</div>
       </article>`;
     }
+    function renderSidebar(items) {
+      const entries=[['all',loc('УСІ ТОВАРИ','ALL PRODUCTS')],
+        ...Object.keys(CatalogManager.CATEGORIES).map(code=>[code,CatalogManager.getCategoryName(code,en)])];
+      categoriesList.innerHTML=entries.map(([code,name])=>{
+        const count=code==='all'?items.length:items.filter(p=>p.category===code).length;
+        return `<li class="sidebar__item"><a href="#" class="sidebar__link ${code===category?'sidebar__link--active':''}" data-target="${esc(code)}">
+          <span>${esc(name)}</span><span class="sidebar__count">${count}</span></a></li>`;
+      }).join('');
+      links=[...categoriesList.querySelectorAll('.sidebar__link[data-target]')];
+      if(category!=='all' && !CatalogManager.CATEGORIES[category]) category='all';
+    }
     function renderCatalog(){
       const items=Object.values(PRODUCTS_DATA);
+      renderSidebar(items);
       grid.innerHTML=items.map(makeCard).join('');
       for(const link of links){
         const cat=link.dataset.target;
@@ -96,7 +109,8 @@
     for(const el of [rMin,rMax]) el.addEventListener('input',rangeChanged);
     for(const el of [minInput,maxInput])el.addEventListener('change',fieldsChanged);
     stockOnly.addEventListener('change',applyFilters);
-    links.forEach(link=>link.addEventListener('click',e=>{
+    categoriesList.addEventListener('click',e=>{
+      const link=e.target.closest('.sidebar__link[data-target]');if(!link)return;
       e.preventDefault();category=link.dataset.target;
       links.forEach(l=>l.classList.toggle('sidebar__link--active',l===link));
       const url=new URL(location.href);
@@ -104,7 +118,7 @@
       else url.searchParams.set('category',category);
       history.replaceState({},'',url);
       applyFilters();if(innerWidth<960)sidebar.classList.remove('sidebar--open');
-    }));
+    });
     $('filter-toggle')?.addEventListener('click',()=>sidebar.classList.toggle('sidebar--open'));
     grid.addEventListener('click',e=>{
       const card=e.target.closest('.product-card');if(!card)return;

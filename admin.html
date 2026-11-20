@@ -311,6 +311,18 @@
 
         <!-- PANEL 3: СКЛАД ТА ЦІНИ -->
         <section class="admin-panel" id="panel-products">
+          <section class="admin-category-manager" aria-labelledby="admin-category-heading">
+            <div class="admin-extra-heading">
+              <div><h2 id="admin-category-heading">Категорії товарів</h2>
+                <p>Додавайте нові категорії або видаляйте порожні. Якщо в категорії є товари, спочатку перенесіть їх до іншої.</p></div>
+            </div>
+            <div class="admin-category-list" id="admin-category-list"></div>
+            <form id="admin-add-category-form" class="admin-category-form">
+              <label>Назва українською <input name="uk" maxlength="80" minlength="2" placeholder="Нова категорія" required /></label>
+              <label>English (необов'язково) <input name="en" maxlength="80" placeholder="New category" /></label>
+              <button type="submit" class="admin-btn admin-btn--outline">+ Додати категорію</button>
+            </form>
+          </section>
           <div class="admin-table-card">
             <table class="admin-table">
               <thead>
@@ -336,20 +348,25 @@
               <label>Назва українською <input name="title" type="text" minlength="3" maxlength="200" required /></label>
               <label>Назва англійською <input name="titleEn" type="text" maxlength="200" /></label>
               <label>Ціна без ПДВ, грн <input name="price" type="number" min="1" max="99999999" step="1" required /></label>
-              <label>Категорія
-                <select name="category" required>
-                  <option value="gsm">GSM/LTE-модеми</option><option value="nbiot">NBIoT-модеми</option>
-                  <option value="pos">Аксесуари для банківських терміналів</option>
-                  <option value="antenna">Антени</option><option value="cables">Кабелі живлення</option>
-                </select>
-              </label>
+<label>Категорія <select name="category" required></select></label>
               <label>Умови продажу
                 <select name="saleTermsCode" required><option value="wholesale">Тільки оптом</option><option value="retail">Оптом і в роздріб</option></select>
               </label>
               <label class="admin-new-product-checkbox"><input name="inStock" type="checkbox" checked /> В наявності</label>
-              <label>Фотографії (одна або більше)
-                <input name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required />
-              </label>
+              <div class="admin-new-product-photo-field">
+                <div class="admin-photo-editor__heading"><span class="admin-new-product-photo-heading">Фотографії (одна або більше)</span>
+                  <span class="admin-photo-editor__count" data-new-photo-count>0 / 12</span></div>
+                <div class="admin-new-product-photo-grid">
+                  <div class="admin-photo-list" data-new-photo-list role="list" aria-label="Фотографії нового товару"></div>
+                  <label class="admin-photo-add-tile" data-new-photo-add title="Додати фото">
+                    <input type="file" name="photos" class="admin-photo-add-tile__input"
+                      accept="image/jpeg,image/png,image/webp" multiple aria-label="Додати фотографії" />
+                    <span class="admin-photo-add-tile__icon" aria-hidden="true">+</span>
+                    <span>Додати фото</span>
+                  </label>
+                </div>
+                <p class="admin-photo-warning">Можна додавати фотографії кількома виборами файлів, видаляти їх і змінювати порядок перетягуванням. Перше фото — головне.</p>
+              </div>
             </div>
             <label class="admin-new-product-description">Опис товару
               <textarea name="description" rows="3" placeholder="Короткий технічний опис"></textarea>

@@ -453,7 +453,7 @@
                         class="docs-item__thumb"
                       />
                       <div class="docs-item__meta">
-                        <span class="docs-item__category">${escapeHtml(I18nManager.translate(product.categoryName))}</span>
+                        <span class="docs-item__category">${escapeHtml(CatalogManager.getCategoryName(product.category, I18nManager.getLang()==='en'))}</span>
                         <h2 class="docs-item__title">${escapeHtml(product.titleEn && I18nManager.getLang()==='en' ? product.titleEn : I18nManager.translate(product.title))}</h2>
                       </div>
                     </div>

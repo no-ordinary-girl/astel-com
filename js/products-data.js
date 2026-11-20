@@ -833,11 +833,17 @@ const CatalogManager = (() => {
   const STORAGE_KEY = 'astelkom_catalog_overrides';
   const CUSTOM_KEY = 'astelkom_catalog_custom_products';
   const DELETED_KEY = 'astelkom_catalog_deleted_products';
-  const CATEGORIES = Object.freeze({
+  const CATEGORY_KEY = 'astelkom_catalog_categories';
+  const REMOVED_CATEGORIES_KEY = 'astelkom_catalog_removed_categories';
+  const DEFAULT_CATEGORIES = Object.freeze({
     gsm: 'GSM/LTE-модеми', nbiot: 'NBIoT-модеми',
     pos: 'Аксесуари для банківських терміналів',
     antenna: 'Антени', cables: 'Кабелі низьковольтного живлення',
   });
+  // Keep a stable object reference so existing catalog/admin modules see changes.
+  const CATEGORIES = {...DEFAULT_CATEGORIES};
+  const CATEGORY_EN = {gsm:'GSM/LTE Modems', nbiot:'NBIoT Modems',
+    pos:'Accessories for Banking Terminals',antenna:'Antennas',cables:'Low-Voltage Power Cables'};
   const SALE_TERMS = Object.freeze({wholesale: 'Тільки оптом', retail: 'Оптом і в роздріб'});
   const base = Object.fromEntries(Object.entries(PRODUCTS_DATA).map(([id,p]) => [id, JSON.parse(JSON.stringify(p))]));
   const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
@@ -858,6 +864,48 @@ const CatalogManager = (() => {
   function readOverrides(){return readStore(STORAGE_KEY,{});}
   function readCustom(){return readStore(CUSTOM_KEY,{});}
   function readDeleted(){return readStore(DELETED_KEY,{});}
+  function readCategories(){return readStore(CATEGORY_KEY,{});}
+  function readRemovedCategories(){return readStore(REMOVED_CATEGORIES_KEY,{});}
+  function rebuildCategories(){
+    const removed=readRemovedCategories();
+    for(const key of Object.keys(CATEGORIES)) delete CATEGORIES[key];
+    for(const [key,label] of Object.entries(DEFAULT_CATEGORIES)) if(!removed[key]) CATEGORIES[key]=label;
+    for(const [key,entry] of Object.entries(readCategories())) {
+      if(/^cat-[a-z0-9-]{3,75}$/.test(key) && entry &&
+         typeof entry.uk==='string' && entry.uk.trim().length>=2 && entry.uk.length<=80)
+        CATEGORIES[key]=entry.uk.trim();
+    }
+  }
+  function getCategoryName(code,english=false){
+    if(!english) return CATEGORIES[code] || '';
+    return readCategories()[code]?.en?.trim() || CATEGORY_EN[code] || CATEGORIES[code] || '';
+  }
+  function addCategory(uk,en=''){
+    uk=String(uk||'').trim();en=String(en||'').trim();
+    if(uk.length<2 || uk.length>80 || en.length>80) throw new Error('Назва категорії: 2–80 символів');
+    if(Object.values(CATEGORIES).some(name=>name.toLocaleLowerCase('uk')===uk.toLocaleLowerCase('uk')))
+      throw new Error('Така категорія вже існує');
+    const entries=readCategories();
+    let key;
+    do { key='cat-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7); }
+    while(CATEGORIES[key] || entries[key]);
+    entries[key]={uk,en};
+    localStorage.setItem(CATEGORY_KEY,JSON.stringify(entries));
+    rebuildCategories();notify('categories');return key;
+  }
+  function deleteCategory(code){
+    if(!CATEGORIES[code]) throw new Error('Категорію не знайдено');
+    if(Object.values(PRODUCTS_DATA).some(p=>p.category===code))
+      throw new Error('Категорію використовують товари. Спочатку перенесіть їх до іншої категорії і натисніть «Оновити».');
+    const custom=readCategories();
+    if(Object.prototype.hasOwnProperty.call(custom,code)) {
+      delete custom[code];localStorage.setItem(CATEGORY_KEY,JSON.stringify(custom));
+    } else {
+      const removed=readRemovedCategories();removed[code]=true;
+      localStorage.setItem(REMOVED_CATEGORIES_KEY,JSON.stringify(removed));
+    }
+    rebuildCategories();notify('categories');return true;
+  }
   const MAX_PDF_DATA_LENGTH = 1400000; // ~1 MB PDF, before localStorage overhead.
   function validPdfSource(src) {
     return typeof src === 'string' && src.length <= MAX_PDF_DATA_LENGTH &&
@@ -871,10 +919,13 @@ const CatalogManager = (() => {
       doc.download.length <= 160 && !/[\\/\x00-\x1f]/.test(doc.download) &&
       /\.pdf$/i.test(doc.download);
   }
-  const SPEC_TYPES = Object.freeze(['tech', 'general']);
+  const SPEC_TYPES = Object.freeze(['tech', 'general', 'custom']);
   function validSpecSections(sections) {
     return Array.isArray(sections) && sections.length <= 8 && sections.every(section =>
-      section && SPEC_TYPES.includes(section.type) && Array.isArray(section.rows) &&
+      section && SPEC_TYPES.includes(section.type) &&
+      (section.type!=='custom' || (typeof section.title==='string' && section.title.trim().length>=2 && section.title.length<=120 &&
+        (section.titleEn===undefined || (typeof section.titleEn==='string' && section.titleEn.length<=120)))) &&
+      Array.isArray(section.rows) &&
       section.rows.length >= 1 && section.rows.length <= 25 && section.rows.every(row =>
         row && typeof row.label === 'string' && !!row.label.trim() && row.label.length <= 160 &&
         typeof row.value === 'string' && !!row.value.trim() && row.value.length <= 2000));
@@ -890,7 +941,7 @@ const CatalogManager = (() => {
     const amount=validPrice(p.numericPrice ?? String(p.price).replace(/[^\d]/g,'')) ?? 1;
     p.numericPrice=amount; p.price=amount.toLocaleString('uk-UA')+' ₴';
     p.stockText=p.inStock ? 'В наявності' : 'Немає в наявності';
-    p.categoryName=CATEGORIES[p.category] || CATEGORIES.gsm;
+    p.categoryName=getCategoryName(p.category) || 'Категорія';
     p.saleTerms=SALE_TERMS[p.saleTermsCode] || SALE_TERMS.wholesale;
     p.minOrderQty=p.saleTermsCode==='retail' ? 1 : 10;
     p.minOrder=p.minOrderQty===1 ? '' : 'Мінімальне замовлення — 10 шт.';
@@ -901,6 +952,7 @@ const CatalogManager = (() => {
     return p;
   }
   function applyOverrides() {
+    rebuildCategories();
     for(const id of Object.keys(PRODUCTS_DATA)) delete PRODUCTS_DATA[id];
     for(const [id,p] of Object.entries(base)) PRODUCTS_DATA[id]=decorate(JSON.parse(JSON.stringify(p)));
     const deleted=readDeleted();
@@ -982,9 +1034,10 @@ const CatalogManager = (() => {
   }
   applyOverrides();
   if(typeof window!=='undefined') window.addEventListener('storage',(e)=>{
-    if([STORAGE_KEY,CUSTOM_KEY,DELETED_KEY].includes(e.key)){applyOverrides();notify('all');}
+    if([STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY].includes(e.key)){applyOverrides();notify('all');}
   });
-  return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORIES,SALE_TERMS,validPrice,validImageSource,
+  return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY,
+    CATEGORIES,SALE_TERMS,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
     validPdfSource,validSpecSections,validDocs,readOverrides,readCustom,readDeleted,
     getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards});
 })();

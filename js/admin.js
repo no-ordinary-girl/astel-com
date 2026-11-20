@@ -1008,7 +1008,10 @@ if (typeof document !== "undefined") {
           row.classList.toggle('has-pending-changes',dirty);
           const button=row.querySelector('[data-save-product]');
           button.disabled=!dirty;
-          row.querySelector('.admin-inventory-unsaved').hidden=!dirty;
+          const metaRow=row.nextElementSibling;
+          const notice=metaRow?.matches('.admin-inventory-meta-row')
+            ? metaRow.querySelector('.admin-inventory-unsaved') : null;
+          if(notice)notice.hidden=!dirty;
         }
         function renderPhotoEditor(p, images) {
           return `<section class="admin-photo-editor" data-product-photos="${esc(p.id)}" aria-label="Фотографії товару: ${esc(p.title)}">
@@ -1059,7 +1062,7 @@ if (typeof document !== "undefined") {
               <div class="admin-description-grid">
                 <label class="admin-new-product-description" data-editor-field-lang="uk">Опис товару українською
                   <textarea name="description" rows="5"></textarea></label>
-                <label class="admin-new-product-description" data-editor-field-lang="en">Description in English
+                <label class="admin-new-product-description" data-editor-field-lang="en">Опис товару англійською
                   <textarea name="descriptionEn" rows="5"></textarea></label>
               </div>
               <div class="admin-new-product-extras">
@@ -1085,7 +1088,7 @@ if (typeof document !== "undefined") {
             if(form && !form.dataset.initialized){AstelProductEditor.bind(form);AstelProductEditor.populate(form,PRODUCTS_DATA[id]);form.dataset.initialized='true';}
           }else{detailOpen.delete(id);target.hidden=true;}
           const button=Array.from(productsTbody.querySelectorAll('[data-toggle-product-details]')).find(b=>b.dataset.toggleProductDetails===id);
-          if(button){button.textContent=opening?'Сховати редактор':'Редагувати товар';button.setAttribute('aria-expanded',String(opening));}
+          if(button){button.innerHTML=opening?'<span aria-hidden="true">▴</span> Сховати редактор':'<span aria-hidden="true">✎</span> Редагувати товар';button.setAttribute('aria-expanded',String(opening));}
         }
         function cleanupRemovedPdfFiles(previousDocs){
           if(typeof AstelProductFiles==='undefined')return;
@@ -1144,9 +1147,7 @@ if (typeof document !== "undefined") {
           productsTbody.innerHTML=items.map(p=>{
             const draft=getDraft(p.id),dirty=productDrafts.has(p.id)||detailsDirty.has(p.id);
             return `<tr class="admin-inventory-product-row ${dirty?'has-pending-changes':''}" data-product-id="${esc(p.id)}">
-              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>
-                <button type="button" class="admin-product-content-toggle" data-toggle-product-details="${esc(p.id)}"
-                  aria-expanded="${detailOpen.has(p.id)}">${detailOpen.has(p.id)?'Сховати редактор':'Редагувати товар'}</button></td>
+              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a></td>
               <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES,draft.category)}</select></td>
               <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS,draft.saleTermsCode)}</select></td>
               <td><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
@@ -1154,7 +1155,13 @@ if (typeof document !== "undefined") {
               <td><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}" ${dirty?'':'disabled'}>Оновити</button>
                 <button type="button" class="admin-inventory-delete" data-delete-product="${esc(p.id)}" title="Видалити товар" aria-label="Видалити товар ${esc(p.title)}"><img src="assets/images/delete.svg" alt="" /></button>
-                <span class="admin-inventory-unsaved" ${dirty?'':'hidden'}>Не збережено</span>
+              </div></td>
+            </tr>
+            <tr class="admin-inventory-meta-row" data-product-meta-id="${esc(p.id)}">
+              <td colspan="6"><div class="admin-inventory-meta-bar">
+                <button type="button" class="admin-product-content-toggle" data-toggle-product-details="${esc(p.id)}"
+                  aria-expanded="${detailOpen.has(p.id)}"><span aria-hidden="true">${detailOpen.has(p.id)?'▴':'✎'}</span> ${detailOpen.has(p.id)?'Сховати редактор':'Редагувати товар'}</button>
+                <span class="admin-inventory-unsaved" role="status" ${dirty?'':'hidden'}>Не збережено</span>
               </div></td>
             </tr>${renderDetailsRow(p)}`;
           }).join('');
@@ -1247,6 +1254,10 @@ if (typeof document !== "undefined") {
             const button=btn;button.disabled=true;
             try{
               if(detailsDirty.has(id)&&form?.dataset.initialized){
+                if(!AstelProductEditor.validateTranslations(form)){
+                  showUndoToast('Потрібен переклад англійською — заповніть підсвічені поля',null);
+                  return;
+                }
                 Object.assign(patch,AstelProductEditor.extractDescriptions(form));
                 patch.specSections=AstelProductEditor.extractSections(form);
                 patch.docs=await AstelProductEditor.extractDocuments(form);
@@ -1301,6 +1312,10 @@ if (typeof document !== "undefined") {
           e.preventDefault();
           const button=addProductForm.querySelector('[type="submit"]');button.disabled=true;
           try {
+            if(!AstelProductEditor.validateTranslations(addProductForm)){
+              showUndoToast('Заповніть англійські переклади у виділених полях',null);
+              return;
+            }
             const data=new FormData(addProductForm);
             const specSections=AstelProductEditor.extractSections(addProductForm);
             const docs=await AstelProductEditor.extractDocuments(addProductForm);

@@ -34,67 +34,99 @@ function selectLanguage(form, language){
 }
 
 function err(msg){throw new Error(msg);}
+const DEFAULT_TITLES={
+  tech:{uk:'Технічні характеристики',en:'Technical Specifications'},
+  general:{uk:'Основні характеристики',en:'General Specifications'},
+};
+function tableType(title,titleEn){
+  const uk=String(title||'').trim(),en=String(titleEn||'').trim();
+  if(uk===DEFAULT_TITLES.tech.uk && en===DEFAULT_TITLES.tech.en)return 'tech';
+  if(uk===DEFAULT_TITLES.general.uk && en===DEFAULT_TITLES.general.en)return 'general';
+  return 'custom';
+}
 function customNames(form){
   const names=new Map();
-  if(typeof PRODUCTS_DATA!=='undefined')Object.values(PRODUCTS_DATA).forEach(p=>(p.specSections||[]).forEach(s=>{
-    if(s.type==='custom'&&s.title)names.set(s.title.toLocaleLowerCase('uk'),{title:s.title,titleEn:s.titleEn||''});
+  if(typeof PRODUCTS_DATA!=='undefined')Object.values(PRODUCTS_DATA).forEach(p=>(p.specSections||[]).forEach(section=>{
+    if(section.type==='custom' && section.title)
+      names.set(section.title.toLocaleLowerCase('uk'),{title:section.title,titleEn:section.titleEn||''});
   }));
   form.querySelectorAll('.admin-spec-section').forEach(section=>{
-    if(section.querySelector('[data-spec-type]')?.value==='custom'){
-      const title=section.querySelector('[data-spec-title]')?.value.trim();
-      if(title){const key=title.toLocaleLowerCase('uk');const existing=names.get(key);
-        names.set(key,{title,titleEn:section.querySelector('[data-spec-title-en]')?.value.trim()||existing?.titleEn||''});}
-    }
+    const title=section.querySelector('[data-spec-title]')?.value.trim();
+    const titleEn=section.querySelector('[data-spec-title-en]')?.value.trim()||'';
+    if(title && tableType(title,titleEn)==='custom')
+      names.set(title.toLocaleLowerCase('uk'),{title,titleEn});
   });
   return [...names.values()].sort((a,b)=>a.title.localeCompare(b.title,'uk'));
 }
 function refreshSuggestions(form){
   const list=form.querySelector('[data-custom-spec-names]');if(!list)return;
   if(!list.id)list.id='astel-spec-names-'+(++nextFormId);
-  form.querySelectorAll('[data-spec-title]').forEach(input=>input.setAttribute('list',list.id));
-  list.replaceChildren(...customNames(form).map(item=>{const opt=document.createElement('option');opt.value=item.title;return opt;}));
+  // Table names are free-text fields. A datalist creates an unwanted native
+  // dropdown arrow on Chromium and suggests the heading is a fixed choice.
+  form.querySelectorAll('[data-spec-title]').forEach(input=>input.removeAttribute('list'));
+  list.replaceChildren(...customNames(form).map(item=>{
+    const opt=document.createElement('option');opt.value=item.title;return opt;
+  }));
 }
 function createSpecRow(data={}){
   const row=document.createElement('div');row.className='admin-spec-row';
   row.innerHTML=`<div class="admin-spec-row__translations">
     <label data-editor-field-lang="uk">Назва характеристики <input data-spec-label placeholder="Назва характеристики" maxlength="160" value="${esc(data.label||'')}" aria-label="Характеристика українською" /></label>
-    <label data-editor-field-lang="en">Specification name <input data-spec-label-en placeholder="Specification name" maxlength="160" value="${esc(englishInitial(data.label||'',data.labelEn))}" aria-label="Specification in English" /></label>
+    <label data-editor-field-lang="en">Назва характеристики <input data-spec-label-en placeholder="Переклад назви англійською" maxlength="160" value="${esc(englishInitial(data.label||'',data.labelEn))}" aria-label="Характеристика англійською" /></label>
   </div><div class="admin-spec-row__translations">
     <label data-editor-field-lang="uk">Значення <input data-spec-value placeholder="Значення" maxlength="2000" value="${esc(data.value||'')}" /></label>
-    <label data-editor-field-lang="en">Value <input data-spec-value-en placeholder="Value" maxlength="2000" value="${esc(englishInitial(data.value||'',data.valueEn))}" /></label>
+    <label data-editor-field-lang="en">Значення <input data-spec-value-en placeholder="Переклад значення англійською" maxlength="2000" value="${esc(englishInitial(data.value||'',data.valueEn))}" /></label>
   </div><button type="button" class="admin-extra-remove admin-extra-remove--small" data-remove-spec-row title="Видалити характеристику" aria-label="Видалити характеристику">×</button>`;
   return row;
 }
 function createSpecSection(data={}){
   const section=document.createElement('div');section.className='admin-spec-section';
   const type=['tech','general','custom'].includes(data.type)?data.type:'tech';
-  section.innerHTML=`<div class="admin-extra-section-top">
-    <label>Тип таблиці <select data-spec-type><option value="tech">Технічні характеристики</option><option value="general">Основні характеристики</option><option value="custom">Власна назва…</option></select></label>
+  const title=type==='custom'?(data.title||''):(data.title||DEFAULT_TITLES[type].uk);
+  const english=type==='custom'?englishInitial(title,data.titleEn):(data.titleEn||DEFAULT_TITLES[type].en);
+  section.innerHTML=`<div class="admin-extra-section-top admin-spec-table-header">
+    <div class="admin-spec-table-name">
+      <label data-editor-field-lang="uk">Тип таблиці
+        <input data-spec-title placeholder="Назва таблиці українською" maxlength="120" value="${esc(title)}" /></label>
+      <label data-editor-field-lang="en">Тип таблиці
+        <input data-spec-title-en placeholder="Перекладіть назву таблиці англійською" maxlength="120" value="${esc(english)}" /></label>
+    </div>
     <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-spec-section><img src="assets/images/delete.svg" alt="" /> Видалити</button>
-  </div><div class="admin-spec-custom-title" data-spec-custom-fields ${type==='custom'?'':'hidden'}>
-    <label data-editor-field-lang="uk">Назва українською <input data-spec-title list="admin-spec-name-suggestions" placeholder="Наприклад: Комплектація" maxlength="120" value="${esc(data.title||'')}" /></label>
-    <label data-editor-field-lang="en">Name in English <input data-spec-title-en placeholder="e.g. Package Contents" maxlength="120" value="${esc(englishInitial(data.title||'',data.titleEn))}" /></label>
   </div><div class="admin-spec-rows"></div><button type="button" class="admin-extra-add" data-add-spec-row>+ Додати характеристику</button>`;
-  section.querySelector('[data-spec-type]').value=type;
   const rows=Array.isArray(data.rows)&&data.rows.length?data.rows:[{}];
   rows.forEach(row=>section.querySelector('.admin-spec-rows').append(createSpecRow(row)));
   return section;
+}
+function safePdfHref(url){
+  const value=String(url||'').trim();
+  return /^(https?:\/\/|(?:\.\.?\/)?(?:assets|downloads|docs)\/)/i.test(value) ? value : '';
 }
 function createDocRow(data={}){
   const row=document.createElement('div');row.className='admin-document-row';
   const original=data.url?data:null;
   if(original)row.dataset.originalDoc=JSON.stringify(original);
+  const isLocal=Boolean(original&&root.AstelProductFiles?.isRef(original.url));
+  const href=isLocal?'#':safePdfHref(original?.url);
+  const filename=String(original?.download||original?.url?.split('/').pop()||'PDF-документ');
+  const currentFile=original?`<div class="admin-document-current" aria-label="Поточний прикріплений PDF">
+    <span class="admin-document-current__badge" aria-hidden="true">PDF</span>
+    <div class="admin-document-current__details"><strong>Прикріплений зараз</strong>
+      <span class="admin-document-current__filename" title="${esc(filename)}">${esc(filename)}</span></div>
+    ${href?`<a class="admin-document-current__open" href="${esc(href)}" ${isLocal?`data-local-pdf="${esc(original.url)}"`:''}
+      target="_blank" rel="noopener noreferrer">Відкрити PDF ↗</a>`:''}
+  </div>`:'';
   row.innerHTML=`<div class="admin-extra-section-top admin-document-row__header">
       <strong>PDF-документ</strong>
       <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-doc-row><img src="assets/images/delete.svg" alt="" /> Видалити</button>
     </div>
     <label data-editor-field-lang="uk">Назва документа українською
     <input data-doc-title placeholder="Наприклад: Паспорт модему" maxlength="200" value="${esc(data.title||'')}" /></label>
-    <label data-editor-field-lang="en">Document title in English
-    <input data-doc-title-en placeholder="e.g. Technical Datasheet" maxlength="200" value="${esc(englishInitial(data.title||'',data.titleEn))}" /></label>
-    <label>PDF-файл${original?' (можна замінити)':''}
-    <input data-doc-file type="file" accept=".pdf,application/pdf" ${original?'':'required'}/></label>
-    ${original?`<span class="admin-document-row__filename">${esc(data.download||'Зовнішнє посилання / PDF')}</span>`:''}`;
+    <label data-editor-field-lang="en">Назва документа англійською
+    <input data-doc-title-en placeholder="Переклад назви документа англійською" maxlength="200" value="${esc(englishInitial(data.title||'',data.titleEn))}" /></label>
+    ${currentFile}
+    <label>${original?'Замінити прикріплений PDF (необов’язково)':'Додати PDF-файл'}
+    <input data-doc-file type="file" accept=".pdf,application/pdf" ${original?'':'required'}/></label>`;
+  if(isLocal)root.AstelProductFiles?.hydrate(row).catch(()=>{});
   return row;
 }
 function populate(form,product){
@@ -120,10 +152,10 @@ function extractDescriptions(form){
 }
 function extractSections(form){
   return Array.from(form.querySelectorAll('.admin-spec-section')).map(section=>{
-    const type=section.querySelector('[data-spec-type]').value;
     const title=section.querySelector('[data-spec-title]')?.value.trim()||'';
     const titleEn=section.querySelector('[data-spec-title-en]')?.value.trim()||'';
-    if(type==='custom'&&(!title||!titleEn))err('Для власної таблиці обов’язкові українська й англійська назви');
+    if(!title||!titleEn)err('Заповніть назву таблиці українською та англійською');
+    const type=tableType(title,titleEn);
     const rows=Array.from(section.querySelectorAll('.admin-spec-row')).map(row=>({
       label:row.querySelector('[data-spec-label]').value.trim(),
       labelEn:row.querySelector('[data-spec-label-en]').value.trim(),
@@ -133,6 +165,44 @@ function extractSections(form){
     if(!rows.length || rows.some(r=>!r.label||!r.labelEn||!r.value||!r.valueEn))err('Заповніть усі поля характеристик українською та англійською');
     return type==='custom'?{type,title,titleEn,rows}:{type,rows};
   });
+}
+function translationHint(value){
+  const text=String(value||'').replace(/\s+/g,' ').trim();
+  const sample=text.length>52?text.slice(0,52)+'…':text;
+  return sample?`Перекладіть «${sample}» англійською`:'Введіть англійський переклад';
+}
+function validateTranslations(form){
+  form.querySelectorAll('.admin-translation-missing').forEach(input=>{
+    input.classList.remove('admin-translation-missing');input.removeAttribute('aria-invalid');
+  });
+  const missing=[];
+  const check=(uk,en)=>{
+    if(!uk||!en)return;
+    const source=uk.value.trim(), translated=en.value.trim();
+    if(source && (!translated || /[А-Яа-яІіЇїЄєҐґ]/.test(translated))){
+      en.placeholder=translationHint(source);
+      en.classList.add('admin-translation-missing');
+      en.setAttribute('aria-invalid','true');
+      missing.push(en);
+    }
+  };
+  check(form.querySelector('[name="description"]'),form.querySelector('[name="descriptionEn"]'));
+  form.querySelectorAll('.admin-spec-section').forEach(section=>{
+    check(section.querySelector('[data-spec-title]'),section.querySelector('[data-spec-title-en]'));
+    section.querySelectorAll('.admin-spec-row').forEach(row=>{
+      check(row.querySelector('[data-spec-label]'),row.querySelector('[data-spec-label-en]'));
+      check(row.querySelector('[data-spec-value]'),row.querySelector('[data-spec-value-en]'));
+    });
+  });
+  form.querySelectorAll('.admin-document-row').forEach(row=>check(row.querySelector('[data-doc-title]'),row.querySelector('[data-doc-title-en]')));
+  if(missing.length){
+    selectLanguage(form,'en');
+    const first=missing[0];
+    first.focus({preventScroll:true});
+    first.scrollIntoView?.({behavior:'smooth',block:'center'});
+    return false;
+  }
+  return true;
 }
 async function readPdf(file){
   if(!root.AstelProductFiles)throw new Error('Не підключено сховище PDF');
@@ -195,10 +265,12 @@ function bind(form){
     selectLanguage(form,lang);
     form.querySelector(`[data-editor-lang="${lang}"]`)?.focus();
   });
-  form.addEventListener('change',e=>{
-    if(e.target.matches('[data-spec-type]')){
-      const section=e.target.closest('.admin-spec-section');section.querySelector('[data-spec-custom-fields]').hidden=e.target.value!=='custom';
+  form.addEventListener('input',e=>{
+    if(e.target.classList?.contains('admin-translation-missing') && e.target.value.trim() && !/[А-Яа-яІіЇїЄєҐґ]/.test(e.target.value)){
+      e.target.classList.remove('admin-translation-missing');e.target.removeAttribute('aria-invalid');
     }
+  });
+  form.addEventListener('change',e=>{
     if(e.target.matches('[data-spec-title]')){
       const selected=customNames(form).find(x=>x.title.toLocaleLowerCase('uk')===e.target.value.trim().toLocaleLowerCase('uk'));
       if(selected){const en=e.target.closest('.admin-spec-section').querySelector('[data-spec-title-en]');if(!en.value)en.value=selected.titleEn;}
@@ -223,7 +295,7 @@ function bind(form){
   if(root.addEventListener)root.addEventListener('astel:catalog-updated',()=>refreshSuggestions(form));
 }
 function reset(form){populate(form,null);clearPhotos(form);}
-const api={bind,reset,populate,extractDescriptions,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto,createSpecSection,createDocRow,englishFromDictionary,englishInitial,selectLanguage};
+const api={bind,reset,populate,extractDescriptions,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto,createSpecSection,createDocRow,englishFromDictionary,englishInitial,selectLanguage,validateTranslations,tableType};
 root.AstelProductEditor=api;
 if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

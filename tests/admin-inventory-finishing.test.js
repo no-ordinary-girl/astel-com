@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const base=path.resolve(__dirname,'..');
+const js=fs.readFileSync(path.join(base,'js/admin.js'),'utf8');
+const editor=fs.readFileSync(path.join(base,'js/admin-new-product.js'),'utf8');
+const css=fs.readFileSync(path.join(base,'css/admin-photos.css'),'utf8');
+assert.match(js,/<tr class="admin-inventory-meta-row" data-product-meta-id=/);
+assert.match(js,/class="admin-inventory-meta-bar"/);
+assert.match(js,/class="admin-inventory-unsaved" role="status"/);
+assert.match(js,/const metaRow=row\.nextElementSibling/);
+assert.match(js,/data-save-product/);
+assert.match(js,/data-delete-product/);
+assert.match(editor,/removeAttribute\('list'\)/);
+assert.match(editor,/admin-document-current__filename/);
+assert.match(editor,/Прикріплений зараз/);
+assert.match(editor,/Відкрити PDF/);
+assert.match(editor,/data-local-pdf/);
+assert.match(css,/\.admin-inventory-meta-bar\s*\{/);
+assert.match(css,/\.admin-document-current__details\s*\{/);
+console.log('PASS separate product action/status row, free-text table title, and current PDF display');

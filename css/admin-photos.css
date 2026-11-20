@@ -439,3 +439,268 @@ html[data-theme="dark"] .admin-category-chip,html[data-theme="dark"] .admin-spec
 }
 html[data-theme="dark"] .admin-editor-language-tabs {border-color:#474747;background:#303030;}
 html[data-theme="dark"] .admin-editor-language-tabs [data-editor-lang][aria-selected="true"] {background:#eee;color:#151515;}
+
+/* Product editor refinements — shared field styling and clear editing affordances. */
+.admin-product-content-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 9px 12px;
+  min-height: 36px;
+  border: 1px solid var(--gray-900);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--gray-900);
+  font: 700 11px/1.2 var(--font-mono);
+  text-decoration: none;
+  transition: background .16s ease, color .16s ease;
+}
+.admin-product-content-toggle:hover,
+.admin-product-content-toggle[aria-expanded="true"] {
+  background: var(--gray-900);
+  color: var(--gray-100);
+}
+.admin-product-content-toggle span {font: 700 15px/1 var(--font-base);}
+
+.admin-inventory-actions { padding-bottom: 18px; }
+.admin-inventory-actions .admin-inventory-unsaved {
+  right: auto;
+  left: 0;
+  bottom: 0;
+  width: 90px;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.admin-editor-language-tabs {
+  display: flex;
+  align-self: stretch;
+  width: 100%;
+  padding: 5px;
+  border-radius: 13px;
+}
+.admin-editor-language-tabs [data-editor-lang] {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 10px 15px;
+  font-size: 13px;
+}
+
+/* The existing-product form previously lacked the input styles of the new-product form. */
+.admin-language-editor :is(input:not([type="checkbox"]):not([type="file"]),textarea,select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  color: var(--gray-900);
+  background: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 9px;
+  font: 400 14px/1.4 var(--font-base);
+}
+.admin-language-editor :is(input,textarea,select):focus-visible {
+  outline: 2px solid var(--gray-900);
+  outline-offset: 2px;
+}
+.admin-language-editor :is(input,textarea,select)[aria-invalid="true"] {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220,38,38,.1);
+}
+.admin-language-editor .admin-document-row input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 9px 11px;
+  min-height: 44px;
+  background: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 9px;
+  color: var(--gray-900);
+  font: 400 12px var(--font-base);
+}
+.admin-language-editor .admin-document-row input[type="file"]::file-selector-button {
+  padding: 7px 11px;
+  margin-right: 14px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 7px;
+  font: 600 12px var(--font-base);
+  cursor: pointer;
+}
+.admin-language-editor .admin-document-row label {
+  min-width: 0;
+  font: 600 12px var(--font-base);
+}
+.admin-language-editor .admin-document-row {
+  align-items: stretch;
+}
+.admin-language-editor .admin-document-row > label {
+  grid-column: 1 / -1;
+}
+.admin-language-editor .admin-document-row__header strong {color:#6b7280;}
+.admin-language-editor .admin-description-grid textarea {min-height: 165px;resize:vertical;}
+
+/* Large editable table heading; only values switch with the language tab. */
+.admin-language-editor .admin-spec-table-header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 95px;
+  padding: 0 116px;
+}
+.admin-language-editor .admin-spec-table-name {
+  display: flex;
+  flex: 1 1 400px;
+  max-width: 460px;
+  min-width: 180px;
+  justify-content: center;
+}
+.admin-language-editor .admin-spec-table-name label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  text-align: center;
+  font: 700 13px/1.3 var(--font-base);
+}
+.admin-language-editor .admin-spec-table-name input {
+  min-height: 47px;
+  text-align: center;
+  font: 700 17px/1.25 var(--font-base);
+  border-radius: 10px;
+}
+.admin-language-editor .admin-spec-table-header > [data-remove-spec-section] {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.admin-language-editor .admin-spec-row label {font: 600 12px/1.3 var(--font-base);}
+.admin-language-editor .admin-spec-row__translations {min-width:0;}
+.admin-language-editor .admin-spec-section {gap:15px;}
+.admin-language-editor .admin-extra-add {font-size:12px;}
+@media (max-width: 760px) {
+  .admin-language-editor .admin-spec-table-header {
+    min-height: auto;
+    padding: 0;
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+  .admin-language-editor .admin-spec-table-header > [data-remove-spec-section] {
+    position: static;
+    align-self: flex-end;
+  }
+  .admin-language-editor .admin-spec-table-name {flex-basis:auto;max-width:100%;width:100%;}
+}
+
+/* November 20 inventory finishing touches: main controls and edit status on
+   separate rows, while Save and Delete stay vertically aligned. */
+.admin-inventory-product-row > td {
+  border-bottom: 0;
+  padding-bottom: 6px;
+}
+.admin-inventory-actions {
+  padding-bottom: 0;
+  align-items: center;
+}
+.admin-inventory-meta-row > td {
+  padding: 0 12px 16px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.admin-inventory-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 43px;
+}
+.admin-inventory-meta-bar .admin-product-content-toggle {
+  margin: 0;
+  flex-shrink: 0;
+}
+.admin-inventory-meta-bar .admin-inventory-unsaved {
+  position: static;
+  width: auto;
+  margin-left: auto;
+  font: 700 11px/1.4 var(--font-mono);
+  color: #b45309;
+  text-align: right;
+}
+/* Real text input: no browser-provided datalist arrow or select affordance. */
+.admin-language-editor .admin-spec-table-name input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: none;
+  padding-inline: 15px;
+}
+/* The document is already attached; the file picker only replaces it. */
+.admin-language-editor .admin-document-row .admin-document-current {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+}
+.admin-document-current__badge {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 8px;
+  background: #f2f2f2;
+  color: var(--gray-900);
+  font: 700 12px var(--font-mono);
+}
+.admin-document-current__details {
+  display: flex;
+  flex: 1 1 180px;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  font: 500 12px/1.35 var(--font-base);
+}
+.admin-document-current__details strong {
+  font-size: 12px;
+  color: var(--gray-900);
+}
+.admin-document-current__filename {
+  color: #5d6675;
+  overflow-wrap: anywhere;
+}
+.admin-document-current__open {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  color: var(--gray-900);
+  font: 700 12px var(--font-mono);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.admin-document-current__open:hover { opacity: .7; }
+.admin-document-current__open[aria-disabled="true"] {
+  opacity: .45;
+  pointer-events: none;
+}
+html[data-theme="dark"] .admin-language-editor .admin-document-row .admin-document-current {
+  background: #303030;
+  border-color: #474747;
+}
+html[data-theme="dark"] .admin-document-current__badge { background: #424242; color: #eee; }
+html[data-theme="dark"] .admin-document-current__details strong,
+html[data-theme="dark"] .admin-document-current__open { color: #eee; }
+html[data-theme="dark"] .admin-document-current__filename { color: #c0c0c0; }
+@media (max-width: 640px) {
+  .admin-inventory-meta-bar { align-items: flex-start; }
+  .admin-inventory-meta-bar .admin-inventory-unsaved { align-self: center; }
+}

@@ -972,33 +972,57 @@ if (typeof document !== "undefined") {
         // Catalog Inventory / Media (localStorage prototype).
         const productsTbody=document.getElementById('admin-products-tbody');
         const addProductForm=document.getElementById('admin-new-product-form');
-        let editingPhotosId=null;
         const options=(items,selected)=>Object.entries(items).map(([key,label])=>
           `<option value="${esc(key)}" ${key===selected?'selected':''}>${esc(label)}</option>`).join('');
+
+        // The photo gallery is intentionally visible for every product: the first
+        // image is the product's cover image. Reordering is saved immediately.
         function renderPhotoEditor(p) {
-          return `<tr class="admin-photo-editor-row"><td colspan="6">
-            <div class="admin-photo-editor">
-              <h4>Фотографії: ${esc(p.title)} <small>Зображення 1 — головне</small></h4>
-              <div class="admin-photo-list">${(p.images||[]).map((src,i)=>`
-                <div class="admin-photo-item">
-                  <img src="${esc(src)}" alt="Фото ${i+1}" />
-                  <span>${i+1}</span>
-                  <button type="button" data-photo-move="up" data-photo-index="${i}" ${i===0?'disabled':''} title="Вище">↑</button>
-                  <button type="button" data-photo-move="down" data-photo-index="${i}" ${i===p.images.length-1?'disabled':''} title="Нижче">↓</button>
-                  <button type="button" data-photo-remove="${i}" title="Видалити">×</button>
-                </div>`).join('')}</div>
-              <label class="admin-photo-upload">Додати фото (PNG, JPG або WebP; максимум 12)
-                <input type="file" accept="image/png,image/jpeg,image/webp" multiple data-photo-upload="${esc(p.id)}" />
-              </label>
-              <p class="admin-photo-warning">Файли зберігаються лише в цьому браузері. Для іншого пристрою потрібен сервер.</p>
-            </div>
-          </td></tr>`;
+          const images=Array.isArray(p.images)?p.images:[];
+          return `<tr class="admin-photo-editor-row" data-product-photos="${esc(p.id)}">
+            <td colspan="6">
+              <section class="admin-photo-editor" aria-label="Фотографії товару: ${esc(p.title)}">
+                <div class="admin-photo-editor__top">
+                  <div class="admin-photo-editor__heading">
+                    <span class="admin-photo-editor__title">Фотографії</span>
+                    <span class="admin-photo-editor__count">${images.length} / 12</span>
+                  </div>
+                  <span class="admin-photo-editor__hint">Перетягніть фото, щоб змінити порядок. Перше фото — головне.</span>
+                </div>
+                <div class="admin-photo-list" role="list" aria-label="Порядок фотографій">
+                  ${images.map((src,i)=>`
+                    <div class="admin-photo-item ${i===0?'is-main':''}" role="listitem"
+                      data-photo-index="${i}" draggable="true" tabindex="0"
+                      aria-label="Фото ${i+1}${i===0?', головне':''}. Перетягніть або натисніть Alt зі стрілкою для зміни порядку">
+                      <div class="admin-photo-item__preview">
+                        <img src="${esc(src)}" alt="Фото ${i+1}: ${esc(p.title)}" draggable="false" />
+                        <button type="button" class="admin-photo-item__remove" data-photo-remove="${i}"
+                          aria-label="Видалити фото ${i+1}" title="Видалити фото">×</button>
+                      </div>
+                      <div class="admin-photo-item__footer">
+                        <span class="admin-photo-item__number">${i===0?'Головне':`Фото ${i+1}`}</span>
+                        <span class="admin-photo-item__handle" aria-hidden="true" title="Перетягніть для зміни порядку">⠿</span>
+                      </div>
+                    </div>`).join('')}
+                  ${images.length<12?`
+                    <label class="admin-photo-add-tile" title="Додати фотографії до товару">
+                      <input class="admin-photo-add-tile__input" type="file"
+                        accept="image/png,image/jpeg,image/webp" multiple data-photo-upload="${esc(p.id)}"
+                        aria-label="Додати фото до товару ${esc(p.title)}" />
+                      <span class="admin-photo-add-tile__icon" aria-hidden="true">+</span>
+                      <span>Додати фото</span>
+                    </label>`:''}
+                </div>
+                <p class="admin-photo-warning">Зображення зберігаються лише в цьому браузері до підключення сервера.</p>
+              </section>
+            </td>
+          </tr>`;
         }
         function renderProductsTable() {
           const items=Object.values(PRODUCTS_DATA);
           document.getElementById('tab-count-products').textContent=items.length;
           productsTbody.innerHTML=items.map(p=>`
-            <tr data-product-id="${esc(p.id)}">
+            <tr class="admin-inventory-product-row" data-product-id="${esc(p.id)}">
               <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a></td>
               <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES,p.category)}</select></td>
               <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS,p.saleTermsCode)}</select></td>
@@ -1006,10 +1030,9 @@ if (typeof document !== "undefined") {
               <td><button type="button" class="stock-toggle-btn ${p.inStock?'is-instock':'is-outstock'}" data-toggle-stock="${esc(p.id)}" data-current-stock="${p.inStock}">${p.inStock?'● В наявності':'○ Немає в наявності'}</button></td>
               <td><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}">Оновити</button>
-                <button type="button" class="admin-btn admin-btn--outline" data-edit-photos="${esc(p.id)}">Фото (${p.images?.length||0})</button>
               </div></td>
             </tr>
-            ${editingPhotosId===p.id?renderPhotoEditor(p):''}`
+            ${renderPhotoEditor(p)}`
           ).join('');
         }
         async function compressImage(file) {
@@ -1055,26 +1078,32 @@ if (typeof document !== "undefined") {
             if(price==null){input.focus();input.setAttribute('aria-invalid','true');showUndoToast('Вкажіть цілу ціну від 1 до 99 999 999 грн',null);return;}
             try{CatalogManager.updateProduct(id,{price,category:row.querySelector('[data-product-category]').value,saleTermsCode:row.querySelector('[data-product-terms]').value});renderProductsTable();showUndoToast('Товар оновлено',null);}
             catch(err){showUndoToast(err.message,null);}
-          } else if(btn.hasAttribute('data-edit-photos')) {
-            const id=btn.dataset.editPhotos;
-            editingPhotosId=editingPhotosId===id?null:id;renderProductsTable();
-          } else if(btn.hasAttribute('data-photo-move')||btn.hasAttribute('data-photo-remove')) {
-            const id=editingPhotosId,p=PRODUCTS_DATA[id];if(!p)return;
+          } else if(btn.hasAttribute('data-photo-remove')) {
+            const photosRow=btn.closest('[data-product-photos]');
+            const id=photosRow?.dataset.productPhotos,p=PRODUCTS_DATA[id];if(!p)return;
             const imgs=[...p.images];
-            const index=Number(btn.dataset.photoIndex ?? btn.dataset.photoRemove);
+            const index=Number(btn.dataset.photoRemove);
             if(!Number.isInteger(index)||index<0||index>=imgs.length)return;
-            if(btn.hasAttribute('data-photo-remove')) {
-              if(imgs.length===1){showUndoToast('Потрібно залишити хоча б одне фото',null);return;}
-              imgs.splice(index,1);
-            }
-            else {
-              const other=index+(btn.dataset.photoMove==='up'?-1:1);
-              if(other<0||other>=imgs.length)return;
-              [imgs[index],imgs[other]]=[imgs[other],imgs[index]];
-            }
+            if(imgs.length===1){showUndoToast('Потрібно залишити хоча б одне фото',null);return;}
+            imgs.splice(index,1);
             try{CatalogManager.updateProduct(id,{images:imgs});renderProductsTable();}
             catch(err){showUndoToast(err.message,null);}
           }
+        });
+        AstelPhotoGallery.mount(productsTbody, ({id,from,target,after,focusMoved=false}) => {
+          const product=PRODUCTS_DATA[id];if(!product)return;
+          const result=AstelPhotoGallery.moveImages(product.images,from,target,after);
+          if(!result.changed)return;
+          try {
+            CatalogManager.updateProduct(id,{images:result.images});
+            renderProductsTable();
+            if(focusMoved) {
+              const gallery=Array.from(productsTbody.querySelectorAll('[data-product-photos]'))
+                .find(row=>row.dataset.productPhotos===id);
+              gallery?.querySelector(`.admin-photo-item[data-photo-index="${result.newIndex}"]`)?.focus();
+            }
+            showUndoToast('Порядок фотографій збережено',null);
+          } catch(err) {showUndoToast(err.message,null);}
         });
         productsTbody.addEventListener('change',async(e)=>{
           const input=e.target.closest('[data-photo-upload]');if(!input)return;

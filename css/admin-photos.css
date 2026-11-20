@@ -1,0 +1,248 @@
+/* Inventory photo gallery — intentionally separate from admin.css so other
+   dashboard customizations (including KPI columns) remain untouched. */
+.admin-inventory-product-row > td {
+  border-bottom: 0;
+  padding-bottom: 8px;
+}
+.admin-photo-editor-row > td {
+  padding: 0 12px 24px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.admin-photo-editor-row:last-child > td {
+  border-bottom: 0;
+}
+.admin-photo-editor {
+  padding: 15px 16px 17px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  gap: 13px;
+}
+.admin-photo-editor__top,
+.admin-photo-editor__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.admin-photo-editor__top {
+  justify-content: space-between;
+  column-gap: 20px;
+}
+.admin-photo-editor__title {
+  color: var(--gray-900);
+  font: 700 12px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+.admin-photo-editor__count {
+  color: #6b7280;
+  font: 600 11px var(--font-mono);
+  padding: 3px 7px;
+  border-radius: 20px;
+  background: var(--gray-200);
+}
+.admin-photo-editor__hint,
+.admin-photo-warning {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: #6b7280;
+}
+.admin-photo-warning {
+  margin: 0;
+}
+.admin-photo-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 11px;
+}
+.admin-photo-item {
+  position: relative;
+  align-items: start;
+  width: 128px;
+  min-height: 151px;
+  padding: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: #fff;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+.admin-photo-item.is-main {
+  border-color: var(--gray-900);
+}
+.admin-photo-item:hover,
+.admin-photo-item:focus-visible {
+  border-color: var(--gray-900);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+.admin-photo-item:focus-visible {
+  outline: 2px solid var(--gray-900);
+  outline-offset: 3px;
+}
+.admin-photo-item.is-dragging {
+  opacity: 0.33;
+}
+.admin-photo-item.is-drop-before::before,
+.admin-photo-item.is-drop-after::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 4px;
+  background: var(--gray-900);
+}
+.admin-photo-item.is-drop-before::before {
+  left: -8px;
+}
+.admin-photo-item.is-drop-after::after {
+  right: -8px;
+}
+.admin-photo-item__preview {
+  position: relative;
+  flex: 0 0 104px;
+  height: 104px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #ececec;
+}
+.admin-photo-item__preview > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: transparent;
+  pointer-events: none;
+}
+.admin-photo-item .admin-photo-item__remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 25px;
+  height: 25px;
+  min-height: 0;
+  border: 1px solid var(--gray-200);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 7px;
+  color: var(--gray-900);
+  font: 18px/1 var(--font-base);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.admin-photo-item .admin-photo-item__remove:hover {
+  background: var(--gray-900);
+  color: #fff;
+}
+.admin-photo-item__footer {
+  display: flex;
+  flex-direction: row-reverse;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 7px;
+}
+.admin-photo-item .admin-photo-item__number {
+  color: var(--gray-900);
+  font: 600 11px var(--font-mono);
+}
+.admin-photo-item .admin-photo-item__handle {
+  color: #6b7280;
+  font-size: 17px;
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+  padding: 2px 4px;
+}
+.admin-photo-ghost {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
+  cursor: grabbing;
+}
+.admin-photo-add-tile {
+  position: relative;
+  width: 128px;
+  min-height: 151px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  color: #52525b;
+  background: transparent;
+  border: 1.5px dashed #b8b8ba;
+  border-radius: 12px;
+  cursor: pointer;
+  font: 600 12px var(--font-mono);
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.admin-photo-add-tile:hover,
+.admin-photo-add-tile:focus-within {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: var(--gray-900);
+  color: var(--gray-900);
+}
+.admin-photo-add-tile__icon {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  font: 400 26px/1 var(--font-base);
+  border-radius: 50%;
+  border: 1px solid currentColor;
+}
+.admin-photo-add-tile__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .admin-photo-editor {
+    padding: 13px;
+  }
+  .admin-photo-editor__hint {
+    width: 100%;
+  }
+}
+html[data-theme="dark"] .admin-photo-editor {
+  background: #242424;
+  border-color: #383838;
+}
+html[data-theme="dark"] .admin-photo-item {
+  background: #303030;
+  border-color: #474747;
+}
+html[data-theme="dark"] .admin-photo-item.is-main {
+  border-color: #eee;
+}
+html[data-theme="dark"] .admin-photo-add-tile {
+  border-color: #626262;
+  color: #ccc;
+}
+html[data-theme="dark"] .admin-photo-add-tile:hover {
+  background: #303030;
+}
+html[data-theme="dark"] .admin-photo-item .admin-photo-item__number {
+  color: #eee;
+}
+html[data-theme="dark"] .admin-photo-item .admin-photo-item__remove {
+  color: #111;
+}

@@ -973,6 +973,8 @@ if (typeof document !== "undefined") {
         const productsTbody=document.getElementById('admin-products-tbody');
         const addProductForm=document.getElementById('admin-new-product-form');
         const productDrafts=new Map();
+        const detailsDirty=new Set();
+        const detailOpen=new Set();
         AstelProductEditor.bind(addProductForm);
         const options=(items,selected)=>Object.entries(items).map(([key,label])=>
           `<option value="${esc(key)}" ${key===selected?'selected':''}>${esc(label)}</option>`).join('');
@@ -1002,16 +1004,14 @@ if (typeof document !== "undefined") {
             saleTermsCode:row.querySelector('[data-product-terms]').value};
         }
         function feedback(row) {
-          const dirty=productDrafts.has(row.dataset.productId);
+          const dirty=productDrafts.has(row.dataset.productId)||detailsDirty.has(row.dataset.productId);
           row.classList.toggle('has-pending-changes',dirty);
           const button=row.querySelector('[data-save-product]');
           button.disabled=!dirty;
           row.querySelector('.admin-inventory-unsaved').hidden=!dirty;
         }
         function renderPhotoEditor(p, images) {
-          return `<tr class="admin-photo-editor-row" data-product-photos="${esc(p.id)}">
-            <td colspan="6">
-              <section class="admin-photo-editor" aria-label="Фотографії товару: ${esc(p.title)}">
+          return `<section class="admin-photo-editor" data-product-photos="${esc(p.id)}" aria-label="Фотографії товару: ${esc(p.title)}">
                 <div class="admin-photo-editor__top">
                   <div class="admin-photo-editor__heading">
                     <span class="admin-photo-editor__title">Фотографії</span>
@@ -1044,9 +1044,56 @@ if (typeof document !== "undefined") {
                     </label>`:''}
                 </div>
                 <p class="admin-photo-warning">Зображення зберігаються лише в цьому браузері до підключення сервера.</p>
-              </section>
-            </td>
-          </tr>`;
+              </section>`;
+        }
+        function renderDetailsRow(p) {
+          return `<tr class="admin-product-details-row" data-product-details-id="${esc(p.id)}" ${detailOpen.has(p.id)?'':'hidden'}>
+            <td colspan="6"><form class="admin-product-details-form admin-language-editor" data-editor-language="uk" data-edit-product="${esc(p.id)}">
+              <h3>Редагування товару — ${esc(p.title)}</h3>
+              <p class="admin-photo-warning">Фотографії, опис, характеристики та PDF залишаються чернеткою до натискання «Оновити» у рядку товару.</p>
+              ${renderPhotoEditor(p,getDraft(p.id).images)}
+              <div class="admin-editor-language-tabs" data-editor-language-tabs role="tablist" aria-label="Мова редагування">
+                <button type="button" role="tab" data-editor-lang="uk" aria-selected="true">Українська</button>
+                <button type="button" role="tab" data-editor-lang="en" aria-selected="false" tabindex="-1">English</button>
+              </div>
+              <div class="admin-description-grid">
+                <label class="admin-new-product-description" data-editor-field-lang="uk">Опис товару українською
+                  <textarea name="description" rows="5"></textarea></label>
+                <label class="admin-new-product-description" data-editor-field-lang="en">Description in English
+                  <textarea name="descriptionEn" rows="5"></textarea></label>
+              </div>
+              <div class="admin-new-product-extras">
+                <section class="admin-extra-block"><div class="admin-extra-heading"><div><h3>Таблиці характеристик</h3><p>Назви й значення двома мовами; свої назви таблиць вводяться прямо у формі.</p></div>
+                  <button type="button" class="admin-btn admin-btn--outline" data-add-spec-section>+ Додати таблицю</button></div>
+                  <div data-spec-sections class="admin-spec-sections"></div></section>
+                <section class="admin-extra-block"><div class="admin-extra-heading"><div><h3>Специфікації та документація</h3><p>Можна додавати, видаляти та замінювати PDF-файли.</p></div>
+                  <button type="button" class="admin-btn admin-btn--outline" data-add-doc-row>+ Додати PDF</button></div>
+                  <div data-doc-rows class="admin-document-rows"></div></section>
+              </div><datalist data-custom-spec-names></datalist>
+            </form></td></tr>`;
+        }
+        function detailsForm(id){
+          return Array.from(productsTbody.querySelectorAll('[data-edit-product]')).find(f=>f.dataset.editProduct===id);
+        }
+        function showDetails(id){
+          const target=Array.from(productsTbody.querySelectorAll('[data-product-details-id]')).find(row=>row.dataset.productDetailsId===id);
+          if(!target)return;
+          const opening=!detailOpen.has(id);
+          if(opening){
+            detailOpen.add(id);target.hidden=false;
+            const form=detailsForm(id);
+            if(form && !form.dataset.initialized){AstelProductEditor.bind(form);AstelProductEditor.populate(form,PRODUCTS_DATA[id]);form.dataset.initialized='true';}
+          }else{detailOpen.delete(id);target.hidden=true;}
+          const button=Array.from(productsTbody.querySelectorAll('[data-toggle-product-details]')).find(b=>b.dataset.toggleProductDetails===id);
+          if(button){button.textContent=opening?'Сховати редактор':'Редагувати товар';button.setAttribute('aria-expanded',String(opening));}
+        }
+        function cleanupRemovedPdfFiles(previousDocs){
+          if(typeof AstelProductFiles==='undefined')return;
+          const retained=new Set(Object.values(PRODUCTS_DATA).flatMap(p=>(p.docs||[]).map(d=>d.url)));
+          for(const d of previousDocs||[]){
+            if(AstelProductFiles.isRef(d.url) && !retained.has(d.url))
+              AstelProductFiles.remove(d.url).catch(()=>{});
+          }
         }
         function renderCategoryManager() {
           const list=document.getElementById('admin-category-list');
@@ -1085,14 +1132,21 @@ if (typeof document !== "undefined") {
           catch(err){showUndoToast(err.message,null);}
         });
         function renderProductsTable() {
+          // Detach already-open editors to preserve uncommitted text and selected File objects.
+          const savedForms=new Map();
+          productsTbody.querySelectorAll('[data-edit-product][data-initialized="true"]').forEach(form=>{
+            savedForms.set(form.dataset.editProduct,form);form.remove();
+          });
           const items=Object.values(PRODUCTS_DATA);
           for(const id of productDrafts.keys()) if(!PRODUCTS_DATA[id]) productDrafts.delete(id);
           document.getElementById('tab-count-products').textContent=items.length;
           renderCategoryManager();
           productsTbody.innerHTML=items.map(p=>{
-            const draft=getDraft(p.id),dirty=productDrafts.has(p.id);
+            const draft=getDraft(p.id),dirty=productDrafts.has(p.id)||detailsDirty.has(p.id);
             return `<tr class="admin-inventory-product-row ${dirty?'has-pending-changes':''}" data-product-id="${esc(p.id)}">
-              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a></td>
+              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>
+                <button type="button" class="admin-product-content-toggle" data-toggle-product-details="${esc(p.id)}"
+                  aria-expanded="${detailOpen.has(p.id)}">${detailOpen.has(p.id)?'Сховати редактор':'Редагувати товар'}</button></td>
               <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES,draft.category)}</select></td>
               <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS,draft.saleTermsCode)}</select></td>
               <td><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
@@ -1102,8 +1156,20 @@ if (typeof document !== "undefined") {
                 <button type="button" class="admin-inventory-delete" data-delete-product="${esc(p.id)}" title="Видалити товар" aria-label="Видалити товар ${esc(p.title)}"><img src="assets/images/delete.svg" alt="" /></button>
                 <span class="admin-inventory-unsaved" ${dirty?'':'hidden'}>Не збережено</span>
               </div></td>
-            </tr>${renderPhotoEditor(p,draft.images)}`;
+            </tr>${renderDetailsRow(p)}`;
           }).join('');
+          savedForms.forEach((form,id)=>{
+            const row=Array.from(productsTbody.querySelectorAll('[data-product-details-id]')).find(r=>r.dataset.productDetailsId===id);
+            row?.querySelector('form')?.replaceWith(form);
+            // Keep the unsaved text/File objects, but refresh the gallery to reflect
+            // changes made by dragging, uploading or removing a photo.
+            const gallery=form.querySelector('[data-product-photos]');
+            if(gallery && PRODUCTS_DATA[id]) {
+              const template=document.createElement('template');
+              template.innerHTML=renderPhotoEditor(PRODUCTS_DATA[id],getDraft(id).images).trim();
+              gallery.replaceWith(template.content.firstElementChild);
+            }
+          });
         }
         async function compressImage(file) {
           if(!['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Підтримуються PNG, JPG та WebP');
@@ -1135,18 +1201,36 @@ if (typeof document !== "undefined") {
           return images;
         }
         productsTbody.addEventListener('input',(e)=>{
+          const form=e.target.closest('[data-edit-product]');
+          if(form){detailsDirty.add(form.dataset.editProduct);
+            const id=form.dataset.editProduct;
+            const row=Array.from(productsTbody.querySelectorAll('tr[data-product-id]')).find(r=>r.dataset.productId===id);
+            if(row)feedback(row);return;}
           const row=e.target.closest('tr[data-product-id]');
           if(!row || !e.target.matches('.admin-price-input'))return;
           setDraft(row.dataset.productId,readRowDraft(row));feedback(row);
         });
         productsTbody.addEventListener('change',(e)=>{
+          const form=e.target.closest('[data-edit-product]');
+          if(form){detailsDirty.add(form.dataset.editProduct);
+            const id=form.dataset.editProduct;
+            const row=Array.from(productsTbody.querySelectorAll('tr[data-product-id]')).find(r=>r.dataset.productId===id);
+            if(row)feedback(row);return;}
           const row=e.target.closest('tr[data-product-id]');
           if(!row || !e.target.matches('[data-product-category],[data-product-terms],.admin-price-input'))return;
           setDraft(row.dataset.productId,readRowDraft(row));feedback(row);
         });
-        productsTbody.addEventListener('click',(e)=>{
+        productsTbody.addEventListener('click',async(e)=>{
+          const form=e.target.closest('[data-edit-product]');
+          if(form && e.target.closest('button') && !e.target.closest('[data-editor-lang]')){
+            const id=form.dataset.editProduct;
+            detailsDirty.add(id);
+            const parent=Array.from(productsTbody.querySelectorAll('tr[data-product-id]')).find(r=>r.dataset.productId===id);
+            if(parent)feedback(parent);
+          }
           const btn=e.target.closest('button');if(!btn)return;
           const row=btn.closest('tr[data-product-id]');
+          if(btn.hasAttribute('data-toggle-product-details')){showDetails(btn.dataset.toggleProductDetails);return;}
           if(btn.hasAttribute('data-toggle-stock')) {
             const id=btn.dataset.toggleStock,draft=readRowDraft(row);
             draft.inStock=!draft.inStock;
@@ -1157,15 +1241,30 @@ if (typeof document !== "undefined") {
             const price=CatalogManager.validPrice(draft.price);
             if(price==null){const input=row.querySelector('.admin-price-input');input.focus();input.setAttribute('aria-invalid','true');showUndoToast('Вкажіть цілу ціну від 1 до 99 999 999 грн',null);return;}
             const previous=getDraft(id);
-            productDrafts.delete(id);
-            try{CatalogManager.updateProduct(id,{price,category:draft.category,saleTermsCode:draft.saleTermsCode,
-                inStock:draft.inStock,images:[...draft.images]});
+            const form=detailsForm(id);
+            const patch={price,category:draft.category,saleTermsCode:draft.saleTermsCode,
+                inStock:draft.inStock,images:[...draft.images]};
+            const button=btn;button.disabled=true;
+            try{
+              if(detailsDirty.has(id)&&form?.dataset.initialized){
+                Object.assign(patch,AstelProductEditor.extractDescriptions(form));
+                patch.specSections=AstelProductEditor.extractSections(form);
+                patch.docs=await AstelProductEditor.extractDocuments(form);
+                // Existing built-in rows are represented in the new unified editor.
+                patch.techSpecs=[];patch.generalSpecs=[];
+              }
+              const oldDocs=[...(PRODUCTS_DATA[id]?.docs||[])];
+              CatalogManager.updateProduct(id,patch);
+              cleanupRemovedPdfFiles(oldDocs);
+              if(form?.dataset.initialized)AstelProductEditor.populate(form,PRODUCTS_DATA[id]);
+              productDrafts.delete(id);detailsDirty.delete(id);
               renderProductsTable();showUndoToast('Товар оновлено',null);
-            }catch(err){productDrafts.set(id,previous);renderProductsTable();showUndoToast(err.name==='QuotaExceededError'?'Недостатньо місця в localStorage':err.message,null);}
+            }catch(err){setDraft(id,previous);renderProductsTable();showUndoToast(err.name==='QuotaExceededError'?'Недостатньо місця в localStorage':err.message,null);}
+            finally{button.disabled=false;}
           } else if(btn.hasAttribute('data-delete-product')) {
             const id=btn.dataset.deleteProduct,p=PRODUCTS_DATA[id];if(!p)return;
             if(!window.confirm(`Видалити товар «${p.title}» із каталогу?\nЦю дію неможливо скасувати.`)) return;
-            try {productDrafts.delete(id);CatalogManager.deleteProduct(id);renderProductsTable();showUndoToast('Товар видалено з каталогу',null);}
+            try {const oldDocs=[...(p.docs||[])];productDrafts.delete(id);detailsDirty.delete(id);detailOpen.delete(id);CatalogManager.deleteProduct(id);cleanupRemovedPdfFiles(oldDocs);renderProductsTable();showUndoToast('Товар видалено з каталогу',null);}
             catch(err){showUndoToast(err.message,null);}
           } else if(btn.hasAttribute('data-photo-remove')) {
             const photosRow=btn.closest('[data-product-photos]');
@@ -1212,6 +1311,7 @@ if (typeof document !== "undefined") {
               id:String(data.get('id')||'').trim(),title:String(data.get('title')||'').trim(),
               titleEn:String(data.get('titleEn')||'').trim(),
               description:String(data.get('description')||'').trim(),
+              descriptionEn:String(data.get('descriptionEn')||'').trim(),
               price:String(data.get('price')||'').trim(),category:String(data.get('category')||''),
               saleTermsCode:String(data.get('saleTermsCode')||''),inStock:!!data.get('inStock'),images:photos,
               specSections,docs,

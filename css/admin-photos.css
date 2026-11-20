@@ -302,3 +302,140 @@ html[data-theme="dark"] .admin-category-chip,html[data-theme="dark"] .admin-spec
   opacity: 0;
   overflow: hidden;
 }
+
+/* Product information editors: unchanged light industrial design. */
+.admin-new-product-grid > .admin-new-product-photo-field {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: 13px;
+  background: #fff;
+}
+.admin-description-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+}
+.admin-description-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.admin-description-grid textarea {
+  width: 100%; min-height: 150px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px; padding: 12px;
+  background: #fff; resize: vertical;
+  font: 400 14px/1.5 var(--font-base);
+}
+.admin-spec-custom-title {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
+  padding:12px; border:1px dashed var(--gray-300,#ccc);
+  border-radius:10px; background: #fff;
+}
+.admin-spec-custom-title[hidden] { display:none; }
+.admin-spec-custom-title label, .admin-spec-row label {display:flex;flex-direction:column;gap:6px;font:600 12px var(--font-base);}
+.admin-spec-custom-title input, .admin-spec-row input {width:100%;min-width:0;min-height:40px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:9px;background:#fff;}
+.admin-spec-row {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 35px;align-items:end;gap:10px;}
+.admin-spec-row__translations {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+.admin-extra-remove--section {display:inline-flex;align-items:center;gap:7px;align-self:auto;white-space:nowrap;min-height:38px;}
+.admin-extra-remove--section img {width:15px;height:15px;object-fit:contain;opacity:.6;}
+.admin-extra-remove--small {height:40px;align-self:end;}
+.admin-document-row__actions {grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.admin-document-row__filename {font:500 12px var(--font-mono);color:#6b7280;overflow-wrap:anywhere;}
+.admin-product-details-row[hidden] {display:none!important;}
+.admin-product-details-row > td {padding:0 16px 24px!important;}
+.admin-product-details-form {display:flex;flex-direction:column;gap:16px;padding:20px;border:1px solid var(--gray-200);border-radius:15px;background:#f7f7f7;}
+.admin-product-details-form > h3 {font-size:17px;font-weight:700;margin:0;}
+.admin-details-toggle {height:35px;padding:0 12px;font-size:11px;}
+.admin-product-details-form .admin-extra-block {background:#fff;}
+@media (max-width:960px) {
+  .admin-description-grid,.admin-spec-custom-title {grid-template-columns:1fr;}
+  .admin-spec-row {grid-template-columns:minmax(0,1fr) 35px;}
+  .admin-spec-row__translations {grid-column:1;}
+  .admin-spec-row .admin-extra-remove--small {grid-column:2;grid-row:1 / 3;align-self:center;}
+}
+@media (max-width:640px) {
+  .admin-spec-row__translations {grid-template-columns:1fr;}
+  .admin-new-product-grid > .admin-new-product-photo-field {padding:12px;}
+}
+.admin-document-row__header {grid-column:1 / -1;align-items:center;}
+.admin-document-row__header strong {font:700 12px var(--font-mono);color:#6b7280;}
+
+/* Product content editing stays collapsed until explicitly opened. */
+.admin-product-content-toggle {
+  display: block;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font: 700 11px var(--font-mono);
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.admin-product-content-toggle:hover {color: var(--gray-900);}
+.admin-product-content-toggle:focus-visible {outline: 2px solid currentColor;outline-offset: 3px;}
+.admin-product-details-form > .admin-photo-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+/* One language at a time. The other language's input values remain in the DOM
+   for the existing bilingual validation and Update button. */
+.admin-language-editor[data-editor-language="uk"] [data-editor-field-lang="en"],
+.admin-language-editor[data-editor-language="en"] [data-editor-field-lang="uk"] {display: none !important;}
+.admin-editor-language-tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--gray-200);
+  background: var(--gray-100);
+  border-radius: 11px;
+}
+.admin-editor-language-tabs [data-editor-lang] {
+  border: 0;
+  border-radius: 8px;
+  min-height: 38px;
+  padding: 9px 18px;
+  color: #6b7280;
+  background: transparent;
+  cursor: pointer;
+  font: 700 12px var(--font-mono);
+}
+.admin-editor-language-tabs [data-editor-lang][aria-selected="true"] {
+  background: var(--gray-900);
+  color: var(--gray-100);
+}
+.admin-editor-language-tabs [data-editor-lang]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.admin-language-editor .admin-description-grid,
+.admin-language-editor .admin-spec-custom-title,
+.admin-language-editor .admin-spec-row__translations {
+  grid-template-columns: minmax(0, 1fr);
+}
+.admin-language-editor .admin-spec-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 35px;
+}
+@media (max-width: 760px) {
+  .admin-language-editor .admin-spec-row {
+    grid-template-columns: minmax(0, 1fr) 35px;
+  }
+  .admin-language-editor .admin-spec-row__translations {grid-column: 1;}
+  .admin-language-editor .admin-spec-row .admin-extra-remove--small {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+}
+html[data-theme="dark"] .admin-editor-language-tabs {border-color:#474747;background:#303030;}
+html[data-theme="dark"] .admin-editor-language-tabs [data-editor-lang][aria-selected="true"] {background:#eee;color:#151515;}

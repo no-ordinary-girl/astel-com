@@ -392,6 +392,7 @@
     <script src="js/site-nav.js"></script>
 
     <script src="js/products-data.js"></script>
+    <script src="js/product-file-store.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // --- Render Documentation Accordion from PRODUCTS_DATA ---
@@ -424,7 +425,7 @@
                   const actionLabel = isDirectDownload ? "PDF" : "DRIVE";
 
                   return `
-                    <a href="${escapeHtml(d.url)}" ${linkAttrs} class="docs-file-link">
+                    <a href="${AstelProductFiles.isRef(d.url) ? '#' : escapeHtml(d.url)}" ${AstelProductFiles.isRef(d.url) ? `data-local-pdf="${escapeHtml(d.url)}"` : ''} ${linkAttrs} class="docs-file-link">
                       <div class="docs-file-link__left">
                         <img
                           src="assets/images/file_save.svg"
@@ -506,6 +507,7 @@
             .join("");
 
           // Attach Accordion Click Listeners
+          AstelProductFiles.hydrate(accordionContainer);
           const triggers = accordionContainer.querySelectorAll(
             ".docs-item__trigger",
           );

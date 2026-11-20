@@ -370,6 +370,7 @@
     <!-- SHARED:FOOTER:END -->
     <script src="js/site-nav.js"></script>
     <script src="js/products-data.js"></script>
+    <script src="js/product-file-store.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
     <script>
@@ -426,14 +427,16 @@
             .map(
               (r) => `
               <tr>
-                <th>${esc(r.label)}</th>
-                <td>${esc(r.value)}</td>
+                <th>${esc(en && r.labelEn ? r.labelEn : (en ? I18nManager.translate(r.label) : r.label))}</th>
+                <td>${esc(en && r.valueEn ? r.valueEn : (en ? I18nManager.translate(r.value) : r.value))}</td>
               </tr>`,
             )
             .join("");
 
-        const descriptionHtml = product.description
-          .map((p) => `<p>${esc(p)}</p>`)
+        const displayDescriptions = en && Array.isArray(product.descriptionEn) && product.descriptionEn.length
+          ? product.descriptionEn : product.description;
+        const descriptionHtml = displayDescriptions
+          .map((p) => `<p>${esc(en && !product.descriptionEn?.length ? I18nManager.translate(p) : p)}</p>`)
           .join("");
 
         const techSpecsSection =
@@ -479,7 +482,7 @@
               ${product.docs
                 .map(
                   (d) => `
-                <a href="${esc(d.url)}" ${d.download ? `download="${esc(d.download)}"` : 'target="_blank" rel="noopener"'} class="doc-item">
+                <a href="${AstelProductFiles.isRef(d.url) ? '#' : esc(d.url)}" ${AstelProductFiles.isRef(d.url) ? `data-local-pdf="${esc(d.url)}"` : ''} ${d.download ? `download="${esc(d.download)}"` : 'target="_blank" rel="noopener"'} class="doc-item">
                   <div class="doc-item__left">
                     <img src="assets/images/file_save.svg" alt="Завантажити" class="doc-item__icon" />
                     <span>${esc(I18nManager.documentTitle(d))}</span>
@@ -573,6 +576,7 @@
         `;
 
         // --- Clean Gallery & Lightbox Script ---
+        AstelProductFiles.hydrate(container);
         const mainImg = document.getElementById("main-product-img");
         const mainImgWrap = document.getElementById("main-img-wrap");
         const thumbButtons = document.querySelectorAll(

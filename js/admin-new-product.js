@@ -1,269 +1,229 @@
-/* New-product editor: photo previews, reusable specification names and PDF attachments.
-   Browser-local prototype; the server must own uploaded files after backend integration. */
-(function (root) {
-  'use strict';
-  const MAX_PDF_BYTES = 950000;
-  const MAX_DOCS = 8;
-  const MAX_SECTIONS = 8;
-  const MAX_ROWS = 25;
-  const MAX_PHOTOS = 12;
-  const photoStates = new WeakMap();
-  const typePrefix = 'custom:';
-  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Shared specification/document editor for new and existing products.
+   Files are saved in IndexedDB; catalog metadata stays in localStorage until a backend exists. */
+(function(root){
+'use strict';
+const MAX_DOCS=8, MAX_SECTIONS=8, MAX_ROWS=25, MAX_PHOTOS=12;
+const photoStates=new WeakMap();
+let nextFormId=0;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// i18n.js exposes a route-aware translate() and a language-independent lookup.
+// The admin screen stays Ukrainian, so translate() would otherwise return Ukrainian.
+function englishFromDictionary(value) {
+  const source=String(value??'');
+  if(!source.trim())return '';
+  const manager=(typeof I18nManager!=='undefined')?I18nManager:root.I18nManager;
+  const translate=manager?.translateForBuild;
+  if(typeof translate!=='function')return /[А-Яа-яІіЇїЄєҐґ]/.test(source)?'':source;
+  const result=source.split('\n').map(line=>translate(line)).join('\n');
+  // Never copy Ukrainian into an English field if the dictionary lacks a translation.
+  return /[А-Яа-яІіЇїЄєҐґ]/.test(result)?'':result;
+}
+function englishInitial(value, existing) {
+  const candidate=String(existing??'').trim();
+  // Preserve a real manually-entered translation, but replace duplicated Ukrainian.
+  return candidate&&!/[А-Яа-яІіЇїЄєҐґ]/.test(candidate)?candidate:englishFromDictionary(value);
+}
+function selectLanguage(form, language){
+  if(language!=='uk'&&language!=='en')return;
+  form.dataset.editorLanguage=language;
+  form.querySelectorAll('[data-editor-lang]').forEach(button=>{
+    const selected=button.dataset.editorLang===language;
+    button.setAttribute('aria-selected',String(selected));
+    button.tabIndex=selected?0:-1;
+  });
+}
 
-  function readPdf(file) {
-    if (!file || (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)))
-      return Promise.reject(new Error('Підтримуються тільки PDF-файли'));
-    if (file.size > MAX_PDF_BYTES)
-      return Promise.reject(new Error('PDF завеликий для localStorage (максимум 950 КБ)'));
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = () => reject(new Error('Не вдалося прочитати PDF'));
-      reader.onload = () => {
-        const data = String(reader.result || '');
-        const match = /^data:[^,]*;base64,([A-Za-z0-9+/]+={0,2})$/.exec(data);
-        if (!match || !match[1].startsWith('JVBER'))
-          reject(new Error('Некоректний PDF-файл'));
-        else resolve('data:application/pdf;base64,' + match[1]);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function customNames(form) {
-    // Intentionally NOT a persistent list. Deleted last uses disappear on next render.
-    const names = new Map();
-    if (typeof PRODUCTS_DATA !== 'undefined') {
-      Object.values(PRODUCTS_DATA).forEach(p => (p.specSections || []).forEach(section => {
-        if (section.type === 'custom' && section.title) names.set(section.title.toLocaleLowerCase('uk'),
-          {title: section.title, titleEn: section.titleEn || ''});
-      }));
+function err(msg){throw new Error(msg);}
+function customNames(form){
+  const names=new Map();
+  if(typeof PRODUCTS_DATA!=='undefined')Object.values(PRODUCTS_DATA).forEach(p=>(p.specSections||[]).forEach(s=>{
+    if(s.type==='custom'&&s.title)names.set(s.title.toLocaleLowerCase('uk'),{title:s.title,titleEn:s.titleEn||''});
+  }));
+  form.querySelectorAll('.admin-spec-section').forEach(section=>{
+    if(section.querySelector('[data-spec-type]')?.value==='custom'){
+      const title=section.querySelector('[data-spec-title]')?.value.trim();
+      if(title){const key=title.toLocaleLowerCase('uk');const existing=names.get(key);
+        names.set(key,{title,titleEn:section.querySelector('[data-spec-title-en]')?.value.trim()||existing?.titleEn||''});}
     }
-    form.querySelectorAll('[data-spec-type]').forEach(select => {
-      if (select.value.startsWith(typePrefix)) {
-        const title = select.value.slice(typePrefix.length);
-        if (title) {
-          const key=title.toLocaleLowerCase('uk');
-          names.set(key, {title, titleEn:select.closest('.admin-spec-section')?.dataset.customTitleEn || names.get(key)?.titleEn || ''});
-        }
-      }
-    });
-    return [...names.values()].sort((a,b) => a.title.localeCompare(b.title,'uk'));
-  }
-  function refreshTypeOptions(form) {
-    const names = customNames(form);
-    form.querySelectorAll('[data-spec-type]').forEach(select => {
-      const selected = select.value;
-      select.replaceChildren();
-      const addOption = (value,label) => {
-        const opt=document.createElement('option');opt.value=value;opt.textContent=label;select.append(opt);
-      };
-      addOption('tech','Технічні характеристики');
-      addOption('general','Основні характеристики');
-      for (const name of names) addOption(typePrefix + name.title,name.title);
-      addOption('__new__','+ Створити нову назву…');
-      select.value = [...select.options].some(o => o.value === selected) ? selected : 'tech';
-    });
-  }
-  function extractSections(form) {
-    return Array.from(form.querySelectorAll('.admin-spec-section')).map(section => {
-      const selected = section.querySelector('[data-spec-type]').value;
-      if (selected === '__new__') throw new Error('Збережіть нову назву таблиці');
-      const custom = selected.startsWith(typePrefix);
-      const title = custom ? selected.slice(typePrefix.length).trim() : '';
-      if (custom && (title.length<2 || title.length>120)) throw new Error('Назва таблиці: від 2 до 120 символів');
-      const rows = Array.from(section.querySelectorAll('.admin-spec-row')).map(row => ({
-        label: row.querySelector('[data-spec-label]').value.trim(),
-        value: row.querySelector('[data-spec-value]').value.trim(),
-      })).filter(row => row.label || row.value);
-      if (!rows.length || rows.some(row => !row.label || !row.value))
-        throw new Error('Кожна таблиця повинна мати заповнені назву та значення хоча б одного рядка');
-      return custom ? {type:'custom', title, titleEn:section.dataset.customTitleEn || '', rows} : {type:selected, rows};
-    });
-  }
-  async function extractDocuments(form) {
-    const rows = Array.from(form.querySelectorAll('.admin-document-row'));
-    if (rows.length > MAX_DOCS) throw new Error('Максимум 8 PDF-файлів');
-    const docs = [];
-    for (const row of rows) {
-      const file = row.querySelector('[data-doc-file]').files[0];
-      if (!file) throw new Error('Оберіть PDF-файл або видаліть порожній рядок документа');
-      const title = row.querySelector('[data-doc-title]').value.trim() || file.name;
-      const titleEn = row.querySelector('[data-doc-title-en]').value.trim();
-      const download = file.name.replace(/[\\/\x00-\x1f]/g, '_').slice(0,160);
-      docs.push({ title, titleEn, url: await readPdf(file), download });
+  });
+  return [...names.values()].sort((a,b)=>a.title.localeCompare(b.title,'uk'));
+}
+function refreshSuggestions(form){
+  const list=form.querySelector('[data-custom-spec-names]');if(!list)return;
+  if(!list.id)list.id='astel-spec-names-'+(++nextFormId);
+  form.querySelectorAll('[data-spec-title]').forEach(input=>input.setAttribute('list',list.id));
+  list.replaceChildren(...customNames(form).map(item=>{const opt=document.createElement('option');opt.value=item.title;return opt;}));
+}
+function createSpecRow(data={}){
+  const row=document.createElement('div');row.className='admin-spec-row';
+  row.innerHTML=`<div class="admin-spec-row__translations">
+    <label data-editor-field-lang="uk">Назва характеристики <input data-spec-label placeholder="Назва характеристики" maxlength="160" value="${esc(data.label||'')}" aria-label="Характеристика українською" /></label>
+    <label data-editor-field-lang="en">Specification name <input data-spec-label-en placeholder="Specification name" maxlength="160" value="${esc(englishInitial(data.label||'',data.labelEn))}" aria-label="Specification in English" /></label>
+  </div><div class="admin-spec-row__translations">
+    <label data-editor-field-lang="uk">Значення <input data-spec-value placeholder="Значення" maxlength="2000" value="${esc(data.value||'')}" /></label>
+    <label data-editor-field-lang="en">Value <input data-spec-value-en placeholder="Value" maxlength="2000" value="${esc(englishInitial(data.value||'',data.valueEn))}" /></label>
+  </div><button type="button" class="admin-extra-remove admin-extra-remove--small" data-remove-spec-row title="Видалити характеристику" aria-label="Видалити характеристику">×</button>`;
+  return row;
+}
+function createSpecSection(data={}){
+  const section=document.createElement('div');section.className='admin-spec-section';
+  const type=['tech','general','custom'].includes(data.type)?data.type:'tech';
+  section.innerHTML=`<div class="admin-extra-section-top">
+    <label>Тип таблиці <select data-spec-type><option value="tech">Технічні характеристики</option><option value="general">Основні характеристики</option><option value="custom">Власна назва…</option></select></label>
+    <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-spec-section><img src="assets/images/delete.svg" alt="" /> Видалити</button>
+  </div><div class="admin-spec-custom-title" data-spec-custom-fields ${type==='custom'?'':'hidden'}>
+    <label data-editor-field-lang="uk">Назва українською <input data-spec-title list="admin-spec-name-suggestions" placeholder="Наприклад: Комплектація" maxlength="120" value="${esc(data.title||'')}" /></label>
+    <label data-editor-field-lang="en">Name in English <input data-spec-title-en placeholder="e.g. Package Contents" maxlength="120" value="${esc(englishInitial(data.title||'',data.titleEn))}" /></label>
+  </div><div class="admin-spec-rows"></div><button type="button" class="admin-extra-add" data-add-spec-row>+ Додати характеристику</button>`;
+  section.querySelector('[data-spec-type]').value=type;
+  const rows=Array.isArray(data.rows)&&data.rows.length?data.rows:[{}];
+  rows.forEach(row=>section.querySelector('.admin-spec-rows').append(createSpecRow(row)));
+  return section;
+}
+function createDocRow(data={}){
+  const row=document.createElement('div');row.className='admin-document-row';
+  const original=data.url?data:null;
+  if(original)row.dataset.originalDoc=JSON.stringify(original);
+  row.innerHTML=`<div class="admin-extra-section-top admin-document-row__header">
+      <strong>PDF-документ</strong>
+      <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-doc-row><img src="assets/images/delete.svg" alt="" /> Видалити</button>
+    </div>
+    <label data-editor-field-lang="uk">Назва документа українською
+    <input data-doc-title placeholder="Наприклад: Паспорт модему" maxlength="200" value="${esc(data.title||'')}" /></label>
+    <label data-editor-field-lang="en">Document title in English
+    <input data-doc-title-en placeholder="e.g. Technical Datasheet" maxlength="200" value="${esc(englishInitial(data.title||'',data.titleEn))}" /></label>
+    <label>PDF-файл${original?' (можна замінити)':''}
+    <input data-doc-file type="file" accept=".pdf,application/pdf" ${original?'':'required'}/></label>
+    ${original?`<span class="admin-document-row__filename">${esc(data.download||'Зовнішнє посилання / PDF')}</span>`:''}`;
+  return row;
+}
+function populate(form,product){
+  const sections=form.querySelector('[data-spec-sections]');const docs=form.querySelector('[data-doc-rows]');
+  if(sections){sections.replaceChildren();
+    if(product){
+      if(product.techSpecs?.length)sections.append(createSpecSection({type:'tech',rows:product.techSpecs}));
+      if(product.generalSpecs?.length)sections.append(createSpecSection({type:'general',rows:product.generalSpecs}));
+      (product.specSections||[]).forEach(s=>sections.append(createSpecSection(s)));
     }
-    return docs;
   }
-  function createSpecRow() {
-    const row = document.createElement('div');
-    row.className = 'admin-spec-row';
-    row.innerHTML = `<input data-spec-label aria-label="Назва характеристики" placeholder="Назва характеристики" maxlength="160" />
-      <input data-spec-value aria-label="Значення характеристики" placeholder="Значення" maxlength="2000" />
-      <button type="button" class="admin-extra-remove" data-remove-spec-row aria-label="Видалити рядок" title="Видалити рядок">×</button>`;
-    return row;
+  if(docs){docs.replaceChildren();(product?.docs||[]).forEach(d=>docs.append(createDocRow(d)));}
+  const uk=form.querySelector('[name="description"]');if(uk)uk.value=(product?.description||[]).join('\n\n');
+  const en=form.querySelector('[name="descriptionEn"]');if(en)en.value=(product?.description?.length?product.description.map((value,i)=>englishInitial(value,product?.descriptionEn?.[i])):(product?.descriptionEn||[])).join('\n\n');
+  refreshSuggestions(form);
+}
+function extractDescriptions(form){
+  const uk=String(form.querySelector('[name="description"]')?.value||'').trim();
+  const en=String(form.querySelector('[name="descriptionEn"]')?.value||'').trim();
+  if((uk&&!en)||(!uk&&en))err('Заповніть опис українською та англійською');
+  return {description:uk.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean),
+    descriptionEn:en.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean)};
+}
+function extractSections(form){
+  return Array.from(form.querySelectorAll('.admin-spec-section')).map(section=>{
+    const type=section.querySelector('[data-spec-type]').value;
+    const title=section.querySelector('[data-spec-title]')?.value.trim()||'';
+    const titleEn=section.querySelector('[data-spec-title-en]')?.value.trim()||'';
+    if(type==='custom'&&(!title||!titleEn))err('Для власної таблиці обов’язкові українська й англійська назви');
+    const rows=Array.from(section.querySelectorAll('.admin-spec-row')).map(row=>({
+      label:row.querySelector('[data-spec-label]').value.trim(),
+      labelEn:row.querySelector('[data-spec-label-en]').value.trim(),
+      value:row.querySelector('[data-spec-value]').value.trim(),
+      valueEn:row.querySelector('[data-spec-value-en]').value.trim(),
+    })).filter(row=>Object.values(row).some(Boolean));
+    if(!rows.length || rows.some(r=>!r.label||!r.labelEn||!r.value||!r.valueEn))err('Заповніть усі поля характеристик українською та англійською');
+    return type==='custom'?{type,title,titleEn,rows}:{type,rows};
+  });
+}
+async function readPdf(file){
+  if(!root.AstelProductFiles)throw new Error('Не підключено сховище PDF');
+  return root.AstelProductFiles.save(file);
+}
+async function extractDocuments(form){
+  const rows=Array.from(form.querySelectorAll('.admin-document-row'));
+  if(rows.length>MAX_DOCS)err('Максимум 8 PDF-файлів');
+  const result=[];
+  for(const row of rows){
+    const file=row.querySelector('[data-doc-file]').files[0];
+    const previous=row.dataset.originalDoc?JSON.parse(row.dataset.originalDoc):null;
+    if(!file&&!previous)err('Оберіть PDF для нового документа');
+    const title=row.querySelector('[data-doc-title]').value.trim(),titleEn=row.querySelector('[data-doc-title-en]').value.trim();
+    if(!title||!titleEn)err('Назва PDF українською та англійською обов’язкова');
+    const url=file?await readPdf(file):previous.url;
+    const download=file?file.name.replace(/[\\/\x00-\x1f]/g,'_').slice(0,160):previous.download;
+    result.push({title,titleEn,url,download});
   }
-  function createSpecSection() {
-    const section = document.createElement('div');
-    section.className = 'admin-spec-section';
-    section.innerHTML = `<div class="admin-extra-section-top">
-        <label>Тип таблиці <select data-spec-type></select></label>
-        <button class="admin-extra-remove" type="button" data-remove-spec-section>Видалити таблицю</button>
-      </div>
-      <div class="admin-spec-name-editor" data-spec-name-editor hidden>
-        <label>Нова назва таблиці <input data-spec-custom-name placeholder="Наприклад: Комплектація" maxlength="120" /></label>
-        <label>English (необов'язково) <input data-spec-custom-name-en placeholder="e.g. Package Contents" maxlength="120" /></label>
-        <button type="button" class="admin-btn admin-btn--outline" data-save-spec-name>Зберегти назву</button>
-      </div>
-      <div class="admin-spec-rows"></div>
-      <button type="button" class="admin-extra-add" data-add-spec-row>+ Додати характеристику</button>`;
-    section.querySelector('.admin-spec-rows').append(createSpecRow());
-    return section;
-  }
-  function createDocRow() {
-    const row = document.createElement('div');
-    row.className = 'admin-document-row';
-    row.innerHTML = `<label>Назва документа українською
-        <input data-doc-title placeholder="Наприклад: Паспорт модему" maxlength="200" /></label>
-      <label>Назва документа англійською (необов'язково)
-        <input data-doc-title-en placeholder="e.g. Technical Datasheet" maxlength="200" /></label>
-      <label>PDF-файл (до 950 КБ)
-        <input data-doc-file type="file" accept=".pdf,application/pdf" required /></label>
-      <button type="button" class="admin-extra-remove" data-remove-doc-row>Видалити PDF</button>`;
-    return row;
-  }
-
-  function getState(form) {
-    if (!photoStates.has(form)) photoStates.set(form,[]);
-    return photoStates.get(form);
-  }
-  function getPhotos(form) { return getState(form).map(item => item.file); }
-  function renderPhotos(form) {
-    const list = form.querySelector('[data-new-photo-list]');
-    if (!list) return;
-    const photos = getState(form);
-    list.innerHTML = photos.map((item,index) => `<div class="admin-photo-item ${index===0?'is-main':''}"
-      draggable="true" tabindex="0" data-new-photo-index="${index}"
-      aria-label="Фото ${index+1}${index===0?', головне':''}; перетягніть для зміни порядку">
-      <div class="admin-photo-item__preview"><img src="${esc(item.url)}" alt="${esc(item.file.name)}" draggable="false" />
-        <button type="button" class="admin-photo-item__remove" data-remove-new-photo="${index}" aria-label="Видалити фото ${index+1}">×</button></div>
-      <div class="admin-photo-item__footer"><span class="admin-photo-item__number">${index===0?'Головне':`Фото ${index+1}`}</span>
-        <span class="admin-photo-item__handle" aria-hidden="true">⠿</span></div></div>`).join('');
-    const counter = form.querySelector('[data-new-photo-count]');
-    if (counter) counter.textContent=`${photos.length} / ${MAX_PHOTOS}`;
-    const add = form.querySelector('[data-new-photo-add]');
-    if (add) add.hidden = photos.length >= MAX_PHOTOS;
-  }
-  function clearPhotos(form) {
-    getState(form).forEach(photo => URL.revokeObjectURL(photo.url));
-    photoStates.set(form, []);
-    renderPhotos(form);
-  }
-  function movePhoto(form,from,to) {
-    const photos=getState(form);
-    if (!Number.isInteger(from) || !Number.isInteger(to) || from<0 || to<0 || from>=photos.length || to>=photos.length || from===to) return false;
-    const [item]=photos.splice(from,1);photos.splice(to,0,item);renderPhotos(form);return true;
-  }
-  function bind(form) {
-    getState(form);
-    const warn = message => { if(typeof window!=='undefined') window.alert(message); };
-    form.addEventListener('click',e => {
-      const action=e.target.closest(
-        '[data-add-spec-section], [data-remove-spec-section], [data-add-spec-row], ' +
-        '[data-remove-spec-row], [data-add-doc-row], [data-remove-doc-row], ' +
-        '[data-save-spec-name], [data-remove-new-photo]');
-      if (!action) return;
-      if (action.hasAttribute('data-add-spec-section')) {
-        const list=form.querySelector('[data-spec-sections]');
-        if (list.children.length>=MAX_SECTIONS) return warn('Максимум 8 таблиць');
-        list.append(createSpecSection());refreshTypeOptions(form);
-      } else if (action.hasAttribute('data-remove-spec-section')) {
-        action.closest('.admin-spec-section').remove();refreshTypeOptions(form);
-      } else if (action.hasAttribute('data-save-spec-name')) {
-        const section=action.closest('.admin-spec-section');
-        const title=section.querySelector('[data-spec-custom-name]').value.trim();
-        const en=section.querySelector('[data-spec-custom-name-en]').value.trim();
-        if (title.length<2 || title.length>120) return warn('Назва таблиці: від 2 до 120 символів');
-        const matches=customNames(form).find(n=>n.title.toLocaleLowerCase('uk')===title.toLocaleLowerCase('uk'));
-        if (matches && matches.title!==title) return warn('Така назва таблиці вже існує');
-        section.dataset.customTitleEn=en;
-        const select=section.querySelector('[data-spec-type]');
-        const opt=document.createElement('option');opt.value=typePrefix+title;opt.textContent=title;
-        select.add(opt);select.value=opt.value;
-        section.querySelector('[data-spec-name-editor]').hidden=true;
-        refreshTypeOptions(form);
-      } else if (action.hasAttribute('data-add-spec-row')) {
-        const list=action.closest('.admin-spec-section').querySelector('.admin-spec-rows');
-        if (list.children.length>=MAX_ROWS) return warn('Максимум 25 характеристик у таблиці');
-        list.append(createSpecRow());
-      } else if (action.hasAttribute('data-remove-spec-row')) {
-        action.closest('.admin-spec-row').remove();
-      } else if (action.hasAttribute('data-add-doc-row')) {
-        const list=form.querySelector('[data-doc-rows]');
-        if (list.children.length>=MAX_DOCS) return warn('Максимум 8 PDF-файлів');
-        list.append(createDocRow());
-      } else if (action.hasAttribute('data-remove-doc-row')) {
-        action.closest('.admin-document-row').remove();
-      } else if (action.hasAttribute('data-remove-new-photo')) {
-        const idx=Number(action.dataset.removeNewPhoto);
-        const photos=getState(form);
-        const [item]=photos.splice(idx,1);if(item) URL.revokeObjectURL(item.url);
-        renderPhotos(form);
-      }
-    });
-    form.addEventListener('change',e => {
-      if (e.target.matches('[data-spec-type]')) {
-        const section=e.target.closest('.admin-spec-section');
-        const savedName = customNames(form).find(n=>e.target.value===typePrefix+n.title);
-        section.dataset.customTitleEn=savedName?.titleEn || '';
-        section.querySelector('[data-spec-name-editor]').hidden = e.target.value !== '__new__';
-        if (e.target.value==='__new__') section.querySelector('[data-spec-custom-name]').focus();
-        refreshTypeOptions(form);
-      }
-      if (e.target.matches('[name="photos"]')) {
-        const files=Array.from(e.target.files||[]),photos=getState(form);
-        if (photos.length+files.length>MAX_PHOTOS) { e.target.value='';return warn('Максимум 12 фотографій'); }
-        if (files.some(file=>!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size>6*1024*1024)) {
-          e.target.value='';return warn('Підтримуються лише PNG, JPG, WebP розміром до 6 МБ');
-        }
-        for(const file of files)photos.push({file,url:URL.createObjectURL(file)});
-        e.target.value=''; // Allows selecting the same file again; array owns the pending photos.
-        renderPhotos(form);
-      }
-    });
-    const list=form.querySelector('[data-new-photo-list]');
-    if(list) {
-      let dragIndex=null;
-      list.addEventListener('dragstart',e=>{
-        const item=e.target.closest('[data-new-photo-index]');if(!item)return;
-        dragIndex=Number(item.dataset.newPhotoIndex);
-        e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(dragIndex));
-      });
-      list.addEventListener('dragover',e=>{
-        if(dragIndex===null || !e.target.closest('[data-new-photo-index]'))return;
-        e.preventDefault();e.dataTransfer.dropEffect='move';
-      });
-      list.addEventListener('drop',e=>{
-        const item=e.target.closest('[data-new-photo-index]');if(!item || dragIndex===null)return;
-        e.preventDefault();movePhoto(form,dragIndex,Number(item.dataset.newPhotoIndex));dragIndex=null;
-      });
-      list.addEventListener('dragend',()=>{dragIndex=null;});
-      list.addEventListener('keydown',e=>{
-        if(!e.altKey || !['ArrowLeft','ArrowRight'].includes(e.key))return;
-        const item=e.target.closest('[data-new-photo-index]');if(!item)return;
-        const idx=Number(item.dataset.newPhotoIndex),next=idx+(e.key==='ArrowLeft'?-1:1);
-        if(movePhoto(form,idx,next)){e.preventDefault();list.querySelector(`[data-new-photo-index="${next}"]`)?.focus();}
-      });
+  return result;
+}
+function getState(form){if(!photoStates.has(form))photoStates.set(form,[]);return photoStates.get(form);}
+function getPhotos(form){return getState(form).map(p=>p.file);}
+function renderPhotos(form){
+  const list=form.querySelector('[data-new-photo-list]');if(!list)return;
+  const state=getState(form);
+  list.innerHTML=state.map((item,i)=>`<div class="admin-photo-item ${i===0?'is-main':''}" draggable="true" tabindex="0" data-new-photo-index="${i}">
+    <div class="admin-photo-item__preview"><img src="${esc(item.url)}" alt="${esc(item.file.name)}" draggable="false" />
+    <button type="button" class="admin-photo-item__remove" data-remove-new-photo="${i}" aria-label="Видалити фото ${i+1}">×</button></div>
+    <div class="admin-photo-item__footer"><span class="admin-photo-item__number">${i===0?'Головне':`Фото ${i+1}`}</span><span class="admin-photo-item__handle" aria-hidden="true">⠿</span></div>
+  </div>`).join('');
+  const count=form.querySelector('[data-new-photo-count]');if(count)count.textContent=`${state.length} / ${MAX_PHOTOS}`;
+  const add=form.querySelector('[data-new-photo-add]');if(add)add.hidden=state.length>=MAX_PHOTOS;
+}
+function clearPhotos(form){getState(form).forEach(p=>URL.revokeObjectURL(p.url));photoStates.set(form,[]);renderPhotos(form);}
+function movePhoto(form,from,to){const s=getState(form);if(from<0||to<0||from>=s.length||to>=s.length||from===to)return false;const [entry]=s.splice(from,1);s.splice(to,0,entry);renderPhotos(form);return true;}
+function bind(form){
+  getState(form);
+  const warn=message=>root.alert?.(message);
+  form.addEventListener('click',e=>{
+    const btn=e.target.closest('button');if(!btn)return;
+    const section=btn.closest('.admin-spec-section');
+    if(btn.hasAttribute('data-editor-lang')){selectLanguage(form,btn.dataset.editorLang);return;}
+    if(btn.hasAttribute('data-add-spec-section')){
+      const container=form.querySelector('[data-spec-sections]');if(container.children.length>=MAX_SECTIONS)return warn('Максимум 8 таблиць');
+      container.append(createSpecSection());refreshSuggestions(form);
+    }else if(btn.hasAttribute('data-remove-spec-section')){section.remove();refreshSuggestions(form);
+    }else if(btn.hasAttribute('data-add-spec-row')){
+      const list=section.querySelector('.admin-spec-rows');if(list.children.length>=MAX_ROWS)return warn('Максимум 25 характеристик');list.append(createSpecRow());
+    }else if(btn.hasAttribute('data-remove-spec-row')){btn.closest('.admin-spec-row').remove();
+    }else if(btn.hasAttribute('data-add-doc-row')){
+      const list=form.querySelector('[data-doc-rows]');if(list.children.length>=MAX_DOCS)return warn('Максимум 8 PDF');list.append(createDocRow());
+    }else if(btn.hasAttribute('data-remove-doc-row')){btn.closest('.admin-document-row').remove();
+    }else if(btn.hasAttribute('data-remove-new-photo')){const state=getState(form),item=state.splice(Number(btn.dataset.removeNewPhoto),1)[0];if(item)URL.revokeObjectURL(item.url);renderPhotos(form);}
+  });
+  form.querySelector('[data-editor-language-tabs]')?.addEventListener('keydown',e=>{
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+    e.preventDefault();
+    const lang=e.key==='Home'?'uk':e.key==='End'?'en':e.key==='ArrowLeft'?'uk':'en';
+    selectLanguage(form,lang);
+    form.querySelector(`[data-editor-lang="${lang}"]`)?.focus();
+  });
+  form.addEventListener('change',e=>{
+    if(e.target.matches('[data-spec-type]')){
+      const section=e.target.closest('.admin-spec-section');section.querySelector('[data-spec-custom-fields]').hidden=e.target.value!=='custom';
     }
-    renderPhotos(form);
-    if(typeof root.addEventListener==='function') root.addEventListener('astel:catalog-updated',()=>refreshTypeOptions(form));
+    if(e.target.matches('[data-spec-title]')){
+      const selected=customNames(form).find(x=>x.title.toLocaleLowerCase('uk')===e.target.value.trim().toLocaleLowerCase('uk'));
+      if(selected){const en=e.target.closest('.admin-spec-section').querySelector('[data-spec-title-en]');if(!en.value)en.value=selected.titleEn;}
+      refreshSuggestions(form);
+    }
+    if(e.target.matches('[name="photos"]')){
+      const photos=getState(form),files=Array.from(e.target.files||[]);
+      if(photos.length+files.length>MAX_PHOTOS){e.target.value='';return warn('Максимум 12 фотографій');}
+      if(files.some(f=>!['image/png','image/jpeg','image/webp'].includes(f.type)||f.size>6*1024*1024)){e.target.value='';return warn('PNG, JPG, WebP до 6 МБ');}
+      files.forEach(file=>photos.push({file,url:URL.createObjectURL(file)}));e.target.value='';renderPhotos(form);
+    }
+  });
+  const list=form.querySelector('[data-new-photo-list]');
+  if(list){let dragging=null;
+    list.addEventListener('dragstart',e=>{const item=e.target.closest('[data-new-photo-index]');if(!item)return;dragging=Number(item.dataset.newPhotoIndex);e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(dragging));});
+    list.addEventListener('dragover',e=>{if(dragging===null||!e.target.closest('[data-new-photo-index]'))return;e.preventDefault();e.dataTransfer.dropEffect='move';});
+    list.addEventListener('drop',e=>{const target=e.target.closest('[data-new-photo-index]');if(!target||dragging===null)return;e.preventDefault();movePhoto(form,dragging,Number(target.dataset.newPhotoIndex));dragging=null;});
+    list.addEventListener('dragend',()=>dragging=null);
+    list.addEventListener('keydown',e=>{const node=e.target.closest('[data-new-photo-index]');if(!node||!e.altKey||!['ArrowLeft','ArrowRight'].includes(e.key))return;const idx=Number(node.dataset.newPhotoIndex),next=idx+(e.key==='ArrowLeft'?-1:1);if(movePhoto(form,idx,next)){e.preventDefault();list.querySelector(`[data-new-photo-index="${next}"]`)?.focus();}});
   }
-  function reset(form) {
-    form.querySelector('[data-spec-sections]')?.replaceChildren();
-    form.querySelector('[data-doc-rows]')?.replaceChildren();
-    clearPhotos(form);
-  }
-  const api={bind,reset,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto};
-  root.AstelProductEditor=api;
-  if(typeof module==='object' && module.exports)module.exports=api;
+  renderPhotos(form);refreshSuggestions(form);selectLanguage(form,form.dataset.editorLanguage||'uk');
+  if(root.addEventListener)root.addEventListener('astel:catalog-updated',()=>refreshSuggestions(form));
+}
+function reset(form){populate(form,null);clearPhotos(form);}
+const api={bind,reset,populate,extractDescriptions,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto,createSpecSection,createDocRow,englishFromDictionary,englishInitial,selectLanguage};
+root.AstelProductEditor=api;
+if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

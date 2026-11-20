@@ -882,7 +882,7 @@ const CatalogManager = (() => {
   }
   function addCategory(uk,en=''){
     uk=String(uk||'').trim();en=String(en||'').trim();
-    if(uk.length<2 || uk.length>80 || en.length>80) throw new Error('Назва категорії: 2–80 символів');
+    if(uk.length<2 || uk.length>80 || en.length<2 || en.length>80) throw new Error('Назви категорії українською та англійською: 2–80 символів');
     if(Object.values(CATEGORIES).some(name=>name.toLocaleLowerCase('uk')===uk.toLocaleLowerCase('uk')))
       throw new Error('Така категорія вже існує');
     const entries=readCategories();
@@ -906,18 +906,19 @@ const CatalogManager = (() => {
     }
     rebuildCategories();notify('categories');return true;
   }
-  const MAX_PDF_DATA_LENGTH = 1400000; // ~1 MB PDF, before localStorage overhead.
   function validPdfSource(src) {
-    return typeof src === 'string' && src.length <= MAX_PDF_DATA_LENGTH &&
-      /^data:application\/pdf;base64,[A-Za-z0-9+/]+={0,2}$/.test(src);
+    return typeof src === 'string' && (src==='#' || /^idb-pdf:[a-zA-Z0-9-]{8,100}$/.test(src) ||
+      /^data:application\/pdf;base64,[A-Za-z0-9+/]+={0,2}$/.test(src) ||
+      (/^assets\/downloads\/[\p{L}\p{N}_.() -]+\.pdf$/u.test(src)) ||
+      /^https:\/\/drive\.google\.com\/(?:file\/d\/|drive\/folders\/)[a-zA-Z0-9_-]+(?:[/?][a-zA-Z0-9_?=&.-]*)?$/.test(src));
   }
   function validDoc(doc) {
     return doc && typeof doc === 'object' &&
       typeof doc.title === 'string' && !!doc.title.trim() && doc.title.length <= 200 &&
       (typeof doc.titleEn === 'undefined' || (typeof doc.titleEn === 'string' && doc.titleEn.length <= 200)) &&
-      validPdfSource(doc.url) && typeof doc.download === 'string' &&
+      validPdfSource(doc.url) && (doc.download===undefined || (typeof doc.download === 'string' &&
       doc.download.length <= 160 && !/[\\/\x00-\x1f]/.test(doc.download) &&
-      /\.pdf$/i.test(doc.download);
+      /\.pdf$/i.test(doc.download)));
   }
   const SPEC_TYPES = Object.freeze(['tech', 'general', 'custom']);
   function validSpecSections(sections) {
@@ -928,7 +929,9 @@ const CatalogManager = (() => {
       Array.isArray(section.rows) &&
       section.rows.length >= 1 && section.rows.length <= 25 && section.rows.every(row =>
         row && typeof row.label === 'string' && !!row.label.trim() && row.label.length <= 160 &&
-        typeof row.value === 'string' && !!row.value.trim() && row.value.length <= 2000));
+        typeof row.value === 'string' && !!row.value.trim() && row.value.length <= 2000 &&
+        (row.labelEn===undefined || (typeof row.labelEn==='string' && row.labelEn.length<=160)) &&
+        (row.valueEn===undefined || (typeof row.valueEn==='string' && row.valueEn.length<=2000))));
   }
   function validDocs(docs) {
     return Array.isArray(docs) && docs.length <= 8 && docs.every(validDoc);
@@ -962,6 +965,7 @@ const CatalogManager = (() => {
       PRODUCTS_DATA[id]=decorate({ ...p, id, title:String(p.title||'').slice(0,200),
         titleEn:String(p.titleEn||'').slice(0,200),
         description:Array.isArray(p.description) ? p.description.slice(0,20) : [],
+        descriptionEn:Array.isArray(p.descriptionEn) ? p.descriptionEn.slice(0,20) : [],
         techSpecs:[], generalSpecs:[],
         specSections:validSpecSections(p.specSections) ? JSON.parse(JSON.stringify(p.specSections)) : [],
         docs:validDocs(p.docs) ? JSON.parse(JSON.stringify(p.docs)) : [] });
@@ -974,6 +978,12 @@ const CatalogManager = (() => {
       if(CATEGORIES[ov.category]) p.category=ov.category;
       if(SALE_TERMS[ov.saleTermsCode]) p.saleTermsCode=ov.saleTermsCode;
       if(Array.isArray(ov.images) && ov.images.length<=12 && ov.images.every(validImageSource)) p.images=[...ov.images];
+      if(Array.isArray(ov.description) && ov.description.every(x=>typeof x==='string')) p.description=[...ov.description];
+      if(Array.isArray(ov.descriptionEn) && ov.descriptionEn.every(x=>typeof x==='string')) p.descriptionEn=[...ov.descriptionEn];
+      if(Array.isArray(ov.techSpecs) && ov.techSpecs.every(r=>r&&typeof r.label==='string'&&typeof r.value==='string'))p.techSpecs=ov.techSpecs;
+      if(Array.isArray(ov.generalSpecs) && ov.generalSpecs.every(r=>r&&typeof r.label==='string'&&typeof r.value==='string'))p.generalSpecs=ov.generalSpecs;
+      if(validSpecSections(ov.specSections))p.specSections=ov.specSections;
+      if(validDocs(ov.docs))p.docs=ov.docs;
       decorate(p);
     }
     return PRODUCTS_DATA;
@@ -987,6 +997,9 @@ const CatalogManager = (() => {
     if(own(patch,'saleTermsCode') && !SALE_TERMS[patch.saleTermsCode]) throw new Error('Невірні умови продажу');
     if(own(patch,'images') && (!Array.isArray(patch.images) || !patch.images.length || patch.images.length>12 || !patch.images.every(validImageSource)))
       throw new Error('Підтримуються до 12 зображень PNG, JPG, WebP');
+    if(own(patch,'specSections')&&!validSpecSections(patch.specSections))throw new Error('Некоректні таблиці характеристик');
+    if(own(patch,'docs')&&!validDocs(patch.docs))throw new Error('Некоректні PDF-документи');
+    for(const field of ['description','descriptionEn'])if(own(patch,field)&&(!Array.isArray(patch[field])||patch[field].length>20||patch[field].some(x=>typeof x!=='string')))throw new Error('Некоректний опис');
     const overrides=readOverrides(); overrides[id]={...(overrides[id]||{}),...patch};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(overrides));
     applyOverrides();notify(id);return PRODUCTS_DATA[id];
@@ -997,6 +1010,7 @@ const CatalogManager = (() => {
     const id=String(payload.id||'').trim().toLowerCase();
     if(!/^[a-z0-9-]{3,70}$/.test(id) || own(PRODUCTS_DATA,id) || own(base,id)) throw new Error('Унікальний ID: 3–70 латинських літер, цифр або дефісів');
     if(title.length<3 || title.length>200) throw new Error('Назва товару: від 3 до 200 символів');
+    if(titleEn.length<3 || titleEn.length>200) throw new Error('Англійська назва обов’язкова (від 3 до 200 символів)');
     if(validPrice(payload.price)===null) throw new Error('Некоректна ціна');
     if(!CATEGORIES[payload.category] || !SALE_TERMS[payload.saleTermsCode]) throw new Error('Оберіть категорію та умови продажу');
     const images=Array.isArray(payload.images) ? payload.images : [];
@@ -1005,6 +1019,7 @@ const CatalogManager = (() => {
       numericPrice:Number(payload.price),inStock:payload.inStock===true,
       image:images[0], images:[...images],
       description:[String(payload.description||'').trim()].filter(Boolean),
+      descriptionEn:[String(payload.descriptionEn||'').trim()].filter(Boolean),
       techSpecs:[],generalSpecs:[],
       specSections:payload.specSections ?? [], docs:payload.docs ?? [], vatNote:'Ціна без ПДВ'};
     if(!validSpecSections(p.specSections)) throw new Error('Некоректні таблиці характеристик');

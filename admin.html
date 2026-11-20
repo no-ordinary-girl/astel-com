@@ -319,7 +319,7 @@
             <div class="admin-category-list" id="admin-category-list"></div>
             <form id="admin-add-category-form" class="admin-category-form">
               <label>Назва українською <input name="uk" maxlength="80" minlength="2" placeholder="Нова категорія" required /></label>
-              <label>English (необов'язково) <input name="en" maxlength="80" placeholder="New category" /></label>
+              <label>English <input name="en" required maxlength="80" placeholder="New category" /></label>
               <button type="submit" class="admin-btn admin-btn--outline">+ Додати категорію</button>
             </form>
           </section>
@@ -340,13 +340,13 @@
               </tbody>
             </table>
           </div>
-          <form id="admin-new-product-form" class="admin-new-product-form">
+          <form id="admin-new-product-form" class="admin-new-product-form admin-language-editor" data-editor-language="uk">
             <h2>+ Додати новий товар</h2>
             <p>Новий товар одразу з'явиться у каталозі цього браузера. Фотографії зберігаються локально до підключення сервера.</p>
             <div class="admin-new-product-grid">
               <label>ID латиницею (унікальний) <input name="id" type="text" pattern="[a-z0-9-]{3,70}" placeholder="new-modem-model" required /></label>
               <label>Назва українською <input name="title" type="text" minlength="3" maxlength="200" required /></label>
-              <label>Назва англійською <input name="titleEn" type="text" maxlength="200" /></label>
+              <label>Назва англійською <input name="titleEn" type="text" minlength="3" maxlength="200" required /></label>
               <label>Ціна без ПДВ, грн <input name="price" type="number" min="1" max="99999999" step="1" required /></label>
 <label>Категорія <select name="category" required></select></label>
               <label>Умови продажу
@@ -368,9 +368,18 @@
                 <p class="admin-photo-warning">Можна додавати фотографії кількома виборами файлів, видаляти їх і змінювати порядок перетягуванням. Перше фото — головне.</p>
               </div>
             </div>
-            <label class="admin-new-product-description">Опис товару
-              <textarea name="description" rows="3" placeholder="Короткий технічний опис"></textarea>
-            </label>
+            <div class="admin-editor-language-tabs" data-editor-language-tabs role="tablist" aria-label="Мова редагування">
+              <button type="button" role="tab" data-editor-lang="uk" aria-selected="true">Українська</button>
+              <button type="button" role="tab" data-editor-lang="en" aria-selected="false" tabindex="-1">English</button>
+            </div>
+            <div class="admin-description-grid">
+              <label class="admin-new-product-description" data-editor-field-lang="uk">Опис товару українською
+                <textarea name="description" rows="5" placeholder="Опис українською"></textarea>
+              </label>
+              <label class="admin-new-product-description" data-editor-field-lang="en">Description in English
+                <textarea name="descriptionEn" rows="5" placeholder="Product description in English"></textarea>
+              </label>
+            </div>
             <div class="admin-new-product-extras">
               <section class="admin-extra-block" aria-labelledby="admin-spec-heading">
                 <div class="admin-extra-heading">
@@ -379,11 +388,12 @@
                   <button type="button" class="admin-btn admin-btn--outline" data-add-spec-section>+ Додати таблицю</button>
                 </div>
                 <div data-spec-sections class="admin-spec-sections"></div>
+                <datalist data-custom-spec-names></datalist>
               </section>
               <section class="admin-extra-block" aria-labelledby="admin-docs-heading">
                 <div class="admin-extra-heading">
                   <div><h3 id="admin-docs-heading">Специфікації та документація</h3>
-                    <p>PDF-документи з'являться на сторінці товару та у розділі «Документація». До 950 КБ на файл; лише для цього браузера.</p></div>
+                    <p>PDF-документи з'являться на сторінці товару та у розділі «Документація». PDF-файли зберігаються в IndexedDB цього браузера; розмір обмежено лише доступним місцем.</p></div>
                   <button type="button" class="admin-btn admin-btn--outline" data-add-doc-row>+ Додати PDF</button>
                 </div>
                 <div class="admin-document-rows" data-doc-rows></div>
@@ -441,6 +451,7 @@
     <script src="js/delivery-data.js"></script>
     <script src="js/admin-delivery.js"></script>
     <script src="js/admin-photo-gallery.js"></script>
+    <script src="js/product-file-store.js"></script>
     <script src="js/admin-new-product.js"></script>
     <script src="js/admin.js"></script>
   </body>

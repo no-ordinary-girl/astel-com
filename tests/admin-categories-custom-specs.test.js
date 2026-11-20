@@ -13,7 +13,7 @@ const key=run('CatalogManager.addCategory("Промислові сенсори",
 assert.equal(run(`CatalogManager.getCategoryName(${JSON.stringify(key)},true)`),'Industrial Sensors');
 assert.equal(run(`CatalogManager.CATEGORIES[${JSON.stringify(key)}]`),'Промислові сенсори');
 const custom={id:'sensor-dev',title:'Тестовий сенсор',titleEn:'Test sensor',price:100,category:key,
- saleTermsCode:'retail',images:['assets/images/logo-main.svg'],specSections:[{type:'custom',title:'Комплектація',titleEn:'Package Contents',rows:[{label:'Кабель',value:'1 шт.'}]}],docs:[]};
+ saleTermsCode:'retail',images:['assets/images/logo-main.svg'],specSections:[{type:'custom',title:'Комплектація',titleEn:'Package Contents',rows:[{label:'Кабель',labelEn:'Cable',value:'1 шт.',valueEn:'1 pc'}]}],docs:[]};
 run(`CatalogManager.addProduct(${JSON.stringify(custom)})`);
 assert.equal(run('PRODUCTS_DATA["sensor-dev"].categoryName'),'Промислові сенсори');
 assert.throws(()=>run(`CatalogManager.deleteCategory(${JSON.stringify(key)})`),/використовують/);

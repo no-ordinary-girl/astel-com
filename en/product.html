@@ -458,6 +458,18 @@
           </section>`
             : "";
 
+        // New products may contain multiple independently ordered specification tables.
+        const extraSpecsSection = Array.isArray(product.specSections)
+          ? product.specSections.map((section) => {
+              const uk = section.type === 'general' ? 'Основні характеристики' : 'Технічні характеристики';
+              const en = section.type === 'general' ? 'General Specifications' : 'Technical Specifications';
+              const isEnglish = document.documentElement.lang === 'en';
+              return `<section class="product-section">
+                <h2 class="product-section__title">${isEnglish ? en : uk}</h2>
+                <table class="specs-table"><tbody>${renderTableRows(section.rows || [])}</tbody></table>
+              </section>`;
+            }).join('') : '';
+
         const docsSection =
           product.docs && product.docs.length
             ? `
@@ -467,10 +479,10 @@
               ${product.docs
                 .map(
                   (d) => `
-                <a href="${d.url}" ${d.download ? `download="${d.download}"` : 'target="_blank" rel="noopener"'} class="doc-item">
+                <a href="${esc(d.url)}" ${d.download ? `download="${esc(d.download)}"` : 'target="_blank" rel="noopener"'} class="doc-item">
                   <div class="doc-item__left">
                     <img src="assets/images/file_save.svg" alt="Завантажити" class="doc-item__icon" />
-                    <span>${I18nManager.documentTitle(d)}</span>
+                    <span>${esc(I18nManager.documentTitle(d))}</span>
                   </div>
                   <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 700;">${d.download ? "PDF" : "DRIVE"}</span>
                 </a>`,
@@ -555,6 +567,7 @@
             </section>
             ${techSpecsSection}
             ${generalSpecsSection}
+            ${extraSpecsSection}
             ${docsSection}
           </div>
         `;

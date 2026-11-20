@@ -4,20 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="google" content="notranslate" />
     <meta name="color-scheme" content="light" />
-    <meta
-      name="description"
-      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
-    />
+    <meta name="description" content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ." />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Документація — АСТЕЛ-КОМ" />
-    <meta
-      property="og:description"
-      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
-    />
+    <meta property="og:description" content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ." />
     <link rel="canonical" href="docs.html" />
     <link rel="alternate" hreflang="uk" href="docs.html" />
     <link rel="alternate" hreflang="en" href="../en/docs.html" />
     <link rel="alternate" hreflang="x-default" href="docs.html" />
+    <meta
+      name="description"
+      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
+    />
+    <meta
+      property="og:description"
+      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Документація — АСТЕЛ-КОМ</title>
     <!-- Favicons -->
@@ -400,6 +402,8 @@
             (item) => item.docs && item.docs.length > 0,
           );
 
+          const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g,
+            ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
           const formatFileCount = (count) => {
             if (I18nManager.getLang() === "en")
               return `${count} ${count === 1 ? "file" : "files"}`;
@@ -415,19 +419,19 @@
                 .map((d) => {
                   const isDirectDownload = Boolean(d.download);
                   const linkAttrs = isDirectDownload
-                    ? `download="${d.download}"`
+                    ? `download="${escapeHtml(d.download)}"`
                     : 'target="_blank" rel="noopener"';
                   const actionLabel = isDirectDownload ? "PDF" : "DRIVE";
 
                   return `
-                    <a href="${d.url}" ${linkAttrs} class="docs-file-link">
+                    <a href="${escapeHtml(d.url)}" ${linkAttrs} class="docs-file-link">
                       <div class="docs-file-link__left">
                         <img
                           src="assets/images/file_save.svg"
                           alt="Завантажити"
                           class="docs-file-link__icon"
                         />
-                        <span>${I18nManager.documentTitle(d)}</span>
+                        <span>${escapeHtml(I18nManager.documentTitle(d))}</span>
                       </div>
                       <span class="docs-file-link__action">${actionLabel}</span>
                     </a>
@@ -444,13 +448,13 @@
                   >
                     <div class="docs-item__left">
                       <img
-                        src="${product.image}"
-                        alt="${I18nManager.translate(product.title)}"
+                        src="${escapeHtml(product.image)}"
+                        alt="${escapeHtml(product.titleEn && I18nManager.getLang()==='en' ? product.titleEn : I18nManager.translate(product.title))}"
                         class="docs-item__thumb"
                       />
                       <div class="docs-item__meta">
-                        <span class="docs-item__category">${I18nManager.translate(product.categoryName)}</span>
-                        <h2 class="docs-item__title">${I18nManager.translate(product.title)}</h2>
+                        <span class="docs-item__category">${escapeHtml(I18nManager.translate(product.categoryName))}</span>
+                        <h2 class="docs-item__title">${escapeHtml(product.titleEn && I18nManager.getLang()==='en' ? product.titleEn : I18nManager.translate(product.title))}</h2>
                       </div>
                     </div>
                     <div class="docs-item__right">

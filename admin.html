@@ -354,6 +354,24 @@
             <label class="admin-new-product-description">Опис товару
               <textarea name="description" rows="3" placeholder="Короткий технічний опис"></textarea>
             </label>
+            <div class="admin-new-product-extras">
+              <section class="admin-extra-block" aria-labelledby="admin-spec-heading">
+                <div class="admin-extra-heading">
+                  <div><h3 id="admin-spec-heading">Таблиці характеристик</h3>
+                    <p>Додавайте окремі таблиці «Технічні характеристики» або «Основні характеристики» та заповнюйте рядки.</p></div>
+                  <button type="button" class="admin-btn admin-btn--outline" data-add-spec-section>+ Додати таблицю</button>
+                </div>
+                <div data-spec-sections class="admin-spec-sections"></div>
+              </section>
+              <section class="admin-extra-block" aria-labelledby="admin-docs-heading">
+                <div class="admin-extra-heading">
+                  <div><h3 id="admin-docs-heading">Специфікації та документація</h3>
+                    <p>PDF-документи з'являться на сторінці товару та у розділі «Документація». До 950 КБ на файл; лише для цього браузера.</p></div>
+                  <button type="button" class="admin-btn admin-btn--outline" data-add-doc-row>+ Додати PDF</button>
+                </div>
+                <div class="admin-document-rows" data-doc-rows></div>
+              </section>
+            </div>
             <button class="admin-btn admin-btn--primary" type="submit">+ Додати товар до каталогу</button>
           </form>
         </section>
@@ -406,6 +424,7 @@
     <script src="js/delivery-data.js"></script>
     <script src="js/admin-delivery.js"></script>
     <script src="js/admin-photo-gallery.js"></script>
+    <script src="js/admin-new-product.js"></script>
     <script src="js/admin.js"></script>
   </body>
 </html>

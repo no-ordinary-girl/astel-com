@@ -17,7 +17,7 @@ assert.deepEqual(photos,['front.png','side.png','back.png']); // input not mutat
 const base=path.resolve(__dirname,'..');
 const admin=fs.readFileSync(path.join(base,'js/admin.js'),'utf8');
 const html=fs.readFileSync(path.join(base,'admin.html'),'utf8');
-assert.match(admin,/\$\{renderPhotoEditor\(p\)\}/);
+assert.match(admin,/renderPhotoEditor\(p,draft.images\)/);
 assert.doesNotMatch(admin,/data-edit-photos|data-photo-move/);
 assert.match(admin,/admin-photo-add-tile/);
 assert.match(admin,/data-photo-remove/);

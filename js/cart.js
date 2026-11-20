@@ -36,7 +36,8 @@ const CartManager = {
           price: catalogProduct?.numericPrice ?? item.price,
           image: catalogProduct?.image ?? item.image,
           title: catalogProduct?.title ?? item.title,
-          inStock: catalogProduct?.inStock ?? item.inStock ?? true,
+          // A deleted catalog product cannot remain orderable from an old cart.
+          inStock: catalogProduct?.inStock ?? (typeof PRODUCTS_DATA !== "undefined" ? false : item.inStock ?? true),
           minQty,
           qty: Math.max(minQty, Number.isFinite(quantity) ? quantity : minQty),
         };
@@ -68,7 +69,8 @@ const CartManager = {
     const catalogProduct =
       typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[product.id] : null;
 
-    if (catalogProduct?.inStock === false || (!catalogProduct && product.inStock === false)) {
+    if (catalogProduct?.inStock === false ||
+        (!catalogProduct && (typeof PRODUCTS_DATA !== "undefined" || product.inStock === false))) {
       this.showToast("Товару немає в наявності");
       return;
     }

@@ -832,6 +832,7 @@ const PRODUCTS_DATA = {
 const CatalogManager = (() => {
   const STORAGE_KEY = 'astelkom_catalog_overrides';
   const CUSTOM_KEY = 'astelkom_catalog_custom_products';
+  const DELETED_KEY = 'astelkom_catalog_deleted_products';
   const CATEGORIES = Object.freeze({
     gsm: 'GSM/LTE-модеми', nbiot: 'NBIoT-модеми',
     pos: 'Аксесуари для банківських терміналів',
@@ -856,6 +857,31 @@ const CatalogManager = (() => {
   }
   function readOverrides(){return readStore(STORAGE_KEY,{});}
   function readCustom(){return readStore(CUSTOM_KEY,{});}
+  function readDeleted(){return readStore(DELETED_KEY,{});}
+  const MAX_PDF_DATA_LENGTH = 1400000; // ~1 MB PDF, before localStorage overhead.
+  function validPdfSource(src) {
+    return typeof src === 'string' && src.length <= MAX_PDF_DATA_LENGTH &&
+      /^data:application\/pdf;base64,[A-Za-z0-9+/]+={0,2}$/.test(src);
+  }
+  function validDoc(doc) {
+    return doc && typeof doc === 'object' &&
+      typeof doc.title === 'string' && !!doc.title.trim() && doc.title.length <= 200 &&
+      (typeof doc.titleEn === 'undefined' || (typeof doc.titleEn === 'string' && doc.titleEn.length <= 200)) &&
+      validPdfSource(doc.url) && typeof doc.download === 'string' &&
+      doc.download.length <= 160 && !/[\\/\x00-\x1f]/.test(doc.download) &&
+      /\.pdf$/i.test(doc.download);
+  }
+  const SPEC_TYPES = Object.freeze(['tech', 'general']);
+  function validSpecSections(sections) {
+    return Array.isArray(sections) && sections.length <= 8 && sections.every(section =>
+      section && SPEC_TYPES.includes(section.type) && Array.isArray(section.rows) &&
+      section.rows.length >= 1 && section.rows.length <= 25 && section.rows.every(row =>
+        row && typeof row.label === 'string' && !!row.label.trim() && row.label.length <= 160 &&
+        typeof row.value === 'string' && !!row.value.trim() && row.value.length <= 2000));
+  }
+  function validDocs(docs) {
+    return Array.isArray(docs) && docs.length <= 8 && docs.every(validDoc);
+  }
   function notify(id) {
     if(typeof window!=='undefined' && typeof window.dispatchEvent==='function')
       window.dispatchEvent(new CustomEvent('astel:catalog-updated',{detail:{id}}));
@@ -877,14 +903,18 @@ const CatalogManager = (() => {
   function applyOverrides() {
     for(const id of Object.keys(PRODUCTS_DATA)) delete PRODUCTS_DATA[id];
     for(const [id,p] of Object.entries(base)) PRODUCTS_DATA[id]=decorate(JSON.parse(JSON.stringify(p)));
+    const deleted=readDeleted();
     for(const [id,p] of Object.entries(readCustom())) {
-      if(own(base,id) || !p || typeof p!=='object') continue;
+      if(deleted[id] || own(base,id) || !p || typeof p!=='object') continue;
       if(!/^[a-z0-9-]{3,70}$/.test(id) || validPrice(p.numericPrice)==null || !CATEGORIES[p.category]) continue;
       PRODUCTS_DATA[id]=decorate({ ...p, id, title:String(p.title||'').slice(0,200),
         titleEn:String(p.titleEn||'').slice(0,200),
         description:Array.isArray(p.description) ? p.description.slice(0,20) : [],
-        techSpecs:[], generalSpecs:[], docs:[] });
+        techSpecs:[], generalSpecs:[],
+        specSections:validSpecSections(p.specSections) ? JSON.parse(JSON.stringify(p.specSections)) : [],
+        docs:validDocs(p.docs) ? JSON.parse(JSON.stringify(p.docs)) : [] });
     }
+    for(const id of Object.keys(deleted)) if(deleted[id]) delete PRODUCTS_DATA[id];
     for(const [id,ov] of Object.entries(readOverrides())) {
       const p=PRODUCTS_DATA[id]; if(!p || !ov || typeof ov!=='object') continue;
       if(validPrice(ov.price)!==null) p.numericPrice=Number(ov.price);
@@ -913,7 +943,7 @@ const CatalogManager = (() => {
     const title=String(payload.title||'').trim();
     const titleEn=String(payload.titleEn||'').trim();
     const id=String(payload.id||'').trim().toLowerCase();
-    if(!/^[a-z0-9-]{3,70}$/.test(id) || own(PRODUCTS_DATA,id)) throw new Error('Унікальний ID: 3–70 латинських літер, цифр або дефісів');
+    if(!/^[a-z0-9-]{3,70}$/.test(id) || own(PRODUCTS_DATA,id) || own(base,id)) throw new Error('Унікальний ID: 3–70 латинських літер, цифр або дефісів');
     if(title.length<3 || title.length>200) throw new Error('Назва товару: від 3 до 200 символів');
     if(validPrice(payload.price)===null) throw new Error('Некоректна ціна');
     if(!CATEGORIES[payload.category] || !SALE_TERMS[payload.saleTermsCode]) throw new Error('Оберіть категорію та умови продажу');
@@ -923,10 +953,25 @@ const CatalogManager = (() => {
       numericPrice:Number(payload.price),inStock:payload.inStock===true,
       image:images[0], images:[...images],
       description:[String(payload.description||'').trim()].filter(Boolean),
-      techSpecs:[],generalSpecs:[],docs:[],vatNote:'Ціна без ПДВ'};
+      techSpecs:[],generalSpecs:[],
+      specSections:payload.specSections ?? [], docs:payload.docs ?? [], vatNote:'Ціна без ПДВ'};
+    if(!validSpecSections(p.specSections)) throw new Error('Некоректні таблиці характеристик');
+    if(!validDocs(p.docs)) throw new Error('Некоректні PDF-документи');
     const custom=readCustom(); custom[id]=p;
     localStorage.setItem(CUSTOM_KEY,JSON.stringify(custom));
     applyOverrides();notify(id);return PRODUCTS_DATA[id];
+  }
+  function deleteProduct(id) {
+    if(!own(PRODUCTS_DATA,id)) throw new Error('Невідомий товар');
+    const custom=readCustom(), overrides=readOverrides(), deleted=readDeleted();
+    if(own(custom,id)) delete custom[id];
+    else deleted[id]=true; // Keep a tombstone for built-in products after reload.
+    delete overrides[id];
+    localStorage.setItem(CUSTOM_KEY,JSON.stringify(custom));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(overrides));
+    localStorage.setItem(DELETED_KEY,JSON.stringify(deleted));
+    applyOverrides();notify(id);
+    return true;
   }
   function syncProductCards(root=document) {
     // Catalog cards are rendered by js/products-catalog.js from this data source.
@@ -937,8 +982,9 @@ const CatalogManager = (() => {
   }
   applyOverrides();
   if(typeof window!=='undefined') window.addEventListener('storage',(e)=>{
-    if([STORAGE_KEY,CUSTOM_KEY].includes(e.key)){applyOverrides();notify('all');}
+    if([STORAGE_KEY,CUSTOM_KEY,DELETED_KEY].includes(e.key)){applyOverrides();notify('all');}
   });
-  return Object.freeze({STORAGE_KEY,CUSTOM_KEY,CATEGORIES,SALE_TERMS,validPrice,validImageSource,
-    readOverrides,readCustom,getOriginalPrice,applyOverrides,updateProduct,addProduct,syncProductCards});
+  return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORIES,SALE_TERMS,validPrice,validImageSource,
+    validPdfSource,validSpecSections,validDocs,readOverrides,readCustom,readDeleted,
+    getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards});
 })();

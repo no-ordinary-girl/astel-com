@@ -33,7 +33,7 @@
   color: var(--gray-900);
   font: 700 12px var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: .025em;
 }
 .admin-photo-editor__count {
   color: #6b7280;
@@ -49,9 +49,7 @@
   line-height: 1.45;
   color: #6b7280;
 }
-.admin-photo-warning {
-  margin: 0;
-}
+.admin-photo-warning {margin: 0;}
 .admin-photo-list {
   display: flex;
   flex-wrap: wrap;
@@ -60,7 +58,6 @@
 }
 .admin-photo-item {
   position: relative;
-  align-items: start;
   width: 128px;
   min-height: 151px;
   padding: 7px;
@@ -73,26 +70,16 @@
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    opacity 0.15s ease;
+  transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
 }
-.admin-photo-item.is-main {
-  border-color: var(--gray-900);
-}
+.admin-photo-item.is-main {border-color: var(--gray-900);}
 .admin-photo-item:hover,
 .admin-photo-item:focus-visible {
   border-color: var(--gray-900);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 10px rgba(0,0,0,.05);
 }
-.admin-photo-item:focus-visible {
-  outline: 2px solid var(--gray-900);
-  outline-offset: 3px;
-}
-.admin-photo-item.is-dragging {
-  opacity: 0.33;
-}
+.admin-photo-item:focus-visible {outline: 2px solid var(--gray-900);outline-offset: 3px;}
+.admin-photo-item.is-dragging {opacity: .33;}
 .admin-photo-item.is-drop-before::before,
 .admin-photo-item.is-drop-after::after {
   content: "";
@@ -104,12 +91,8 @@
   border-radius: 4px;
   background: var(--gray-900);
 }
-.admin-photo-item.is-drop-before::before {
-  left: -8px;
-}
-.admin-photo-item.is-drop-after::after {
-  right: -8px;
-}
+.admin-photo-item.is-drop-before::before {left: -8px;}
+.admin-photo-item.is-drop-after::after {right: -8px;}
 .admin-photo-item__preview {
   position: relative;
   flex: 0 0 104px;
@@ -134,7 +117,7 @@
   height: 25px;
   min-height: 0;
   border: 1px solid var(--gray-200);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255,255,255,.95);
   border-radius: 7px;
   color: var(--gray-900);
   font: 18px/1 var(--font-base);
@@ -142,13 +125,9 @@
   display: grid;
   place-items: center;
 }
-.admin-photo-item .admin-photo-item__remove:hover {
-  background: var(--gray-900);
-  color: #fff;
-}
+.admin-photo-item .admin-photo-item__remove:hover {background: var(--gray-900);color: #fff;}
 .admin-photo-item__footer {
   display: flex;
-  flex-direction: row-reverse;
   flex: 1;
   align-items: center;
   justify-content: space-between;
@@ -168,7 +147,7 @@
   padding: 2px 4px;
 }
 .admin-photo-ghost {
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,.24) !important;
   cursor: grabbing;
 }
 .admin-photo-add-tile {
@@ -187,13 +166,11 @@
   cursor: pointer;
   font: 600 12px var(--font-mono);
   text-align: center;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+  transition: background-color .15s ease, border-color .15s ease;
 }
 .admin-photo-add-tile:hover,
 .admin-photo-add-tile:focus-within {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255,255,255,.75);
   border-color: var(--gray-900);
   color: var(--gray-900);
 }
@@ -215,12 +192,8 @@
   overflow: hidden;
 }
 @media (max-width: 760px) {
-  .admin-photo-editor {
-    padding: 13px;
-  }
-  .admin-photo-editor__hint {
-    width: 100%;
-  }
+  .admin-photo-editor {padding: 13px;}
+  .admin-photo-editor__hint {width: 100%;}
 }
 html[data-theme="dark"] .admin-photo-editor {
   background: #242424;
@@ -230,19 +203,57 @@ html[data-theme="dark"] .admin-photo-item {
   background: #303030;
   border-color: #474747;
 }
-html[data-theme="dark"] .admin-photo-item.is-main {
-  border-color: #eee;
+html[data-theme="dark"] .admin-photo-item.is-main {border-color: #eee;}
+html[data-theme="dark"] .admin-photo-add-tile {border-color: #626262;color: #ccc;}
+html[data-theme="dark"] .admin-photo-add-tile:hover {background: #303030;}
+html[data-theme="dark"] .admin-photo-item .admin-photo-item__number {color: #eee;}
+html[data-theme="dark"] .admin-photo-item .admin-photo-item__remove {color: #111;}
+
+/* Keep the compact photo-tile alignment chosen by the site owner. */
+.admin-photo-item { align-items: start; }
+.admin-photo-item__footer { flex-direction: row-reverse; }
+
+/* Save/commit semantics for inventory rows. */
+.admin-inventory-product-row.has-pending-changes > td { background: rgba(217,119,6,.035); }
+.admin-inventory-unsaved { font: 700 10px/1.3 var(--font-mono); color: #b45309; }
+.admin-inventory-unsaved[hidden] { display: none; }
+.admin-inventory-actions { flex-wrap: wrap; }
+.admin-inventory-actions [data-save-product]:disabled { opacity: .38; cursor: not-allowed; }
+.admin-inventory-delete {
+  display: inline-grid; place-items: center; width: 36px; height: 36px;
+  padding: 8px; background: transparent; border: 1px solid var(--gray-200);
+  border-radius: 9px; cursor: pointer; transition: background .15s, border-color .15s;
 }
-html[data-theme="dark"] .admin-photo-add-tile {
-  border-color: #626262;
-  color: #ccc;
+.admin-inventory-delete img { width: 18px; height: 18px; object-fit: contain; }
+.admin-inventory-delete:hover { background: #fff1f2; border-color: #dc2626; }
+.admin-inventory-delete:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* Repeatable product specifications and documentation fields. */
+.admin-new-product-extras { display:flex;flex-direction:column;gap:18px; }
+.admin-extra-block { border:1px solid var(--gray-200);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:15px;background:#fff; }
+.admin-extra-heading { display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap; }
+.admin-extra-heading h3 { font-size:16px;font-weight:700;margin:0 0 6px; }
+.admin-extra-heading p { max-width:660px;font-size:12px;line-height:1.5; }
+.admin-spec-sections, .admin-document-rows { display:flex;flex-direction:column;gap:12px; }
+.admin-spec-section, .admin-document-row { display:flex;flex-direction:column;gap:12px;padding:15px;border:1px solid var(--gray-200);border-radius:12px;background:var(--gray-100); }
+.admin-extra-section-top { display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap; }
+.admin-extra-section-top label, .admin-document-row label { font-size:12px;font-weight:600;display:flex;flex-direction:column;gap:7px; }
+.admin-extra-section-top select { width:min(100%,330px);min-height:39px;padding:7px 10px;border:1px solid var(--gray-200);border-radius:9px;background:#fff; }
+.admin-spec-rows { display:flex;flex-direction:column;gap:9px; }
+.admin-spec-row { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) 35px;align-items:center;gap:9px; }
+.admin-spec-row input { width:100%;min-width:0;min-height:39px;padding:8px 10px;border:1px solid var(--gray-200);border-radius:8px;background:#fff; }
+.admin-extra-add { align-self:flex-start;padding:7px 0;border:0;background:transparent;font:700 12px var(--font-mono);cursor:pointer;text-decoration:underline; }
+.admin-extra-remove { align-self:flex-start;background:transparent;color:#6b7280;border:1px solid var(--gray-200);border-radius:8px;padding:7px 9px;cursor:pointer;font:700 12px var(--font-mono); }
+.admin-extra-remove:hover { color:#dc2626;border-color:#dc2626; }
+.admin-document-row { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:end; }
+.admin-document-row label:nth-child(3) { grid-column:1 / -1; }
+.admin-document-row button { justify-self:start; }
+@media (max-width:760px) {
+  .admin-spec-row {grid-template-columns:minmax(0,1fr) 35px;}
+  .admin-spec-row [data-spec-value] {grid-column:1;grid-row:2;}
+  .admin-spec-row [data-remove-spec-row] {grid-column:2;grid-row:1 / span 2;}
+  .admin-document-row {grid-template-columns:1fr;}
+  .admin-document-row label:nth-child(3) {grid-column:1;}
 }
-html[data-theme="dark"] .admin-photo-add-tile:hover {
-  background: #303030;
-}
-html[data-theme="dark"] .admin-photo-item .admin-photo-item__number {
-  color: #eee;
-}
-html[data-theme="dark"] .admin-photo-item .admin-photo-item__remove {
-  color: #111;
-}
+html[data-theme="dark"] .admin-extra-block {background:#242424;border-color:#383838;}
+html[data-theme="dark"] .admin-spec-section,html[data-theme="dark"] .admin-document-row {background:#1d1d1d;border-color:#383838;}

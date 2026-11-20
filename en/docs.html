@@ -13,8 +13,24 @@
     <link rel="alternate" hreflang="uk" href="docs.html" />
     <link rel="alternate" hreflang="en" href="../en/docs.html" />
     <link rel="alternate" hreflang="x-default" href="docs.html" />
+    <meta
+      name="description"
+      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
+    />
+    <meta
+      property="og:description"
+      content="Завантажте технічні паспорти, посібники з монтажу та експлуатації модемів АСТЕЛ-КОМ."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Technical Documentation — ASTEL-COM</title>
+    <!-- Favicons -->
+    <link rel="icon" href="assets/favicons/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="assets/favicons/astel-com-favicon.svg"
+    />
+    <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png" />
     <link
       rel="preload"
       href="assets/fonts/geist-v5-cyrillic_latin/geist-v5-cyrillic_latin-regular.woff2"
@@ -115,22 +131,35 @@
 
         <div class="header__collapse" id="menu-collapse">
           <nav class="header__nav">
-            <a href="en/index.html" class="header__link" data-i18n="nav.home">HOME</a>
-            <a href="en/about_us.html" class="header__link" data-i18n="nav.about">ABOUT US</a>
-
-            <a href="en/products.html" class="header__link hide-on-compact"
-               data-i18n="nav.products">PRODUCTS</a
+            <a href="en/index.html" class="header__link" data-i18n="nav.home"
+              >HOME</a
             >
-            <a href="en/downloads.html" class="header__link hide-on-compact"
-               data-i18n="nav.downloads">DOWNLOADS</a
+            <a href="en/about_us.html" class="header__link" data-i18n="nav.about"
+              >ABOUT US</a
+            >
+
+            <a
+              href="en/products.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.products"
+              >PRODUCTS</a
+            >
+            <a
+              href="en/downloads.html"
+              class="header__link hide-on-compact"
+              data-i18n="nav.downloads"
+              >DOWNLOADS</a
             >
             <a
               href="en/docs.html"
               class="header__link hide-on-compact header__link--active"
-               data-i18n="nav.docs">DOCUMENTATION</a
+              data-i18n="nav.docs"
+              >DOCUMENTATION</a
             >
 
-            <a href="#footer" class="header__link" data-i18n="nav.contacts">CONTACTS</a>
+            <a href="#footer" class="header__link" data-i18n="nav.contacts"
+              >CONTACTS</a
+            >
 
             <div
               class="header__more show-on-compact header__link--active"
@@ -141,7 +170,8 @@
                 id="more-toggle"
                 type="button"
                 aria-expanded="false"
-               data-i18n="nav.more">
+                data-i18n="nav.more"
+              >
                 MORE
                 <svg
                   class="header__more-icon"
@@ -158,14 +188,23 @@
                 </svg>
               </button>
               <div class="header__more-menu">
-                <a href="en/products.html" class="header__more-link" data-i18n="nav.products">PRODUCTS</a>
-                <a href="en/downloads.html" class="header__more-link"
-                   data-i18n="nav.downloads">DOWNLOADS</a
+                <a
+                  href="en/products.html"
+                  class="header__more-link"
+                  data-i18n="nav.products"
+                  >PRODUCTS</a
+                >
+                <a
+                  href="en/downloads.html"
+                  class="header__more-link"
+                  data-i18n="nav.downloads"
+                  >DOWNLOADS</a
                 >
                 <a
                   href="en/docs.html"
                   class="header__more-link header__more-link--active"
-                   data-i18n="nav.docs">DOCUMENTATION</a
+                  data-i18n="nav.docs"
+                  >DOCUMENTATION</a
                 >
               </div>
             </div>
@@ -190,10 +229,22 @@
               </div>
               <ul class="header__lang-menu">
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="uk" translate="no">UA</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="uk"
+                    translate="no"
+                    >UA</a
+                  >
                 </li>
                 <li class="header__lang-item">
-                  <a href="#" class="header__lang-link" data-lang="en" translate="no">EN</a>
+                  <a
+                    href="#"
+                    class="header__lang-link"
+                    data-lang="en"
+                    translate="no"
+                    >EN</a
+                  >
                 </li>
               </ul>
             </div>
@@ -232,8 +283,12 @@
     <main class="docs-page">
       <div class="container">
         <div class="docs-header">
-          <span class="docs-header__badge" data-i18n="docs.badge">Technical Library</span>
-          <h1 class="docs-header__title" data-i18n="docs.heading">Specifications & Documentation</h1>
+          <span class="docs-header__badge" data-i18n="docs.badge"
+            >Technical Library</span
+          >
+          <h1 class="docs-header__title" data-i18n="docs.heading">
+            Specifications & Documentation
+          </h1>
           <p class="docs-header__subtitle">
             Select a device below to download installation and operation manuals, technical datasheets, and drivers.
           </p>
@@ -347,8 +402,11 @@
             (item) => item.docs && item.docs.length > 0,
           );
 
+          const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g,
+            ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
           const formatFileCount = (count) => {
-            if (I18nManager.getLang() === "en") return `${count} ${count === 1 ? "file" : "files"}`;
+            if (I18nManager.getLang() === "en")
+              return `${count} ${count === 1 ? "file" : "files"}`;
             if (count === 1) return "1 файл";
             if (count >= 2 && count <= 4) return `${count} файли`;
             return `${count} файлів`;
@@ -361,19 +419,19 @@
                 .map((d) => {
                   const isDirectDownload = Boolean(d.download);
                   const linkAttrs = isDirectDownload
-                    ? `download="${d.download}"`
+                    ? `download="${escapeHtml(d.download)}"`
                     : 'target="_blank" rel="noopener"';
                   const actionLabel = isDirectDownload ? "PDF" : "DRIVE";
 
                   return `
-                    <a href="${d.url}" ${linkAttrs} class="docs-file-link">
+                    <a href="${escapeHtml(d.url)}" ${linkAttrs} class="docs-file-link">
                       <div class="docs-file-link__left">
                         <img
                           src="assets/images/file_save.svg"
                           alt="Завантажити"
                           class="docs-file-link__icon"
                         />
-                        <span>${I18nManager.documentTitle(d)}</span>
+                        <span>${escapeHtml(I18nManager.documentTitle(d))}</span>
                       </div>
                       <span class="docs-file-link__action">${actionLabel}</span>
                     </a>
@@ -390,13 +448,13 @@
                   >
                     <div class="docs-item__left">
                       <img
-                        src="${product.image}"
-                        alt="${I18nManager.translate(product.title)}"
+                        src="${escapeHtml(product.image)}"
+                        alt="${escapeHtml(product.titleEn && I18nManager.getLang()==='en' ? product.titleEn : I18nManager.translate(product.title))}"
                         class="docs-item__thumb"
                       />
                       <div class="docs-item__meta">
-                        <span class="docs-item__category">${I18nManager.translate(product.categoryName)}</span>
-                        <h2 class="docs-item__title">${I18nManager.translate(product.title)}</h2>
+                        <span class="docs-item__category">${escapeHtml(I18nManager.translate(product.categoryName))}</span>
+                        <h2 class="docs-item__title">${escapeHtml(product.titleEn && I18nManager.getLang()==='en' ? product.titleEn : I18nManager.translate(product.title))}</h2>
                       </div>
                     </div>
                     <div class="docs-item__right">

@@ -125,8 +125,7 @@ const AuthManager = (function () {
 
   function ensureOrdersSeeded() {
     try {
-      const existing = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
-      if (existing.length === 0) {
+      if (localStorage.getItem(ORDERS_KEY) === null) {
         localStorage.setItem(ORDERS_KEY, JSON.stringify(DEFAULT_DEMO_ORDERS));
       }
     } catch (e) {}

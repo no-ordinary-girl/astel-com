@@ -7,7 +7,7 @@ const base=path.resolve(__dirname,'..');
 const js=fs.readFileSync(path.join(base,'js/admin.js'),'utf8');
 const editor=fs.readFileSync(path.join(base,'js/admin-new-product.js'),'utf8');
 const css=fs.readFileSync(path.join(base,'css/admin-photos.css'),'utf8');
-assert.match(js,/<tr class="admin-inventory-meta-row" data-product-meta-id=/);
+assert.match(js,/<tr class="admin-inventory-meta-row \$\{dirty\?/);
 assert.match(js,/class="admin-inventory-meta-bar"/);
 assert.match(js,/class="admin-inventory-unsaved" role="status"/);
 assert.match(js,/const metaRow=row\.nextElementSibling/);

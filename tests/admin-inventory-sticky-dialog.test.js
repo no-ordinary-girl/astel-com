@@ -1,0 +1,20 @@
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const root = path.join(__dirname, '..');
+const html = fs.readFileSync(path.join(root,'admin.html'),'utf8');
+const css = fs.readFileSync(path.join(root,'css','admin-photos.css'),'utf8');
+const js = fs.readFileSync(path.join(root,'js','admin.js'),'utf8');
+
+assert.match(html, /admin-table-card admin-inventory-table-card/);
+assert.match(css, /\.admin-inventory-product-row \.admin-inventory-select\s*\{[^}]*padding:\s*0 40px 0 14px/s);
+assert.match(css, /background-position:\s*right 14px center/);
+assert.match(js, /metaRow\?\.classList\.toggle\('has-pending-changes', dirty\)/);
+assert.match(js, /function confirmAdminDelete\(/);
+assert.match(js, /item\.textContent = subject/);
+assert.match(js, /dialog\.showModal\(\)/);
+assert.doesNotMatch(js, /window\.confirm\(/);
+assert.doesNotMatch(css, /position:\s*sticky|inventory-sticky/);
+assert.doesNotMatch(js, /updateInventorySticky|scheduleInventorySticky|inventoryStickyFrame|inventory-sticky/);
+assert.match(css, /\.admin-inventory-meta-row\.has-pending-changes \.admin-inventory-unsaved\s*\{/);
+console.log('PASS: padded inventory selectors, normal-flow product rows, orange unsaved state, custom safe delete dialogs');

@@ -201,6 +201,60 @@ if (typeof document !== "undefined") {
           );
         }
 
+        // Styled confirmation for destructive admin actions. Never interpolate product
+        // or category names into HTML: those labels may originate from user input.
+        function confirmAdminDelete({ title, message, subject, confirmLabel='Видалити' }) {
+          return new Promise(resolve => {
+            const dialog = document.createElement('dialog');
+            dialog.className = 'admin-confirm-dialog';
+            dialog.setAttribute('aria-labelledby', 'admin-confirm-title');
+            dialog.setAttribute('aria-describedby', 'admin-confirm-message');
+
+            const heading = document.createElement('h2');
+            heading.id = 'admin-confirm-title';
+            heading.textContent = title;
+            const description = document.createElement('p');
+            description.id = 'admin-confirm-message';
+            description.textContent = message;
+            const item = document.createElement('strong');
+            item.className = 'admin-confirm-dialog__subject';
+            item.textContent = subject;
+            const actions = document.createElement('div');
+            actions.className = 'admin-confirm-dialog__actions';
+            const cancel = document.createElement('button');
+            cancel.type = 'button';
+            cancel.className = 'admin-btn admin-btn--outline';
+            cancel.textContent = 'Скасувати';
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'admin-btn admin-confirm-dialog__danger';
+            remove.textContent = confirmLabel;
+            actions.append(cancel, remove);
+            dialog.append(heading, description, item, actions);
+
+            let settled = false;
+            const finish = accepted => {
+              if (settled) return;
+              settled = true;
+              if (dialog.open) dialog.close();
+              dialog.remove();
+              resolve(accepted);
+            };
+            cancel.addEventListener('click', () => finish(false));
+            remove.addEventListener('click', () => finish(true));
+            dialog.addEventListener('cancel', event => {
+              event.preventDefault();
+              finish(false);
+            });
+            dialog.addEventListener('click', event => {
+              if (event.target === dialog) finish(false);
+            });
+            document.body.append(dialog);
+            dialog.showModal();
+            cancel.focus();
+          });
+        }
+
         function showUndoToast(message, undoCallback) {
           let toast = document.getElementById("admin-undo-toast");
           if (!toast) {
@@ -1011,6 +1065,7 @@ if (typeof document !== "undefined") {
           const metaRow=row.nextElementSibling;
           const notice=metaRow?.matches('.admin-inventory-meta-row')
             ? metaRow.querySelector('.admin-inventory-unsaved') : null;
+          metaRow?.classList.toggle('has-pending-changes', dirty);
           if(notice)notice.hidden=!dirty;
         }
         function renderPhotoEditor(p, images) {
@@ -1123,14 +1178,14 @@ if (typeof document !== "undefined") {
             form.reset();renderProductsTable();showUndoToast('Категорію додано',null);
           }catch(err){showUndoToast(err.message,null);}
         });
-        document.getElementById('admin-category-list')?.addEventListener('click',e=>{
+        document.getElementById('admin-category-list')?.addEventListener('click',async e=>{
           const btn=e.target.closest('[data-delete-category]');if(!btn)return;
           const code=btn.dataset.deleteCategory;
           if([...productDrafts.values()].some(d=>d.category===code)) {
             showUndoToast('Є незбережені зміни категорії в таблиці товарів',null);return;
           }
           const name=CatalogManager.CATEGORIES[code];
-          if(!window.confirm(`Видалити категорію «${name}»?`))return;
+          if(!await confirmAdminDelete({title:'Видалити категорію?', message:'Категорію буде видалено з каталогу. Цю дію неможливо скасувати.', subject:name}))return;
           try{CatalogManager.deleteCategory(code);renderProductsTable();showUndoToast('Категорію видалено',null);}
           catch(err){showUndoToast(err.message,null);}
         });
@@ -1157,7 +1212,7 @@ if (typeof document !== "undefined") {
                 <button type="button" class="admin-inventory-delete" data-delete-product="${esc(p.id)}" title="Видалити товар" aria-label="Видалити товар ${esc(p.title)}"><img src="assets/images/delete.svg" alt="" /></button>
               </div></td>
             </tr>
-            <tr class="admin-inventory-meta-row" data-product-meta-id="${esc(p.id)}">
+            <tr class="admin-inventory-meta-row ${dirty?'has-pending-changes':''}" data-product-meta-id="${esc(p.id)}">
               <td colspan="6"><div class="admin-inventory-meta-bar">
                 <button type="button" class="admin-product-content-toggle" data-toggle-product-details="${esc(p.id)}"
                   aria-expanded="${detailOpen.has(p.id)}"><span aria-hidden="true">${detailOpen.has(p.id)?'▴':'✎'}</span> ${detailOpen.has(p.id)?'Сховати редактор':'Редагувати товар'}</button>
@@ -1274,7 +1329,7 @@ if (typeof document !== "undefined") {
             finally{button.disabled=false;}
           } else if(btn.hasAttribute('data-delete-product')) {
             const id=btn.dataset.deleteProduct,p=PRODUCTS_DATA[id];if(!p)return;
-            if(!window.confirm(`Видалити товар «${p.title}» із каталогу?\nЦю дію неможливо скасувати.`)) return;
+            if(!await confirmAdminDelete({title:'Видалити товар?', message:'Товар буде видалено з каталогу. Цю дію неможливо скасувати.', subject:p.title})) return;
             try {const oldDocs=[...(p.docs||[])];productDrafts.delete(id);detailsDirty.delete(id);detailOpen.delete(id);CatalogManager.deleteProduct(id);cleanupRemovedPdfFiles(oldDocs);renderProductsTable();showUndoToast('Товар видалено з каталогу',null);}
             catch(err){showUndoToast(err.message,null);}
           } else if(btn.hasAttribute('data-photo-remove')) {

@@ -1205,17 +1205,22 @@ html[data-theme="dark"] .admin-document-current__filename {
   }
 }
 
-/* Inventory polish: align the two native-select replacement arrows with an
-   intentional right inset instead of the UA's flush-right appearance. */
-.admin-inventory-product-row .admin-inventory-select {
+/* Consistent arrow spacing for inventory and new-product dropdowns.
+   The new-product form was previously omitted from this rule. */
+.admin-inventory-product-row .admin-inventory-select,
+.admin-new-product-form select[name="category"],
+.admin-new-product-form select[name="saleTermsCode"] {
   appearance: none;
   -webkit-appearance: none;
-  padding: 0 40px 0 14px;
-  background-color: #fff;
+  padding-right: 30px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23161617' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 14px center;
+  background-position: right 10px center;
   background-size: 14px 14px;
+}
+.admin-inventory-product-row .admin-inventory-select {
+  padding-left: 14px;
+  background-color: #fff;
 }
 
 /* Custom destructive-action confirmation, replacing browser confirm(). */

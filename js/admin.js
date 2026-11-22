@@ -1114,6 +1114,19 @@ if (typeof document !== "undefined") {
                 <button type="button" role="tab" data-editor-lang="uk" aria-selected="true">Українська</button>
                 <button type="button" role="tab" data-editor-lang="en" aria-selected="false" tabindex="-1">English</button>
               </div>
+              <div class="admin-editor-language-context" data-editor-language-context role="status" aria-live="polite">
+                <span class="admin-editor-language-context__code" data-editor-language-code>UA</span>
+                <div class="admin-editor-language-context__copy">
+                  <strong data-editor-language-heading>Ви редагуєте українську версію</strong>
+                  <span data-editor-language-help>Заповнюйте назву, опис і характеристики українською. Для англійської версії перейдіть на вкладку English.</span>
+                </div>
+              </div>
+              <div class="admin-product-name-grid">
+                <label data-editor-field-lang="uk">Назва товару
+                  <input name="title" type="text" maxlength="200" placeholder="Введіть назву товару українською" /></label>
+                <label data-editor-field-lang="en">Назва товару
+                  <input name="titleEn" type="text" maxlength="200" placeholder="Перекладіть назву товару англійською" /></label>
+              </div>
               <div class="admin-description-grid">
                 <label class="admin-new-product-description" data-editor-field-lang="uk">Опис товару українською
                   <textarea name="description" rows="5"></textarea></label>
@@ -1313,6 +1326,7 @@ if (typeof document !== "undefined") {
                   showUndoToast('Потрібен переклад англійською — заповніть підсвічені поля',null);
                   return;
                 }
+                Object.assign(patch,AstelProductEditor.extractProductNames(form));
                 Object.assign(patch,AstelProductEditor.extractDescriptions(form));
                 patch.specSections=AstelProductEditor.extractSections(form);
                 patch.docs=await AstelProductEditor.extractDocuments(form);
@@ -1378,8 +1392,8 @@ if (typeof document !== "undefined") {
             if(!photoFiles.length) throw new Error('Додайте принаймні одну фотографію');
             const photos=[];for(const file of photoFiles)photos.push(await compressImage(file));
             const newProduct=CatalogManager.addProduct({
-              id:String(data.get('id')||'').trim(),title:String(data.get('title')||'').trim(),
-              titleEn:String(data.get('titleEn')||'').trim(),
+              id:String(data.get('id')||'').trim(),
+              ...AstelProductEditor.extractProductNames(addProductForm),
               description:String(data.get('description')||'').trim(),
               descriptionEn:String(data.get('descriptionEn')||'').trim(),
               price:String(data.get('price')||'').trim(),category:String(data.get('category')||''),

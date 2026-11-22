@@ -345,8 +345,6 @@
             <p>Новий товар одразу з'явиться у каталозі цього браузера. Фотографії зберігаються локально до підключення сервера.</p>
             <div class="admin-new-product-grid">
               <label>ID латиницею (унікальний) <input name="id" type="text" pattern="[a-z0-9-]{3,70}" placeholder="new-modem-model" required /></label>
-              <label>Назва українською <input name="title" type="text" minlength="3" maxlength="200" required /></label>
-              <label>Назва англійською <input name="titleEn" type="text" minlength="3" maxlength="200" required /></label>
               <label>Ціна без ПДВ, грн <input name="price" type="number" min="1" max="99999999" step="1" required /></label>
 <label>Категорія <select name="category" required></select></label>
               <label>Умови продажу
@@ -371,6 +369,19 @@
             <div class="admin-editor-language-tabs" data-editor-language-tabs role="tablist" aria-label="Мова редагування">
               <button type="button" role="tab" data-editor-lang="uk" aria-selected="true">Українська</button>
               <button type="button" role="tab" data-editor-lang="en" aria-selected="false" tabindex="-1">English</button>
+            </div>
+            <div class="admin-editor-language-context" data-editor-language-context role="status" aria-live="polite">
+              <span class="admin-editor-language-context__code" data-editor-language-code>UA</span>
+              <div class="admin-editor-language-context__copy">
+                <strong data-editor-language-heading>Ви редагуєте українську версію</strong>
+                <span data-editor-language-help>Заповнюйте назву, опис і характеристики українською. Для англійської версії перейдіть на вкладку English.</span>
+              </div>
+            </div>
+            <div class="admin-product-name-grid">
+              <label data-editor-field-lang="uk">Назва товару
+                <input name="title" type="text" maxlength="200" placeholder="Введіть назву товару українською" /></label>
+              <label data-editor-field-lang="en">Назва товару
+                <input name="titleEn" type="text" maxlength="200" placeholder="Перекладіть назву товару англійською" /></label>
             </div>
             <div class="admin-description-grid">
               <label class="admin-new-product-description" data-editor-field-lang="uk">Опис товару українською

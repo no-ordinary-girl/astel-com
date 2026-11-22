@@ -1303,3 +1303,150 @@ html[data-theme="dark"] .admin-inventory-meta-row.has-pending-changes > td,
 html[data-theme="dark"] .admin-inventory-product-row.has-pending-changes > td {
   background: #382a1c;
 }
+
+/* Language-aware content editing: one clear language context across the entire form. */
+.admin-language-editor .admin-editor-language-tabs {
+  position: relative;
+  margin-top: 4px;
+  padding: 5px;
+  background: #ececef;
+  border: 1px solid #dcdce0;
+  border-radius: 12px;
+}
+.admin-language-editor .admin-editor-language-tabs [data-editor-lang] {
+  min-height: 46px;
+  font: 700 14px var(--font-mono);
+}
+.admin-language-editor .admin-editor-language-context {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 15px 17px;
+  border: 1px solid #dcdce0;
+  border-left: 4px solid #171717;
+  border-radius: 11px;
+  background: #f3f3f4;
+}
+.admin-language-editor .admin-editor-language-context__code {
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  background: #171717;
+  color: white;
+  font: 700 13px var(--font-mono);
+}
+.admin-language-editor .admin-editor-language-context__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.admin-language-editor .admin-editor-language-context__copy strong {
+  color: var(--gray-900);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.admin-language-editor .admin-editor-language-context__copy span {
+  color: #657083;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.admin-language-editor[data-editor-language="en"]
+  .admin-editor-language-context {
+  background: #eef3f9;
+  border-color: #d4dfeb;
+  border-left-color: #42678e;
+}
+.admin-language-editor[data-editor-language="en"]
+  .admin-editor-language-context__code {
+  background: #42678e;
+}
+/* Only user-entered content switches languages. Interface labels stay Ukrainian. */
+.admin-language-editor .admin-product-name-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.admin-language-editor .admin-product-name-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font: 700 14px var(--font-base);
+}
+.admin-language-editor .admin-product-name-grid input {
+  min-height: 49px;
+  font: 600 16px/1.4 var(--font-base);
+}
+.admin-language-editor .admin-product-name-grid input::placeholder {
+  font-weight: 400;
+}
+.admin-language-editor .admin-description-grid label {
+  font-size: 14px;
+  font-weight: 700;
+}
+.admin-language-editor .admin-spec-table-name label {
+  font-size: 14px;
+}
+.admin-language-editor .admin-extra-heading > div > h3::after {
+  content: "UA";
+  display: inline-flex;
+  margin-left: 12px;
+  transform: translateY(-1px);
+  vertical-align: middle;
+  padding: 4px 7px;
+  border-radius: 5px;
+  background: #e8e8ea;
+  color: #4a5568;
+  font: 700 10px var(--font-mono);
+}
+.admin-language-editor[data-editor-language="en"]
+  .admin-extra-heading
+  > div
+  > h3::after {
+  content: "EN";
+  background: #e1eaf4;
+  color: #365d86;
+}
+.admin-language-editor .admin-translation-missing {
+  border-color: #d97706 !important;
+  background: #fff9eb !important;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.1);
+}
+html[data-theme="dark"] .admin-language-editor .admin-editor-language-tabs {
+  background: #292929;
+  border-color: #474747;
+}
+html[data-theme="dark"] .admin-language-editor .admin-editor-language-context {
+  background: #292929;
+  border-color: #474747;
+  border-left-color: #eeeeee;
+}
+html[data-theme="dark"]
+  .admin-language-editor[data-editor-language="en"]
+  .admin-editor-language-context {
+  border-left-color: #8cadd0;
+}
+html[data-theme="dark"]
+  .admin-language-editor
+  .admin-editor-language-context__copy
+  strong {
+  color: #efefef;
+}
+html[data-theme="dark"]
+  .admin-language-editor
+  .admin-editor-language-context__copy
+  span {
+  color: #b6bcc5;
+}
+@media (max-width: 600px) {
+  .admin-language-editor .admin-editor-language-context {
+    align-items: flex-start;
+    padding: 12px;
+  }
+  .admin-language-editor .admin-editor-language-context__copy span {
+    font-size: 11px;
+  }
+}

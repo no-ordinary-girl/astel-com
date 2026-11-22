@@ -31,6 +31,17 @@ function selectLanguage(form, language){
     button.setAttribute('aria-selected',String(selected));
     button.tabIndex=selected?0:-1;
   });
+  const context=form.querySelector('[data-editor-language-context]');
+  if(context){
+    const code=context.querySelector('[data-editor-language-code]');
+    const heading=context.querySelector('[data-editor-language-heading]');
+    const help=context.querySelector('[data-editor-language-help]');
+    if(code)code.textContent=language==='uk'?'UA':'EN';
+    if(heading)heading.textContent=language==='uk'?'Ви редагуєте українську версію':'Ви редагуєте англійську версію';
+    if(help)help.textContent=language==='uk'
+      ?'Заповнюйте назву, опис і характеристики українською. Для англійської версії перейдіть на вкладку English.'
+      :'Заповнюйте англійські переклади назви, опису та характеристик. Підписи полів залишаються українською.';
+  }
 }
 
 function err(msg){throw new Error(msg);}
@@ -86,9 +97,9 @@ function createSpecSection(data={}){
   const english=type==='custom'?englishInitial(title,data.titleEn):(data.titleEn||DEFAULT_TITLES[type].en);
   section.innerHTML=`<div class="admin-extra-section-top admin-spec-table-header">
     <div class="admin-spec-table-name">
-      <label data-editor-field-lang="uk">Тип таблиці
+      <label data-editor-field-lang="uk">Назва таблиці
         <input data-spec-title placeholder="Назва таблиці українською" maxlength="120" value="${esc(title)}" /></label>
-      <label data-editor-field-lang="en">Тип таблиці
+      <label data-editor-field-lang="en">Назва таблиці
         <input data-spec-title-en placeholder="Перекладіть назву таблиці англійською" maxlength="120" value="${esc(english)}" /></label>
     </div>
     <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-spec-section><img src="assets/images/delete.svg" alt="" /> Видалити</button>
@@ -130,6 +141,10 @@ function createDocRow(data={}){
   return row;
 }
 function populate(form,product){
+  const titleUk=form.querySelector('[name="title"]');
+  const titleEn=form.querySelector('[name="titleEn"]');
+  if(titleUk)titleUk.value=product?.title||'';
+  if(titleEn)titleEn.value=product?englishInitial(product.title||'',product.titleEn):'';
   const sections=form.querySelector('[data-spec-sections]');const docs=form.querySelector('[data-doc-rows]');
   if(sections){sections.replaceChildren();
     if(product){
@@ -142,6 +157,14 @@ function populate(form,product){
   const uk=form.querySelector('[name="description"]');if(uk)uk.value=(product?.description||[]).join('\n\n');
   const en=form.querySelector('[name="descriptionEn"]');if(en)en.value=(product?.description?.length?product.description.map((value,i)=>englishInitial(value,product?.descriptionEn?.[i])):(product?.descriptionEn||[])).join('\n\n');
   refreshSuggestions(form);
+}
+function extractProductNames(form){
+  const title=form.querySelector('[name="title"]')?.value.trim()||'';
+  const titleEn=form.querySelector('[name="titleEn"]')?.value.trim()||'';
+  if(title.length<3 || title.length>200)err('Назва товару українською: від 3 до 200 символів');
+  if(titleEn.length<3 || titleEn.length>200 || /[А-Яа-яІіЇїЄєҐґ]/.test(titleEn))
+    err('Назва товару англійською: від 3 до 200 символів');
+  return {title,titleEn};
 }
 function extractDescriptions(form){
   const uk=String(form.querySelector('[name="description"]')?.value||'').trim();
@@ -186,6 +209,16 @@ function validateTranslations(form){
       missing.push(en);
     }
   };
+  const nameUk=form.querySelector('[name="title"]'),nameEn=form.querySelector('[name="titleEn"]');
+  check(nameUk,nameEn);
+  // Missing required product names should be highlighted, including a missing UK name.
+  if(nameUk&&!nameUk.value.trim()){
+    nameUk.classList.add('admin-translation-missing');nameUk.setAttribute('aria-invalid','true');
+    missing.unshift(nameUk);
+  } else if(nameEn&&!nameEn.value.trim()&&!missing.includes(nameEn)){
+    nameEn.placeholder=translationHint(nameUk?.value||'');
+    nameEn.classList.add('admin-translation-missing');nameEn.setAttribute('aria-invalid','true');missing.push(nameEn);
+  }
   check(form.querySelector('[name="description"]'),form.querySelector('[name="descriptionEn"]'));
   form.querySelectorAll('.admin-spec-section').forEach(section=>{
     check(section.querySelector('[data-spec-title]'),section.querySelector('[data-spec-title-en]'));
@@ -196,8 +229,8 @@ function validateTranslations(form){
   });
   form.querySelectorAll('.admin-document-row').forEach(row=>check(row.querySelector('[data-doc-title]'),row.querySelector('[data-doc-title-en]')));
   if(missing.length){
-    selectLanguage(form,'en');
     const first=missing[0];
+    selectLanguage(form,first.closest?.('[data-editor-field-lang]')?.dataset.editorFieldLang||'en');
     first.focus({preventScroll:true});
     first.scrollIntoView?.({behavior:'smooth',block:'center'});
     return false;
@@ -295,7 +328,7 @@ function bind(form){
   if(root.addEventListener)root.addEventListener('astel:catalog-updated',()=>refreshSuggestions(form));
 }
 function reset(form){populate(form,null);clearPhotos(form);}
-const api={bind,reset,populate,extractDescriptions,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto,createSpecSection,createDocRow,englishFromDictionary,englishInitial,selectLanguage,validateTranslations,tableType};
+const api={bind,reset,populate,extractProductNames,extractDescriptions,extractSections,extractDocuments,readPdf,getPhotos,customNames,movePhoto,createSpecSection,createDocRow,englishFromDictionary,englishInitial,selectLanguage,validateTranslations,tableType};
 root.AstelProductEditor=api;
 if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

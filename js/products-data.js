@@ -973,6 +973,9 @@ const CatalogManager = (() => {
     for(const id of Object.keys(deleted)) if(deleted[id]) delete PRODUCTS_DATA[id];
     for(const [id,ov] of Object.entries(readOverrides())) {
       const p=PRODUCTS_DATA[id]; if(!p || !ov || typeof ov!=='object') continue;
+      if(typeof ov.title==='string' && ov.title.trim().length>=3 && ov.title.length<=200) p.title=ov.title.trim();
+      if(typeof ov.titleEn==='string' && ov.titleEn.trim().length>=3 && ov.titleEn.length<=200 &&
+         !/[А-Яа-яІіЇїЄєҐґ]/.test(ov.titleEn)) p.titleEn=ov.titleEn.trim();
       if(validPrice(ov.price)!==null) p.numericPrice=Number(ov.price);
       if(typeof ov.inStock==='boolean') p.inStock=ov.inStock;
       if(CATEGORIES[ov.category]) p.category=ov.category;
@@ -991,6 +994,10 @@ const CatalogManager = (() => {
   function getOriginalPrice(id){ return base[id] ? validPrice(String(base[id].price).replace(/[^\d]/g,'')) : null; }
   function updateProduct(id,patch) {
     if(!own(PRODUCTS_DATA,id)) throw new Error('Невідомий товар');
+    if(own(patch,'title') && (typeof patch.title!=='string' || patch.title.trim().length<3 || patch.title.length>200))
+      throw new Error('Назва товару українською: від 3 до 200 символів');
+    if(own(patch,'titleEn') && (typeof patch.titleEn!=='string' || patch.titleEn.trim().length<3 || patch.titleEn.length>200 || /[А-Яа-яІіЇїЄєҐґ]/.test(patch.titleEn)))
+      throw new Error('Введіть назву товару англійською (3–200 символів)');
     if(own(patch,'price') && validPrice(patch.price)===null) throw new Error('Вкажіть цілу ціну від 1 до 99 999 999 грн');
     if(own(patch,'inStock') && typeof patch.inStock!=='boolean') throw new Error('Невірне значення наявності');
     if(own(patch,'category') && !CATEGORIES[patch.category]) throw new Error('Невірна категорія');

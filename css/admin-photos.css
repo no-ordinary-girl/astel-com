@@ -1476,3 +1476,28 @@ html[data-theme="dark"]
     align-self: start;
   }
 }
+
+/* Keep characteristic inputs aligned even if only one field has an inline
+   validation message. End alignment pushed the other input downward. */
+.admin-spec-row,
+.admin-language-editor .admin-spec-row {
+  align-items: start;
+}
+
+/* At tablet and mobile widths, stack the two fields, leaving a fixed-size
+   remove button next to the first field. A longer validation message must
+   not stretch the button or pull the other field out of alignment. */
+@media (max-width: 960px) {
+  .admin-language-editor .admin-spec-row {
+    grid-template-columns: minmax(0, 1fr) 35px;
+  }
+  .admin-language-editor .admin-spec-row__translations {
+    grid-column: 1;
+  }
+  .admin-language-editor .admin-spec-row > [data-remove-spec-row] {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    width: 35px;
+  }
+}

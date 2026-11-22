@@ -334,6 +334,12 @@ if (typeof document !== "undefined") {
       }, 6000);
     }
 
+    // Native required-field validation is caught before submit handlers run.
+    // Keep its black toast generic; details appear under each invalid field.
+    document.addEventListener("astel:admin-validation-failed", () => {
+      showUndoToast("Заповніть пропущені поля!", null);
+    });
+
     function writeOrder(updatedOrd) {
       const cleanId = String(updatedOrd.orderId);
       const orders = loadAllOrders();
@@ -1661,14 +1667,11 @@ if (typeof document !== "undefined") {
         try {
           if (detailsDirty.has(id) && form?.dataset.initialized) {
             if (!AstelAdminValidation.validateForm(form)) {
-              showUndoToast("Виправте помилки у виділених полях", null);
+              showUndoToast("Заповніть пропущені поля!", null);
               return;
             }
             if (!AstelProductEditor.validateTranslations(form)) {
-              showUndoToast(
-                AstelProductEditor.validationMessage(form),
-                null,
-              );
+              showUndoToast("Заповніть пропущені поля!", null);
               return;
             }
             Object.assign(patch, AstelProductEditor.extractProductNames(form));
@@ -1797,10 +1800,7 @@ if (typeof document !== "undefined") {
       button.disabled = true;
       try {
         if (!AstelProductEditor.validateTranslations(addProductForm)) {
-          showUndoToast(
-            AstelProductEditor.validationMessage(addProductForm),
-            null,
-          );
+          showUndoToast("Заповніть пропущені поля!", null);
           return;
         }
         const data = new FormData(addProductForm);

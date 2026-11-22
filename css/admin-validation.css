@@ -10,32 +10,24 @@
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
-/* One error border, not a border plus an outline (which creates a
-   doubled ring when the invalid field receives keyboard focus). */
-.admin-validation-invalid:is(input, textarea, select) {
-  border-color: #dc2626 !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-.admin-validation-invalid:is(input, textarea, select):focus-visible {
-  border: 2px solid #dc2626 !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* The translation workflow already marks untranslated fields orange.
-   Don't stack the generic red outline/border/shadow on top of that state. */
+/* One consistent palette for all invalid inputs, whether the error is a
+   required field, an invalid ID/price, or a missing bilingual translation. */
+.admin-validation-invalid:is(input, textarea, select),
 .admin-language-editor .admin-translation-missing:is(input, textarea, select) {
-  border: 1px solid #d97706 !important;
-  background: #fff9eb !important;
+  border: 1px solid #dc2626 !important;
+  background-color: #fff7f7 !important;
   outline: none !important;
   box-shadow: none !important;
 }
+/* The error is the focus cue too: do not add another ring or change sizing. */
+.admin-validation-invalid:is(input, textarea, select):focus-visible,
 .admin-language-editor .admin-translation-missing:is(input, textarea, select):focus-visible {
-  border-width: 2px !important;
+  border-color: #b91c1c !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 .admin-language-editor .admin-translation-missing + .admin-validation-error {
-  color: #b45309;
+  color: #b91c1c;
 }
 
 /* Category fields must not jump vertically when one label gains an

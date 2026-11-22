@@ -213,7 +213,7 @@
     <input data-doc-title-en placeholder="Переклад назви документа англійською" maxlength="200" value="${esc(englishInitial(data.title || "", data.titleEn))}" /></label>
     ${currentFile}
     <label>${original ? "Замінити прикріплений PDF (необов’язково)" : "Додати PDF-файл"}
-    <input data-doc-file type="file" accept=".pdf,application/pdf" ${original ? "" : "required"}/></label>`;
+    <input data-doc-file type="file" accept=".pdf,application/pdf" /></label>`;
     if (isLocal) root.AstelProductFiles?.hydrate(row).catch(() => {});
     return row;
   }
@@ -405,12 +405,22 @@
       });
     });
 
-    form.querySelectorAll(".admin-document-row").forEach((row) =>
-      checkEnglish(
-        row.querySelector("[data-doc-title]"),
-        row.querySelector("[data-doc-title-en]"),
-      ),
-    );
+    // Documents use the same inline required-field validation as product names
+    // and specifications. Do not defer missing titles to extractDocuments(),
+    // which would throw a plain error without highlighting the fields.
+    form.querySelectorAll(".admin-document-row").forEach((row) => {
+      const titleUk = row.querySelector("[data-doc-title]");
+      const titleEn = row.querySelector("[data-doc-title-en]");
+      const fileInput = row.querySelector("[data-doc-file]");
+      const hasOriginal = Boolean(row.dataset.originalDoc);
+      if (titleUk && !titleUk.value.trim())
+        markMissing(titleUk, "Вкажіть назву документа українською.", "uk");
+      if (titleEn && !titleEn.value.trim() && !titleUk?.value.trim())
+        markMissing(titleEn, "Вкажіть назву документа англійською.", "en");
+      else checkEnglish(titleUk, titleEn);
+      if (!hasOriginal && fileInput && !fileInput.files?.length)
+        markMissing(fileInput, "Додайте PDF-файл.", "uk");
+    });
 
     // Finish missing Ukrainian content before asking for its translation.
     const missing = [...missingUk, ...missingEn];

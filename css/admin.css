@@ -48,7 +48,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  visibility: hidden;
+  /* visibility: hidden; */
+  display: none;
 }
 
 /* --- 4 KPI Summary Cards --- */

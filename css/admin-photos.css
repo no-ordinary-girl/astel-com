@@ -1501,3 +1501,43 @@ html[data-theme="dark"]
     width: 35px;
   }
 }
+
+/* Storefront visibility: separate from availability and deletion. */
+.admin-inventory-visibility {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--gray-200);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.admin-inventory-visibility img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+.admin-inventory-visibility:hover,
+.admin-inventory-visibility.is-hidden {
+  background: var(--gray-100);
+  border-color: var(--gray-400);
+}
+.admin-inventory-visibility:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.admin-inventory-hidden-label {
+  display: inline-block;
+  margin-left: 9px;
+  padding: 3px 6px;
+  color: #606777;
+  background: var(--gray-200);
+  border-radius: 5px;
+  font: 700 10px/1.3 var(--font-mono);
+  white-space: nowrap;
+}

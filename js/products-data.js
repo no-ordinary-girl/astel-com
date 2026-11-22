@@ -943,6 +943,7 @@ const CatalogManager = (() => {
   function decorate(p) {
     const amount=validPrice(p.numericPrice ?? String(p.price).replace(/[^\d]/g,'')) ?? 1;
     p.numericPrice=amount; p.price=amount.toLocaleString('uk-UA')+' ₴';
+    p.isVisible = p.isVisible !== false;
     p.stockText=p.inStock ? 'В наявності' : 'Немає в наявності';
     p.categoryName=getCategoryName(p.category) || 'Категорія';
     p.saleTerms=SALE_TERMS[p.saleTermsCode] || SALE_TERMS.wholesale;
@@ -978,6 +979,7 @@ const CatalogManager = (() => {
          !/[А-Яа-яІіЇїЄєҐґ]/.test(ov.titleEn)) p.titleEn=ov.titleEn.trim();
       if(validPrice(ov.price)!==null) p.numericPrice=Number(ov.price);
       if(typeof ov.inStock==='boolean') p.inStock=ov.inStock;
+      if(typeof ov.isVisible==='boolean') p.isVisible=ov.isVisible;
       if(CATEGORIES[ov.category]) p.category=ov.category;
       if(SALE_TERMS[ov.saleTermsCode]) p.saleTermsCode=ov.saleTermsCode;
       if(Array.isArray(ov.images) && ov.images.length<=12 && ov.images.every(validImageSource)) p.images=[...ov.images];
@@ -1000,6 +1002,7 @@ const CatalogManager = (() => {
       throw new Error('Введіть назву товару англійською (3–200 символів)');
     if(own(patch,'price') && validPrice(patch.price)===null) throw new Error('Вкажіть цілу ціну від 1 до 99 999 999 грн');
     if(own(patch,'inStock') && typeof patch.inStock!=='boolean') throw new Error('Невірне значення наявності');
+    if(own(patch,'isVisible') && typeof patch.isVisible!=='boolean') throw new Error('Невірне значення видимості товару');
     if(own(patch,'category') && !CATEGORIES[patch.category]) throw new Error('Невірна категорія');
     if(own(patch,'saleTermsCode') && !SALE_TERMS[patch.saleTermsCode]) throw new Error('Невірні умови продажу');
     if(own(patch,'images') && (!Array.isArray(patch.images) || !patch.images.length || patch.images.length>12 || !patch.images.every(validImageSource)))
@@ -1023,7 +1026,7 @@ const CatalogManager = (() => {
     const images=Array.isArray(payload.images) ? payload.images : [];
     if(!images.length || images.length>12 || !images.every(validImageSource)) throw new Error('Додайте принаймні одне коректне фото');
     const p={id,title,titleEn,category:payload.category,saleTermsCode:payload.saleTermsCode,
-      numericPrice:Number(payload.price),inStock:payload.inStock===true,
+      numericPrice:Number(payload.price),inStock:payload.inStock===true,isVisible:true,
       image:images[0], images:[...images],
       description:[String(payload.description||'').trim()].filter(Boolean),
       descriptionEn:[String(payload.descriptionEn||'').trim()].filter(Boolean),
@@ -1051,7 +1054,8 @@ const CatalogManager = (() => {
     // Catalog cards are rendered by js/products-catalog.js from this data source.
     root.querySelectorAll('.product-card[data-product-id]').forEach(card => {
       const p=PRODUCTS_DATA[card.dataset.productId];
-      if(p) {card.dataset.price=p.numericPrice;card.dataset.instock=String(p.inStock);card.dataset.category=p.category;}
+      if(p && p.isVisible !== false) {card.dataset.price=p.numericPrice;card.dataset.instock=String(p.inStock);card.dataset.category=p.category;}
+      else card.remove();
     });
   }
   applyOverrides();
@@ -1061,5 +1065,7 @@ const CatalogManager = (() => {
   return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY,
     CATEGORIES,SALE_TERMS,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
     validPdfSource,validSpecSections,validDocs,readOverrides,readCustom,readDeleted,
-    getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards});
+    getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards,
+    getStorefrontProduct:(id) => PRODUCTS_DATA[id]?.isVisible === false ? null : (PRODUCTS_DATA[id] || null),
+    getStorefrontProducts:() => Object.values(PRODUCTS_DATA).filter(p => p.isVisible !== false)});
 })();

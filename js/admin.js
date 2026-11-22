@@ -239,6 +239,7 @@ if (typeof document !== "undefined") {
       message,
       subject,
       confirmLabel = "Видалити",
+      neutral = false,
     }) {
       return new Promise((resolve) => {
         const dialog = document.createElement("dialog");
@@ -263,7 +264,7 @@ if (typeof document !== "undefined") {
         cancel.textContent = "Скасувати";
         const remove = document.createElement("button");
         remove.type = "button";
-        remove.className = "admin-btn admin-confirm-dialog__danger";
+        remove.className = neutral ? "admin-btn admin-btn--primary" : "admin-btn admin-confirm-dialog__danger";
         remove.textContent = confirmLabel;
         actions.append(cancel, remove);
         dialog.append(heading, description, item, actions);
@@ -545,7 +546,7 @@ if (typeof document !== "undefined") {
             <div class="admin-edit-add-row">
               <select class="admin-select" data-add-product-select>
                 ${Object.values(PRODUCTS_DATA)
-                  .filter((p) => p.inStock)
+                  .filter((p) => p.inStock && p.isVisible !== false)
                   .map(
                     (p) =>
                       `<option value="${esc(p.id)}">${esc(p.title)} — ${formatMoney(p.numericPrice)}</option>`,
@@ -1046,7 +1047,7 @@ if (typeof document !== "undefined") {
         const editor = card.querySelector("[data-order-editor]");
         const id = editor?.querySelector("[data-add-product-select]")?.value;
         const product = PRODUCTS_DATA[id];
-        if (!editor || !product || !product.inStock) return;
+        if (!editor || !product || !product.inStock || product.isVisible === false) return;
         const existing = Array.from(
           editor.querySelectorAll("[data-line-id]"),
         ).find((el) => el.dataset.lineId === id);
@@ -1498,13 +1499,22 @@ if (typeof document !== "undefined") {
           const draft = getDraft(p.id),
             dirty = productDrafts.has(p.id) || detailsDirty.has(p.id);
           return `<tr class="admin-inventory-product-row ${dirty ? "has-pending-changes" : ""}" data-product-id="${esc(p.id)}">
-              <td><a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a></td>
+              <td>${p.isVisible === false
+                ? `<span class="admin-product-link">${esc(p.title)}</span><span class="admin-inventory-hidden-label">Приховано</span>`
+                : `<a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>`}</td>
               <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES, draft.category)}</select></td>
               <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS, draft.saleTermsCode)}</select></td>
               <td><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
               <td><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● В наявності" : "○ Немає в наявності"}</button></td>
               <td><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}" ${dirty ? "" : "disabled"}>Оновити</button>
+                <button type="button" class="admin-inventory-visibility ${p.isVisible === false ? 'is-hidden' : ''}"
+                  data-toggle-product-visibility="${esc(p.id)}"
+                  title="${p.isVisible === false ? 'Показати товар у каталозі' : 'Приховати товар з каталогу'}"
+                  aria-label="${p.isVisible === false ? 'Показати товар' : 'Приховати товар'}: ${esc(p.title)}"
+                  aria-pressed="${p.isVisible === false ? 'true' : 'false'}">
+                  <img src="assets/images/${p.isVisible === false ? 'visibility.svg' : 'visibility_off.svg'}" alt="" />
+                </button>
                 <button type="button" class="admin-inventory-delete" data-delete-product="${esc(p.id)}" title="Видалити товар" aria-label="Видалити товар ${esc(p.title)}"><img src="assets/images/delete.svg" alt="" /></button>
               </div></td>
             </tr>
@@ -1702,6 +1712,28 @@ if (typeof document !== "undefined") {
           );
         } finally {
           button.disabled = false;
+        }
+      } else if (btn.hasAttribute("data-toggle-product-visibility")) {
+        const id = btn.dataset.toggleProductVisibility;
+        const product = PRODUCTS_DATA[id];
+        if (!product) return;
+        const willHide = product.isVisible !== false;
+        const accepted = await confirmAdminDelete({
+          title: willHide ? "Приховати товар?" : "Показати товар?",
+          message: willHide
+            ? "Товар зникне з каталогу, документації та прямих сторінок товарів для покупців. Він залишиться у складському обліку й буде доступний для редагування."
+            : "Товар знову буде доступний покупцям у каталозі та на сторінці товару.",
+          subject: product.title,
+          confirmLabel: willHide ? "Приховати" : "Показати",
+          neutral: true,
+        });
+        if (!accepted) return;
+        try {
+          CatalogManager.updateProduct(id, { isVisible: !willHide });
+          renderProductsTable();
+          showUndoToast(willHide ? "Товар приховано з каталогу" : "Товар повернуто до каталогу", null);
+        } catch (err) {
+          showUndoToast(err.message, null);
         }
       } else if (btn.hasAttribute("data-delete-product")) {
         const id = btn.dataset.deleteProduct,

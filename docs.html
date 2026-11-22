@@ -400,7 +400,7 @@
 
         if (accordionContainer && typeof PRODUCTS_DATA !== "undefined") {
           const productsWithDocs = Object.values(PRODUCTS_DATA).filter(
-            (item) => item.docs && item.docs.length > 0,
+            (item) => item.isVisible !== false && item.docs && item.docs.length > 0,
           );
 
           const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g,

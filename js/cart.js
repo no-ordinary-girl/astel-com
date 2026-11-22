@@ -37,7 +37,7 @@ const CartManager = {
           image: catalogProduct?.image ?? item.image,
           title: catalogProduct?.title ?? item.title,
           // A deleted catalog product cannot remain orderable from an old cart.
-          inStock: catalogProduct?.inStock ?? (typeof PRODUCTS_DATA !== "undefined" ? false : item.inStock ?? true),
+          inStock: catalogProduct ? (catalogProduct.inStock && catalogProduct.isVisible !== false) : (typeof PRODUCTS_DATA !== "undefined" ? false : item.inStock ?? true),
           minQty,
           qty: Math.max(minQty, Number.isFinite(quantity) ? quantity : minQty),
         };
@@ -69,7 +69,7 @@ const CartManager = {
     const catalogProduct =
       typeof PRODUCTS_DATA !== "undefined" ? PRODUCTS_DATA[product.id] : null;
 
-    if (catalogProduct?.inStock === false ||
+    if (catalogProduct?.inStock === false || catalogProduct?.isVisible === false ||
         (!catalogProduct && (typeof PRODUCTS_DATA !== "undefined" || product.inStock === false))) {
       this.showToast("Товару немає в наявності");
       return;
@@ -93,7 +93,7 @@ const CartManager = {
         id: product.id,
         title: product.title,
         price: numericPrice,
-        inStock: catalogProduct?.inStock ?? product.inStock ?? true,
+        inStock: catalogProduct ? (catalogProduct.inStock && catalogProduct.isVisible !== false) : (product.inStock ?? true),
         image: product.image,
         minQty: minQty,
         qty: initialQty,

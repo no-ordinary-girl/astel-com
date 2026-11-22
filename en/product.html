@@ -378,7 +378,7 @@
         // Render Dynamic Product
         const params = new URLSearchParams(window.location.search);
         const productId = params.get("id") || "com-900-485";
-        const product = PRODUCTS_DATA[productId];
+        const product = CatalogManager.getStorefrontProduct(productId);
         const container = document.getElementById("product-container");
 
         if (!product) {

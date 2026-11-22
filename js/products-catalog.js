@@ -54,7 +54,7 @@
       if(category!=='all' && !CatalogManager.CATEGORIES[category]) category='all';
     }
     function renderCatalog(){
-      const items=Object.values(PRODUCTS_DATA);
+      const items=Object.values(PRODUCTS_DATA).filter(p => p.isVisible !== false);
       renderSidebar(items);
       grid.innerHTML=items.map(makeCard).join('');
       for(const link of links){

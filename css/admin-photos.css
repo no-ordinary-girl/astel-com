@@ -1042,7 +1042,8 @@ html[data-theme="dark"]
 }
 .admin-language-editor .admin-spec-table-name input {
   min-height: 47px;
-  text-align: center;
+  text-align: left; /* Keep the caret at the start of the empty name field. */
+  padding-inline: 16px;
   font: 700 17px/1.25 var(--font-base);
   border-radius: 10px;
 }
@@ -1205,15 +1206,16 @@ html[data-theme="dark"] .admin-document-current__filename {
   }
 }
 
-/* Consistent arrow spacing for inventory and new-product dropdowns.
-   The new-product form was previously omitted from this rule. */
+/* All admin dropdowns use the same visible chevron and compact 10px inset.
+   Keep the artwork in a shared file to avoid inconsistent data-URI decoding. */
 .admin-inventory-product-row .admin-inventory-select,
-.admin-new-product-form select[name="category"],
-.admin-new-product-form select[name="saleTermsCode"] {
+.admin-new-product-form.admin-language-editor select[name="category"],
+.admin-new-product-form.admin-language-editor select[name="saleTermsCode"],
+#admin-status-filter {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 30px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23161617' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("../assets/images/admin-select-chevron.svg");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 14px 14px;

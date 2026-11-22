@@ -1049,17 +1049,15 @@ if (typeof document !== "undefined") {
           existing.querySelector(".admin-edit-qty").value =
             Number(existing.querySelector(".admin-edit-qty").value) + min;
         else
-          editor
-            .querySelector(".admin-edit-lines")
-            .insertAdjacentHTML(
-              "beforeend",
-              renderOrderLine({
-                id,
-                title: product.title,
-                price: product.numericPrice,
-                qty: min,
-              }),
-            );
+          editor.querySelector(".admin-edit-lines").insertAdjacentHTML(
+            "beforeend",
+            renderOrderLine({
+              id,
+              title: product.title,
+              price: product.numericPrice,
+              qty: min,
+            }),
+          );
         return;
       }
       const removeLineBtn = e.target.closest("[data-remove-order-line]");
@@ -1347,9 +1345,9 @@ if (typeof document !== "undefined") {
                 </div>
               </div>
               <div class="admin-product-name-grid">
-                <label data-editor-field-lang="uk">Назва товару
-                  <input name="title" type="text" maxlength="200" placeholder="Введіть назву товару українською" /></label>
-                <label data-editor-field-lang="en">Назва товару
+                <label data-editor-field-lang="uk">Назва товару українською
+                  <input name="title" type="text" maxlength="200" placeholder="Назва товару українською" /></label>
+                <label data-editor-field-lang="en">Назва товару англійською
                   <input name="titleEn" type="text" maxlength="200" placeholder="Переклад назви товару англійською" /></label>
               </div>
               <div class="admin-description-grid">
@@ -1359,7 +1357,7 @@ if (typeof document !== "undefined") {
                   <textarea name="descriptionEn" rows="5"></textarea></label>
               </div>
               <div class="admin-new-product-extras">
-                <section class="admin-extra-block"><div class="admin-extra-heading"><div><h3>Таблиці характеристик</h3><p>Назви й значення двома мовами; свої назви таблиць вводяться прямо у формі.</p></div>
+                <section class="admin-extra-block"><div class="admin-extra-heading"><div><h3>Таблиці характеристик</h3><p>Створюйте таблиці з власними назвами та додавайте характеристики українською й англійською.</p></div>
                   <button type="button" class="admin-btn admin-btn--outline" data-add-spec-section>+ Додати таблицю</button></div>
                   <div data-spec-sections class="admin-spec-sections"></div></section>
                 <section class="admin-extra-block"><div class="admin-extra-heading"><div><h3>Специфікації та документація</h3><p>Можна додавати, видаляти та замінювати PDF-файли.</p></div>

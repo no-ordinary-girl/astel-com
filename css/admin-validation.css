@@ -1,0 +1,61 @@
+/* Ukrainian inline validation, independent of the visitor's browser language. */
+.admin-validation-error {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  color: #b91c1c;
+  font-family: var(--font-base, sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+/* One error border, not a border plus an outline (which creates a
+   doubled ring when the invalid field receives keyboard focus). */
+.admin-validation-invalid:is(input, textarea, select) {
+  border-color: #dc2626 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.admin-validation-invalid:is(input, textarea, select):focus-visible {
+  border: 2px solid #dc2626 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* The translation workflow already marks untranslated fields orange.
+   Don't stack the generic red outline/border/shadow on top of that state. */
+.admin-language-editor .admin-translation-missing:is(input, textarea, select) {
+  border: 1px solid #d97706 !important;
+  background: #fff9eb !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.admin-language-editor .admin-translation-missing:is(input, textarea, select):focus-visible {
+  border-width: 2px !important;
+}
+.admin-language-editor .admin-translation-missing + .admin-validation-error {
+  color: #b45309;
+}
+
+/* Category fields must not jump vertically when one label gains an
+   inline validation message. Keep the button aligned with input tops. */
+.admin-category-form {
+  align-items: flex-start;
+}
+.admin-category-form > .admin-btn {
+  margin-top: 22px;
+}
+@media (max-width: 760px) {
+  .admin-category-form > .admin-btn {
+    margin-top: 0;
+  }
+}
+
+/* This class is also used for errors in dynamically generated inventory rows. */
+.admin-new-product-form .admin-validation-error,
+.admin-category-form .admin-validation-error,
+.admin-order-editor .admin-validation-error,
+.admin-product-details-form .admin-validation-error {
+  text-align: left;
+}

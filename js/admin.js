@@ -503,7 +503,7 @@ if (typeof document !== "undefined") {
         `<label class="admin-edit-field">${label}<input name="${name}" type="${type}" value="${esc(value || "")}" required></label>`;
       const select = (name, value, opts) =>
         `<label class="admin-edit-field">${name === "carrierKey" ? "Служба доставки" : "Спосіб оплати"}<select name="${name}" class="admin-select">${opts.map(([key, label]) => `<option value="${esc(key)}" ${key === value ? "selected" : ""}>${esc(label)}</option>`).join("")}</select></label>`;
-      return `<form class="admin-order-editor" data-order-editor="${esc(ord.orderId)}">
+      return `<form novalidate class="admin-order-editor" data-order-editor="${esc(ord.orderId)}">
             <h3>Редагування замовлення #${esc(ord.orderId)}</h3>
             <div class="admin-edit-grid">
               ${field("firstName", ord.customer?.firstName, "Ім’я")}
@@ -1092,6 +1092,7 @@ if (typeof document !== "undefined") {
         if (!AdminSafety.isValidTtn(val, order?.delivery?.carrierKey)) {
           ttnInput.focus();
           ttnInput.classList.add("has-error");
+          AstelAdminValidation?.reportField(ttnInput, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
           showUndoToast(
             "Введіть коректний номер ТТН для цієї служби доставки",
             null,
@@ -1124,25 +1125,13 @@ if (typeof document !== "undefined") {
               ttnInput.classList.remove("has-error");
               void ttnInput.offsetWidth; // Restart shake animation
               ttnInput.classList.add("has-error");
+              AstelAdminValidation?.reportField(ttnInput, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
               ttnInput.focus();
 
-              // Show inline error hint under the input if not already shown
-              const group = ttnInput.closest(".ttn-inline-box");
-              if (group && !group.querySelector(".ttn-error-hint")) {
-                const hint = document.createElement("span");
-                hint.className = "ttn-error-hint";
-                hint.textContent =
-                  "Введіть коректний номер ТТН для вибраної служби доставки";
-                group.appendChild(hint);
-              }
-
+              // Keep the existing shake animation; the shared validator owns the inline text.
               ttnInput.addEventListener(
                 "input",
-                () => {
-                  ttnInput.classList.remove("has-error");
-                  const h = group && group.querySelector(".ttn-error-hint");
-                  if (h) h.remove();
-                },
+                () => ttnInput.classList.remove("has-error"),
                 { once: true },
               );
             }
@@ -1203,6 +1192,7 @@ if (typeof document !== "undefined") {
         );
         if (!AdminSafety.isValidTtn(val, order?.delivery?.carrierKey)) {
           e.target.classList.add("has-error");
+          AstelAdminValidation?.reportField(e.target, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
           showUndoToast(
             "Введіть коректний номер ТТН для цієї служби доставки",
             null,
@@ -1329,7 +1319,7 @@ if (typeof document !== "undefined") {
     }
     function renderDetailsRow(p) {
       return `<tr class="admin-product-details-row" data-product-details-id="${esc(p.id)}" ${detailOpen.has(p.id) ? "" : "hidden"}>
-            <td colspan="6"><form class="admin-product-details-form admin-language-editor" data-editor-language="uk" data-edit-product="${esc(p.id)}">
+            <td colspan="6"><form novalidate class="admin-product-details-form admin-language-editor" data-editor-language="uk" data-edit-product="${esc(p.id)}">
               <h3>Редагування товару — ${esc(p.title)}</h3>
               <p class="admin-photo-warning">Фотографії, опис, характеристики та PDF залишаються чернеткою до натискання «Оновити» у рядку товару.</p>
               ${renderPhotoEditor(p, getDraft(p.id).images)}
@@ -1448,6 +1438,7 @@ if (typeof document !== "undefined") {
           renderProductsTable();
           showUndoToast("Категорію додано", null);
         } catch (err) {
+          AstelAdminValidation?.reportField(form.elements.uk, err.message, { manual: true });
           showUndoToast(err.message, null);
         }
       });
@@ -1651,8 +1642,8 @@ if (typeof document !== "undefined") {
         const price = CatalogManager.validPrice(draft.price);
         if (price == null) {
           const input = row.querySelector(".admin-price-input");
-          input.focus();
-          input.setAttribute("aria-invalid", "true");
+          AstelAdminValidation?.reportField(input, "Вкажіть цілу ціну від 1 до 99 999 999 грн", { manual: true });
+          AstelAdminValidation?.focusFirst(input);
           showUndoToast("Вкажіть цілу ціну від 1 до 99 999 999 грн", null);
           return;
         }
@@ -1669,9 +1660,13 @@ if (typeof document !== "undefined") {
         button.disabled = true;
         try {
           if (detailsDirty.has(id) && form?.dataset.initialized) {
+            if (!AstelAdminValidation.validateForm(form)) {
+              showUndoToast("Виправте помилки у виділених полях", null);
+              return;
+            }
             if (!AstelProductEditor.validateTranslations(form)) {
               showUndoToast(
-                "Потрібен переклад англійською — заповніть підсвічені поля",
+                AstelProductEditor.validationMessage(form),
                 null,
               );
               return;
@@ -1803,7 +1798,7 @@ if (typeof document !== "undefined") {
       try {
         if (!AstelProductEditor.validateTranslations(addProductForm)) {
           showUndoToast(
-            "Заповніть англійські переклади у виділених полях",
+            AstelProductEditor.validationMessage(addProductForm),
             null,
           );
           return;

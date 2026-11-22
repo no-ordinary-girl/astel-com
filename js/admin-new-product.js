@@ -7,6 +7,7 @@
     MAX_ROWS = 25,
     MAX_PHOTOS = 12;
   const photoStates = new WeakMap();
+  const validationMessages = new WeakMap();
   let nextFormId = 0;
   const esc = (v) =>
     String(v ?? "").replace(
@@ -144,7 +145,9 @@
     section.className = "admin-spec-section";
     // A newly added table is blank. Only existing built-in tables should be
     // populated with their saved headings (and their known English equivalents).
-    const type = ["tech", "general"].includes(data.type) ? data.type : "custom";
+    const type = ["tech", "general"].includes(data.type)
+      ? data.type
+      : "custom";
     const title =
       type === "custom"
         ? String(data.title ?? "")
@@ -156,9 +159,9 @@
     section.innerHTML = `<div class="admin-extra-section-top admin-spec-table-header">
     <div class="admin-spec-table-name">
       <label data-editor-field-lang="uk">Назва таблиці українською
-        <input data-spec-title placeholder="Назва таблиці" maxlength="120" value="${esc(title)}" /></label>
+        <input data-spec-title placeholder="Назва таблиці українською" maxlength="120" value="${esc(title)}" /></label>
       <label data-editor-field-lang="en">Назва таблиці англійською
-        <input data-spec-title-en placeholder="Переклад назви таблиці" maxlength="120" value="${esc(english)}" /></label>
+        <input data-spec-title-en placeholder="Переклад назви таблиці англійською" maxlength="120" value="${esc(english)}" /></label>
     </div>
     <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-spec-section><img src="assets/images/delete.svg" alt="" /> Видалити</button>
   </div><div class="admin-spec-rows"></div><button type="button" class="admin-extra-add" data-add-spec-row>+ Додати характеристику</button>`;
@@ -329,70 +332,95 @@
       : "Введіть англійський переклад";
   }
   function validateTranslations(form) {
+    validationMessages.delete(form);
     form.querySelectorAll(".admin-translation-missing").forEach((input) => {
+      root.AstelAdminValidation?.clearField(input);
       input.classList.remove("admin-translation-missing");
       input.removeAttribute("aria-invalid");
     });
-    const missing = [];
-    const check = (uk, en) => {
+    const missingUk = [];
+    const missingEn = [];
+    const messages = new Map();
+    const markMissing = (field, message, language) => {
+      if (!field || messages.has(field)) return;
+      field.classList.add("admin-translation-missing");
+      root.AstelAdminValidation?.reportField(field, message, { manual: true });
+      messages.set(field, message);
+      field.setAttribute("aria-invalid", "true");
+      (language === "uk" ? missingUk : missingEn).push(field);
+    };
+    const checkEnglish = (uk, en) => {
       if (!uk || !en) return;
-      const source = uk.value.trim(),
-        translated = en.value.trim();
+      const source = uk.value.trim();
+      const translated = en.value.trim();
       if (source && (!translated || /[А-Яа-яІіЇїЄєҐґ]/.test(translated))) {
-        en.placeholder = translationHint(source);
-        en.classList.add("admin-translation-missing");
-        en.setAttribute("aria-invalid", "true");
-        missing.push(en);
+        const hint = translationHint(source);
+        en.placeholder = hint;
+        markMissing(en, hint, "en");
       }
     };
-    const nameUk = form.querySelector('[name="title"]'),
-      nameEn = form.querySelector('[name="titleEn"]');
-    check(nameUk, nameEn);
-    // Missing required product names should be highlighted, including a missing UK name.
-    if (nameUk && !nameUk.value.trim()) {
-      nameUk.classList.add("admin-translation-missing");
-      nameUk.setAttribute("aria-invalid", "true");
-      missing.unshift(nameUk);
-    } else if (nameEn && !nameEn.value.trim() && !missing.includes(nameEn)) {
-      nameEn.placeholder = translationHint(nameUk?.value || "");
-      nameEn.classList.add("admin-translation-missing");
-      nameEn.setAttribute("aria-invalid", "true");
-      missing.push(nameEn);
-    }
-    check(
+
+    const nameUk = form.querySelector('[name="title"]');
+    const nameEn = form.querySelector('[name="titleEn"]');
+    if (nameUk && !nameUk.value.trim())
+      markMissing(nameUk, "Вкажіть назву товару українською.", "uk");
+    checkEnglish(nameUk, nameEn);
+    checkEnglish(
       form.querySelector('[name="description"]'),
       form.querySelector('[name="descriptionEn"]'),
     );
+
     form.querySelectorAll(".admin-spec-section").forEach((section) => {
-      check(
-        section.querySelector("[data-spec-title]"),
-        section.querySelector("[data-spec-title-en]"),
+      const titleUk = section.querySelector("[data-spec-title]");
+      const titleEn = section.querySelector("[data-spec-title-en]");
+      if (titleUk && !titleUk.value.trim())
+        markMissing(titleUk, "Вкажіть назву таблиці українською.", "uk");
+      checkEnglish(titleUk, titleEn);
+
+      // A table must contain at least one characteristic. Blank optional rows
+      // after a completed row are ignored; partially filled rows must be finished.
+      const container = section.querySelector(".admin-spec-rows");
+      if (container && !container.querySelector(".admin-spec-row"))
+        container.append(createSpecRow());
+      const rows = Array.from(section.querySelectorAll(".admin-spec-row"));
+      const rowFields = (row) => ({
+        labelUk: row.querySelector("[data-spec-label]"),
+        labelEn: row.querySelector("[data-spec-label-en]"),
+        valueUk: row.querySelector("[data-spec-value]"),
+        valueEn: row.querySelector("[data-spec-value-en]"),
+      });
+      const populated = rows.filter((row) =>
+        Object.values(rowFields(row)).some((field) => field?.value.trim()),
       );
-      section.querySelectorAll(".admin-spec-row").forEach((row) => {
-        check(
-          row.querySelector("[data-spec-label]"),
-          row.querySelector("[data-spec-label-en]"),
-        );
-        check(
-          row.querySelector("[data-spec-value]"),
-          row.querySelector("[data-spec-value-en]"),
-        );
+      // An entirely blank table still needs its first characteristic completed.
+      const checked = populated.length ? populated : rows.slice(0, 1);
+      checked.forEach((row) => {
+        const { labelUk, labelEn, valueUk, valueEn } = rowFields(row);
+        if (labelUk && !labelUk.value.trim())
+          markMissing(labelUk, "Вкажіть назву характеристики українською.", "uk");
+        if (valueUk && !valueUk.value.trim())
+          markMissing(valueUk, "Вкажіть значення характеристики українською.", "uk");
+        checkEnglish(labelUk, labelEn);
+        checkEnglish(valueUk, valueEn);
       });
     });
-    form
-      .querySelectorAll(".admin-document-row")
-      .forEach((row) =>
-        check(
-          row.querySelector("[data-doc-title]"),
-          row.querySelector("[data-doc-title-en]"),
-        ),
-      );
+
+    form.querySelectorAll(".admin-document-row").forEach((row) =>
+      checkEnglish(
+        row.querySelector("[data-doc-title]"),
+        row.querySelector("[data-doc-title-en]"),
+      ),
+    );
+
+    // Finish missing Ukrainian content before asking for its translation.
+    const missing = [...missingUk, ...missingEn];
     if (missing.length) {
       const first = missing[0];
+      validationMessages.set(form, messages.get(first));
       selectLanguage(
         form,
         first.closest?.("[data-editor-field-lang]")?.dataset.editorFieldLang ||
-          "en",
+          (missingUk.includes(first) ? "uk" : "en"),
       );
       first.focus({ preventScroll: true });
       first.scrollIntoView?.({ behavior: "smooth", block: "center" });
@@ -525,13 +553,16 @@
         form.querySelector(`[data-editor-lang="${lang}"]`)?.focus();
       });
     form.addEventListener("input", (e) => {
+      const input = e.target;
+      if (!input.classList?.contains("admin-translation-missing")) return;
+      const language = input.closest("[data-editor-field-lang]")?.dataset.editorFieldLang;
       if (
-        e.target.classList?.contains("admin-translation-missing") &&
-        e.target.value.trim() &&
-        !/[А-Яа-яІіЇїЄєҐґ]/.test(e.target.value)
+        input.value.trim() &&
+        (language !== "en" || !/[А-Яа-яІіЇїЄєҐґ]/.test(input.value))
       ) {
-        e.target.classList.remove("admin-translation-missing");
-        e.target.removeAttribute("aria-invalid");
+        root.AstelAdminValidation?.clearField(input);
+        input.classList.remove("admin-translation-missing");
+        input.removeAttribute("aria-invalid");
       }
     });
     form.addEventListener("change", (e) => {
@@ -639,6 +670,7 @@
     englishInitial,
     selectLanguage,
     validateTranslations,
+    validationMessage: (form) => validationMessages.get(form) || "Виправте виділені поля перед збереженням.",
     tableType,
   };
   root.AstelProductEditor = api;

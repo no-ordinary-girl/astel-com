@@ -1457,3 +1457,22 @@ html[data-theme="dark"]
     font-size: 11px;
   }
 }
+
+/* Specification-row remove control: align to the input, not the validation
+   text below it. Error messages can increase the height of either field. */
+.admin-spec-row > [data-remove-spec-row],
+.admin-language-editor .admin-spec-row > [data-remove-spec-row] {
+  align-self: start;
+  margin-top: 22px; /* label line-height + 6px label-to-input gap */
+}
+
+/* On narrow layouts the value field stacks below the name field.
+   Keep the remove button next to the first input, not between both rows. */
+@media (max-width: 760px) {
+  .admin-spec-row > [data-remove-spec-row],
+  .admin-language-editor .admin-spec-row > [data-remove-spec-row] {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+}

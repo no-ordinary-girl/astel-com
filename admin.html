@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/admin.css" />
     <link rel="stylesheet" href="css/admin-photos.css" />
+    <link rel="stylesheet" href="css/admin-validation.css" />
   </head>
   <body>
     <!-- SHARED:HEADER:START -->
@@ -329,14 +330,14 @@
               </div>
             </div>
             <div class="admin-category-list" id="admin-category-list"></div>
-            <form id="admin-add-category-form" class="admin-category-form">
+            <form id="admin-add-category-form" class="admin-category-form" novalidate>
               <label
                 >Назва українською
                 <input
                   name="uk"
                   maxlength="80"
                   minlength="2"
-                  placeholder="Назва категорії"
+                  placeholder="Назва категорії українською"
                   required
               /></label>
               <label
@@ -345,7 +346,7 @@
                   name="en"
                   required
                   maxlength="80"
-                  placeholder="Переклад категорії"
+                  placeholder="Переклад категорії англійською"
               /></label>
               <button type="submit" class="admin-btn admin-btn--outline">
                 + Додати категорію
@@ -372,6 +373,7 @@
           <form
             id="admin-new-product-form"
             class="admin-new-product-form admin-language-editor"
+            novalidate
             data-editor-language="uk"
           >
             <h2>+ Додати новий товар</h2>
@@ -385,7 +387,7 @@
                 <input
                   name="id"
                   type="text"
-                  pattern="[a-z0-9-]{3,70}"
+                  pattern="[a-z0-9\-]{3,70}"
                   placeholder="new-modem-model"
                   required
               /></label>

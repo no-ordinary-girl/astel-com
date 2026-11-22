@@ -142,23 +142,23 @@
   function createSpecSection(data = {}) {
     const section = document.createElement("div");
     section.className = "admin-spec-section";
-    const type = ["tech", "general", "custom"].includes(data.type)
-      ? data.type
-      : "tech";
+    // A newly added table is blank. Only existing built-in tables should be
+    // populated with their saved headings (and their known English equivalents).
+    const type = ["tech", "general"].includes(data.type) ? data.type : "custom";
     const title =
       type === "custom"
-        ? data.title || ""
-        : data.title || DEFAULT_TITLES[type].uk;
+        ? String(data.title ?? "")
+        : String(data.title ?? DEFAULT_TITLES[type].uk);
     const english =
       type === "custom"
         ? englishInitial(title, data.titleEn)
-        : data.titleEn || DEFAULT_TITLES[type].en;
+        : String(data.titleEn ?? DEFAULT_TITLES[type].en);
     section.innerHTML = `<div class="admin-extra-section-top admin-spec-table-header">
     <div class="admin-spec-table-name">
       <label data-editor-field-lang="uk">Назва таблиці українською
-        <input data-spec-title placeholder="Назва таблиці українською" maxlength="120" value="${esc(title)}" /></label>
+        <input data-spec-title placeholder="Назва таблиці" maxlength="120" value="${esc(title)}" /></label>
       <label data-editor-field-lang="en">Назва таблиці англійською
-        <input data-spec-title-en placeholder="Переклад назви таблиці англійською" maxlength="120" value="${esc(english)}" /></label>
+        <input data-spec-title-en placeholder="Переклад назви таблиці" maxlength="120" value="${esc(english)}" /></label>
     </div>
     <button type="button" class="admin-extra-remove admin-extra-remove--section" data-remove-spec-section><img src="assets/images/delete.svg" alt="" /> Видалити</button>
   </div><div class="admin-spec-rows"></div><button type="button" class="admin-extra-add" data-add-spec-row>+ Додати характеристику</button>`;

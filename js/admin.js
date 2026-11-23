@@ -97,6 +97,9 @@ if (typeof document !== "undefined") {
     // Tracks which order IDs currently have their TTN input open for editing
     const editingTtnOrderIds = new Set();
     const editingOrderIds = new Set();
+    // Order-specific notes use the same customer profiles as the Clients tab.
+    const expandedOrderNoteIds = new Set();
+    const orderNoteDrafts = new Map();
     // Preserve an address being typed if another admin action re-renders an open editor.
     const orderAddressDrafts = new Map();
     const orderDestinationDrafts = new Map();
@@ -268,7 +271,9 @@ if (typeof document !== "undefined") {
         cancel.textContent = "Скасувати";
         const remove = document.createElement("button");
         remove.type = "button";
-        remove.className = neutral ? "admin-btn admin-btn--primary" : "admin-btn admin-confirm-dialog__danger";
+        remove.className = neutral
+          ? "admin-btn admin-btn--primary"
+          : "admin-btn admin-confirm-dialog__danger";
         remove.textContent = confirmLabel;
         actions.append(cancel, remove);
         dialog.append(heading, description, item, actions);
@@ -429,16 +434,21 @@ if (typeof document !== "undefined") {
     const customerNoteDrafts = new Map();
     const customerSelectedOrders = new Map();
     const customerProfiles = () => AdminCustomers.read(localStorage);
-    const customerProfile = (key) => AdminCustomers.profileFor(customerProfiles(), key);
-    const clientOrderIds = (client) => client.orders.map((order) => String(order.orderId));
+    const customerProfile = (key) =>
+      AdminCustomers.profileFor(customerProfiles(), key);
+    const clientOrderIds = (client) =>
+      client.orders.map((order) => String(order.orderId));
     const clientNoteDraftKey = (key, orderId) => `${key}::${orderId}`;
     function buildClientsList(orders) {
-      const account = typeof AuthManager !== "undefined" ? AuthManager.getUser() : null;
+      const account =
+        typeof AuthManager !== "undefined" ? AuthManager.getUser() : null;
       return AdminCustomers.buildClients(orders, account);
     }
     function clientAttentionButton(key) {
       const attention = customerProfile(key).status !== "normal";
-      const label = attention ? "Зняти позначку: потребує уваги" : "Позначити: потребує уваги";
+      const label = attention
+        ? "Зняти позначку: потребує уваги"
+        : "Позначити: потребує уваги";
       return `<button type="button" class="admin-client-attention-toggle ${attention ? "is-attention" : ""}"
         data-toggle-client-attention="${esc(key)}" aria-label="${label}"
         aria-pressed="${attention}" title="${label}">
@@ -450,15 +460,30 @@ if (typeof document !== "undefined") {
       // Each order owns its own note editor. No separate notes tab or order selector.
       // For a customer with one order, the note editor is open by default.
       const preferredId = customerSelectedOrders.get(client.key);
-      const openOrderId = preferredId === "" ? "" :
-        (orderIds.includes(preferredId) ? preferredId : (orderIds.length === 1 ? orderIds[0] : ""));
+      const openOrderId =
+        preferredId === ""
+          ? ""
+          : orderIds.includes(preferredId)
+            ? preferredId
+            : orderIds.length === 1
+              ? orderIds[0]
+              : "";
       const notesCount = AdminCustomers.countOrderNotes(profile, orderIds);
-      const history = client.orders.length ? client.orders.map((ord) => {
-        const orderId = String(ord.orderId);
-        const orderNotes = AdminCustomers.notesForOrder(profile, orderId);
-        const isOpen = orderId === openOrderId;
-        const safeDomId = `client-note-panel-${client.key}-${orderId}`.replace(/[^a-zA-Z0-9_-]/g, "-");
-        const notesHtml = orderNotes.length ? `<ul class="admin-client-note-list">${orderNotes.map((note) => `
+      const history = client.orders.length
+        ? client.orders
+            .map((ord) => {
+              const orderId = String(ord.orderId);
+              const orderNotes = AdminCustomers.notesForOrder(profile, orderId);
+              const isOpen = orderId === openOrderId;
+              const safeDomId =
+                `client-note-panel-${client.key}-${orderId}`.replace(
+                  /[^a-zA-Z0-9_-]/g,
+                  "-",
+                );
+              const notesHtml = orderNotes.length
+                ? `<ul class="admin-client-note-list">${orderNotes
+                    .map(
+                      (note) => `
           <li class="admin-client-note">
             <div class="admin-client-note__heading">
               <time>${formatDate(note.createdAt)}</time>
@@ -466,9 +491,11 @@ if (typeof document !== "undefined") {
                 aria-label="Видалити примітку" title="Видалити примітку">Видалити</button>
             </div>
             <p>${esc(note.text)}</p>
-          </li>`).join("")}</ul>` :
-          '<p class="admin-client-empty">Приміток до цього замовлення ще немає.</p>';
-        return `<article class="admin-client-order${isOpen ? " is-open" : ""}">
+          </li>`,
+                    )
+                    .join("")}</ul>`
+                : '<p class="admin-client-empty">Приміток до цього замовлення ще немає.</p>';
+              return `<article class="admin-client-order${isOpen ? " is-open" : ""}">
           <div class="admin-client-order__row">
             <div class="admin-client-order__identity">
               <button class="admin-client-order-link" type="button" data-client-order="${esc(orderId)}">#${esc(orderId)}</button>
@@ -483,7 +510,9 @@ if (typeof document !== "undefined") {
               <svg class="admin-client-order__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </button>
           </div>
-          ${isOpen ? `<div class="admin-client-order__note-panel" id="${esc(safeDomId)}">
+          ${
+            isOpen
+              ? `<div class="admin-client-order__note-panel" id="${esc(safeDomId)}">
             <div class="admin-client-order__note-heading">
               <strong>Внутрішні примітки</strong><span>Лише для менеджера · замовлення #${esc(orderId)}</span>
             </div>
@@ -496,27 +525,41 @@ if (typeof document !== "undefined") {
                 <button type="submit" class="admin-btn admin-btn--primary">Зберегти примітку</button>
               </div>
             </form>
-          </div>` : ""}
+          </div>`
+              : ""
+          }
         </article>`;
-      }).join("") : '<p class="admin-client-empty">Замовлень поки немає.</p>';
+            })
+            .join("")
+        : '<p class="admin-client-empty">Замовлень поки немає.</p>';
 
       // Older, customer-wide notes stay unassigned until the manager chooses
       // a real order; do not silently attach them to the first order.
-      const legacyNotes = profile.notes.length ? `<details class="admin-client-legacy-notes">
+      const legacyNotes = profile.notes.length
+        ? `<details class="admin-client-legacy-notes">
         <summary>Неприв’язані примітки з попередньої версії <span class="admin-client-section-count">${profile.notes.length}</span></summary>
-        <ul class="admin-client-note-list">${profile.notes.map((note) => `<li class="admin-client-note">
+        <ul class="admin-client-note-list">${profile.notes
+          .map(
+            (note) => `<li class="admin-client-note">
           <div class="admin-client-note__heading"><time>${formatDate(note.createdAt)}</time>
             <button type="button" data-delete-legacy-client-note="${esc(note.id)}">Видалити</button></div>
           <p>${esc(note.text)}</p>
-          ${orderIds.length ? `<div class="admin-client-legacy-notes__assign">
+          ${
+            orderIds.length
+              ? `<div class="admin-client-legacy-notes__assign">
             <select class="admin-select" data-legacy-note-order="${esc(note.id)}" aria-label="Замовлення для прив'язки примітки">
               <option value="">Оберіть замовлення</option>
               ${orderIds.map((id) => `<option value="${esc(id)}">#${esc(id)}</option>`).join("")}
             </select>
             <button type="button" data-assign-legacy-client-note="${esc(note.id)}">Прив’язати</button>
-          </div>` : ""}
-        </li>`).join("")}</ul>
-      </details>` : "";
+          </div>`
+              : ""
+          }
+        </li>`,
+          )
+          .join("")}</ul>
+      </details>`
+        : "";
 
       return `<div class="admin-client-details" data-client-details="${esc(client.key)}">
         <div class="admin-client-details__heading">
@@ -570,11 +613,85 @@ if (typeof document !== "undefined") {
             <button type="button" class="admin-btn admin-btn--danger" data-remove-order-line>Видалити</button>
           </div>`;
     }
+    function renderOrderNotePanel(ord) {
+      const id = String(ord.orderId);
+      const customerKey = AdminCustomers.keyFor(ord.customer);
+      if (!customerKey || !expandedOrderNoteIds.has(id)) return "";
+      const notes = AdminCustomers.notesForOrder(
+        customerProfile(customerKey),
+        id,
+      );
+      const list = notes.length
+        ? `<ul class="admin-order-note-list">${notes
+            .map(
+              (note) => `
+            <li class="admin-order-note">
+              <div class="admin-order-note__heading">
+                <time>${formatDate(note.createdAt)}</time>
+                <button type="button" data-admin-order-note-delete="${esc(note.id)}" aria-label="Видалити примітку">Видалити</button>
+              </div>
+              <p>${esc(note.text)}</p>
+            </li>`,
+            )
+            .join("")}</ul>`
+        : `<p class="admin-order-note-empty">Приміток до цього замовлення ще немає.</p>`;
+      return `<section class="admin-order-note-panel" aria-label="Примітки до замовлення #${esc(id)}">
+        <div class="admin-order-note-panel__head">
+          <strong>Примітки до замовлення #${esc(id)}</strong>
+          <span>Лише для менеджера</span>
+        </div>
+        ${list}
+        <form data-admin-order-note-form="${esc(id)}" novalidate>
+          <label for="admin-order-note-${esc(id)}">Нова примітка</label>
+          <textarea id="admin-order-note-${esc(id)}" name="note" rows="3" maxlength="${AdminCustomers.MAX_NOTE}"
+            placeholder="Наприклад, клієнт змінив адресу доставки">${esc(orderNoteDrafts.get(id) || "")}</textarea>
+          <button class="admin-btn admin-btn--primary" type="submit">Зберегти примітку</button>
+        </form>
+      </section>`;
+    }
+    function orderNoteButton(ord) {
+      const id = String(ord.orderId);
+      const key = AdminCustomers.keyFor(ord.customer);
+      const count = key
+        ? AdminCustomers.notesForOrder(customerProfile(key), id).length
+        : 0;
+      const expanded = expandedOrderNoteIds.has(id);
+      return `<button type="button" class="admin-btn admin-btn--outline admin-order-notes-button"
+        data-admin-order-notes-toggle="${esc(id)}" aria-expanded="${expanded}"
+        aria-label="${expanded ? "Сховати" : "Відкрити"} примітки до замовлення #${esc(id)}">
+        Примітки${count ? ` <span class="admin-order-notes-button__count">${count}</span>` : ""}
+      </button>`;
+    }
+
+    // Update only notes UI: never re-render the order editor and lose unsaved changes.
+    function refreshOrderNoteUI(orderId) {
+      const order = loadAllOrders().find(
+        (entry) => String(entry.orderId) === String(orderId),
+      );
+      const card = [
+        ...ordersContainer.querySelectorAll(".admin-order-card"),
+      ].find((entry) => entry.dataset.orderId === String(orderId));
+      if (!card || !order) return;
+      const toolbar = card.querySelector(".admin-order-inline-actions");
+      const button = toolbar?.querySelector("[data-admin-order-notes-toggle]");
+      if (!toolbar || !button) return;
+      button.outerHTML = orderNoteButton(order);
+      const panel = card.querySelector(".admin-order-note-panel");
+      const html = renderOrderNotePanel(order);
+      if (panel) {
+        if (html) panel.outerHTML = html;
+        else panel.remove();
+      } else if (html) {
+        toolbar.insertAdjacentHTML("afterend", html);
+      }
+    }
     function renderOrderEditor(ord) {
       const destinationDraft = orderDestinationDrafts.get(String(ord.orderId));
       const editedCity = destinationDraft?.city ?? ord.delivery?.city ?? "";
-      const editedCarrier = destinationDraft?.carrierKey ?? ord.delivery?.carrierKey ?? "nova";
-      const editedType = destinationDraft?.deliveryType ?? ord.delivery?.type ?? "Відділення";
+      const editedCarrier =
+        destinationDraft?.carrierKey ?? ord.delivery?.carrierKey ?? "nova";
+      const editedType =
+        destinationDraft?.deliveryType ?? ord.delivery?.type ?? "Відділення";
       const field = (name, value, label, type = "text") =>
         `<label class="admin-edit-field">${label}<input name="${name}" type="${type}" value="${esc(value || "")}" required></label>`;
       const select = (name, value, opts) =>
@@ -904,7 +1021,9 @@ if (typeof document !== "undefined") {
                         ${(() => {
                           const key = AdminCustomers.keyFor(ord.customer);
                           const status = customerProfile(key).status;
-                          return status === "normal" ? "" : `<span class="admin-client-status admin-client-status--${status}" title="Внутрішня позначка клієнта">${esc(AdminCustomers.STATUSES[status])}</span>`;
+                          return status === "normal"
+                            ? ""
+                            : `<span class="admin-client-status admin-client-status--${esc(status)}" title="Внутрішня позначка менеджера"><span class="admin-client-status__dot" aria-hidden="true"></span>${esc(AdminCustomers.STATUSES[status])}</span>`;
                         })()}
                       </div>
                     </div>
@@ -933,18 +1052,18 @@ if (typeof document !== "undefined") {
                     <div class="admin-order-items">
                       ${itemsHtml}
                     </div>
-                    ${
-                      ord.statusCode === "processing"
-                        ? `
-                      <div class="admin-edit-actions">
-                        <button class="admin-btn admin-btn--outline" data-edit-order="${esc(ord.orderId)}" type="button">
-                          ${editingOrderIds.has(String(ord.orderId)) ? "Закрити редагування" : "Редагувати дані, доставку й товари"}
-                        </button>
-                      </div>
-                      ${editingOrderIds.has(String(ord.orderId)) ? renderOrderEditor(ord) : ""}
-                    `
-                        : ""
-                    }
+                    <div class="admin-order-inline-actions">
+                      ${orderNoteButton(ord)}
+                      ${
+                        ord.statusCode === "processing"
+                          ? `<button class="admin-btn admin-btn--outline" data-edit-order="${esc(ord.orderId)}" type="button">
+                        ${editingOrderIds.has(String(ord.orderId)) ? "Закрити редагування" : "Редагувати дані"}
+                      </button>`
+                          : ""
+                      }
+                    </div>
+                    ${renderOrderNotePanel(ord)}
+                    ${ord.statusCode === "processing" && editingOrderIds.has(String(ord.orderId)) ? renderOrderEditor(ord) : ""}
 
                     ${
                       !editingOrderIds.has(String(ord.orderId))
@@ -961,20 +1080,24 @@ if (typeof document !== "undefined") {
 
       // Refresh address suggestions after the order cards are re-rendered.
       // The field itself remains a normal editable input, even with no suggestions.
-      ordersContainer.querySelectorAll("[data-order-editor]").forEach((editor) => {
-        editor.dataset.adminDeliveryKey = JSON.stringify([
-          editor.elements.city.value.trim(),
-          editor.elements.carrierKey.value,
-          editor.elements.deliveryType.value,
-        ]);
-        refreshAdminBranches(editor);
-      });
+      ordersContainer
+        .querySelectorAll("[data-order-editor]")
+        .forEach((editor) => {
+          editor.dataset.adminDeliveryKey = JSON.stringify([
+            editor.elements.city.value.trim(),
+            editor.elements.carrierKey.value,
+            editor.elements.deliveryType.value,
+          ]);
+          refreshAdminBranches(editor);
+        });
 
       // The dot is a clickable, two-state attention marker, not a purchase restriction.
-      clientsTbody.innerHTML = clients.map((c) => {
-        const initials = ((c.firstName || "К")[0] || "К") + ((c.lastName || "Л")[0] || "");
-        const opened = expandedClientKeys.has(c.key);
-        return `<tr class="admin-client-row" data-client-row="${esc(c.key)}">
+      clientsTbody.innerHTML = clients
+        .map((c) => {
+          const initials =
+            ((c.firstName || "К")[0] || "К") + ((c.lastName || "Л")[0] || "");
+          const opened = expandedClientKeys.has(c.key);
+          return `<tr class="admin-client-row" data-client-row="${esc(c.key)}">
           <td><div class="client-name-cell">
             ${clientAttentionButton(c.key)}
             <span class="client-avatar-sm">${esc(initials.toUpperCase())}</span>
@@ -993,7 +1116,8 @@ if (typeof document !== "undefined") {
         </tr><tr class="admin-client-detail-row" ${opened ? "" : "hidden"} data-client-detail-row="${esc(c.key)}">
           <td colspan="7">${opened ? renderClientDetail(c) : ""}</td>
         </tr>`;
-      }).join("");
+        })
+        .join("");
     }
 
     // Delegation survives re-renders of the customer table.
@@ -1001,9 +1125,14 @@ if (typeof document !== "undefined") {
       const attention = event.target.closest("[data-toggle-client-attention]");
       if (attention) {
         try {
-          AdminCustomers.toggleAttention(localStorage, attention.dataset.toggleClientAttention);
+          AdminCustomers.toggleAttention(
+            localStorage,
+            attention.dataset.toggleClientAttention,
+          );
           renderDashboard();
-        } catch (error) { showUndoToast(error.message, null); }
+        } catch (error) {
+          showUndoToast(error.message, null);
+        }
         return;
       }
       const toggle = event.target.closest("[data-toggle-client]");
@@ -1014,9 +1143,12 @@ if (typeof document !== "undefined") {
         renderDashboard();
         return;
       }
-      const notesShortcut = event.target.closest("[data-client-notes-for-order]");
+      const notesShortcut = event.target.closest(
+        "[data-client-notes-for-order]",
+      );
       if (notesShortcut) {
-        const key = notesShortcut.closest("[data-client-details]")?.dataset.clientDetails;
+        const key = notesShortcut.closest("[data-client-details]")?.dataset
+          .clientDetails;
         if (!key) return;
         const id = notesShortcut.dataset.clientNotesForOrder;
         const isOpen = notesShortcut.getAttribute("aria-expanded") === "true";
@@ -1034,50 +1166,92 @@ if (typeof document !== "undefined") {
         scrollToOrderCard(id);
         return;
       }
-      const assignButton = event.target.closest("[data-assign-legacy-client-note]");
+      const assignButton = event.target.closest(
+        "[data-assign-legacy-client-note]",
+      );
       if (assignButton) {
-        const key = assignButton.closest("[data-client-details]")?.dataset.clientDetails;
-        const client = buildClientsList(loadAllOrders()).find((item) => item.key === key);
+        const key = assignButton.closest("[data-client-details]")?.dataset
+          .clientDetails;
+        const client = buildClientsList(loadAllOrders()).find(
+          (item) => item.key === key,
+        );
         if (!client) return;
-        const select = Array.from(assignButton.closest(".admin-client-legacy-notes")?.querySelectorAll("[data-legacy-note-order]") || [])
-          .find((element) => element.dataset.legacyNoteOrder === assignButton.dataset.assignLegacyClientNote);
+        const select = Array.from(
+          assignButton
+            .closest(".admin-client-legacy-notes")
+            ?.querySelectorAll("[data-legacy-note-order]") || [],
+        ).find(
+          (element) =>
+            element.dataset.legacyNoteOrder ===
+            assignButton.dataset.assignLegacyClientNote,
+        );
         const orderId = select?.value || "";
         try {
-          AdminCustomers.assignLegacyNote(localStorage, key,
-            assignButton.dataset.assignLegacyClientNote, orderId,
-            clientOrderIds(client));
+          AdminCustomers.assignLegacyNote(
+            localStorage,
+            key,
+            assignButton.dataset.assignLegacyClientNote,
+            orderId,
+            clientOrderIds(client),
+          );
           renderDashboard();
           showUndoToast("Примітку прив’язано до замовлення", null);
-        } catch (error) { showUndoToast(error.message, null); }
+        } catch (error) {
+          showUndoToast(error.message, null);
+        }
         return;
       }
-      const deleteButton = event.target.closest("[data-delete-client-note], [data-delete-legacy-client-note]");
+      const deleteButton = event.target.closest(
+        "[data-delete-client-note], [data-delete-legacy-client-note]",
+      );
       if (deleteButton) {
-        const key = deleteButton.closest("[data-client-details]")?.dataset.clientDetails;
-        if (!key || !(await confirmAdminDelete({
-          title: "Видалити примітку?",
-          message: "Примітку буде видалено з цього браузера. Цю дію неможливо скасувати.",
-          subject: "Внутрішня примітка менеджера",
-        }))) return;
+        const key = deleteButton.closest("[data-client-details]")?.dataset
+          .clientDetails;
+        if (
+          !key ||
+          !(await confirmAdminDelete({
+            title: "Видалити примітку?",
+            message:
+              "Примітку буде видалено з цього браузера. Цю дію неможливо скасувати.",
+            subject: "Внутрішня примітка менеджера",
+          }))
+        )
+          return;
         try {
           if (deleteButton.hasAttribute("data-delete-legacy-client-note")) {
-            AdminCustomers.deleteNote(localStorage, key, deleteButton.dataset.deleteLegacyClientNote);
+            AdminCustomers.deleteNote(
+              localStorage,
+              key,
+              deleteButton.dataset.deleteLegacyClientNote,
+            );
           } else {
-            const client = buildClientsList(loadAllOrders()).find((item) => item.key === key);
+            const client = buildClientsList(loadAllOrders()).find(
+              (item) => item.key === key,
+            );
             if (!client) return;
-            AdminCustomers.deleteOrderNote(localStorage, key, deleteButton.dataset.noteOrder,
-              deleteButton.dataset.deleteClientNote, clientOrderIds(client));
+            AdminCustomers.deleteOrderNote(
+              localStorage,
+              key,
+              deleteButton.dataset.noteOrder,
+              deleteButton.dataset.deleteClientNote,
+              clientOrderIds(client),
+            );
           }
           renderDashboard();
           showUndoToast("Примітку видалено", null);
-        } catch (error) { showUndoToast(error.message, null); }
+        } catch (error) {
+          showUndoToast(error.message, null);
+        }
         return;
       }
     });
     clientsTbody.addEventListener("input", (event) => {
       const form = event.target.closest("[data-client-note-form]");
       if (form && event.target.name === "note") {
-        customerNoteDrafts.set(clientNoteDraftKey(form.dataset.clientNoteForm, form.dataset.orderId), event.target.value);
+        customerNoteDrafts.set(
+          clientNoteDraftKey(form.dataset.clientNoteForm, form.dataset.orderId),
+          event.target.value,
+        );
       }
     });
     clientsTbody.addEventListener("submit", (event) => {
@@ -1087,10 +1261,18 @@ if (typeof document !== "undefined") {
       const key = form.dataset.clientNoteForm;
       const orderId = form.dataset.orderId;
       const input = form.elements.note;
-      const client = buildClientsList(loadAllOrders()).find((item) => item.key === key);
+      const client = buildClientsList(loadAllOrders()).find(
+        (item) => item.key === key,
+      );
       if (!client) return;
       try {
-        AdminCustomers.addOrderNote(localStorage, key, orderId, input.value, clientOrderIds(client));
+        AdminCustomers.addOrderNote(
+          localStorage,
+          key,
+          orderId,
+          input.value,
+          clientOrderIds(client),
+        );
         customerNoteDrafts.delete(clientNoteDraftKey(key, orderId));
         renderDashboard();
         showUndoToast("Примітку до замовлення додано", null);
@@ -1121,9 +1303,11 @@ if (typeof document !== "undefined") {
     function openAdminBranchPicker(form) {
       const { input, list, toggle } = branchPickerParts(form);
       if (!input || !list || !toggle) return;
-      ordersContainer.querySelectorAll("[data-order-editor]").forEach((other) => {
-        if (other !== form) closeAdminBranchPicker(other);
-      });
+      ordersContainer
+        .querySelectorAll("[data-order-editor]")
+        .forEach((other) => {
+          if (other !== form) closeAdminBranchPicker(other);
+        });
       list.hidden = false;
       input.setAttribute("aria-expanded", "true");
       toggle.setAttribute("aria-expanded", "true");
@@ -1135,7 +1319,8 @@ if (typeof document !== "undefined") {
       if (!choices.length) {
         const empty = document.createElement("span");
         empty.className = "admin-branch-picker__empty";
-        empty.textContent = message || "Немає пропозицій. Можна ввести адресу вручну.";
+        empty.textContent =
+          message || "Немає пропозицій. Можна ввести адресу вручну.";
         list.append(empty);
         return;
       }
@@ -1158,7 +1343,10 @@ if (typeof document !== "undefined") {
         list.append(option);
       });
     }
-    async function refreshAdminBranches(form, { show = false, all = false } = {}) {
+    async function refreshAdminBranches(
+      form,
+      { show = false, all = false } = {},
+    ) {
       const { input, list, hint } = branchPickerParts(form);
       if (!input || !list || !hint) return;
       const city = String(form.elements.city.value || "").trim();
@@ -1176,8 +1364,12 @@ if (typeof document !== "undefined") {
       const order = loadAllOrders().find(
         (o) => String(o.orderId) === form.dataset.orderEditor,
       );
-      const normalize = (v) => String(v || "").trim().toLocaleLowerCase("uk");
-      const sameDestination = normalize(city) === normalize(order?.delivery?.city) &&
+      const normalize = (v) =>
+        String(v || "")
+          .trim()
+          .toLocaleLowerCase("uk");
+      const sameDestination =
+        normalize(city) === normalize(order?.delivery?.city) &&
         carrier === order?.delivery?.carrierKey &&
         type === (order?.delivery?.type || "Відділення");
       const previous = AdminDelivery.uniqueBranches([
@@ -1185,43 +1377,66 @@ if (typeof document !== "undefined") {
         ...AdminDelivery.orderBranches(loadAllOrders(), city, carrier, type),
       ]);
       const query = all ? "" : input.value.trim().toLocaleLowerCase("uk");
-      const matches = (v) => !query || String(v || "").toLocaleLowerCase("uk").includes(query);
+      const matches = (v) =>
+        !query ||
+        String(v || "")
+          .toLocaleLowerCase("uk")
+          .includes(query);
       const choices = new Map();
       previous.filter(matches).forEach((address) => {
         choices.set(normalize(address), {
-          title: address, subtitle: "З попереднього замовлення · перевірте актуальність",
+          title: address,
+          subtitle: "З попереднього замовлення · перевірте актуальність",
         });
       });
-      const updateChoices = (message = "Немає пропозицій. Введіть адресу вручну.") => {
-        renderAdminBranchChoices(form, [...choices.values()].slice(0, 60), message);
+      const updateChoices = (
+        message = "Немає пропозицій. Введіть адресу вручну.",
+      ) => {
+        renderAdminBranchChoices(
+          form,
+          [...choices.values()].slice(0, 60),
+          message,
+        );
       };
       updateChoices("Завантаження варіантів доставки…");
-      hint.textContent = "Введіть адресу вручну або оберіть варіант, доступний у формі покупця. Перевірте дані перед відправленням.";
+      hint.textContent =
+        "Введіть адресу вручну або оберіть варіант, доступний у формі покупця. Перевірте дані перед відправленням.";
 
       // The public checkout directory has a generated fallback for offline/demo
       // use. The admin displays the same entries, but does not call them verified.
-      const directoryCity = city.replace(/^(?:м\.|місто)\s*/i, "").split(",")[0].trim();
+      const directoryCity = city
+        .replace(/^(?:м\.|місто)\s*/i, "")
+        .split(",")[0]
+        .trim();
       try {
         const [customerItems, verified] = await Promise.all([
           typeof DeliveryDirectory !== "undefined" &&
           typeof DeliveryDirectory.getBranches === "function"
             ? DeliveryDirectory.getBranches(carrier, type, directoryCity, "")
             : Promise.resolve([]),
-          AdminDelivery.fetchVerifiedBranches(city, carrier, type).catch(() => null),
+          AdminDelivery.fetchVerifiedBranches(city, carrier, type).catch(
+            () => null,
+          ),
         ]);
-        if (form.dataset.deliveryRevision !== revision || !form.isConnected) return;
+        if (form.dataset.deliveryRevision !== revision || !form.isConnected)
+          return;
         (customerItems || []).forEach((item) => {
-          if (!item?.title || !matches(item.title) && !matches(item.subtitle)) return;
+          if (!item?.title || (!matches(item.title) && !matches(item.subtitle)))
+            return;
           const key = normalize(item.title);
-          if (!choices.has(key)) choices.set(key, {
-            title: item.title,
-            subtitle: item.subtitle || "Варіант з оформлення замовлення · перевірте актуальність",
-          });
+          if (!choices.has(key))
+            choices.set(key, {
+              title: item.title,
+              subtitle:
+                item.subtitle ||
+                "Варіант з оформлення замовлення · перевірте актуальність",
+            });
         });
         (verified || []).forEach((address) => {
           if (!matches(address)) return;
           choices.set(normalize(address), {
-            title: address, subtitle: "Із підключеного довідника доставки",
+            title: address,
+            subtitle: "Із підключеного довідника доставки",
           });
         });
         updateChoices();
@@ -1229,9 +1444,11 @@ if (typeof document !== "undefined") {
           ? "Можна обрати адресу з довідника або ввести вручну."
           : "Варіанти як у формі покупця (можуть бути демонстраційними). Перевірте адресу перед відправленням.";
       } catch (_) {
-        if (form.dataset.deliveryRevision !== revision || !form.isConnected) return;
+        if (form.dataset.deliveryRevision !== revision || !form.isConnected)
+          return;
         updateChoices();
-        hint.textContent = "Довідник недоступний. Можна вибрати попередню адресу або ввести вручну.";
+        hint.textContent =
+          "Довідник недоступний. Можна вибрати попередню адресу або ввести вручну.";
       }
     }
     function updateDestinationDraft(form) {
@@ -1242,14 +1459,21 @@ if (typeof document !== "undefined") {
         deliveryType: form.elements.deliveryType.value,
       };
       const oldKey = form.dataset.adminDeliveryKey || "";
-      const key = JSON.stringify([next.city.trim(), next.carrierKey, next.deliveryType]);
+      const key = JSON.stringify([
+        next.city.trim(),
+        next.carrierKey,
+        next.deliveryType,
+      ]);
       if (oldKey && oldKey !== key) {
         form.elements.branch.value = "";
         orderAddressDrafts.set(id, "");
       }
       form.dataset.adminDeliveryKey = key;
       orderDestinationDrafts.set(id, next);
-      refreshAdminBranches(form, { show: !branchPickerParts(form).list.hidden, all: true });
+      refreshAdminBranches(form, {
+        show: !branchPickerParts(form).list.hidden,
+        all: true,
+      });
     }
     ordersContainer.addEventListener("click", (event) => {
       const form = event.target.closest("[data-order-editor]");
@@ -1276,13 +1500,22 @@ if (typeof document !== "undefined") {
     });
     ordersContainer.addEventListener("focusin", (event) => {
       const form = event.target.closest("[data-order-editor]");
-      if (form && event.target.matches("[data-admin-branch-input]") && !form.dataset.adminBranchSkipFocus) {
+      if (
+        form &&
+        event.target.matches("[data-admin-branch-input]") &&
+        !form.dataset.adminBranchSkipFocus
+      ) {
         refreshAdminBranches(form, { show: true, all: true });
       }
     });
     ordersContainer.addEventListener("change", (event) => {
       const form = event.target.closest("[data-order-editor]");
-      if (form && event.target.matches('[name="city"], [name="carrierKey"], [name="deliveryType"]')) {
+      if (
+        form &&
+        event.target.matches(
+          '[name="city"], [name="carrierKey"], [name="deliveryType"]',
+        )
+      ) {
         updateDestinationDraft(form);
       }
     });
@@ -1291,15 +1524,20 @@ if (typeof document !== "undefined") {
       if (!form) return;
       if (event.target.matches("[data-admin-branch-input]")) {
         orderAddressDrafts.set(form.dataset.orderEditor, event.target.value);
-        if (!branchPickerParts(form).list.hidden) refreshAdminBranches(form, { show: true });
+        if (!branchPickerParts(form).list.hidden)
+          refreshAdminBranches(form, { show: true });
       }
-      if (event.target.matches("[data-admin-city]")) updateDestinationDraft(form);
+      if (event.target.matches("[data-admin-city]"))
+        updateDestinationDraft(form);
     });
     ordersContainer.addEventListener("keydown", (event) => {
       const form = event.target.closest("[data-order-editor]");
       if (!form || !event.target.matches("[data-admin-branch-input]")) return;
       const { list } = branchPickerParts(form);
-      if (event.key === "Escape") { closeAdminBranchPicker(form); return; }
+      if (event.key === "Escape") {
+        closeAdminBranchPicker(form);
+        return;
+      }
       if (event.key === "ArrowDown") {
         event.preventDefault();
         if (list.hidden) refreshAdminBranches(form, { show: true, all: true });
@@ -1316,23 +1554,73 @@ if (typeof document !== "undefined") {
         branchPickerParts(form).input.focus();
       } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
         event.preventDefault();
-        const options = [...list.querySelectorAll("[data-admin-branch-option]")];
+        const options = [
+          ...list.querySelectorAll("[data-admin-branch-option]"),
+        ];
         const pos = options.indexOf(option);
-        options[(pos + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length]?.focus();
+        options[
+          (pos + (event.key === "ArrowDown" ? 1 : -1) + options.length) %
+            options.length
+        ]?.focus();
       }
     });
     document.addEventListener("pointerdown", (event) => {
       if (event.target.closest("[data-admin-branch-picker]")) return;
-      ordersContainer.querySelectorAll("[data-order-editor]").forEach(closeAdminBranchPicker);
+      ordersContainer
+        .querySelectorAll("[data-order-editor]")
+        .forEach(closeAdminBranchPicker);
     });
 
     // Order Actions Click Handler
-    ordersContainer.addEventListener("click", (e) => {
+    ordersContainer.addEventListener("click", async (e) => {
       const card = e.target.closest(".admin-order-card");
       if (!card) return;
       const orderId = String(card.getAttribute("data-order-id"));
       const ttnInput = card.querySelector(".order-ttn-input");
       const currentTtn = ttnInput ? ttnInput.value.trim() : undefined;
+
+      const notesToggle = e.target.closest("[data-admin-order-notes-toggle]");
+      if (notesToggle) {
+        if (expandedOrderNoteIds.has(orderId))
+          expandedOrderNoteIds.delete(orderId);
+        else expandedOrderNoteIds.add(orderId);
+        refreshOrderNoteUI(orderId);
+        return;
+      }
+      const deleteNoteButton = e.target.closest(
+        "[data-admin-order-note-delete]",
+      );
+      if (deleteNoteButton) {
+        const order = loadAllOrders().find(
+          (entry) => String(entry.orderId) === orderId,
+        );
+        if (!order) return;
+        const confirmed = await confirmAdminDelete({
+          title: "Видалити примітку?",
+          message:
+            "Примітку буде видалено з цього браузера. Цю дію неможливо скасувати.",
+          subject: `Замовлення #${orderId}`,
+        });
+        if (!confirmed) return;
+        try {
+          const key = AdminCustomers.keyFor(order.customer);
+          const client = buildClientsList(loadAllOrders()).find(
+            (item) => item.key === key,
+          );
+          AdminCustomers.deleteOrderNote(
+            localStorage,
+            key,
+            orderId,
+            deleteNoteButton.dataset.adminOrderNoteDelete,
+            clientOrderIds(client || { orders: [order] }),
+          );
+          refreshOrderNoteUI(orderId);
+          showUndoToast("Примітку видалено", null);
+        } catch (error) {
+          showUndoToast(error.message, null);
+        }
+        return;
+      }
 
       const editOrderBtn = e.target.closest("[data-edit-order]");
       if (editOrderBtn) {
@@ -1365,7 +1653,13 @@ if (typeof document !== "undefined") {
         const editor = card.querySelector("[data-order-editor]");
         const id = editor?.querySelector("[data-add-product-select]")?.value;
         const product = PRODUCTS_DATA[id];
-        if (!editor || !product || !product.inStock || product.isVisible === false) return;
+        if (
+          !editor ||
+          !product ||
+          !product.inStock ||
+          product.isVisible === false
+        )
+          return;
         const existing = Array.from(
           editor.querySelectorAll("[data-line-id]"),
         ).find((el) => el.dataset.lineId === id);
@@ -1417,7 +1711,11 @@ if (typeof document !== "undefined") {
         if (!AdminSafety.isValidTtn(val, order?.delivery?.carrierKey)) {
           ttnInput.focus();
           ttnInput.classList.add("has-error");
-          AstelAdminValidation?.reportField(ttnInput, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
+          AstelAdminValidation?.reportField(
+            ttnInput,
+            "Введіть коректний номер ТТН для вибраної служби доставки",
+            { manual: true },
+          );
           showUndoToast(
             "Введіть коректний номер ТТН для цієї служби доставки",
             null,
@@ -1450,7 +1748,11 @@ if (typeof document !== "undefined") {
               ttnInput.classList.remove("has-error");
               void ttnInput.offsetWidth; // Restart shake animation
               ttnInput.classList.add("has-error");
-              AstelAdminValidation?.reportField(ttnInput, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
+              AstelAdminValidation?.reportField(
+                ttnInput,
+                "Введіть коректний номер ТТН для вибраної служби доставки",
+                { manual: true },
+              );
               ttnInput.focus();
 
               // Keep the existing shake animation; the shared validator owns the inline text.
@@ -1493,7 +1795,46 @@ if (typeof document !== "undefined") {
       }
     });
 
+    ordersContainer.addEventListener("input", (event) => {
+      const form = event.target.closest("[data-admin-order-note-form]");
+      if (form && event.target.name === "note") {
+        orderNoteDrafts.set(
+          form.dataset.adminOrderNoteForm,
+          event.target.value,
+        );
+      }
+    });
     ordersContainer.addEventListener("submit", (e) => {
+      const noteForm = e.target.closest("[data-admin-order-note-form]");
+      if (noteForm) {
+        e.preventDefault();
+        const orderId = noteForm.dataset.adminOrderNoteForm;
+        const order = loadAllOrders().find(
+          (entry) => String(entry.orderId) === orderId,
+        );
+        if (!order) return;
+        const key = AdminCustomers.keyFor(order.customer);
+        const client = buildClientsList(loadAllOrders()).find(
+          (item) => item.key === key,
+        );
+        try {
+          AdminCustomers.addOrderNote(
+            localStorage,
+            key,
+            orderId,
+            noteForm.elements.note.value,
+            clientOrderIds(client || { orders: [order] }),
+          );
+          orderNoteDrafts.delete(orderId);
+          expandedOrderNoteIds.add(orderId);
+          refreshOrderNoteUI(orderId);
+          showUndoToast("Примітку до замовлення додано", null);
+        } catch (error) {
+          noteForm.elements.note.focus();
+          showUndoToast(error.message, null);
+        }
+        return;
+      }
       const form = e.target.closest("[data-order-editor]");
       if (!form) return;
       e.preventDefault();
@@ -1517,7 +1858,11 @@ if (typeof document !== "undefined") {
         );
         if (!AdminSafety.isValidTtn(val, order?.delivery?.carrierKey)) {
           e.target.classList.add("has-error");
-          AstelAdminValidation?.reportField(e.target, "Введіть коректний номер ТТН для вибраної служби доставки", { manual: true });
+          AstelAdminValidation?.reportField(
+            e.target,
+            "Введіть коректний номер ТТН для вибраної служби доставки",
+            { manual: true },
+          );
           showUndoToast(
             "Введіть коректний номер ТТН для цієї служби доставки",
             null,
@@ -1736,12 +2081,14 @@ if (typeof document !== "undefined") {
               (p) => p.category === key,
             ).length;
             const fixed = CatalogManager.isFixedCategory(key);
-            return `<div class="admin-category-chip"${fixed ? ' title="Базова категорія — використовується на головній сторінці"' : ''}>
+            return `<div class="admin-category-chip"${fixed ? ' title="Базова категорія — використовується на головній сторінці"' : ""}>
               <span>${esc(name)} <small>${count}</small></span>
-              ${fixed
-                ? `<span class="admin-category-chip__fixed" role="img" aria-label="Базову категорію не можна видалити"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`
-                : `<button type="button" data-delete-category="${esc(key)}" aria-label="Видалити категорію ${esc(name)}"
-                    title="${count ? "Спочатку перенесіть товари до іншої категорії" : "Видалити категорію"}" ${count ? "disabled" : ""}>×</button>`}
+              ${
+                fixed
+                  ? `<span class="admin-category-chip__fixed" role="img" aria-label="Базову категорію не можна видалити"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`
+                  : `<button type="button" data-delete-category="${esc(key)}" aria-label="Видалити категорію ${esc(name)}"
+                    title="${count ? "Спочатку перенесіть товари до іншої категорії" : "Видалити категорію"}" ${count ? "disabled" : ""}>×</button>`
+              }
             </div>`;
           })
           .join("");
@@ -1766,7 +2113,9 @@ if (typeof document !== "undefined") {
           renderProductsTable();
           showUndoToast("Категорію додано", null);
         } catch (err) {
-          AstelAdminValidation?.reportField(form.elements.uk, err.message, { manual: true });
+          AstelAdminValidation?.reportField(form.elements.uk, err.message, {
+            manual: true,
+          });
           showUndoToast(err.message, null);
         }
       });
@@ -1821,21 +2170,23 @@ if (typeof document !== "undefined") {
           const draft = getDraft(p.id),
             dirty = productDrafts.has(p.id) || detailsDirty.has(p.id);
           return `<tr class="admin-inventory-product-row ${dirty ? "has-pending-changes" : ""}" data-product-id="${esc(p.id)}">
-              <td>${p.isVisible === false
-                ? `<span class="admin-product-link">${esc(p.title)}</span><span class="admin-inventory-hidden-label">Приховано</span>`
-                : `<a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>`}</td>
+              <td>${
+                p.isVisible === false
+                  ? `<span class="admin-product-link">${esc(p.title)}</span><span class="admin-inventory-hidden-label">Приховано</span>`
+                  : `<a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>`
+              }</td>
               <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES, draft.category)}</select></td>
               <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS, draft.saleTermsCode)}</select></td>
               <td><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
               <td><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● В наявності" : "○ Немає в наявності"}</button></td>
               <td><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}" ${dirty ? "" : "disabled"}>Оновити</button>
-                <button type="button" class="admin-inventory-visibility ${p.isVisible === false ? 'is-hidden' : ''}"
+                <button type="button" class="admin-inventory-visibility ${p.isVisible === false ? "is-hidden" : ""}"
                   data-toggle-product-visibility="${esc(p.id)}"
-                  title="${p.isVisible === false ? 'Показати товар у каталозі' : 'Приховати товар з каталогу'}"
-                  aria-label="${p.isVisible === false ? 'Показати товар' : 'Приховати товар'}: ${esc(p.title)}"
-                  aria-pressed="${p.isVisible === false ? 'true' : 'false'}">
-                  <img src="assets/images/${p.isVisible === false ? 'visibility.svg' : 'visibility_off.svg'}" alt="" />
+                  title="${p.isVisible === false ? "Показати товар у каталозі" : "Приховати товар з каталогу"}"
+                  aria-label="${p.isVisible === false ? "Показати товар" : "Приховати товар"}: ${esc(p.title)}"
+                  aria-pressed="${p.isVisible === false ? "true" : "false"}">
+                  <img src="assets/images/${p.isVisible === false ? "visibility.svg" : "visibility_off.svg"}" alt="" />
                 </button>
                 <button type="button" class="admin-inventory-delete" data-delete-product="${esc(p.id)}" title="Видалити товар" aria-label="Видалити товар ${esc(p.title)}"><img src="assets/images/delete.svg" alt="" /></button>
               </div></td>
@@ -1980,7 +2331,11 @@ if (typeof document !== "undefined") {
         const price = CatalogManager.validPrice(draft.price);
         if (price == null) {
           const input = row.querySelector(".admin-price-input");
-          AstelAdminValidation?.reportField(input, "Вкажіть цілу ціну від 1 до 99 999 999 грн", { manual: true });
+          AstelAdminValidation?.reportField(
+            input,
+            "Вкажіть цілу ціну від 1 до 99 999 999 грн",
+            { manual: true },
+          );
           AstelAdminValidation?.focusFirst(input);
           showUndoToast("Вкажіть цілу ціну від 1 до 99 999 999 грн", null);
           return;
@@ -2053,7 +2408,12 @@ if (typeof document !== "undefined") {
         try {
           CatalogManager.updateProduct(id, { isVisible: !willHide });
           renderProductsTable();
-          showUndoToast(willHide ? "Товар приховано з каталогу" : "Товар повернуто до каталогу", null);
+          showUndoToast(
+            willHide
+              ? "Товар приховано з каталогу"
+              : "Товар повернуто до каталогу",
+            null,
+          );
         } catch (err) {
           showUndoToast(err.message, null);
         }
@@ -2274,7 +2634,13 @@ if (typeof document !== "undefined") {
       if (next !== lastOrderFingerprint) renderDashboard();
     }, 1000);
     window.addEventListener("storage", (event) => {
-      if ([ACTIVE_ORDER_KEY, COMPLETED_ORDERS_KEY, AdminCustomers.STORAGE_KEY].includes(event.key))
+      if (
+        [
+          ACTIVE_ORDER_KEY,
+          COMPLETED_ORDERS_KEY,
+          AdminCustomers.STORAGE_KEY,
+        ].includes(event.key)
+      )
         renderDashboard();
     });
     document.addEventListener("visibilitychange", () => {

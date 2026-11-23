@@ -516,11 +516,13 @@ if (typeof document !== "undefined") {
               return `<article class="admin-client-order${isOpen ? " is-open" : ""}">
           <div class="admin-client-order__row">
             <div class="admin-client-order__identity">
-              <button class="admin-client-order-link" type="button" data-client-order="${esc(orderId)}">#${esc(orderId)}</button>
+              <div class="admin-client-order__title">
+                <button class="admin-client-order-link" type="button" data-client-order="${esc(orderId)}">#${esc(orderId)}</button>
+                <span class="admin-client-order__state">${esc(STATUS_LABELS[ord.statusCode] || ord.status || "—")}</span>
+              </div>
               <time>${formatDate(ord.createdAt)}</time>
               <p class="admin-client-order__delivery" title="Адреса доставки"><span>Доставка:</span> ${esc(orderDeliveryAddress(ord.delivery))}</p>
             </div>
-            <span class="admin-client-order__state">${esc(STATUS_LABELS[ord.statusCode] || ord.status || "—")}</span>
             <strong class="admin-client-order__amount">${formatMoney(ord.subtotal)}</strong>
             <button type="button" class="admin-client-order__notes-toggle" data-client-notes-for-order="${esc(orderId)}"
               aria-expanded="${isOpen}" ${isOpen ? `aria-controls="${esc(safeDomId)}"` : ""} aria-label="${isOpen ? "Згорнути" : "Відкрити"} примітки до замовлення #${esc(orderId)}">

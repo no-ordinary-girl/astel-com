@@ -342,9 +342,10 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("order-status-container");
-        const rawOrder = localStorage.getItem("astelkom_active_order");
+        const requestedOrderId = new URLSearchParams(window.location.search).get("order");
+        const loadedOrder = OrderLifecycle.getOrder(requestedOrderId);
 
-        if (!rawOrder) {
+        if (!loadedOrder) {
           container.innerHTML = `
             <div class="order-status-card" style="text-align: center;">
               <h1 class="order-status__title">Активне замовлення не знайдено</h1>
@@ -357,7 +358,7 @@
           return;
         }
 
-        const order = JSON.parse(rawOrder);
+        const order = loadedOrder;
         const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
         const safeImage=value=>CatalogManager.validImageSource(value)?value:'assets/images/logo-main.svg';
         const paymentLabel = ()=>OrderFinance.paymentLabel(order, document.documentElement.lang);
@@ -469,7 +470,7 @@
         function lockOrderUI() {
           if (!order.locked) {
             Object.assign(order, OrderLifecycle.release(order));
-            localStorage.setItem("astelkom_active_order", JSON.stringify(order));
+            OrderLifecycle.saveOrder(order);
           }
 
           timerBox.classList.add("is-locked");
@@ -515,7 +516,7 @@
         editBtn.addEventListener("click", () => {
           if (order.locked || Date.now() >= order.expiresAt) return;
           CartManager.saveCart(order.items);
-          window.location.href = "cart.html?edit=true";
+          window.location.href = "cart.html?edit=" + encodeURIComponent(order.orderId);
         });
 
         // Lock Immediately / Return to Catalog Button

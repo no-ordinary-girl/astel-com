@@ -773,6 +773,7 @@
     <script src="js/delivery-data.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/order-lifecycle.js"></script>
     <script>
       // Built-in fallback so account.html always works even if AuthManager is not in js/cart.js
       /* window.AuthManager = window.AuthManager || {
@@ -1082,7 +1083,7 @@
                   <div class="order-history-card__actions">
                     ${
                       ord.statusCode === "active"
-                        ? `<a href="order-status.html" class="acct-btn-outline">Статус / Таймер</a>`
+                        ? `<a href="order-status.html?order=${encodeURIComponent(ord.orderId)}" class="acct-btn-outline">Статус / Таймер</a>`
                         : ""
                     }
                     <button

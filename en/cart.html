@@ -1239,12 +1239,13 @@
 
         // --- Pre-fill Checkout Form if Returning to Edit an Active Order ---
         const urlParams = new URLSearchParams(window.location.search);
-        const isEditingOrder = urlParams.get("edit") === "true";
-        const savedOrderRaw = localStorage.getItem("astelkom_active_order");
+        const editParam = urlParams.get("edit");
+        const isEditingOrder = editParam !== null && editParam !== "false";
+        const editOrderId = editParam && editParam !== "true" ? editParam : null;
+        const savedOrder = isEditingOrder ? OrderLifecycle.getOrder(editOrderId) : null;
 
-        if (isEditingOrder && savedOrderRaw) {
+        if (isEditingOrder && savedOrder) {
           try {
-            const savedOrder = JSON.parse(savedOrderRaw);
             if (OrderLifecycle.isEditable(savedOrder)) {
               document.getElementById("firstName").value =
                 savedOrder.customer.firstName || "";
@@ -1377,17 +1378,14 @@
           ).value;
 
           // Keep original order ID and timer if editing, otherwise create new 15-min window
-          let existingOrder = null;
-          try {
-            existingOrder = JSON.parse(
-              localStorage.getItem("astelkom_active_order"),
-            );
-          } catch (err) {}
+          const existingOrder = isEditingOrder
+            ? OrderLifecycle.getOrder(editOrderId)
+            : null;
 
           const now = Date.now();
           if (isEditingOrder && !OrderLifecycle.isEditable(existingOrder, now)) {
             alert("Час редагування замовлення минув. Замовлення вже передано в обробку.");
-            window.location.href = "en/order-status.html";
+            window.location.href = "en/order-status.html?order=" + encodeURIComponent(existingOrder?.orderId || editOrderId || "");
             return;
           }
 
@@ -1395,7 +1393,7 @@
             orderId:
               isEditingOrder && existingOrder
                 ? existingOrder.orderId
-                : "AK-" + String(now).slice(-6),
+                : OrderLifecycle.generateId(now),
             createdAt:
               isEditingOrder && existingOrder ? existingOrder.createdAt : now,
             expiresAt:
@@ -1417,12 +1415,18 @@
             subtotal: CartManager.getSubtotal(),
           };
 
-          localStorage.setItem(
-            "astelkom_active_order",
-            JSON.stringify(orderPayload),
-          );
+          try {
+            if (isEditingOrder) {
+              OrderLifecycle.saveOrder(orderPayload);
+            } else {
+              OrderLifecycle.createOrder(orderPayload);
+            }
+          } catch (error) {
+            alert("Не вдалося зберегти замовлення. Перевірте вільне місце браузера та спробуйте ще раз.");
+            return;
+          }
           CartManager.clearCart();
-          window.location.href = "en/order-status.html";
+          window.location.href = "en/order-status.html?order=" + encodeURIComponent(orderPayload.orderId);
         });
 
         // --- Validate "Я постійний клієнт" Login Form ---

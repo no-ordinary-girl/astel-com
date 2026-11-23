@@ -197,6 +197,7 @@ if (typeof document !== "undefined") {
           const id = String(ord.orderId || ord.id || "");
           if (
             !id ||
+            map.has(id) ||
             id === activeEditableOrderId ||
             OrderLifecycle.isEditable(ord, now)
           )
@@ -343,18 +344,16 @@ if (typeof document !== "undefined") {
 
     function writeOrder(updatedOrd) {
       const cleanId = String(updatedOrd.orderId);
-      const orders = loadAllOrders();
-      const list = orders.some((o) => String(o.orderId) === cleanId)
-        ? orders.map((o) => (String(o.orderId) === cleanId ? updatedOrd : o))
-        : [updatedOrd, ...orders];
-      localStorage.setItem(COMPLETED_ORDERS_KEY, JSON.stringify(list));
-      try {
-        const active = JSON.parse(
-          localStorage.getItem(ACTIVE_ORDER_KEY) || "null",
-        );
-        if (active && String(active.orderId || active.id) === cleanId)
-          localStorage.setItem(ACTIVE_ORDER_KEY, JSON.stringify(updatedOrd));
-      } catch (_) {}
+      // Never regenerate the archive from loadAllOrders(): that function hides
+      // orders still in their editing window, so doing so silently deleted them.
+      const saved = OrderLifecycle.getOrder(cleanId);
+      if (saved) {
+        OrderLifecycle.saveOrder(updatedOrd);
+      } else {
+        const list = OrderLifecycle.readHistory();
+        list.unshift(updatedOrd);
+        localStorage.setItem(COMPLETED_ORDERS_KEY, JSON.stringify(list));
+      }
       renderDashboard();
     }
 
@@ -2055,7 +2054,7 @@ if (typeof document !== "undefined") {
       .addEventListener("click", () => {
         const now = Date.now();
         const demoOrder = {
-          orderId: "AK-" + String(now).slice(-6),
+          orderId: OrderLifecycle.generateId(now),
           createdAt: now,
           expiresAt: now + 15 * 60 * 1000,
           locked: true,
@@ -2088,7 +2087,9 @@ if (typeof document !== "undefined") {
             },
           ],
         };
-        const currentList = loadAllOrders();
+        // Append to raw history, never the filtered manager view: that view
+        // intentionally excludes orders still inside their editing window.
+        const currentList = OrderLifecycle.readHistory();
         currentList.unshift(demoOrder);
         localStorage.setItem(COMPLETED_ORDERS_KEY, JSON.stringify(currentList));
         // Demo orders are ready for processing; do not replace a customer's editable order.

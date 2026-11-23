@@ -126,42 +126,52 @@ const AuthManager = (function () {
   function ensureOrdersSeeded() {
     try {
       if (localStorage.getItem(ORDERS_KEY) === null) {
-        localStorage.setItem(ORDERS_KEY, JSON.stringify(DEFAULT_DEMO_ORDERS));
+        // Do not inject demo history into a customer's real first order.
+        localStorage.setItem(
+          ORDERS_KEY,
+          JSON.stringify(localStorage.getItem("astelkom_active_order") ? [] : DEFAULT_DEMO_ORDERS),
+        );
       }
     } catch (e) {}
   }
 
   function getOrders() {
     ensureOrdersSeeded();
-    const list = [];
-    try {
-      const activeRaw = localStorage.getItem("astelkom_active_order");
-      if (activeRaw) {
-        const activeOrder = JSON.parse(activeRaw);
-        list.push({
-          ...activeOrder,
-          status: activeOrder.locked
-            ? "Передано в обробку"
-            : "Прийнято (редагування)",
-          statusCode: activeOrder.locked ? "processing" : "active",
-        });
-      }
-    } catch (e) {}
-
-    try {
-      const completed = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
-      completed.forEach((ord) => {
-        if (!list.some((o) => o.orderId === ord.orderId)) {
-          list.push({
-            ...ord,
-            status: ord.status || "Виконано",
-            statusCode: ord.statusCode || "completed",
-          });
+    let stored = [];
+    if (typeof OrderLifecycle !== "undefined") {
+      stored = OrderLifecycle.getOrders(localStorage);
+    } else {
+      try {
+        const archived = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
+        if (Array.isArray(archived)) stored = archived;
+        const active = JSON.parse(localStorage.getItem("astelkom_active_order") || "null");
+        if (active && active.orderId) {
+          stored = stored.filter((o) => String(o.orderId) !== String(active.orderId));
+          stored.push(active);
         }
-      });
-    } catch (e) {}
+      } catch (e) {}
+    }
 
-    return list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const now = Date.now();
+    return stored.map((ord) => {
+      const code = String(ord.statusCode || "");
+      if (["shipped", "completed", "canceled"].includes(code)) {
+        return { ...ord, statusCode: code };
+      }
+      // Old archived orders may still be in their 15-minute editing window.
+      // Determine their current state from their own deadline, not from whether
+      // they happen to be the latest order.
+      const expiry = Number(ord.expiresAt);
+      if (Number.isFinite(expiry) && expiry > 0) {
+        const editable = ord.locked !== true && expiry > now;
+        return {
+          ...ord,
+          statusCode: editable ? "active" : "processing",
+          status: editable ? "Оформлено (редагування)" : "Передано в обробку",
+        };
+      }
+      return { ...ord, statusCode: code || "completed", status: ord.status || "Виконано" };
+    }).sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
   }
 
   function copyOrderToCart(orderId) {

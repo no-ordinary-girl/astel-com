@@ -54,6 +54,8 @@
 .admin-client-order-link { background: none; padding: 0; border: 0; text-align: left; text-decoration: underline; text-underline-offset: 3px; color: #171717; cursor: pointer; font-size: 14px; font-weight: 700; }
 .admin-client-order-link:hover { color: #555; }
 .admin-client-order__identity time { color: #7a818b; font: 12px var(--font-mono, monospace); }
+.admin-client-order__delivery { margin: 3px 0 0; color: #525965; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.admin-client-order__delivery span { color: #7a818b; }
 .admin-client-order__state { justify-self: start; color: #555d68; font: 700 11px var(--font-mono, monospace); padding: 6px 9px; border-radius: 6px; background: #efefef; }
 .admin-client-order__amount { font: 700 14px var(--font-mono, monospace); white-space: nowrap; justify-self: end; }
 .admin-client-order__notes-toggle {
@@ -68,22 +70,26 @@
 
 /* Notes belong visually and in storage to the order directly above. */
 .admin-client-order__note-panel { padding: 20px 24px 24px; background: #f5f5f6; border-top: 1px solid #e2e2e2; }
-.admin-client-order__note-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+.admin-client-order__note-heading { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
+.admin-client-order__note-heading time { color: #737a85; font: 12px var(--font-mono, monospace); }
 .admin-client-order__note-heading strong { color: #171717; font-size: 13px; }
-.admin-client-order__note-heading span { color: #7c818a; font: 11px var(--font-mono, monospace); }
 .admin-client-empty { margin: 0 0 16px; color: #7b818d; font-size: 13px; }
 .admin-client-note-list { list-style: none; margin: 0 0 17px; padding: 0; }
 .admin-client-note { padding: 12px 0; border-bottom: 1px solid #dedede; }
 .admin-client-note:first-child { padding-top: 0; }
 .admin-client-note__heading { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+.admin-note-title-date { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 12px; min-width: 0; }
+.admin-note-title-date strong { color: #171717; font-size: 13px; }
 .admin-client-note__heading time { color: #737a85; font: 12px var(--font-mono, monospace); }
 .admin-client-note__heading button { padding: 4px 0; border: 0; background: transparent; color: #a13c3c; cursor: pointer; font: 700 12px var(--font-mono, monospace); }
 .admin-client-note p { white-space: pre-wrap; overflow-wrap: anywhere; margin: 6px 0 2px; font-size: 13px; line-height: 1.55; }
-.admin-client-note-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.admin-client-note-compose-toggle { min-height: 40px; padding: 10px 14px; }
+.admin-client-note-form { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #dedede; }
+.admin-client-note-form[hidden] { display: none; }
 .admin-client-note-form > label { font-size: 12px; font-weight: 700; }
-.admin-client-note-form__body { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: end; }
-.admin-client-note-form textarea { width: 100%; min-height: 82px; resize: vertical; font: 14px/1.5 var(--font-base, sans-serif); border: 1px solid #d7d7d7; border-radius: 9px; padding: 12px 13px; background: #fff; color: #171717; }
-.admin-client-note-form .admin-btn { align-self: end; white-space: nowrap; }
+.admin-client-note-form__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.admin-client-note-form textarea { width: 100%; min-height: 100px; resize: vertical; font: 14px/1.5 var(--font-base, sans-serif); border: 1px solid #d7d7d7; border-radius: 9px; padding: 12px 13px; background: #fff; color: #171717; }
+.admin-client-note-form .admin-btn { justify-self: end; white-space: nowrap; }
 .admin-client-legacy-notes { padding: 14px 24px; border-top: 1px solid #e6e6e6; }
 .admin-client-legacy-notes > summary { font-size: 12px; color: #626974; cursor: pointer; }
 .admin-client-legacy-notes .admin-client-note-list { margin-top: 16px; }
@@ -105,7 +111,9 @@
 }
 @media (max-width: 520px) {
   .admin-client-details__hint { display: none; }
-  .admin-client-note-form__body { grid-template-columns: 1fr; }
-  .admin-client-note-form .admin-btn { justify-self: start; }
+  .admin-client-note-form .admin-btn { width: 100%; justify-self: stretch; }
   .admin-client-order__notes-toggle { padding: 9px; }
 }
+
+/* Client search empty state inside the existing table. */
+.admin-client-search-empty td { padding: 28px 24px; text-align: center; color: #737a85; font-size: 14px; }

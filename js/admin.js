@@ -99,6 +99,7 @@ if (typeof document !== "undefined") {
     const editingOrderIds = new Set();
     // Order-specific notes use the same customer profiles as the Clients tab.
     const expandedOrderNoteIds = new Set();
+    const openOrderNoteComposers = new Set();
     const orderNoteDrafts = new Map();
     // Preserve an address being typed if another admin action re-renders an open editor.
     const orderAddressDrafts = new Map();
@@ -301,6 +302,15 @@ if (typeof document !== "undefined") {
       });
     }
 
+    // Preview the exact note being removed without making the dialog excessively tall.
+    function noteDeletionSubject(noteElement, fallback) {
+      const text = (noteElement?.querySelector("p")?.textContent || "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (!text) return fallback;
+      return text.length > 140 ? `${text.slice(0, 139)}…` : text;
+    }
+
     function showUndoToast(message, undoCallback) {
       let toast = document.getElementById("admin-undo-toast");
       if (!toast) {
@@ -432,6 +442,8 @@ if (typeof document !== "undefined") {
     // Every new manager note is bound to one of this customer's actual order IDs.
     const expandedClientKeys = new Set();
     const customerNoteDrafts = new Map();
+    // Keep the add-note composer collapsed until explicitly opened.
+    const openClientNoteComposers = new Set();
     const customerSelectedOrders = new Map();
     const customerProfiles = () => AdminCustomers.read(localStorage);
     const customerProfile = (key) =>
@@ -447,28 +459,30 @@ if (typeof document !== "undefined") {
     function clientAttentionButton(key) {
       const attention = customerProfile(key).status !== "normal";
       const label = attention
-        ? "Зняти позначку: потребує уваги"
-        : "Позначити: потребує уваги";
+        ? "Зняти позначку «Проблемний клієнт»"
+        : "Позначити як проблемного клієнта";
       return `<button type="button" class="admin-client-attention-toggle ${attention ? "is-attention" : ""}"
         data-toggle-client-attention="${esc(key)}" aria-label="${label}"
         aria-pressed="${attention}" title="${label}">
         <span class="admin-client-attention-toggle__dot" aria-hidden="true"></span></button>`;
     }
+    // Delivery belongs to the order, not to the customer's default address.
+    function orderDeliveryAddress(delivery) {
+      if (!delivery || typeof delivery !== "object") return "Адресу доставки не вказано";
+      const city = String(delivery.city || "").trim();
+      const carrier = String(delivery.carrierName || CARRIERS[delivery.carrierKey] || "").trim();
+      const branch = String(delivery.branch || "").trim();
+      const type = String(delivery.type || "").trim();
+      const parts = [city && `м. ${city}`, carrier, branch || type].filter(Boolean);
+      return parts.length ? parts.join(", ") : "Адресу доставки не вказано";
+    }
     function renderClientDetail(client) {
       const profile = customerProfile(client.key);
       const orderIds = clientOrderIds(client);
-      // Each order owns its own note editor. No separate notes tab or order selector.
-      // For a customer with one order, the note editor is open by default.
+      // Each order owns its own note editor. Keep all note panels closed
+      // until a manager opens one, including when there is only one order.
       const preferredId = customerSelectedOrders.get(client.key);
-      const openOrderId =
-        preferredId === ""
-          ? ""
-          : orderIds.includes(preferredId)
-            ? preferredId
-            : orderIds.length === 1
-              ? orderIds[0]
-              : "";
-      const notesCount = AdminCustomers.countOrderNotes(profile, orderIds);
+      const openOrderId = orderIds.includes(preferredId) ? preferredId : "";
       const history = client.orders.length
         ? client.orders
             .map((ord) => {
@@ -480,13 +494,17 @@ if (typeof document !== "undefined") {
                   /[^a-zA-Z0-9_-]/g,
                   "-",
                 );
+              const composerKey = clientNoteDraftKey(client.key, orderId);
+              const composerOpen = openClientNoteComposers.has(composerKey);
               const notesHtml = orderNotes.length
                 ? `<ul class="admin-client-note-list">${orderNotes
                     .map(
-                      (note) => `
+                      (note, index) => `
           <li class="admin-client-note">
             <div class="admin-client-note__heading">
-              <time>${formatDate(note.createdAt)}</time>
+              ${index === 0
+                ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time></span>`
+                : `<time>${formatDate(note.createdAt)}</time>`}
               <button type="button" data-delete-client-note="${esc(note.id)}" data-note-order="${esc(orderId)}"
                 aria-label="Видалити примітку" title="Видалити примітку">Видалити</button>
             </div>
@@ -500,6 +518,7 @@ if (typeof document !== "undefined") {
             <div class="admin-client-order__identity">
               <button class="admin-client-order-link" type="button" data-client-order="${esc(orderId)}">#${esc(orderId)}</button>
               <time>${formatDate(ord.createdAt)}</time>
+              <p class="admin-client-order__delivery" title="Адреса доставки"><span>Доставка:</span> ${esc(orderDeliveryAddress(ord.delivery))}</p>
             </div>
             <span class="admin-client-order__state">${esc(STATUS_LABELS[ord.statusCode] || ord.status || "—")}</span>
             <strong class="admin-client-order__amount">${formatMoney(ord.subtotal)}</strong>
@@ -513,15 +532,17 @@ if (typeof document !== "undefined") {
           ${
             isOpen
               ? `<div class="admin-client-order__note-panel" id="${esc(safeDomId)}">
-            <div class="admin-client-order__note-heading">
-              <strong>Внутрішні примітки</strong><span>Лише для менеджера · замовлення #${esc(orderId)}</span>
-            </div>
+            ${orderNotes.length ? "" : `<div class="admin-client-order__note-heading"><strong>Внутрішні примітки</strong></div>`}
             ${notesHtml}
-            <form class="admin-client-note-form" data-client-note-form="${esc(client.key)}" data-order-id="${esc(orderId)}" novalidate>
-              <label for="client-note-${esc(safeDomId)}">Додати примітку</label>
+            <button type="button" class="admin-btn admin-btn--outline admin-client-note-compose-toggle"
+              data-client-note-compose="${esc(orderId)}" aria-expanded="${composerOpen}"
+              aria-controls="client-note-form-${esc(safeDomId)}">${composerOpen ? "Скасувати" : "+ Додати примітку"}</button>
+            <form id="client-note-form-${esc(safeDomId)}" class="admin-client-note-form" data-client-note-form="${esc(client.key)}"
+              data-order-id="${esc(orderId)}" novalidate ${composerOpen ? "" : "hidden"}>
+              <label for="client-note-${esc(safeDomId)}">Нова примітка</label>
               <div class="admin-client-note-form__body">
-                <textarea id="client-note-${esc(safeDomId)}" name="note" maxlength="${AdminCustomers.MAX_NOTE}" rows="2"
-                  placeholder="Наприклад, покупець попросив змінити адресу доставки">${esc(customerNoteDrafts.get(clientNoteDraftKey(client.key, orderId)) || "")}</textarea>
+                <textarea id="client-note-${esc(safeDomId)}" name="note" maxlength="${AdminCustomers.MAX_NOTE}" rows="3"
+                  placeholder="Наприклад, покупець попросив змінити адресу доставки">${esc(customerNoteDrafts.get(composerKey) || "")}</textarea>
                 <button type="submit" class="admin-btn admin-btn--primary">Зберегти примітку</button>
               </div>
             </form>
@@ -564,7 +585,6 @@ if (typeof document !== "undefined") {
       return `<div class="admin-client-details" data-client-details="${esc(client.key)}">
         <div class="admin-client-details__heading">
           <h3>Замовлення клієнта <span class="admin-client-section-count">${client.orders.length}</span></h3>
-          <span class="admin-client-details__hint">Примітки до конкретних замовлень <strong>${notesCount}</strong></span>
         </div>
         <div class="admin-client-order-list">${history}</div>
         ${legacyNotes}
@@ -574,6 +594,7 @@ if (typeof document !== "undefined") {
     const ordersContainer = document.getElementById("admin-orders-container");
     const clientsTbody = document.getElementById("admin-clients-tbody");
     const searchInput = document.getElementById("admin-search");
+    const clientSearchInput = document.getElementById("admin-client-search");
     const statusFilter = document.getElementById("admin-status-filter");
 
     let lastOrderFingerprint = "";
@@ -621,31 +642,36 @@ if (typeof document !== "undefined") {
         customerProfile(customerKey),
         id,
       );
+      const composerOpen = openOrderNoteComposers.has(id);
       const list = notes.length
-        ? `<ul class="admin-order-note-list">${notes
+        ? `<ul class="admin-client-note-list admin-order-note-list">${notes
             .map(
-              (note) => `
-            <li class="admin-order-note">
-              <div class="admin-order-note__heading">
-                <time>${formatDate(note.createdAt)}</time>
+              (note, index) => `
+            <li class="admin-client-note admin-order-note">
+              <div class="admin-client-note__heading admin-order-note__heading">
+                ${index === 0
+                  ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time></span>`
+                  : `<time>${formatDate(note.createdAt)}</time>`}
                 <button type="button" data-admin-order-note-delete="${esc(note.id)}" aria-label="Видалити примітку">Видалити</button>
               </div>
               <p>${esc(note.text)}</p>
             </li>`,
             )
             .join("")}</ul>`
-        : `<p class="admin-order-note-empty">Приміток до цього замовлення ще немає.</p>`;
+        : `<p class="admin-client-empty admin-order-note-empty">Приміток до цього замовлення ще немає.</p>`;
       return `<section class="admin-order-note-panel" aria-label="Примітки до замовлення #${esc(id)}">
-        <div class="admin-order-note-panel__head">
-          <strong>Примітки до замовлення #${esc(id)}</strong>
-          <span>Лише для менеджера</span>
-        </div>
+        ${notes.length ? "" : `<div class="admin-client-order__note-heading admin-order-note-panel__head"><strong>Внутрішні примітки</strong></div>`}
         ${list}
-        <form data-admin-order-note-form="${esc(id)}" novalidate>
+        <button type="button" class="admin-btn admin-btn--outline admin-client-note-compose-toggle admin-order-note-compose-toggle"
+          data-admin-order-note-compose="${esc(id)}" aria-expanded="${composerOpen}"
+          aria-controls="admin-order-note-form-${esc(id)}">${composerOpen ? "Скасувати" : "+ Додати примітку"}</button>
+        <form class="admin-client-note-form" id="admin-order-note-form-${esc(id)}" data-admin-order-note-form="${esc(id)}" novalidate ${composerOpen ? "" : "hidden"}>
           <label for="admin-order-note-${esc(id)}">Нова примітка</label>
-          <textarea id="admin-order-note-${esc(id)}" name="note" rows="3" maxlength="${AdminCustomers.MAX_NOTE}"
-            placeholder="Наприклад, клієнт змінив адресу доставки">${esc(orderNoteDrafts.get(id) || "")}</textarea>
-          <button class="admin-btn admin-btn--primary" type="submit">Зберегти примітку</button>
+          <div class="admin-client-note-form__body">
+            <textarea id="admin-order-note-${esc(id)}" name="note" rows="3" maxlength="${AdminCustomers.MAX_NOTE}"
+              placeholder="Наприклад, покупець попросив змінити адресу доставки">${esc(orderNoteDrafts.get(id) || "")}</textarea>
+            <button class="admin-btn admin-btn--primary" type="submit">Зберегти примітку</button>
+          </div>
         </form>
       </section>`;
     }
@@ -658,8 +684,8 @@ if (typeof document !== "undefined") {
       const expanded = expandedOrderNoteIds.has(id);
       return `<button type="button" class="admin-btn admin-btn--outline admin-order-notes-button"
         data-admin-order-notes-toggle="${esc(id)}" aria-expanded="${expanded}"
-        aria-label="${expanded ? "Сховати" : "Відкрити"} примітки до замовлення #${esc(id)}">
-        Примітки${count ? ` <span class="admin-order-notes-button__count">${count}</span>` : ""}
+        aria-label="${expanded ? "Закрити" : "Відкрити"} примітки до замовлення #${esc(id)}">
+        ${expanded ? "Закрити примітки" : `Примітки${count ? ` <span class="admin-order-notes-button__count">${count}</span>` : ""}`}
       </button>`;
     }
 
@@ -1091,8 +1117,30 @@ if (typeof document !== "undefined") {
           refreshAdminBranches(editor);
         });
 
+      renderClientsTable(clients);
+    }
+
+    function renderClientsTable(clients) {
+      // Filter clients independently of the orders search and status dropdown.
+      const clientQuery = clientSearchInput.value.trim().toLocaleLowerCase("uk-UA");
+      const clientDigits = clientQuery.replace(/\D/g, "");
+      const matchingClients = clients.filter((client) => {
+        if (!clientQuery) return true;
+        const searchable = [
+          client.firstName, client.lastName,
+          `${client.firstName} ${client.lastName}`,
+          client.phone, client.email, client.address,
+          ...client.orders.flatMap((order) => [
+            order.orderId, orderDeliveryAddress(order.delivery),
+          ]),
+        ].join(" ").toLocaleLowerCase("uk-UA");
+        return searchable.includes(clientQuery) ||
+          (clientDigits.length >= 3 &&
+            String(client.phone).replace(/\D/g, "").includes(clientDigits));
+      });
+
       // The dot is a clickable, two-state attention marker, not a purchase restriction.
-      clientsTbody.innerHTML = clients
+      clientsTbody.innerHTML = matchingClients.length ? matchingClients
         .map((c) => {
           const initials =
             ((c.firstName || "К")[0] || "К") + ((c.lastName || "Л")[0] || "");
@@ -1117,8 +1165,9 @@ if (typeof document !== "undefined") {
           <td colspan="7">${opened ? renderClientDetail(c) : ""}</td>
         </tr>`;
         })
-        .join("");
+        .join("") : `<tr class="admin-client-search-empty"><td colspan="7">${clients.length ? "За вашим запитом клієнтів не знайдено." : "Клієнтів поки немає."}</td></tr>`;
     }
+
 
     // Delegation survives re-renders of the customer table.
     clientsTbody.addEventListener("click", async (event) => {
@@ -1138,8 +1187,15 @@ if (typeof document !== "undefined") {
       const toggle = event.target.closest("[data-toggle-client]");
       if (toggle) {
         const key = toggle.dataset.toggleClient;
-        if (expandedClientKeys.has(key)) expandedClientKeys.delete(key);
-        else expandedClientKeys.add(key);
+        if (expandedClientKeys.has(key)) {
+          expandedClientKeys.delete(key);
+          customerSelectedOrders.delete(key); // Reopening details starts with notes collapsed.
+          // Also reset any open add-note composer for this client.
+          for (const composerKey of openClientNoteComposers) {
+            if (composerKey.startsWith(`${key}::`))
+              openClientNoteComposers.delete(composerKey);
+          }
+        } else expandedClientKeys.add(key);
         renderDashboard();
         return;
       }
@@ -1152,8 +1208,31 @@ if (typeof document !== "undefined") {
         if (!key) return;
         const id = notesShortcut.dataset.clientNotesForOrder;
         const isOpen = notesShortcut.getAttribute("aria-expanded") === "true";
+        if (isOpen) openClientNoteComposers.delete(clientNoteDraftKey(key, id));
         customerSelectedOrders.set(key, isOpen ? "" : id);
         renderDashboard();
+        return;
+      }
+      const composeToggle = event.target.closest("[data-client-note-compose]");
+      if (composeToggle) {
+        const panel = composeToggle.closest("[data-client-details]");
+        const key = panel?.dataset.clientDetails;
+        const orderId = composeToggle.dataset.clientNoteCompose;
+        if (!key) return;
+        const composerKey = clientNoteDraftKey(key, orderId);
+        const open = !openClientNoteComposers.has(composerKey);
+        if (open) openClientNoteComposers.add(composerKey);
+        else openClientNoteComposers.delete(composerKey);
+        composeToggle.setAttribute("aria-expanded", String(open));
+        composeToggle.textContent = open ? "Скасувати" : "+ Додати примітку";
+        const form = document.getElementById(composeToggle.getAttribute("aria-controls"));
+        if (form) form.hidden = !open;
+        if (open) form?.elements.note?.focus();
+        else {
+          // Cancel means discard this unfinished entry, not save it for later.
+          customerNoteDrafts.delete(composerKey);
+          if (form) form.elements.note.value = "";
+        }
         return;
       }
       const historyLink = event.target.closest("[data-client-order]");
@@ -1211,9 +1290,11 @@ if (typeof document !== "undefined") {
           !key ||
           !(await confirmAdminDelete({
             title: "Видалити примітку?",
-            message:
-              "Примітку буде видалено з цього браузера. Цю дію неможливо скасувати.",
-            subject: "Внутрішня примітка менеджера",
+            message: "Після видалення відновити цю примітку буде неможливо.",
+            subject: noteDeletionSubject(
+              deleteButton.closest(".admin-client-note"),
+              "Внутрішня примітка",
+            ),
           }))
         )
           return;
@@ -1274,6 +1355,7 @@ if (typeof document !== "undefined") {
           clientOrderIds(client),
         );
         customerNoteDrafts.delete(clientNoteDraftKey(key, orderId));
+        openClientNoteComposers.delete(clientNoteDraftKey(key, orderId));
         renderDashboard();
         showUndoToast("Примітку до замовлення додано", null);
       } catch (error) {
@@ -1581,10 +1663,28 @@ if (typeof document !== "undefined") {
 
       const notesToggle = e.target.closest("[data-admin-order-notes-toggle]");
       if (notesToggle) {
-        if (expandedOrderNoteIds.has(orderId))
+        if (expandedOrderNoteIds.has(orderId)) {
           expandedOrderNoteIds.delete(orderId);
-        else expandedOrderNoteIds.add(orderId);
+          openOrderNoteComposers.delete(orderId);
+        } else expandedOrderNoteIds.add(orderId);
         refreshOrderNoteUI(orderId);
+        return;
+      }
+      const composeToggle = e.target.closest("[data-admin-order-note-compose]");
+      if (composeToggle) {
+        const open = !openOrderNoteComposers.has(orderId);
+        if (open) openOrderNoteComposers.add(orderId);
+        else openOrderNoteComposers.delete(orderId);
+        composeToggle.setAttribute("aria-expanded", String(open));
+        composeToggle.textContent = open ? "Скасувати" : "+ Додати примітку";
+        const form = card.querySelector("[data-admin-order-note-form]");
+        if (form) form.hidden = !open;
+        if (open) form?.elements.note?.focus();
+        else {
+          // Cancel discards unfinished text; saving closes the editor as well.
+          orderNoteDrafts.delete(orderId);
+          if (form) form.elements.note.value = "";
+        }
         return;
       }
       const deleteNoteButton = e.target.closest(
@@ -1597,9 +1697,11 @@ if (typeof document !== "undefined") {
         if (!order) return;
         const confirmed = await confirmAdminDelete({
           title: "Видалити примітку?",
-          message:
-            "Примітку буде видалено з цього браузера. Цю дію неможливо скасувати.",
-          subject: `Замовлення #${orderId}`,
+          message: "Після видалення відновити цю примітку буде неможливо.",
+          subject: noteDeletionSubject(
+            deleteNoteButton.closest(".admin-order-note"),
+            `Замовлення #${orderId}`,
+          ),
         });
         if (!confirmed) return;
         try {
@@ -1826,6 +1928,7 @@ if (typeof document !== "undefined") {
             clientOrderIds(client || { orders: [order] }),
           );
           orderNoteDrafts.delete(orderId);
+          openOrderNoteComposers.delete(orderId);
           expandedOrderNoteIds.add(orderId);
           refreshOrderNoteUI(orderId);
           showUndoToast("Примітку до замовлення додано", null);
@@ -1875,6 +1978,9 @@ if (typeof document !== "undefined") {
     });
 
     searchInput.addEventListener("input", renderDashboard);
+    clientSearchInput.addEventListener("input", () => {
+      renderClientsTable(buildClientsList(loadAllOrders()));
+    });
     statusFilter.addEventListener("change", renderDashboard);
 
     // Catalog Inventory / Media (localStorage prototype).
@@ -2613,13 +2719,18 @@ if (typeof document !== "undefined") {
     const tabBtns = document.querySelectorAll("[data-admin-tab]");
     const panels = document.querySelectorAll(".admin-panel");
     const filterBar = document.getElementById("orders-filter-bar");
+    const clientFilterBar = document.getElementById("clients-filter-bar");
 
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-admin-tab");
         tabBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
         panels.forEach((p) => p.classList.toggle("is-active", p.id === target));
-        filterBar.style.display = target === "panel-orders" ? "flex" : "none";
+        filterBar.hidden = target !== "panel-orders";
+        clientFilterBar.hidden = target !== "panel-clients";
+        if (target === "panel-clients") {
+          renderClientsTable(buildClientsList(loadAllOrders()));
+        }
       });
     });
 

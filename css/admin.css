@@ -163,6 +163,9 @@
   gap: 10px;
   flex: 1;
 }
+.admin-filters[hidden] { display: none; }
+.admin-client-filters { width: 100%; }
+.admin-client-filters .admin-search-input { min-width: 0; }
 
 .admin-search-input,
 .admin-select {
@@ -857,6 +860,7 @@ html[data-theme="dark"] .order-closed-banner--canceled {
   .admin-filters {
     max-width: 620px;
   }
+  .admin-client-filters { max-width: 440px; }
 
   .admin-order-card {
     padding: 28px;
@@ -1262,46 +1266,18 @@ html[data-theme="dark"] .admin-new-product-form textarea {
 }
 .admin-order-note-panel {
   min-width: 0;
-  padding: 18px 20px;
+  padding: 20px 24px;
   border: 1px solid var(--gray-200);
   border-radius: 12px;
   background: #f5f5f6;
 }
-.admin-order-note-panel__head,
-.admin-order-note__heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.admin-order-note-panel__head { margin-bottom: 16px; }
-.admin-order-note-panel__head strong { font-size: 14px; }
-.admin-order-note-panel__head span,
-.admin-order-note__heading time,
-.admin-order-note-empty {
-  color: #737b88;
-  font-size: 12px;
-}
-.admin-order-note-list { list-style: none; margin: 0 0 18px; padding: 0; }
-.admin-order-note { padding: 12px 0; border-bottom: 1px solid #ddd; }
-.admin-order-note__heading button {
-  border: 0;
-  background: transparent;
-  color: #b91c1c;
-  cursor: pointer;
-  font: 700 12px var(--font-mono, monospace);
-}
-.admin-order-note p { margin: 10px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
-.admin-order-note-panel form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px; }
-.admin-order-note-panel form label { grid-column: 1/-1; font-size: 13px; font-weight: 700; }
-.admin-order-note-panel form textarea {
-  min-width: 0; width: 100%; min-height: 84px; padding: 11px 12px;
-  border: 1px solid #d5d5d5; border-radius: 9px; background: #fff;
-  font: 14px/1.45 var(--font-base, sans-serif); resize: vertical;
-}
+/* Notes in both tabs share the Clients component's headings, list, and form styles. */
+.admin-order-note-panel__head { margin-bottom: 15px; }
+.admin-order-note-panel__head strong { font-size: 13px; }
+.admin-order-note-compose-toggle { min-height: 40px; padding: 10px 14px; }
 html[data-theme="dark"] .admin-order-note-panel { background: #292929; border-color: #474747; }
-html[data-theme="dark"] .admin-order-note-panel form textarea { background: #303030; color: #fff; border-color: #474747; }
+html[data-theme="dark"] .admin-order-note-panel .admin-client-note-form { border-top-color: #474747; }
+html[data-theme="dark"] .admin-order-note-panel .admin-client-note-form textarea { background: #303030; color: #fff; border-color: #474747; }
 html[data-theme="dark"] .admin-order-card__badges .admin-client-status { background: #452323; border-color: #7f3434; color: #fca5a5; }
 @media (max-width: 760px) {
   .admin-order-editor .admin-edit-line {
@@ -1329,7 +1305,5 @@ html[data-theme="dark"] .admin-order-card__badges .admin-client-status { backgro
   .admin-order-inline-actions { justify-content: stretch; }
   .admin-order-inline-actions .admin-btn { flex: 1 1 auto; min-width: 0; white-space: normal; text-align: center; }
   .admin-order-note-panel { padding: 16px; }
-  .admin-order-note-panel form { grid-template-columns: minmax(0, 1fr); }
-  .admin-order-note-panel form label { grid-column: 1; }
-  .admin-order-note-panel form .admin-btn { justify-self: end; }
+  .admin-order-note-panel__head { align-items: flex-start; }
 }

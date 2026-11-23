@@ -7,7 +7,7 @@ const AdminCustomers = (() => {
   const STORAGE_KEY = "astelkom_admin_customer_profiles";
   const STATUSES = Object.freeze({
     normal: "Звичайний",
-    attention: "Потребує уваги",
+    attention: "Проблемний клієнт",
     restricted: "Обмежений",
   });
   const MAX_NOTE = 1000;

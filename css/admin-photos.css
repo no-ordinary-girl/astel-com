@@ -546,6 +546,13 @@ html[data-theme="dark"] .admin-document-row {
   margin-left: 4px;
   font-family: var(--font-mono);
 }
+.admin-category-chip__fixed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  flex: none;
+}
 .admin-category-chip button {
   background: transparent;
   border: 0;

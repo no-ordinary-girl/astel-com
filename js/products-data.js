@@ -866,10 +866,12 @@ const CatalogManager = (() => {
   function readDeleted(){return readStore(DELETED_KEY,{});}
   function readCategories(){return readStore(CATEGORY_KEY,{});}
   function readRemovedCategories(){return readStore(REMOVED_CATEGORIES_KEY,{});}
+  // Homepage category links are hard-coded, so the five built-in categories must
+  // always exist, including in browsers with legacy removal markers in storage.
+  const isFixedCategory = (code) => own(DEFAULT_CATEGORIES, code);
   function rebuildCategories(){
-    const removed=readRemovedCategories();
     for(const key of Object.keys(CATEGORIES)) delete CATEGORIES[key];
-    for(const [key,label] of Object.entries(DEFAULT_CATEGORIES)) if(!removed[key]) CATEGORIES[key]=label;
+    Object.assign(CATEGORIES, DEFAULT_CATEGORIES);
     for(const [key,entry] of Object.entries(readCategories())) {
       if(/^cat-[a-z0-9-]{3,75}$/.test(key) && entry &&
          typeof entry.uk==='string' && entry.uk.trim().length>=2 && entry.uk.length<=80)
@@ -894,16 +896,15 @@ const CatalogManager = (() => {
     rebuildCategories();notify('categories');return key;
   }
   function deleteCategory(code){
+    if(isFixedCategory(code))
+      throw new Error('Базову категорію не можна видалити: вона використовується на головній сторінці.');
     if(!CATEGORIES[code]) throw new Error('Категорію не знайдено');
     if(Object.values(PRODUCTS_DATA).some(p=>p.category===code))
       throw new Error('Категорію використовують товари. Спочатку перенесіть їх до іншої категорії і натисніть «Оновити».');
     const custom=readCategories();
-    if(Object.prototype.hasOwnProperty.call(custom,code)) {
-      delete custom[code];localStorage.setItem(CATEGORY_KEY,JSON.stringify(custom));
-    } else {
-      const removed=readRemovedCategories();removed[code]=true;
-      localStorage.setItem(REMOVED_CATEGORIES_KEY,JSON.stringify(removed));
-    }
+    if(!own(custom,code)) throw new Error('Можна видаляти лише створені вручну категорії.');
+    delete custom[code];
+    localStorage.setItem(CATEGORY_KEY,JSON.stringify(custom));
     rebuildCategories();notify('categories');return true;
   }
   function validPdfSource(src) {
@@ -1063,7 +1064,7 @@ const CatalogManager = (() => {
     if([STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY].includes(e.key)){applyOverrides();notify('all');}
   });
   return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY,
-    CATEGORIES,SALE_TERMS,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
+    CATEGORIES,SALE_TERMS,isFixedCategory,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
     validPdfSource,validSpecSections,validDocs,readOverrides,readCustom,readDeleted,
     getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards,
     getStorefrontProduct:(id) => PRODUCTS_DATA[id]?.isVisible === false ? null : (PRODUCTS_DATA[id] || null),

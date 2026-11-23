@@ -1590,10 +1590,13 @@ if (typeof document !== "undefined") {
             const count = Object.values(PRODUCTS_DATA).filter(
               (p) => p.category === key,
             ).length;
-            return `<div class="admin-category-chip">
+            const fixed = CatalogManager.isFixedCategory(key);
+            return `<div class="admin-category-chip"${fixed ? ' title="Базова категорія — використовується на головній сторінці"' : ''}>
               <span>${esc(name)} <small>${count}</small></span>
-              <button type="button" data-delete-category="${esc(key)}" aria-label="Видалити категорію ${esc(name)}"
-                title="${count ? "Спочатку перенесіть товари до іншої категорії" : "Видалити категорію"}" ${count ? "disabled" : ""}>×</button>
+              ${fixed
+                ? `<span class="admin-category-chip__fixed" role="img" aria-label="Базову категорію не можна видалити"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`
+                : `<button type="button" data-delete-category="${esc(key)}" aria-label="Видалити категорію ${esc(name)}"
+                    title="${count ? "Спочатку перенесіть товари до іншої категорії" : "Видалити категорію"}" ${count ? "disabled" : ""}>×</button>`}
             </div>`;
           })
           .join("");
@@ -1628,6 +1631,7 @@ if (typeof document !== "undefined") {
         const btn = e.target.closest("[data-delete-category]");
         if (!btn) return;
         const code = btn.dataset.deleteCategory;
+        if (CatalogManager.isFixedCategory(code)) return;
         if ([...productDrafts.values()].some((d) => d.category === code)) {
           showUndoToast(
             "Є незбережені зміни категорії в таблиці товарів",

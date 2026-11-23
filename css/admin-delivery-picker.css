@@ -1,0 +1,113 @@
+/* Order-editor address picker: same city/carrier suggestions as customer checkout.
+   Stored addresses and free-text entry still work without a connected directory. */
+.admin-order-editor .admin-branch-picker {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.admin-order-editor .admin-branch-picker__control {
+  display: flex;
+  position: relative;
+  width: 100%;
+  align-items: center;
+}
+.admin-order-editor .admin-branch-picker__control input {
+  width: 100%;
+  min-width: 0;
+  padding-right: 46px;
+}
+.admin-order-editor .admin-branch-picker__toggle {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  color: inherit;
+  cursor: pointer;
+}
+.admin-order-editor .admin-branch-picker__toggle:hover {
+  background: var(--gray-100, #f4f4f4);
+}
+.admin-order-editor .admin-branch-picker__toggle svg {
+  transition: transform .15s ease;
+}
+.admin-order-editor .admin-branch-picker__toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.admin-order-editor .admin-branch-picker__options {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  max-height: 265px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+  border: 1px solid var(--gray-300, #d1d5db);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .1);
+  padding: 5px;
+}
+.admin-order-editor .admin-branch-picker__options[hidden] {
+  display: none;
+}
+.admin-order-editor .admin-branch-picker__option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: #18181b;
+  cursor: pointer;
+  border-radius: 7px;
+  line-height: 1.3;
+}
+.admin-order-editor .admin-branch-picker__option:hover,
+.admin-order-editor .admin-branch-picker__option:focus-visible {
+  background: var(--gray-100, #f4f4f4);
+}
+.admin-order-editor .admin-branch-picker__title {
+  font-weight: 600;
+  white-space: normal;
+}
+.admin-order-editor .admin-branch-picker__subtitle {
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #667085;
+}
+.admin-order-editor .admin-branch-picker__empty {
+  display: block;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #667085;
+}
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__options {
+  background: #252525;
+  border-color: #474747;
+}
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__option {
+  color: #f4f4f4;
+}
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__subtitle {
+  color: #b3b3b3;
+}
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__toggle:hover,
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__option:hover,
+html[data-theme="dark"] .admin-order-editor .admin-branch-picker__option:focus-visible {
+  background: #373737;
+}

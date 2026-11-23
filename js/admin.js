@@ -97,6 +97,9 @@ if (typeof document !== "undefined") {
     // Tracks which order IDs currently have their TTN input open for editing
     const editingTtnOrderIds = new Set();
     const editingOrderIds = new Set();
+    // Preserve an address being typed if another admin action re-renders an open editor.
+    const orderAddressDrafts = new Map();
+    const orderDestinationDrafts = new Map();
     let lastActionUndo = null;
     let undoToastTimer = null;
 
@@ -568,6 +571,10 @@ if (typeof document !== "undefined") {
           </div>`;
     }
     function renderOrderEditor(ord) {
+      const destinationDraft = orderDestinationDrafts.get(String(ord.orderId));
+      const editedCity = destinationDraft?.city ?? ord.delivery?.city ?? "";
+      const editedCarrier = destinationDraft?.carrierKey ?? ord.delivery?.carrierKey ?? "nova";
+      const editedType = destinationDraft?.deliveryType ?? ord.delivery?.type ?? "Відділення";
       const field = (name, value, label, type = "text") =>
         `<label class="admin-edit-field">${label}<input name="${name}" type="${type}" value="${esc(value || "")}" required></label>`;
       const select = (name, value, opts) =>
@@ -580,21 +587,26 @@ if (typeof document !== "undefined") {
               ${field("phone", ord.customer?.phone, "Телефон", "tel")}
               ${field("email", ord.customer?.email, "E-mail", "email")}
               <label class="admin-edit-field">Місто
-                <input name="city" list="admin-city-list-${esc(ord.orderId)}" value="${esc(ord.delivery?.city || "")}" autocomplete="off" required data-admin-city>
+                <input name="city" list="admin-city-list-${esc(ord.orderId)}" value="${esc(editedCity)}" autocomplete="off" required data-admin-city>
                 <datalist id="admin-city-list-${esc(ord.orderId)}">${AdminDelivery.cityOptions()
                   .map((city) => `<option value="${esc(city)}"></option>`)
                   .join("")}</datalist>
               </label>
               <label class="admin-edit-field">Відділення / адреса
-                <select name="branchChoice" class="admin-select" data-admin-branch-select required></select>
-                <input name="branchManual" type="text" placeholder="Введіть фактичну адресу вручну" data-admin-branch-manual hidden>
-                <span class="admin-delivery-hint" data-admin-delivery-hint aria-live="polite"></span>
+                <span class="admin-branch-picker" data-admin-branch-picker>
+                  <span class="admin-branch-picker__control">
+                    <input name="branch" type="text" value="${esc(orderAddressDrafts.get(String(ord.orderId)) ?? ord.delivery?.branch ?? "")}" placeholder="Введіть адресу або оберіть зі списку" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="admin-branch-list-${esc(ord.orderId)}" required data-admin-branch-input>
+                    <button class="admin-branch-picker__toggle" type="button" data-admin-branch-toggle aria-label="Показати відділення для вибраного міста" aria-expanded="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                  </span>
+                  <span class="admin-branch-picker__options" id="admin-branch-list-${esc(ord.orderId)}" role="listbox" data-admin-branch-options hidden></span>
+                </span>
+                <span class="admin-delivery-hint" data-admin-delivery-hint aria-live="polite">Введіть адресу вручну або відкрийте перелік точок доставки для вибраного міста.</span>
               </label>
-              ${select("carrierKey", ord.delivery?.carrierKey, Object.entries(CARRIERS))}
+              ${select("carrierKey", editedCarrier, Object.entries(CARRIERS))}
               <label class="admin-edit-field">Тип доставки
                 <select name="deliveryType" class="admin-select">
-                  <option value="Відділення" ${ord.delivery?.type === "Відділення" ? "selected" : ""}>Відділення</option>
-                  <option value="Поштомат" ${ord.delivery?.type === "Поштомат" ? "selected" : ""}>Поштомат</option>
+                  <option value="Відділення" ${editedType === "Відділення" ? "selected" : ""}>Відділення</option>
+                  <option value="Поштомат" ${editedType === "Поштомат" ? "selected" : ""}>Поштомат</option>
                 </select>
               </label>
               ${select(
@@ -646,11 +658,8 @@ if (typeof document !== "undefined") {
       const deliveryType = String(data.get("deliveryType") || "");
       if (!["Відділення", "Поштомат"].includes(deliveryType))
         throw new Error("Невірний тип доставки");
-      const branchChoice = String(data.get("branchChoice") || "");
-      const branch =
-        branchChoice === "__manual__"
-          ? String(data.get("branchManual") || "").trim()
-          : branchChoice;
+      // The address is always editable; datalist suggestions are never required.
+      const branch = String(data.get("branch") || "").trim();
       const delivery = {
         ...ord.delivery,
         city: String(data.get("city") || "").trim(),
@@ -701,6 +710,8 @@ if (typeof document !== "undefined") {
           : {}),
       };
       writeOrder(updated);
+      orderAddressDrafts.delete(id);
+      orderDestinationDrafts.delete(id);
       editingOrderIds.delete(id);
       renderDashboard();
       scrollToOrderCard(id);
@@ -948,6 +959,17 @@ if (typeof document !== "undefined") {
           .join("");
       }
 
+      // Refresh address suggestions after the order cards are re-rendered.
+      // The field itself remains a normal editable input, even with no suggestions.
+      ordersContainer.querySelectorAll("[data-order-editor]").forEach((editor) => {
+        editor.dataset.adminDeliveryKey = JSON.stringify([
+          editor.elements.city.value.trim(),
+          editor.elements.carrierKey.value,
+          editor.elements.deliveryType.value,
+        ]);
+        refreshAdminBranches(editor);
+      });
+
       // The dot is a clickable, two-state attention marker, not a purchase restriction.
       clientsTbody.innerHTML = clients.map((c) => {
         const initials = ((c.firstName || "К")[0] || "К") + ((c.lastName || "Л")[0] || "");
@@ -1078,109 +1100,230 @@ if (typeof document !== "undefined") {
       }
     });
 
-    // Dependent city / carrier / delivery-type branch dropdown.
-    async function refreshAdminBranches(form) {
-      const city = form.elements.city.value.trim();
+    // The admin picker uses the SAME region/carrier directory as customer checkout.
+    // Native <datalist> cannot reliably open on click, so we render an accessible
+    // interactive listbox while preserving free-text entry and existing drafts.
+    function branchPickerParts(form) {
+      return {
+        input: form.querySelector("[data-admin-branch-input]"),
+        list: form.querySelector("[data-admin-branch-options]"),
+        toggle: form.querySelector("[data-admin-branch-toggle]"),
+        hint: form.querySelector("[data-admin-delivery-hint]"),
+      };
+    }
+    function closeAdminBranchPicker(form) {
+      if (!form) return;
+      const { input, list, toggle } = branchPickerParts(form);
+      if (list) list.hidden = true;
+      if (input) input.setAttribute("aria-expanded", "false");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    }
+    function openAdminBranchPicker(form) {
+      const { input, list, toggle } = branchPickerParts(form);
+      if (!input || !list || !toggle) return;
+      ordersContainer.querySelectorAll("[data-order-editor]").forEach((other) => {
+        if (other !== form) closeAdminBranchPicker(other);
+      });
+      list.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+    function renderAdminBranchChoices(form, choices, message) {
+      const { list } = branchPickerParts(form);
+      if (!list) return;
+      list.replaceChildren();
+      if (!choices.length) {
+        const empty = document.createElement("span");
+        empty.className = "admin-branch-picker__empty";
+        empty.textContent = message || "Немає пропозицій. Можна ввести адресу вручну.";
+        list.append(empty);
+        return;
+      }
+      choices.forEach((choice) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "admin-branch-picker__option";
+        option.setAttribute("role", "option");
+        option.dataset.adminBranchOption = choice.title;
+        const title = document.createElement("span");
+        title.className = "admin-branch-picker__title";
+        title.textContent = choice.title;
+        option.append(title);
+        if (choice.subtitle) {
+          const subtitle = document.createElement("small");
+          subtitle.className = "admin-branch-picker__subtitle";
+          subtitle.textContent = choice.subtitle;
+          option.append(subtitle);
+        }
+        list.append(option);
+      });
+    }
+    async function refreshAdminBranches(form, { show = false, all = false } = {}) {
+      const { input, list, hint } = branchPickerParts(form);
+      if (!input || !list || !hint) return;
+      const city = String(form.elements.city.value || "").trim();
       const carrier = form.elements.carrierKey.value;
       const type = form.elements.deliveryType.value;
-      const branchSelect = form.querySelector("[data-admin-branch-select]");
-      const manual = form.querySelector("[data-admin-branch-manual]");
-      const hint = form.querySelector("[data-admin-delivery-hint]");
-      if (!branchSelect || !manual || !hint) return;
       const revision = String(Number(form.dataset.deliveryRevision || 0) + 1);
       form.dataset.deliveryRevision = revision;
+      if (show) openAdminBranchPicker(form);
+
+      if (!city) {
+        renderAdminBranchChoices(form, [], "Спочатку вкажіть місто доставки.");
+        hint.textContent = "Вкажіть місто, щоб побачити варіанти доставки.";
+        return;
+      }
       const order = loadAllOrders().find(
         (o) => String(o.orderId) === form.dataset.orderEditor,
       );
-      const previousValue = branchSelect.value || order?.delivery?.branch || "";
-      const sameDestination =
-        city === order?.delivery?.city &&
+      const normalize = (v) => String(v || "").trim().toLocaleLowerCase("uk");
+      const sameDestination = normalize(city) === normalize(order?.delivery?.city) &&
         carrier === order?.delivery?.carrierKey &&
         type === (order?.delivery?.type || "Відділення");
-      const suggestions = AdminDelivery.orderBranches(
-        loadAllOrders(),
-        city,
-        carrier,
-        type,
-      );
-      const original = sameDestination ? order?.delivery?.branch || "" : "";
-      const entries = AdminDelivery.uniqueBranches([original, ...suggestions]);
-      function populate(options, verified = false) {
-        const chosen =
-          options.includes(previousValue) && sameDestination
-            ? previousValue
-            : original;
-        branchSelect.replaceChildren();
-        const addOption = (value, label) => {
-          const opt = document.createElement("option");
-          opt.value = value;
-          opt.textContent = label;
-          branchSelect.append(opt);
-        };
-        addOption("", "Оберіть відділення / адресу");
-        options.forEach((x) => addOption(x, x));
-        addOption("__manual__", "Ввести адресу вручну");
-        branchSelect.value =
-          chosen && options.includes(chosen) ? chosen : "__manual__";
-        manual.value =
-          branchSelect.value === "__manual__"
-            ? sameDestination
-              ? previousValue
-              : ""
-            : "";
-        manual.hidden = branchSelect.value !== "__manual__";
-        manual.required = !manual.hidden;
-        if (!verified)
-          hint.textContent = options.length
-            ? "Адреси з попередніх замовлень (актуальність не перевірена)."
-            : "Довідник відділень не підключено. Введіть адресу вручну.";
-      }
-      populate(entries);
+      const previous = AdminDelivery.uniqueBranches([
+        ...(sameDestination ? [order?.delivery?.branch] : []),
+        ...AdminDelivery.orderBranches(loadAllOrders(), city, carrier, type),
+      ]);
+      const query = all ? "" : input.value.trim().toLocaleLowerCase("uk");
+      const matches = (v) => !query || String(v || "").toLocaleLowerCase("uk").includes(query);
+      const choices = new Map();
+      previous.filter(matches).forEach((address) => {
+        choices.set(normalize(address), {
+          title: address, subtitle: "З попереднього замовлення · перевірте актуальність",
+        });
+      });
+      const updateChoices = (message = "Немає пропозицій. Введіть адресу вручну.") => {
+        renderAdminBranchChoices(form, [...choices.values()].slice(0, 60), message);
+      };
+      updateChoices("Завантаження варіантів доставки…");
+      hint.textContent = "Введіть адресу вручну або оберіть варіант, доступний у формі покупця. Перевірте дані перед відправленням.";
+
+      // The public checkout directory has a generated fallback for offline/demo
+      // use. The admin displays the same entries, but does not call them verified.
+      const directoryCity = city.replace(/^(?:м\.|місто)\s*/i, "").split(",")[0].trim();
       try {
-        const verified = await AdminDelivery.fetchVerifiedBranches(
-          city,
-          carrier,
-          type,
-        );
-        if (form.dataset.deliveryRevision !== revision || !form.isConnected)
-          return;
-        if (verified?.length) {
-          const typedManual =
-            branchSelect.value === "__manual__" ? manual.value.trim() : "";
-          populate(AdminDelivery.uniqueBranches(verified), true);
-          if (typedManual) {
-            branchSelect.value = "__manual__";
-            manual.hidden = false;
-            manual.required = true;
-            manual.value = typedManual;
-          }
-          hint.textContent = "Актуальні адреси від служби доставки.";
-        }
-      } catch (err) {
-        if (form.dataset.deliveryRevision === revision)
-          hint.textContent = "Довідник недоступний. Перевірте адресу вручну.";
+        const [customerItems, verified] = await Promise.all([
+          typeof DeliveryDirectory !== "undefined" &&
+          typeof DeliveryDirectory.getBranches === "function"
+            ? DeliveryDirectory.getBranches(carrier, type, directoryCity, "")
+            : Promise.resolve([]),
+          AdminDelivery.fetchVerifiedBranches(city, carrier, type).catch(() => null),
+        ]);
+        if (form.dataset.deliveryRevision !== revision || !form.isConnected) return;
+        (customerItems || []).forEach((item) => {
+          if (!item?.title || !matches(item.title) && !matches(item.subtitle)) return;
+          const key = normalize(item.title);
+          if (!choices.has(key)) choices.set(key, {
+            title: item.title,
+            subtitle: item.subtitle || "Варіант з оформлення замовлення · перевірте актуальність",
+          });
+        });
+        (verified || []).forEach((address) => {
+          if (!matches(address)) return;
+          choices.set(normalize(address), {
+            title: address, subtitle: "Із підключеного довідника доставки",
+          });
+        });
+        updateChoices();
+        hint.textContent = verified?.length
+          ? "Можна обрати адресу з довідника або ввести вручну."
+          : "Варіанти як у формі покупця (можуть бути демонстраційними). Перевірте адресу перед відправленням.";
+      } catch (_) {
+        if (form.dataset.deliveryRevision !== revision || !form.isConnected) return;
+        updateChoices();
+        hint.textContent = "Довідник недоступний. Можна вибрати попередню адресу або ввести вручну.";
       }
     }
-    ordersContainer.addEventListener("change", (e) => {
-      const form = e.target.closest("[data-order-editor]");
-      if (!form) return;
-      if (e.target.matches('[name="branchChoice"]')) {
-        const manual = form.querySelector("[data-admin-branch-manual]");
-        manual.hidden = e.target.value !== "__manual__";
-        manual.required = !manual.hidden;
-        if (!manual.hidden) manual.focus();
+    function updateDestinationDraft(form) {
+      const id = form.dataset.orderEditor;
+      const next = {
+        city: form.elements.city.value,
+        carrierKey: form.elements.carrierKey.value,
+        deliveryType: form.elements.deliveryType.value,
+      };
+      const oldKey = form.dataset.adminDeliveryKey || "";
+      const key = JSON.stringify([next.city.trim(), next.carrierKey, next.deliveryType]);
+      if (oldKey && oldKey !== key) {
+        form.elements.branch.value = "";
+        orderAddressDrafts.set(id, "");
       }
-      if (
-        e.target.matches(
-          '[name="city"], [name="carrierKey"], [name="deliveryType"]',
-        )
-      )
-        refreshAdminBranches(form);
+      form.dataset.adminDeliveryKey = key;
+      orderDestinationDrafts.set(id, next);
+      refreshAdminBranches(form, { show: !branchPickerParts(form).list.hidden, all: true });
+    }
+    ordersContainer.addEventListener("click", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (!form) return;
+      if (event.target.closest("[data-admin-branch-toggle]")) {
+        event.preventDefault();
+        const pickerOpen = !branchPickerParts(form).list.hidden;
+        if (pickerOpen) closeAdminBranchPicker(form);
+        else refreshAdminBranches(form, { show: true, all: true });
+        return;
+      }
+      const option = event.target.closest("[data-admin-branch-option]");
+      if (option) {
+        event.preventDefault();
+        const input = branchPickerParts(form).input;
+        input.value = option.dataset.adminBranchOption;
+        orderAddressDrafts.set(form.dataset.orderEditor, input.value);
+        closeAdminBranchPicker(form);
+        form.dataset.adminBranchSkipFocus = "1";
+        input.focus();
+        delete form.dataset.adminBranchSkipFocus;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
     });
-    ordersContainer.addEventListener("input", (e) => {
-      if (!e.target.matches("[data-admin-city]")) return;
-      const form = e.target.closest("[data-order-editor]");
-      if (form) refreshAdminBranches(form);
+    ordersContainer.addEventListener("focusin", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (form && event.target.matches("[data-admin-branch-input]") && !form.dataset.adminBranchSkipFocus) {
+        refreshAdminBranches(form, { show: true, all: true });
+      }
+    });
+    ordersContainer.addEventListener("change", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (form && event.target.matches('[name="city"], [name="carrierKey"], [name="deliveryType"]')) {
+        updateDestinationDraft(form);
+      }
+    });
+    ordersContainer.addEventListener("input", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (!form) return;
+      if (event.target.matches("[data-admin-branch-input]")) {
+        orderAddressDrafts.set(form.dataset.orderEditor, event.target.value);
+        if (!branchPickerParts(form).list.hidden) refreshAdminBranches(form, { show: true });
+      }
+      if (event.target.matches("[data-admin-city]")) updateDestinationDraft(form);
+    });
+    ordersContainer.addEventListener("keydown", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (!form || !event.target.matches("[data-admin-branch-input]")) return;
+      const { list } = branchPickerParts(form);
+      if (event.key === "Escape") { closeAdminBranchPicker(form); return; }
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (list.hidden) refreshAdminBranches(form, { show: true, all: true });
+        list.querySelector("[data-admin-branch-option]")?.focus();
+      }
+    });
+    ordersContainer.addEventListener("keydown", (event) => {
+      const option = event.target.closest("[data-admin-branch-option]");
+      if (!option) return;
+      const form = option.closest("[data-order-editor]");
+      const list = branchPickerParts(form).list;
+      if (event.key === "Escape") {
+        closeAdminBranchPicker(form);
+        branchPickerParts(form).input.focus();
+      } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const options = [...list.querySelectorAll("[data-admin-branch-option]")];
+        const pos = options.indexOf(option);
+        options[(pos + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length]?.focus();
+      }
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("[data-admin-branch-picker]")) return;
+      ordersContainer.querySelectorAll("[data-order-editor]").forEach(closeAdminBranchPicker);
     });
 
     // Order Actions Click Handler
@@ -1200,16 +1343,18 @@ if (typeof document !== "undefined") {
           )
         )
           return;
-        if (editingOrderIds.has(orderId)) editingOrderIds.delete(orderId);
-        else editingOrderIds.add(orderId);
+        if (editingOrderIds.has(orderId)) {
+          editingOrderIds.delete(orderId);
+          orderAddressDrafts.delete(orderId);
+          orderDestinationDrafts.delete(orderId);
+        } else editingOrderIds.add(orderId);
+        // renderDashboard initializes the delivery selectors for every open editor.
         renderDashboard();
-        const newlyOpened = [
-          ...ordersContainer.querySelectorAll("[data-order-editor]"),
-        ].find((form) => form.dataset.orderEditor === orderId);
-        if (newlyOpened) refreshAdminBranches(newlyOpened);
         return;
       }
       if (e.target.closest("[data-cancel-order-edit]")) {
+        orderAddressDrafts.delete(orderId);
+        orderDestinationDrafts.delete(orderId);
         editingOrderIds.delete(orderId);
         renderDashboard();
         scrollToOrderCard(orderId);

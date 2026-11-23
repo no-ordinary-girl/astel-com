@@ -33,8 +33,7 @@
         phone: "Вкажіть номер телефону.",
         email: "Вкажіть адресу електронної пошти.",
         city: "Оберіть або введіть місто доставки.",
-        branchChoice: "Оберіть відділення або адресу доставки.",
-        branchManual: "Вкажіть адресу доставки.",
+        branch: "Вкажіть відділення або адресу доставки.",
       };
       if (requiredMessages[field.name]) return requiredMessages[field.name];
       if (field.hasAttribute?.("data-doc-title"))

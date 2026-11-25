@@ -1995,6 +1995,9 @@ if (typeof document !== "undefined") {
     const addProductForm = document.getElementById("admin-new-product-form");
     const productDrafts = new Map();
     const detailsDirty = new Set();
+    // Capture the real saved editor values, rather than remembering whether
+    // the user has ever typed/clicked anything since opening the editor.
+    const editorBaselines = new Map();
     const detailOpen = new Set();
     AstelProductEditor.bind(addProductForm);
     const options = (items, selected) =>
@@ -2157,6 +2160,7 @@ if (typeof document !== "undefined") {
         if (form && !form.dataset.initialized) {
           AstelProductEditor.bind(form);
           AstelProductEditor.populate(form, PRODUCTS_DATA[id]);
+          editorBaselines.set(id, productEditorSnapshot(form));
           form.dataset.initialized = "true";
         }
       } else {
@@ -2373,24 +2377,55 @@ if (typeof document !== "undefined") {
       for (const file of files) images.push(await compressImage(file));
       return images;
     }
-    function markProductEditorDirty(form) {
+    function productEditorSnapshot(form) {
+      // Only values that affect a saved product belong in this snapshot.
+      // Gallery photos already use productDrafts, and changing the language
+      // tab or focus must not count as a product modification.
+      const fields = Array.from(form.querySelectorAll("input, textarea, select"))
+        .filter((field) => !field.matches("[data-photo-upload]"))
+        .map((field) => {
+          if (field.type === "file") {
+            return Array.from(field.files || [], (file) => [
+              file.name, file.size, file.type, file.lastModified,
+            ]);
+          }
+          if (field.type === "checkbox" || field.type === "radio")
+            return field.checked;
+          return field.value;
+        });
+      return JSON.stringify({
+        fields,
+        // Include the row/section structure and original PDF attachments.
+        // Thus, adding then removing an item returns to the clean state.
+        sections: Array.from(form.querySelectorAll(".admin-spec-section"),
+          (section) => section.querySelectorAll(".admin-spec-row").length),
+        docs: Array.from(form.querySelectorAll(".admin-document-row"),
+          (row) => row.dataset.originalDoc || null),
+      });
+    }
+    function refreshProductEditorDirty(form) {
+      if (form.dataset.initialized !== "true") return;
       const id = form.dataset.editProduct;
-      detailsDirty.add(id);
+      const baseline = editorBaselines.get(id);
+      if (baseline === undefined) return;
+      if (productEditorSnapshot(form) === baseline) detailsDirty.delete(id);
+      else detailsDirty.add(id);
       const row = Array.from(
         productsTbody.querySelectorAll("tr[data-product-id]"),
       ).find((r) => r.dataset.productId === id);
       if (row) feedback(row);
     }
     // Confirmed structural changes are reported by AstelProductEditor *after*
-    // the item is actually removed. Opening/cancelling a dialog changes nothing.
+    // the item is actually removed. Cancelled deletion changes nothing.
     productsTbody.addEventListener("astel:product-editor-mutated", (e) => {
       const form = e.target.closest("[data-edit-product]");
-      if (form) markProductEditorDirty(form);
+      if (form) refreshProductEditorDirty(form);
     });
     productsTbody.addEventListener("input", (e) => {
       const form = e.target.closest("[data-edit-product]");
       if (form) {
-        markProductEditorDirty(form);
+        if (!e.target.matches("[data-photo-upload]"))
+          refreshProductEditorDirty(form);
         return;
       }
       const row = e.target.closest("tr[data-product-id]");
@@ -2401,7 +2436,8 @@ if (typeof document !== "undefined") {
     productsTbody.addEventListener("change", (e) => {
       const form = e.target.closest("[data-edit-product]");
       if (form) {
-        markProductEditorDirty(form);
+        if (!e.target.matches("[data-photo-upload]"))
+          refreshProductEditorDirty(form);
         return;
       }
       const row = e.target.closest("tr[data-product-id]");
@@ -2424,7 +2460,9 @@ if (typeof document !== "undefined") {
           "[data-editor-lang], [data-remove-spec-row], [data-remove-spec-section], [data-remove-doc-row]",
         )
       ) {
-        markProductEditorDirty(form);
+        // Add-row/add-section actions mutate synchronously; compare the form
+        // after the editor's delegated handler has applied the mutation.
+        refreshProductEditorDirty(form);
       }
       const btn = e.target.closest("button");
       if (!btn) return;
@@ -2486,8 +2524,10 @@ if (typeof document !== "undefined") {
           const oldDocs = [...(PRODUCTS_DATA[id]?.docs || [])];
           CatalogManager.updateProduct(id, patch);
           cleanupRemovedPdfFiles(oldDocs);
-          if (form?.dataset.initialized)
+          if (form?.dataset.initialized) {
             AstelProductEditor.populate(form, PRODUCTS_DATA[id]);
+            editorBaselines.set(id, productEditorSnapshot(form));
+          }
           productDrafts.delete(id);
           detailsDirty.delete(id);
           renderProductsTable();
@@ -2548,6 +2588,7 @@ if (typeof document !== "undefined") {
           const oldDocs = [...(p.docs || [])];
           productDrafts.delete(id);
           detailsDirty.delete(id);
+          editorBaselines.delete(id);
           detailOpen.delete(id);
           CatalogManager.deleteProduct(id);
           cleanupRemovedPdfFiles(oldDocs);

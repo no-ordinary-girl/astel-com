@@ -123,6 +123,45 @@ if (typeof document !== "undefined") {
       });
     };
 
+    // Old localStorage notes predate author tracking: do not invent an author.
+    const noteAuthor = (note) => `<span class="admin-note-author" title="Хто додав примітку">${note.authorName ? `Додав: ${esc(note.authorName)}` : "Автор не вказаний"}</span>`;
+
+    // The log is informational until backend authentication and storage exist.
+    const activityRecord = (payload) => AstelAdminActivity.record(payload);
+    const orderActivity = (previous, current) => {
+      if (!previous) return;
+      const id = String(current.orderId);
+      const log = (type, action, summary, detail) => activityRecord({
+        type, action, entityType: "order", entityId: id, summary, detail,
+      });
+      const text = (val) => String(val ?? "").trim() || "—";
+      const money = (val) => `${Number(val || 0).toLocaleString("uk-UA")} ₴`;
+      if (previous.statusCode !== current.statusCode)
+        log("order", "order.status", "Змінено статус замовлення", `${STATUS_LABELS[previous.statusCode] || text(previous.statusCode)} → ${STATUS_LABELS[current.statusCode] || text(current.statusCode)}`);
+      if (text(previous.ttn) !== text(current.ttn))
+        log("delivery", "order.ttn", current.ttn ? (previous.ttn ? "Змінено ТТН" : "Додано ТТН") : "Видалено ТТН", `${text(previous.ttn)} → ${text(current.ttn)}`);
+      const customerFields = { firstName: "Ім’я", lastName: "Прізвище", phone: "Телефон", email: "E-mail" };
+      const customerChanges = Object.entries(customerFields).filter(([key]) =>
+        text(previous.customer?.[key]) !== text(current.customer?.[key]))
+        .map(([key, label]) => `${label}: ${text(previous.customer?.[key])} → ${text(current.customer?.[key])}`);
+      if (customerChanges.length) log("customer", "order.customer", "Оновлено дані покупця", customerChanges.join("\n"));
+      const deliveryKeys = ["city", "carrierName", "branch", "type"];
+      if (deliveryKeys.some((key) => text(previous.delivery?.[key]) !== text(current.delivery?.[key]))) {
+        const address = (o) => [o?.city && `м. ${o.city}`, o?.carrierName, o?.branch, o?.type].filter(Boolean).join(", ") || "—";
+        log("delivery", "order.address", "Змінено адресу доставки", `${address(previous.delivery)} → ${address(current.delivery)}`);
+      }
+      if (text(previous.payment) !== text(current.payment))
+        log("payment", "order.payment", "Змінено спосіб оплати", `${text(previous.payment)} → ${text(current.payment)}`);
+      const oldItems = (previous.items || []).map((v) => [v.id, Number(v.qty), Number(v.price)]);
+      const newItems = (current.items || []).map((v) => [v.id, Number(v.qty), Number(v.price)]);
+      if (JSON.stringify(oldItems) !== JSON.stringify(newItems)) {
+        const list = (o) => (o.items || []).map((v) => `${v.title || v.id} × ${v.qty}`).join("; ") || "—";
+        log("order", "order.items", "Змінено товари замовлення", `${list(previous)} → ${list(current)}`);
+      }
+      if (Number(previous.subtotal) !== Number(current.subtotal))
+        log("payment", "order.total", "Перераховано суму замовлення", `${money(previous.subtotal)} → ${money(current.subtotal)}`);
+    };
+
     // Seed default orders ONLY ONCE if localStorage is completely empty
     if (
       !localStorage.getItem(COMPLETED_ORDERS_KEY) &&
@@ -366,6 +405,7 @@ if (typeof document !== "undefined") {
 
     function writeOrder(updatedOrd) {
       const cleanId = String(updatedOrd.orderId);
+      const previous = loadAllOrders().find((ord) => String(ord.orderId) === cleanId);
       // Never regenerate the archive from loadAllOrders(): that function hides
       // orders still in their editing window, so doing so silently deleted them.
       const saved = OrderLifecycle.getOrder(cleanId);
@@ -376,6 +416,7 @@ if (typeof document !== "undefined") {
         list.unshift(updatedOrd);
         localStorage.setItem(COMPLETED_ORDERS_KEY, JSON.stringify(list));
       }
+      orderActivity(previous, updatedOrd);
       renderDashboard();
     }
 
@@ -507,8 +548,8 @@ if (typeof document !== "undefined") {
           <li class="admin-client-note">
             <div class="admin-client-note__heading">
               ${index === 0
-                ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time></span>`
-                : `<time>${formatDate(note.createdAt)}</time>`}
+                ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time>${noteAuthor(note)}</span>`
+                : `<span class="admin-note-title-date"><time>${formatDate(note.createdAt)}</time>${noteAuthor(note)}</span>`}
               <button type="button" data-delete-client-note="${esc(note.id)}" data-note-order="${esc(orderId)}"
                 aria-label="Видалити примітку" title="Видалити примітку">Видалити</button>
             </div>
@@ -555,6 +596,7 @@ if (typeof document !== "undefined") {
           </div>`
               : ""
           }
+          ${AstelAdminActivity.orderSection(orderId)}
         </article>`;
             })
             .join("")
@@ -568,7 +610,7 @@ if (typeof document !== "undefined") {
         <ul class="admin-client-note-list">${profile.notes
           .map(
             (note) => `<li class="admin-client-note">
-          <div class="admin-client-note__heading"><time>${formatDate(note.createdAt)}</time>
+          <div class="admin-client-note__heading"><span class="admin-note-title-date"><time>${formatDate(note.createdAt)}</time>${noteAuthor(note)}</span>
             <button type="button" data-delete-legacy-client-note="${esc(note.id)}">Видалити</button></div>
           <p>${esc(note.text)}</p>
           ${
@@ -656,8 +698,8 @@ if (typeof document !== "undefined") {
             <li class="admin-client-note admin-order-note">
               <div class="admin-client-note__heading admin-order-note__heading">
                 ${index === 0
-                  ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time></span>`
-                  : `<time>${formatDate(note.createdAt)}</time>`}
+                  ? `<span class="admin-note-title-date"><strong>Внутрішні примітки</strong><time>${formatDate(note.createdAt)}</time>${noteAuthor(note)}</span>`
+                  : `<span class="admin-note-title-date"><time>${formatDate(note.createdAt)}</time>${noteAuthor(note)}</span>`}
                 <button type="button" data-admin-order-note-delete="${esc(note.id)}" aria-label="Видалити примітку">Видалити</button>
               </div>
               <p>${esc(note.text)}</p>
@@ -1099,6 +1141,7 @@ if (typeof document !== "undefined") {
                     </div>
                     ${renderOrderNotePanel(ord)}
                     ${ord.statusCode === "processing" && editingOrderIds.has(String(ord.orderId)) ? renderOrderEditor(ord) : ""}
+                    ${AstelAdminActivity.orderSection(ord.orderId)}
 
                     ${
                       !editingOrderIds.has(String(ord.orderId))
@@ -2322,6 +2365,44 @@ if (typeof document !== "undefined") {
           AstelProductFiles.remove(d.url).catch(() => {});
       }
     }
+    function productAuditSnapshot(product) {
+      if (!product) return null;
+      return {
+        title: product.title, titleEn: product.titleEn,
+        price: Number(product.numericPrice ?? product.price),
+        inStock: !!product.inStock, isVisible: product.isVisible !== false,
+        category: product.category, saleTermsCode: product.saleTermsCode,
+        imagesCount: product.images?.length || 0,
+        specs: JSON.stringify(product.specSections || []),
+        docsCount: product.docs?.length || 0,
+        descriptions: JSON.stringify([product.description, product.descriptionEn]),
+      };
+    }
+    function logProductChanges(id, before, product) {
+      const after = productAuditSnapshot(product);
+      if (!before || !after) return;
+      const diff = [];
+      const add = (label, oldValue, newValue) => {
+        if (oldValue !== newValue) diff.push(`${label}: ${oldValue} → ${newValue}`);
+      };
+      add("Назва", before.title, after.title);
+      add("English", before.titleEn, after.titleEn);
+      add("Ціна", `${before.price} ₴`, `${after.price} ₴`);
+      add("Наявність", before.inStock ? "В наявності" : "Немає", after.inStock ? "В наявності" : "Немає");
+      add("Категорія", CatalogManager.CATEGORIES[before.category] || before.category, CatalogManager.CATEGORIES[after.category] || after.category);
+      add("Умови продажу", before.saleTermsCode, after.saleTermsCode);
+      add("Видимість", before.isVisible ? "Показано" : "Приховано", after.isVisible ? "Показано" : "Приховано");
+      add("Фотографії", before.imagesCount, after.imagesCount);
+      add("PDF", before.docsCount, after.docsCount);
+      if (before.specs !== after.specs) diff.push("Оновлено таблиці характеристик");
+      if (before.descriptions !== after.descriptions) diff.push("Оновлено опис товару");
+      if (!diff.length) return;
+      const stockOnly = diff.every((entry) => entry.startsWith("Ціна:") || entry.startsWith("Наявність:"));
+      activityRecord({ type: stockOnly ? "inventory" : "product", action: "product.updated",
+        entityType: "product", entityId: id, summary: stockOnly ? "Оновлено склад або ціну" : "Оновлено товар",
+        detail: `${product.title}: ${diff.join("; ")}` });
+    }
+
     function renderCategoryManager() {
       const list = document.getElementById("admin-category-list");
       if (list)
@@ -2355,10 +2436,13 @@ if (typeof document !== "undefined") {
         e.preventDefault();
         const form = e.currentTarget;
         try {
+          const name = form.elements.uk.value.trim();
           CatalogManager.addCategory(
             form.elements.uk.value,
             form.elements.en.value,
           );
+          activityRecord({ type: "product", action: "category.added", entityType: "category",
+            entityId: name, summary: "Створено категорію", detail: name });
           form.reset();
           renderProductsTable();
           showUndoToast("Категорію додано", null);
@@ -2395,6 +2479,8 @@ if (typeof document !== "undefined") {
           return;
         try {
           CatalogManager.deleteCategory(code);
+          activityRecord({ type: "product", action: "category.deleted", entityType: "category",
+            entityId: code, summary: "Видалено категорію", detail: name });
           renderProductsTable();
           showUndoToast("Категорію видалено", null);
         } catch (err) {
@@ -2654,8 +2740,10 @@ if (typeof document !== "undefined") {
             patch.techSpecs = [];
             patch.generalSpecs = [];
           }
+          const before = productAuditSnapshot(PRODUCTS_DATA[id]);
           const oldDocs = [...(PRODUCTS_DATA[id]?.docs || [])];
           CatalogManager.updateProduct(id, patch);
+          logProductChanges(id, before, PRODUCTS_DATA[id]);
           cleanupRemovedPdfFiles(oldDocs);
           if (form?.dataset.initialized) {
             AstelProductEditor.populate(form, PRODUCTS_DATA[id]);
@@ -2694,6 +2782,9 @@ if (typeof document !== "undefined") {
         if (!accepted) return;
         try {
           CatalogManager.updateProduct(id, { isVisible: !willHide });
+          activityRecord({ type: "product", action: "product.visibility", entityType: "product",
+            entityId: id, summary: willHide ? "Приховано товар" : "Опубліковано товар",
+            detail: product.title });
           renderProductsTable();
           showUndoToast(
             willHide
@@ -2724,6 +2815,8 @@ if (typeof document !== "undefined") {
           editorBaselines.delete(id);
           detailOpen.delete(id);
           CatalogManager.deleteProduct(id);
+          activityRecord({ type: "product", action: "product.deleted", entityType: "product",
+            entityId: id, summary: "Видалено товар", detail: p.title });
           cleanupRemovedPdfFiles(oldDocs);
           renderProductsTable();
           showUndoToast("Товар видалено з каталогу", null);
@@ -2826,6 +2919,8 @@ if (typeof document !== "undefined") {
           specSections,
           docs,
         });
+        activityRecord({ type: "product", action: "product.added", entityType: "product",
+          entityId: newProduct.id, summary: "Додано новий товар", detail: newProduct.title });
         addProductForm.reset();
         AstelProductEditor.reset(addProductForm);
         renderProductsTable();
@@ -2890,6 +2985,9 @@ if (typeof document !== "undefined") {
         currentList.unshift(demoOrder);
         localStorage.setItem(COMPLETED_ORDERS_KEY, JSON.stringify(currentList));
         // Demo orders are ready for processing; do not replace a customer's editable order.
+        activityRecord({ type: "order", action: "order.created", entityType: "order",
+          entityId: demoOrder.orderId, summary: "Створено тестове замовлення",
+          detail: "Демонстраційне замовлення, додане менеджером" });
         renderDashboard();
         showUndoToast(
           `Створено нове тестове замовлення #${demoOrder.orderId}`,
@@ -2910,6 +3008,7 @@ if (typeof document !== "undefined") {
         panels.forEach((p) => p.classList.toggle("is-active", p.id === target));
         filterBar.hidden = target !== "panel-orders";
         clientFilterBar.hidden = target !== "panel-clients";
+        if (target === "panel-activity") AstelAdminActivity.renderGlobal();
         if (target === "panel-clients") {
           renderClientsTable(buildClientsList(loadAllOrders()));
         }

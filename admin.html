@@ -47,6 +47,8 @@
     <link rel="stylesheet" href="css/admin-validation.css" />
     <link rel="stylesheet" href="css/admin-delivery-picker.css" />
     <link rel="stylesheet" href="css/admin-customers.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;icon_names=account_balance_wallet,chat_bubble_outline,expand_more,inventory_2,layers,local_shipping,person_outline,receipt_long&amp;display=block" />
+    <link rel="stylesheet" href="css/admin-activity.css" />
   </head>
   <body>
     <!-- SHARED:HEADER:START -->
@@ -259,6 +261,10 @@
               <span class="admin-tab-label-full">Склад та ціни</span><span class="admin-tab-label-short">Склад</span>
               <span class="admin-tab__count" id="tab-count-products">15</span>
             </button>
+            <button type="button" class="admin-tab" data-admin-tab="panel-activity">
+              <span>Журнал дій</span>
+              <span class="admin-tab__count" id="tab-count-activity">0</span>
+            </button>
           </div>
 
           <div class="admin-filters" id="orders-filter-bar">
@@ -326,6 +332,55 @@
                 <!-- Populated via JS -->
               </tbody>
             </table>
+          </div>
+        </section>
+
+        <!-- PANEL 4: ЖУРНАЛ ДІЙ — local demo until backend integration -->
+        <section class="admin-panel" id="panel-activity" aria-labelledby="admin-activity-heading">
+          <div class="admin-activity-page">
+            <header class="admin-activity-header">
+              <div>
+                <h2 id="admin-activity-heading">Журнал дій</h2>
+                <p>Історія дій менеджерів із замовленнями, клієнтами та товарами.</p>
+              </div>
+              <span class="admin-activity-local-label">Лише в цьому браузері · демо</span>
+            </header>
+            <div class="admin-activity-stats" aria-label="Статистика журналу">
+              <div class="admin-activity-stat"><span>Усього записів</span><strong id="admin-activity-total">0</strong></div>
+              <div class="admin-activity-stat"><span>Сьогодні</span><strong id="admin-activity-today">0</strong></div>
+              <div class="admin-activity-stat"><span>Менеджерів</span><strong id="admin-activity-people">0</strong></div>
+            </div>
+            <div class="admin-activity-main">
+              <div class="admin-activity-filterbar">
+                <input id="admin-activity-search" class="admin-search-input" type="search"
+                  placeholder="Пошук за дією, замовленням, товаром..." aria-label="Пошук у журналі дій" autocomplete="off" />
+                <select id="admin-activity-type" class="admin-select" aria-label="Тип дії">
+                  <option value="all">Усі типи дій</option>
+                  <option value="order">Замовлення</option>
+                  <option value="delivery">Доставка</option>
+                  <option value="payment">Оплата</option>
+                  <option value="product">Товари</option>
+                  <option value="inventory">Склад та ціни</option>
+                  <option value="customer">Клієнти</option>
+                  <option value="note">Примітки</option>
+                </select>
+                <select id="admin-activity-manager" class="admin-select" aria-label="Менеджер">
+                  <option value="all">Усі менеджери</option>
+                </select>
+                <select id="admin-activity-period" class="admin-select" aria-label="Період">
+                  <option value="all">Увесь час</option>
+                  <option value="today">Сьогодні</option>
+                  <option value="7">Останні 7 днів</option>
+                  <option value="30">Останні 30 днів</option>
+                </select>
+              </div>
+              <div class="admin-activity-list-header">
+                <strong>Події</strong>
+                <span id="admin-activity-matches" aria-live="polite">0 записів</span>
+              </div>
+              <div id="admin-activity-list" class="admin-activity-list" aria-label="Події журналу"></div>
+              <p class="admin-activity-disclaimer">Це прототип журналу. До підключення сервера записи не є захищеними від зміни чи видалення та не підтверджують особу менеджера.</p>
+            </div>
           </div>
         </section>
 
@@ -665,6 +720,7 @@
     <script src="js/product-file-store.js"></script>
     <script src="js/admin-new-product.js"></script>
     <script src="js/admin-customers.js"></script>
+    <script src="js/admin-activity.js"></script>
     <script src="js/admin-greeting.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/admin-validation.js"></script>

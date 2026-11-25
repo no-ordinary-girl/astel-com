@@ -11,6 +11,7 @@ const AdminCustomers = (() => {
     restricted: "Обмежений",
   });
   const MAX_NOTE = 1000;
+  const activity = () => typeof AstelAdminActivity !== "undefined" ? AstelAdminActivity : null;
 
   function keyFor(customer) {
     const email = String(customer?.email || "").trim().toLowerCase();
@@ -35,6 +36,8 @@ const AdminCustomers = (() => {
           id: String(n.id || ""),
           text: n.text.slice(0, MAX_NOTE),
           createdAt: Number(n.createdAt) || 0,
+          ...(typeof n.authorName === "string" && n.authorName.trim()
+            ? { authorName: n.authorName.slice(0, 80), authorId: String(n.authorId || "").slice(0, 80) } : {}),
         }))
       : [];
   }
@@ -85,17 +88,26 @@ const AdminCustomers = (() => {
     if (clean.length > MAX_NOTE)
       throw new Error(`Примітка не може перевищувати ${MAX_NOTE} символів.`);
     const profile = profileFor(read(storage), key);
+    const who = activity()?.actor();
     const note = { id: `${timestamp}-${Math.random().toString(36).slice(2, 10)}`,
-      text: clean, createdAt: timestamp };
+      text: clean, createdAt: timestamp,
+      ...(who ? { authorName: who.name, authorId: who.id } : {}) };
     profile.orderNotes[id] = [note, ...notesForOrder(profile, id)];
-    return write(storage, key, profile);
+    const result = write(storage, key, profile);
+    activity()?.record({ type: "note", action: "note.added", entityType: "order", entityId: id,
+      summary: "Додано внутрішню примітку", detail: clean.slice(0, 180) });
+    return result;
   }
 
   function deleteOrderNote(storage, key, orderId, noteId, knownOrderIds) {
     const id = assertCustomerOrder(orderId, knownOrderIds);
     const profile = profileFor(read(storage), key);
+    const removed = notesForOrder(profile, id).find((note) => note.id === noteId);
     profile.orderNotes[id] = notesForOrder(profile, id).filter((note) => note.id !== noteId);
-    return write(storage, key, profile);
+    const result = write(storage, key, profile);
+    if (removed) activity()?.record({ type: "note", action: "note.deleted", entityType: "order", entityId: id,
+      summary: "Видалено внутрішню примітку", detail: removed.text.slice(0, 180) });
+    return result;
   }
 
   function assignLegacyNote(storage, key, noteId, orderId, knownOrderIds) {
@@ -105,7 +117,10 @@ const AdminCustomers = (() => {
     if (!note) throw new Error("Примітку не знайдено.");
     profile.orderNotes[id] = [note, ...notesForOrder(profile, id)];
     profile.notes = profile.notes.filter((item) => item.id !== noteId);
-    return write(storage, key, profile);
+    const result = write(storage, key, profile);
+    activity()?.record({ type: "note", action: "note.assigned", entityType: "order", entityId: id,
+      summary: "Примітку прив’язано до замовлення", detail: note.text.slice(0, 180) });
+    return result;
   }
 
   function write(storage, key, next) {
@@ -120,7 +135,12 @@ const AdminCustomers = (() => {
     if (!Object.hasOwn(STATUSES, status))
       throw new Error("Невідомий статус клієнта.");
     const profile = profileFor(read(storage), key);
-    return write(storage, key, { ...profile, status });
+    const result = write(storage, key, { ...profile, status });
+    if (profile.status !== status) activity()?.record({
+      type: "customer", action: "customer.status", entityType: "customer", entityId: key,
+      summary: "Змінено позначку клієнта", detail: `${STATUSES[profile.status]} → ${STATUSES[status]}`,
+    });
+    return result;
   }
 
   function addNote(storage, key, text, timestamp = Date.now()) {

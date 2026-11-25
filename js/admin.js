@@ -736,10 +736,13 @@ if (typeof document !== "undefined") {
               ${field("phone", ord.customer?.phone, "Телефон", "tel")}
               ${field("email", ord.customer?.email, "E-mail", "email")}
               <label class="admin-edit-field">Місто
-                <input name="city" list="admin-city-list-${esc(ord.orderId)}" value="${esc(editedCity)}" autocomplete="off" required data-admin-city>
-                <datalist id="admin-city-list-${esc(ord.orderId)}">${AdminDelivery.cityOptions()
-                  .map((city) => `<option value="${esc(city)}"></option>`)
-                  .join("")}</datalist>
+                <span class="admin-branch-picker admin-city-picker" data-admin-city-picker>
+                  <span class="admin-branch-picker__control">
+                    <input name="city" type="text" value="${esc(editedCity)}" placeholder="Введіть або оберіть місто" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="admin-city-list-${esc(ord.orderId)}" required data-admin-city>
+                    <button class="admin-branch-picker__toggle" type="button" data-admin-city-toggle aria-label="Показати міста" aria-expanded="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                  </span>
+                  <span class="admin-branch-picker__options" id="admin-city-list-${esc(ord.orderId)}" role="listbox" data-admin-city-options hidden></span>
+                </span>
               </label>
               <label class="admin-edit-field">Відділення / адреса
                 <span class="admin-branch-picker" data-admin-branch-picker>
@@ -1371,6 +1374,84 @@ if (typeof document !== "undefined") {
       }
     });
 
+    // Reuse the branch picker's visual language for the city field. Both fields
+    // allow manual entry, but their suggestions are never browser-native menus.
+    function cityPickerParts(form) {
+      return {
+        input: form.querySelector("[data-admin-city]"),
+        list: form.querySelector("[data-admin-city-options]"),
+        toggle: form.querySelector("[data-admin-city-toggle]"),
+      };
+    }
+    function closeAdminCityPicker(form) {
+      if (!form) return;
+      const { input, list, toggle } = cityPickerParts(form);
+      if (list) list.hidden = true;
+      if (input) input.setAttribute("aria-expanded", "false");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    }
+    function renderAdminCityChoices(form, query = "") {
+      const { list, input } = cityPickerParts(form);
+      if (!list || !input) return;
+      const normalize = (value) => String(value || "").trim().toLocaleLowerCase("uk");
+      // Include the current order's city even if it is absent from the local directory.
+      const orderCities = loadAllOrders().map((order) => order.delivery?.city).filter(Boolean);
+      const currentCity = loadAllOrders().find(
+        (order) => String(order.orderId) === form.dataset.orderEditor,
+      )?.delivery?.city;
+      const priority = [currentCity, "Київ", "Львів", "Дніпро", "Одеса", "Харків"];
+      const cities = [...new Set([...priority, ...AdminDelivery.cityOptions(), ...orderCities].filter(Boolean))];
+      const matches = cities.filter((city) => normalize(city).includes(normalize(query)));
+      list.replaceChildren();
+      if (!matches.length) {
+        const empty = document.createElement("span");
+        empty.className = "admin-branch-picker__empty";
+        empty.textContent = "Місто не знайдено. Можна ввести назву вручну.";
+        list.append(empty);
+        return;
+      }
+      matches.slice(0, 80).forEach((city) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "admin-branch-picker__option";
+        option.setAttribute("role", "option");
+        option.dataset.adminCityOption = city;
+        const title = document.createElement("span");
+        title.className = "admin-branch-picker__title";
+        title.textContent = city;
+        option.append(title);
+        list.append(option);
+      });
+    }
+    function openAdminCityPicker(form, query = "") {
+      const { input, list, toggle } = cityPickerParts(form);
+      if (!input || !list || !toggle) return;
+      ordersContainer.querySelectorAll("[data-order-editor]").forEach((other) => {
+        closeAdminCityPicker(other);
+        closeAdminBranchPicker(other);
+      });
+      renderAdminCityChoices(form, query);
+      list.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      toggle.setAttribute("aria-expanded", "true");
+    }
+    function chooseAdminCity(form, city) {
+      const { input } = cityPickerParts(form);
+      if (!input) return;
+      const changed = input.value !== city;
+      input.value = city;
+      closeAdminCityPicker(form);
+      // Existing order-draft logic clears obsolete branches when the city changes.
+      if (changed) {
+        form.dataset.adminCitySelecting = "1";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        delete form.dataset.adminCitySelecting;
+      }
+      form.dataset.adminCitySkipFocus = "1";
+      input.focus();
+      delete form.dataset.adminCitySkipFocus;
+    }
+
     // The admin picker uses the SAME region/carrier directory as customer checkout.
     // Native <datalist> cannot reliably open on click, so we render an accessible
     // interactive listbox while preserving free-text entry and existing drafts.
@@ -1395,6 +1476,7 @@ if (typeof document !== "undefined") {
       ordersContainer
         .querySelectorAll("[data-order-editor]")
         .forEach((other) => {
+          closeAdminCityPicker(other);
           if (other !== form) closeAdminBranchPicker(other);
         });
       list.hidden = false;
@@ -1567,6 +1649,18 @@ if (typeof document !== "undefined") {
     ordersContainer.addEventListener("click", (event) => {
       const form = event.target.closest("[data-order-editor]");
       if (!form) return;
+      if (event.target.closest("[data-admin-city-toggle]")) {
+        event.preventDefault();
+        if (cityPickerParts(form).list.hidden) openAdminCityPicker(form);
+        else closeAdminCityPicker(form);
+        return;
+      }
+      const cityOption = event.target.closest("[data-admin-city-option]");
+      if (cityOption) {
+        event.preventDefault();
+        chooseAdminCity(form, cityOption.dataset.adminCityOption);
+        return;
+      }
       if (event.target.closest("[data-admin-branch-toggle]")) {
         event.preventDefault();
         const pickerOpen = !branchPickerParts(form).list.hidden;
@@ -1589,6 +1683,9 @@ if (typeof document !== "undefined") {
     });
     ordersContainer.addEventListener("focusin", (event) => {
       const form = event.target.closest("[data-order-editor]");
+      if (form && event.target.matches("[data-admin-city]") && !form.dataset.adminCitySkipFocus) {
+        openAdminCityPicker(form);
+      }
       if (
         form &&
         event.target.matches("[data-admin-branch-input]") &&
@@ -1616,8 +1713,44 @@ if (typeof document !== "undefined") {
         if (!branchPickerParts(form).list.hidden)
           refreshAdminBranches(form, { show: true });
       }
-      if (event.target.matches("[data-admin-city]"))
+      if (event.target.matches("[data-admin-city]")) {
         updateDestinationDraft(form);
+        if (!form.dataset.adminCitySelecting)
+          openAdminCityPicker(form, event.target.value);
+      }
+    });
+    ordersContainer.addEventListener("keydown", (event) => {
+      const form = event.target.closest("[data-order-editor]");
+      if (!form || !event.target.matches("[data-admin-city]")) return;
+      const { list } = cityPickerParts(form);
+      if (event.key === "Escape") {
+        closeAdminCityPicker(form);
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (list.hidden) openAdminCityPicker(form);
+        list.querySelector("[data-admin-city-option]")?.focus();
+      }
+    });
+    ordersContainer.addEventListener("keydown", (event) => {
+      const cityOption = event.target.closest("[data-admin-city-option]");
+      if (!cityOption) return;
+      const form = cityOption.closest("[data-order-editor]");
+      const { input, list } = cityPickerParts(form);
+      if (event.key === "Escape") {
+        closeAdminCityPicker(form);
+        form.dataset.adminCitySkipFocus = "1";
+        input.focus();
+        delete form.dataset.adminCitySkipFocus;
+      } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const options = [...list.querySelectorAll("[data-admin-city-option]")];
+        const pos = options.indexOf(cityOption);
+        options[(pos + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length]?.focus();
+      } else if (event.key === "Enter" || event.key === " ") {
+        // Click handler also handles pointer selection; button activation handles Enter/Space.
+        event.preventDefault();
+        chooseAdminCity(form, cityOption.dataset.adminCityOption);
+      }
     });
     ordersContainer.addEventListener("keydown", (event) => {
       const form = event.target.closest("[data-order-editor]");
@@ -1654,10 +1787,10 @@ if (typeof document !== "undefined") {
       }
     });
     document.addEventListener("pointerdown", (event) => {
-      if (event.target.closest("[data-admin-branch-picker]")) return;
-      ordersContainer
-        .querySelectorAll("[data-order-editor]")
-        .forEach(closeAdminBranchPicker);
+      ordersContainer.querySelectorAll("[data-order-editor]").forEach((form) => {
+        if (!event.target.closest("[data-admin-branch-picker]")) closeAdminBranchPicker(form);
+        if (!event.target.closest("[data-admin-city-picker]")) closeAdminCityPicker(form);
+      });
     });
 
     // Order Actions Click Handler

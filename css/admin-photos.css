@@ -1548,3 +1548,150 @@ html[data-theme="dark"]
   font: 700 10px/1.3 var(--font-mono);
   white-space: nowrap;
 }
+
+/* Mobile specification editor: use the available width instead of nesting
+   multiple padded desktop panels around narrow input columns. */
+@media (max-width: 760px) {
+  .admin-inventory-table-card .admin-product-details-row > td {
+    padding: 0 8px 12px !important;
+  }
+  .admin-inventory-table-card .admin-product-details-form {
+    padding: 12px;
+  }
+  .admin-product-details-form .admin-extra-block {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  /* The same table editor is also used while adding a new product. */
+  .admin-new-product-form.admin-language-editor .admin-extra-block {
+    padding: 12px;
+  }
+  .admin-language-editor .admin-extra-heading {
+    gap: 12px;
+  }
+  .admin-language-editor .admin-spec-sections {
+    counter-reset: admin-spec-table;
+  }
+  .admin-language-editor .admin-spec-section {
+    counter-increment: admin-spec-table;
+    min-width: 0;
+    gap: 14px;
+    padding: 12px;
+  }
+  .admin-language-editor .admin-spec-table-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .admin-language-editor .admin-spec-table-header::before {
+    content: "Таблиця " counter(admin-spec-table);
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    color: #6b7280;
+    font: 700 12px/1.4 var(--font-mono);
+  }
+  .admin-language-editor .admin-spec-table-header > [data-remove-spec-section] {
+    grid-column: 2;
+    grid-row: 1;
+    position: static;
+    align-self: center;
+    justify-self: end;
+    min-height: 35px;
+  }
+  .admin-language-editor .admin-spec-table-name {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+    flex: none;
+  }
+  .admin-language-editor .admin-spec-table-name label {
+    align-items: stretch;
+    text-align: left;
+    font-size: 12px;
+  }
+  .admin-language-editor .admin-spec-table-name input {
+    min-height: 44px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+  }
+  .admin-language-editor .admin-spec-rows {
+    counter-reset: admin-spec-item;
+    gap: 0;
+  }
+  .admin-language-editor .admin-spec-row {
+    counter-increment: admin-spec-item;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 8px;
+    padding: 13px 0;
+    align-items: start;
+  }
+  .admin-language-editor .admin-spec-row + .admin-spec-row {
+    border-top: 1px solid var(--gray-200);
+  }
+  .admin-language-editor .admin-spec-row::before {
+    content: "Характеристика " counter(admin-spec-item);
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    color: #6b7280;
+    font: 700 11px/1.4 var(--font-mono);
+  }
+  .admin-language-editor .admin-spec-row > .admin-spec-row__translations {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+  }
+  .admin-language-editor .admin-spec-row > .admin-spec-row__translations:first-child {
+    grid-row: 2;
+  }
+  .admin-language-editor .admin-spec-row > .admin-spec-row__translations:nth-child(2) {
+    grid-row: 3;
+  }
+  .admin-language-editor .admin-spec-row > [data-remove-spec-row] {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    margin: 0;
+    padding: 0;
+  }
+  .admin-language-editor .admin-spec-row label {
+    gap: 7px;
+    font-size: 12px;
+    overflow-wrap: break-word;
+  }
+  .admin-language-editor .admin-spec-row input {
+    min-height: 44px;
+  }
+  .admin-language-editor .admin-spec-section > [data-add-spec-row] {
+    align-self: stretch;
+    min-height: 42px;
+    padding: 10px;
+    border: 1px solid var(--gray-200);
+    border-radius: 9px;
+    background: #fff;
+    text-align: center;
+    text-decoration: none;
+  }
+  html[data-theme="dark"] .admin-language-editor .admin-spec-section > [data-add-spec-row] {
+    background: #292929;
+    border-color: #474747;
+    color: #f4f4f4;
+  }
+  html[data-theme="dark"] .admin-language-editor .admin-spec-table-header,
+  html[data-theme="dark"] .admin-language-editor .admin-spec-row + .admin-spec-row {
+    border-color: #474747;
+  }
+}

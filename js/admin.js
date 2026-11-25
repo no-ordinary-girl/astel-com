@@ -302,6 +302,10 @@ if (typeof document !== "undefined") {
       });
     }
 
+    // Shared with the product characteristics editor so destructive actions use
+    // the same accessible, styled confirmation instead of window.confirm().
+    window.AstelAdminConfirm = confirmAdminDelete;
+
     // Preview the exact note being removed without making the dialog excessively tall.
     function noteDeletionSubject(noteElement, fallback) {
       const text = (noteElement?.querySelector("p")?.textContent || "")
@@ -2369,15 +2373,24 @@ if (typeof document !== "undefined") {
       for (const file of files) images.push(await compressImage(file));
       return images;
     }
+    function markProductEditorDirty(form) {
+      const id = form.dataset.editProduct;
+      detailsDirty.add(id);
+      const row = Array.from(
+        productsTbody.querySelectorAll("tr[data-product-id]"),
+      ).find((r) => r.dataset.productId === id);
+      if (row) feedback(row);
+    }
+    // Confirmed structural changes are reported by AstelProductEditor *after*
+    // the item is actually removed. Opening/cancelling a dialog changes nothing.
+    productsTbody.addEventListener("astel:product-editor-mutated", (e) => {
+      const form = e.target.closest("[data-edit-product]");
+      if (form) markProductEditorDirty(form);
+    });
     productsTbody.addEventListener("input", (e) => {
       const form = e.target.closest("[data-edit-product]");
       if (form) {
-        detailsDirty.add(form.dataset.editProduct);
-        const id = form.dataset.editProduct;
-        const row = Array.from(
-          productsTbody.querySelectorAll("tr[data-product-id]"),
-        ).find((r) => r.dataset.productId === id);
-        if (row) feedback(row);
+        markProductEditorDirty(form);
         return;
       }
       const row = e.target.closest("tr[data-product-id]");
@@ -2388,12 +2401,7 @@ if (typeof document !== "undefined") {
     productsTbody.addEventListener("change", (e) => {
       const form = e.target.closest("[data-edit-product]");
       if (form) {
-        detailsDirty.add(form.dataset.editProduct);
-        const id = form.dataset.editProduct;
-        const row = Array.from(
-          productsTbody.querySelectorAll("tr[data-product-id]"),
-        ).find((r) => r.dataset.productId === id);
-        if (row) feedback(row);
+        markProductEditorDirty(form);
         return;
       }
       const row = e.target.closest("tr[data-product-id]");
@@ -2412,14 +2420,11 @@ if (typeof document !== "undefined") {
       if (
         form &&
         e.target.closest("button") &&
-        !e.target.closest("[data-editor-lang]")
+        !e.target.closest(
+          "[data-editor-lang], [data-remove-spec-row], [data-remove-spec-section], [data-remove-doc-row]",
+        )
       ) {
-        const id = form.dataset.editProduct;
-        detailsDirty.add(id);
-        const parent = Array.from(
-          productsTbody.querySelectorAll("tr[data-product-id]"),
-        ).find((r) => r.dataset.productId === id);
-        if (parent) feedback(parent);
+        markProductEditorDirty(form);
       }
       const btn = e.target.closest("button");
       if (!btn) return;

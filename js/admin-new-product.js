@@ -506,10 +506,71 @@
     renderPhotos(form);
     return true;
   }
+  async function confirmSpecRowRemoval(row) {
+    const name =
+      row.querySelector("[data-spec-label]")?.value.trim() ||
+      row.querySelector("[data-spec-label-en]")?.value.trim() ||
+      "Без назви";
+    const value =
+      row.querySelector("[data-spec-value]")?.value.trim() ||
+      row.querySelector("[data-spec-value-en]")?.value.trim();
+    const preview = [name, value].filter(Boolean).join(" — ");
+    const subject = preview.length > 140 ? `${preview.slice(0, 139)}…` : preview;
+    if (typeof root.AstelAdminConfirm === "function") {
+      return root.AstelAdminConfirm({
+        title: "Видалити характеристику?",
+        message:
+          "Характеристику буде прибрано з цієї таблиці. Зміни набудуть чинності після збереження товару.",
+        subject,
+      });
+    }
+    // Keep the confirmation functional if this editor is used independently.
+    return typeof root.confirm === "function" &&
+      root.confirm(`Видалити характеристику «${name}»?`);
+  }
+  async function confirmSpecSectionRemoval(section) {
+    const title =
+      section.querySelector("[data-spec-title]")?.value.trim() ||
+      section.querySelector("[data-spec-title-en]")?.value.trim() ||
+      "Таблиця без назви";
+    const subject = title.length > 140 ? `${title.slice(0, 139)}…` : title;
+    if (typeof root.AstelAdminConfirm === "function") {
+      return root.AstelAdminConfirm({
+        title: "Видалити таблицю характеристик?",
+        message:
+          "Таблицю та всі її характеристики буде видалено з редактора. Зміни набудуть чинності після збереження товару.",
+        subject,
+      });
+    }
+    return typeof root.confirm === "function" &&
+      root.confirm(`Видалити таблицю характеристик «${title}» разом з усіма характеристиками?`);
+  }
+  async function confirmDocRowRemoval(row) {
+    const title =
+      row.querySelector("[data-doc-title]")?.value.trim() ||
+      row.querySelector("[data-doc-title-en]")?.value.trim() ||
+      row.querySelector(".admin-document-current__filename")?.textContent.trim() ||
+      "PDF-документ без назви";
+    const subject = title.length > 140 ? `${title.slice(0, 139)}…` : title;
+    if (typeof root.AstelAdminConfirm === "function") {
+      return root.AstelAdminConfirm({
+        title: "Видалити PDF-документ?",
+        message:
+          "Документ буде прибрано з товару. Зміни набудуть чинності після збереження товару.",
+        subject,
+      });
+    }
+    return typeof root.confirm === "function" &&
+      root.confirm(`Видалити PDF-документ «${title}»?`);
+  }
   function bind(form) {
     getState(form);
     const warn = (message) => root.alert?.(message);
-    form.addEventListener("click", (e) => {
+    // Tell the inventory editor only about changes that actually happened.
+    // In particular, a cancelled deletion must not produce an unsaved state.
+    const notifyMutation = () =>
+      form.dispatchEvent(new Event("astel:product-editor-mutated", { bubbles: true }));
+    form.addEventListener("click", async (e) => {
       const btn = e.target.closest("button");
       if (!btn) return;
       const section = btn.closest(".admin-spec-section");
@@ -524,21 +585,32 @@
         container.append(createSpecSection());
         refreshSuggestions(form);
       } else if (btn.hasAttribute("data-remove-spec-section")) {
-        section.remove();
-        refreshSuggestions(form);
+        if (section && (await confirmSpecSectionRemoval(section)) && section.isConnected) {
+          section.remove();
+          refreshSuggestions(form);
+          notifyMutation();
+        }
       } else if (btn.hasAttribute("data-add-spec-row")) {
         const list = section.querySelector(".admin-spec-rows");
         if (list.children.length >= MAX_ROWS)
           return warn("Максимум 25 характеристик");
         list.append(createSpecRow());
       } else if (btn.hasAttribute("data-remove-spec-row")) {
-        btn.closest(".admin-spec-row").remove();
+        const row = btn.closest(".admin-spec-row");
+        if (row && (await confirmSpecRowRemoval(row)) && row.isConnected) {
+          row.remove();
+          notifyMutation();
+        }
       } else if (btn.hasAttribute("data-add-doc-row")) {
         const list = form.querySelector("[data-doc-rows]");
         if (list.children.length >= MAX_DOCS) return warn("Максимум 8 PDF");
         list.append(createDocRow());
       } else if (btn.hasAttribute("data-remove-doc-row")) {
-        btn.closest(".admin-document-row").remove();
+        const row = btn.closest(".admin-document-row");
+        if (row && (await confirmDocRowRemoval(row)) && row.isConnected) {
+          row.remove();
+          notifyMutation();
+        }
       } else if (btn.hasAttribute("data-remove-new-photo")) {
         const state = getState(form),
           item = state.splice(Number(btn.dataset.removeNewPhoto), 1)[0];

@@ -117,3 +117,38 @@
 
 /* Client search empty state inside the existing table. */
 .admin-client-search-empty td { padding: 28px 24px; text-align: center; color: #737a85; font-size: 14px; }
+
+/* Customer directory: self-contained cards instead of a sideways-scrolling table. */
+@media (max-width: 900px) {
+  #panel-clients .admin-client-row {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px; padding: 18px 16px;
+    background: #fff; border: 1px solid var(--gray-200); border-radius: 16px;
+    margin-bottom: 12px;
+  }
+  #panel-clients .admin-client-row > td { display: block; padding: 0; width: auto; border: 0; font-size: 13px; line-height: 1.5; }
+  #panel-clients .admin-client-row > td:first-child { grid-column: 1 / -1; padding-bottom: 14px; border-bottom: 1px solid var(--gray-200); }
+  #panel-clients .admin-client-row > td:nth-child(4) { grid-column: 1 / -1; }
+  #panel-clients .admin-client-row > td:nth-child(6) { white-space: normal; }
+  #panel-clients .admin-client-row > .admin-client-row__action { grid-column: 1 / -1; }
+  #panel-clients .client-name-cell { gap: 10px; min-width: 0; }
+  #panel-clients .admin-client-name-group { font-size: 15px; }
+  #panel-clients .client-avatar-sm { width: 40px; height: 40px; }
+  #panel-clients .admin-client-expand { width: 100%; min-height: 43px; justify-content: center; }
+  #panel-clients .admin-client-row:has(.admin-client-expand[aria-expanded="true"]) { border-radius: 16px 16px 0 0; margin-bottom: 0; }
+  #panel-clients .admin-client-detail-row:not([hidden]) { display: block; margin-bottom: 12px; }
+  #panel-clients .admin-client-detail-row > td { display: block; padding: 0 !important; border: 0; }
+  #panel-clients .admin-client-details { border-radius: 0 0 16px 16px; border-top: 0; }
+  #panel-clients .admin-client-details__heading { padding: 16px; }
+  #panel-clients .admin-client-details__heading h3 { font-size: 15px; }
+  #panel-clients .admin-client-order__row { padding: 15px; }
+  #panel-clients .admin-client-order__note-panel { padding: 16px; }
+  #panel-clients .admin-client-search-empty { display: block; background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; }
+  #panel-clients .admin-client-search-empty td { display: block; width: 100%; }
+  html[data-theme="dark"] #panel-clients .admin-client-row,
+  html[data-theme="dark"] #panel-clients .admin-client-search-empty { background: #242424; border-color: #424242; }
+}
+@media (max-width: 400px) {
+  #panel-clients .admin-client-row > td:nth-child(2),
+  #panel-clients .admin-client-row > td:nth-child(3) { grid-column: 1 / -1; }
+}

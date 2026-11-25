@@ -1307,3 +1307,69 @@ html[data-theme="dark"] .admin-order-card__badges .admin-client-status { backgro
   .admin-order-note-panel { padding: 16px; }
   .admin-order-note-panel__head { align-items: flex-start; }
 }
+
+/* Mobile admin navigation: three balanced tabs, no stacked buttons. */
+.admin-tab-label-short { display: none; }
+@media (max-width: 760px) {
+  .admin-page { padding-top: 20px; }
+  .admin-controls-bar { min-width: 0; gap: 12px; }
+  .admin-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 3px; padding: 4px; }
+  .admin-tab { min-width: 0; justify-content: center; gap: 5px; padding: 12px 3px; font-size: 10px; letter-spacing: 0; white-space: nowrap; }
+  .admin-tab__count { flex-shrink: 0; padding: 2px 6px; font-size: 10px; }
+  .admin-tab-label-full { display: none; }
+  .admin-tab-label-short { display: inline; }
+  .admin-filters { min-width: 0; width: 100%; }
+}
+/* Compact tablets also get readable cards instead of squashed, scrolling tables. */
+@media (max-width: 900px) {
+  .admin-table-card { padding: 0; background: transparent; border: none; border-radius: 0; box-shadow: none; overflow: visible; }
+  .admin-table-card .admin-table { display: block; width: 100%; min-width: 0; }
+  .admin-table-card .admin-table > thead { display: none; }
+  .admin-table-card .admin-table > tbody { display: block; width: 100%; min-width: 0; }
+  .admin-table-card .admin-table td { min-width: 0; overflow-wrap: anywhere; }
+  .admin-table-card .admin-table td[data-label]::before {
+    content: attr(data-label); display: block; margin-bottom: 7px;
+    color: #777e89; font: 700 10px/1.3 var(--font-mono, monospace);
+    text-transform: uppercase; letter-spacing: .025em;
+  }
+  /* Inventory: a single vertical card per product; all six fields remain editable. */
+  .admin-inventory-table-card .admin-inventory-product-row {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px; padding: 18px 16px 14px;
+    background: #fff; border: 1px solid var(--gray-200); border-radius: 16px 16px 0 0;
+  }
+  .admin-inventory-table-card .admin-inventory-product-row > td {
+    display: block; width: auto; padding: 0; border: 0;
+  }
+  .admin-inventory-product-row > td:first-child,
+  .admin-inventory-product-row > .admin-inventory-product-row__actions { grid-column: 1 / -1; }
+  .admin-inventory-product-row > td:first-child { font-size: 15px; line-height: 1.45; }
+  .admin-inventory-product-row .admin-product-link { display: inline; font-weight: 700; text-underline-offset: 3px; }
+  .admin-inventory-table-card .astel-select { max-width: none; }
+  .admin-inventory-table-card .astel-select__trigger { width: 100%; min-height: 43px; }
+  .admin-inventory-table-card .admin-price-input { width: 100%; height: 43px; font-size: 14px; }
+  .admin-inventory-table-card .stock-toggle-btn { display: block; width: 100%; min-height: 43px; padding: 8px 6px; font-size: 10px; white-space: normal; text-align: center; }
+  .admin-inventory-table-card .admin-inventory-actions { display: flex; gap: 8px; }
+  .admin-inventory-table-card .admin-inventory-actions .admin-btn { height: 43px; flex: 1 1 auto; font-size: 12px; }
+  .admin-inventory-table-card .admin-inventory-meta-row { display: block; margin-bottom: 15px; background: #fff;
+    border: 1px solid var(--gray-200); border-top: 0; border-radius: 0 0 16px 16px; }
+  .admin-inventory-table-card .admin-inventory-meta-row > td { display: block; width: 100%; padding: 0 16px 15px; border: 0; }
+  .admin-inventory-table-card .admin-inventory-meta-bar { min-height: 0; }
+  .admin-inventory-table-card .admin-product-content-toggle { min-height: 42px; }
+  .admin-inventory-table-card .admin-inventory-meta-row:has(+ .admin-product-details-row:not([hidden])) { border-radius: 0; margin-bottom: 0; }
+  .admin-inventory-table-card .admin-product-details-row:not([hidden]) { display: block; margin-bottom: 15px; background: #fff;
+    border: 1px solid var(--gray-200); border-top: 0; border-radius: 0 0 16px 16px; }
+  .admin-inventory-table-card .admin-product-details-row > td { display: block; width: 100%; padding: 0 12px 14px !important; border: 0; }
+  .admin-inventory-table-card .admin-product-details-form { padding: 15px; }
+  .admin-inventory-table-card .admin-product-details-form h3 { overflow-wrap: anywhere; }
+  .admin-new-product-form { padding: 18px 16px; }
+  .admin-new-product-form .astel-select { width: 100%; }
+  .admin-inventory-table-card .admin-table-card { overflow: visible; }
+  html[data-theme="dark"] .admin-inventory-table-card .admin-inventory-product-row,
+  html[data-theme="dark"] .admin-inventory-table-card .admin-inventory-meta-row,
+  html[data-theme="dark"] .admin-inventory-table-card .admin-product-details-row { background: #242424; border-color: #424242; }
+}
+@media (max-width: 365px) {
+  .admin-tab { font-size: 9px; gap: 3px; }
+  .admin-tab__count { font-size: 9px; padding: 2px 5px; }
+}

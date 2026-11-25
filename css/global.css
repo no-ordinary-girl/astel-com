@@ -1061,3 +1061,53 @@ html[data-theme="dark"] .footer {
   background-color: #151515;
   border-top: 1px solid #1e222a;
 }
+
+/* Unified custom select. The real <select> is retained for forms and JS; users
+   interact with the same keyboard/pointer listbox on desktop and mobile. */
+.astel-select { display: inline-flex; position: relative; vertical-align: middle; width: 100%; min-width: 0; max-width: 100%; }
+.astel-select > select.astel-select__native {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  opacity: 0 !important; pointer-events: none !important; overflow: hidden !important;
+  border: 0 !important; padding: 0 !important; margin: 0 !important;
+}
+.astel-select__trigger {
+  box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 13px; border: 1px solid var(--gray-300, #d3d3d3);
+  border-radius: 10px; background: #fff; color: var(--gray-900, #171717);
+  font: inherit; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer;
+}
+.astel-select__trigger:hover { border-color: var(--gray-500, #999); }
+.astel-select__trigger:focus-visible { outline: 2px solid var(--gray-900, #171717); outline-offset: 2px; }
+.astel-select__trigger[aria-expanded="true"] { border-color: var(--gray-900, #171717); }
+.astel-select__trigger:disabled { opacity: .6; cursor: not-allowed; }
+.astel-select__value { display: block; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.astel-select__chevron { display: grid; place-items: center; flex: 0 0 14px; width: 14px; height: 14px;
+  transition: transform .15s ease;
+}
+.astel-select__chevron svg { display: block; width: 14px; height: 14px; }
+.astel-select__trigger[aria-expanded="true"] .astel-select__chevron { transform: rotate(180deg); }
+.astel-select__popup {
+  position: fixed; z-index: 30000; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain;
+  padding: 5px; border: 1px solid #dedede; border-radius: 11px; background: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .17); color: #171717;
+}
+.astel-select__group { padding: 12px 10px 5px; color: #7b8190; font: 700 11px var(--font-mono, monospace); text-transform: uppercase; }
+.astel-select__option { padding: 11px 12px; min-height: 40px; display: flex; align-items: center;
+  border-radius: 7px; font: 500 14px/1.35 var(--font-base, sans-serif);
+  cursor: pointer; outline: none; overflow-wrap: anywhere;
+}
+.astel-select__option:hover, .astel-select__option:focus-visible { background: #f0f0f0; }
+.astel-select__option[aria-selected="true"] { background: #eee; font-weight: 700; }
+.astel-select__option[aria-disabled="true"] { opacity: .4; cursor: not-allowed; }
+.astel-select--inventory { max-width: 215px; }
+.astel-select--inventory .astel-select__trigger { min-height: 40px; font-size: 13px; }
+.astel-select--product-picker { flex: 1 1 220px; }
+.astel-select--account .astel-select__trigger { min-height: 45px; font-size: 15px; }
+html[data-theme="dark"] .astel-select__trigger,
+html[data-theme="dark"] .astel-select__popup { background: #303030; border-color: #555; color: #f5f5f5; }
+html[data-theme="dark"] .astel-select__option:hover,
+html[data-theme="dark"] .astel-select__option:focus-visible,
+html[data-theme="dark"] .astel-select__option[aria-selected="true"] { background: #454545; }
+@media (min-width: 640px) { .astel-select--filter { max-width: 240px; } }
+@media (max-width: 760px) { .astel-select--inventory { max-width: none; } }

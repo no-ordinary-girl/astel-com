@@ -1153,12 +1153,12 @@ if (typeof document !== "undefined") {
             <span class="client-avatar-sm">${esc(initials.toUpperCase())}</span>
             <div class="admin-client-name-group"><strong>${esc(c.firstName)} ${esc(c.lastName)}</strong></div>
           </div></td>
-          <td style="font-family: var(--font-mono)">${esc(c.phone)}</td>
-          <td>${esc(c.email)}</td>
-          <td>${esc(c.address)}</td>
-          <td style="font-family: var(--font-mono); font-weight: 700">${c.ordersCount}</td>
-          <td style="font-family: var(--font-mono); font-weight: 700">${formatMoney(c.totalSpent)}</td>
-          <td><button type="button" class="admin-client-expand" data-toggle-client="${esc(c.key)}"
+          <td data-label="Телефон" style="font-family: var(--font-mono)">${esc(c.phone)}</td>
+          <td data-label="E-mail">${esc(c.email)}</td>
+          <td data-label="Основна адреса">${esc(c.address)}</td>
+          <td data-label="Замовлень" style="font-family: var(--font-mono); font-weight: 700">${c.ordersCount}</td>
+          <td data-label="Загальна сума" style="font-family: var(--font-mono); font-weight: 700">${formatMoney(c.totalSpent)}</td>
+          <td class="admin-client-row__action"><button type="button" class="admin-client-expand" data-toggle-client="${esc(c.key)}"
             aria-expanded="${opened}" aria-label="${opened ? "Згорнути" : "Відкрити"} історію та примітки клієнта ${esc(c.firstName)} ${esc(c.lastName)}">
             <span>${opened ? "Згорнути" : "Деталі"}</span>
             <svg class="admin-client-expand__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
@@ -1242,6 +1242,7 @@ if (typeof document !== "undefined") {
         const id = historyLink.dataset.clientOrder;
         searchInput.value = "";
         statusFilter.value = "all";
+        window.AstelCustomSelect?.refresh();
         document.querySelector('[data-admin-tab="panel-orders"]')?.click();
         renderDashboard();
         scrollToOrderCard(id);
@@ -2283,11 +2284,11 @@ if (typeof document !== "undefined") {
                   ? `<span class="admin-product-link">${esc(p.title)}</span><span class="admin-inventory-hidden-label">Приховано</span>`
                   : `<a href="product.html?id=${encodeURIComponent(p.id)}" class="admin-product-link">${esc(p.title)}</a>`
               }</td>
-              <td><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES, draft.category)}</select></td>
-              <td><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS, draft.saleTermsCode)}</select></td>
-              <td><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
-              <td><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● В наявності" : "○ Немає в наявності"}</button></td>
-              <td><div class="admin-inventory-actions">
+              <td data-label="Категорія"><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES, draft.category)}</select></td>
+              <td data-label="Умови продажу"><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS, draft.saleTermsCode)}</select></td>
+              <td data-label="Ціна без ПДВ"><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
+              <td data-label="Наявність"><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● В наявності" : "○ Немає в наявності"}</button></td>
+              <td class="admin-inventory-product-row__actions"><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}" ${dirty ? "" : "disabled"}>Оновити</button>
                 <button type="button" class="admin-inventory-visibility ${p.isVisible === false ? "is-hidden" : ""}"
                   data-toggle-product-visibility="${esc(p.id)}"

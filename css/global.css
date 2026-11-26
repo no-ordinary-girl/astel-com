@@ -397,7 +397,6 @@ body {
   display: block;
 }
 
-.header__more:hover .header__more-icon,
 .header__more.is-open .header__more-icon {
   transform: rotate(180deg);
 }
@@ -421,7 +420,6 @@ body {
   transition: all 0.3s ease;
 }
 
-.header__more:hover .header__more-menu,
 .header__more.is-open .header__more-menu {
   opacity: 1;
   visibility: visible;
@@ -665,9 +663,6 @@ body {
     left: -16px;
     right: auto;
     transform: translateY(-10px);
-  }
-  .header__more:hover .header__more-menu {
-    transform: translateY(0);
   }
 
   .footer {

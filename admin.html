@@ -47,7 +47,10 @@
     <link rel="stylesheet" href="css/admin-validation.css" />
     <link rel="stylesheet" href="css/admin-delivery-picker.css" />
     <link rel="stylesheet" href="css/admin-customers.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;icon_names=account_balance_wallet,chat_bubble_outline,expand_more,inventory_2,layers,local_shipping,person_outline,receipt_long&amp;display=block" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&amp;icon_names=account_balance_wallet,chat_bubble_outline,expand_more,inventory_2,layers,local_shipping,person_outline,receipt_long&amp;display=block"
+    />
     <link rel="stylesheet" href="css/admin-activity.css" />
   </head>
   <body>
@@ -124,6 +127,54 @@
               >ДОКУМЕНТАЦІЯ</a
             >
             <a href="#footer" class="header__link">КОНТАКТИ</a>
+
+            <div class="header__more show-on-compact" id="header-more-dropdown">
+              <button
+                class="header__link header__more-trigger"
+                id="more-toggle"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="header-more-menu"
+                data-i18n="nav.more"
+              >
+                БІЛЬШЕ
+                <svg
+                  class="header__more-icon"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="header__more-menu" id="header-more-menu">
+                <a
+                  href="products.html"
+                  class="header__more-link"
+                  data-i18n="nav.products"
+                  >ТОВАРИ</a
+                >
+                <a
+                  href="downloads.html"
+                  class="header__more-link"
+                  data-i18n="nav.downloads"
+                  >ЗАВАНТАЖЕННЯ</a
+                >
+                <a
+                  href="docs.html"
+                  class="header__more-link"
+                  data-i18n="nav.docs"
+                  >ДОКУМЕНТАЦІЯ</a
+                >
+              </div>
+            </div>
           </nav>
 
           <div class="header__utils">
@@ -191,7 +242,12 @@
         <!-- Top Header -->
         <div class="admin-topbar">
           <div class="admin-topbar__left">
-            <span class="admin-badge">● Back-Office / <span id="admin-greeting" data-name="Сергій">Добрий день, Сергій!</span></span>
+            <span class="admin-badge"
+              >● Back-Office /
+              <span id="admin-greeting" data-name="Сергій"
+                >Добрий день, Сергій!</span
+              ></span
+            >
             <h1 class="admin-title">Управління замовленнями та клієнтами</h1>
           </div>
           <div class="admin-topbar__actions">
@@ -258,10 +314,15 @@
               class="admin-tab"
               data-admin-tab="panel-products"
             >
-              <span class="admin-tab-label-full">Склад та ціни</span><span class="admin-tab-label-short">Склад</span>
+              <span class="admin-tab-label-full">Склад</span
+              ><span class="admin-tab-label-short">Склад</span>
               <span class="admin-tab__count" id="tab-count-products">15</span>
             </button>
-            <button type="button" class="admin-tab" data-admin-tab="panel-activity">
+            <button
+              type="button"
+              class="admin-tab"
+              data-admin-tab="panel-activity"
+            >
               <span>Журнал дій</span>
               <span class="admin-tab__count" id="tab-count-activity">0</span>
             </button>
@@ -294,7 +355,11 @@
             </select>
           </div>
 
-          <div class="admin-filters admin-client-filters" id="clients-filter-bar" hidden>
+          <div
+            class="admin-filters admin-client-filters"
+            id="clients-filter-bar"
+            hidden
+          >
             <input
               type="search"
               id="admin-client-search"
@@ -336,38 +401,73 @@
         </section>
 
         <!-- PANEL 4: ЖУРНАЛ ДІЙ — local demo until backend integration -->
-        <section class="admin-panel" id="panel-activity" aria-labelledby="admin-activity-heading">
+        <section
+          class="admin-panel"
+          id="panel-activity"
+          aria-labelledby="admin-activity-heading"
+        >
           <div class="admin-activity-page">
             <header class="admin-activity-header">
               <div>
                 <h2 id="admin-activity-heading">Журнал дій</h2>
-                <p>Історія дій менеджерів із замовленнями, клієнтами та товарами.</p>
+                <p>
+                  Історія дій менеджерів із замовленнями, клієнтами та товарами.
+                </p>
               </div>
-              <span class="admin-activity-local-label">Лише в цьому браузері · демо</span>
+              <span class="admin-activity-local-label"
+                >Лише в цьому браузері · демо</span
+              >
             </header>
             <div class="admin-activity-stats" aria-label="Статистика журналу">
-              <div class="admin-activity-stat"><span>Усього записів</span><strong id="admin-activity-total">0</strong></div>
-              <div class="admin-activity-stat"><span>Сьогодні</span><strong id="admin-activity-today">0</strong></div>
-              <div class="admin-activity-stat"><span>Менеджерів</span><strong id="admin-activity-people">0</strong></div>
+              <div class="admin-activity-stat">
+                <span>Усього записів</span
+                ><strong id="admin-activity-total">0</strong>
+              </div>
+              <div class="admin-activity-stat">
+                <span>Сьогодні</span
+                ><strong id="admin-activity-today">0</strong>
+              </div>
+              <div class="admin-activity-stat">
+                <span>Менеджерів</span
+                ><strong id="admin-activity-people">0</strong>
+              </div>
             </div>
             <div class="admin-activity-main">
               <div class="admin-activity-filterbar">
-                <input id="admin-activity-search" class="admin-search-input" type="search"
-                  placeholder="Пошук за дією, замовленням, товаром..." aria-label="Пошук у журналі дій" autocomplete="off" />
-                <select id="admin-activity-type" class="admin-select" aria-label="Тип дії">
+                <input
+                  id="admin-activity-search"
+                  class="admin-search-input"
+                  type="search"
+                  placeholder="Пошук за дією, замовленням, товаром..."
+                  aria-label="Пошук у журналі дій"
+                  autocomplete="off"
+                />
+                <select
+                  id="admin-activity-type"
+                  class="admin-select"
+                  aria-label="Тип дії"
+                >
                   <option value="all">Усі типи дій</option>
                   <option value="order">Замовлення</option>
                   <option value="delivery">Доставка</option>
                   <option value="payment">Оплата</option>
                   <option value="product">Товари</option>
-                  <option value="inventory">Склад та ціни</option>
+                  <option value="inventory">Склад</option>
                   <option value="customer">Клієнти</option>
                   <option value="note">Примітки</option>
                 </select>
-                <select id="admin-activity-manager" class="admin-select" aria-label="Менеджер">
+                <select
+                  id="admin-activity-manager"
+                  class="admin-select"
+                  aria-label="Менеджер"
+                >
                   <option value="all">Усі менеджери</option>
                 </select>
-                <select id="admin-activity-period" class="admin-select" aria-label="Період">
+                <select
+                  id="admin-activity-period"
+                  class="admin-select"
+                  aria-label="Період"
+                >
                   <option value="all">Увесь час</option>
                   <option value="today">Сьогодні</option>
                   <option value="7">Останні 7 днів</option>
@@ -376,10 +476,20 @@
               </div>
               <div class="admin-activity-list-header">
                 <strong>Події</strong>
-                <span id="admin-activity-matches" aria-live="polite">0 записів</span>
+                <span id="admin-activity-matches" aria-live="polite"
+                  >0 записів</span
+                >
               </div>
-              <div id="admin-activity-list" class="admin-activity-list" aria-label="Події журналу"></div>
-              <p class="admin-activity-disclaimer">Це прототип журналу. До підключення сервера записи не є захищеними від зміни чи видалення та не підтверджують особу менеджера.</p>
+              <div
+                id="admin-activity-list"
+                class="admin-activity-list"
+                aria-label="Події журналу"
+              ></div>
+              <p class="admin-activity-disclaimer">
+                Це прототип журналу. До підключення сервера записи не є
+                захищеними від зміни чи видалення та не підтверджують особу
+                менеджера.
+              </p>
             </div>
           </div>
         </section>
@@ -394,13 +504,18 @@
               <div>
                 <h2 id="admin-category-heading">Категорії товарів</h2>
                 <p>
-                  П'ять базових категорій використовуються на головній сторінці, тому їх не можна видаляти.
-                  Додаткові категорії можна видаляти, якщо в них немає товарів.
+                  П'ять базових категорій використовуються на головній сторінці,
+                  тому їх не можна видаляти. Додаткові категорії можна видаляти,
+                  якщо в них немає товарів.
                 </p>
               </div>
             </div>
             <div class="admin-category-list" id="admin-category-list"></div>
-            <form id="admin-add-category-form" class="admin-category-form" novalidate>
+            <form
+              id="admin-add-category-form"
+              class="admin-category-form"
+              novalidate
+            >
               <label
                 >Назва українською
                 <input

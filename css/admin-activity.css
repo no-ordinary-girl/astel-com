@@ -52,6 +52,15 @@
 .admin-activity-entry__top strong { font-size:14px; line-height:1.5; font-weight:700; overflow-wrap:anywhere; }
 .admin-activity-entry__top time { flex-shrink:0; color:#737a85; font:12px var(--font-mono,monospace); }
 .admin-activity-entry__detail { margin:4px 0 8px; line-height:1.5; font-size:13px; color:#5b6370; white-space:pre-line; overflow-wrap:anywhere; }
+/* Keep the inline change arrow compact in both the journal and order history. */
+.admin-activity-entry__detail .icon-arrow.card__icon {
+  display:inline-block;
+  width:16px;
+  height:16px;
+  margin:0 4px;
+  vertical-align:-3px;
+  flex:none;
+}
 .admin-activity-entry__meta { display:flex; align-items:center; flex-wrap:wrap; gap:7px; color:#7a808b; font-size:12px; line-height:1.4; margin-top:6px; }
 .admin-activity-entry__actor { display:inline-flex; align-items:center; gap:5px; color:#454b54; font-weight:600; }
 .admin-activity-entry__actor .admin-material-icon { width:14px; height:14px; font-size:14px; }

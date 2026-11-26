@@ -38,19 +38,40 @@ const AstelAdminActivity = (() => {
         document.querySelector("#admin-greeting")?.dataset.name) ||
       "Сергій",
   });
-  // Official Google Material Symbols Outlined ligatures (Apache-2.0).
-  // Matching font subset is loaded in admin.html.
+  // User-provided local SVGs. CSS masks preserve the context-specific currentColor
+  // (including category colors and dark mode) without third-party font requests.
   const icons = Object.freeze({
     package: "receipt_long",
-    truck: "local_shipping",
-    wallet: "account_balance_wallet",
-    box: "inventory_2",
-    user: "person_outline",
-    message: "chat_bubble_outline",
+    truck: "shipping",
+    wallet: "payments",
+    box: "package",
+    user: "person",
+    message: "chat_bubble",
     layers: "layers",
   });
-  const icon = (key) =>
-    `<span class="admin-material-icon" aria-hidden="true">${icons[key] || icons.package}</span>`;
+  // Exact <path> shapes from the seven user-provided Material SVGs.
+  // Rendering inline avoids external mask-image loading restrictions when
+  // the prototype is opened directly via file:// (as well as on HTTP sites).
+  const iconPaths = Object.freeze({
+    receipt_long:
+      "M6,22q-1.25,0-2.13-0.88T3,19V16H6V2L7.5,3.5L9,2l1.5,1.5L12,2l1.5,1.5L15,2l1.5,1.5L18,2l1.5,1.5L21,2V19q0,1.25-0.88,2.13T18,22H6Zm12-2q0.43,0 0.71-0.29Q19,19.43 19,19V5H8V16h9v3q0,0.43 0.29,0.71T18,20ZM9,9V7h6V9H9Zm0,3V10h6v2H9Zm8-3q-0.43,0-0.71-0.29T16,8q0-0.43 0.29-0.71T17,7t0.71,0.29T18,8q0,0.42-0.29,0.71T17,9Zm0,3q-0.43,0-0.71-0.29Q16,11.43 16,11t0.29-0.71T17,10t0.71,0.29T18,11t-0.29,0.71T17,12ZM6,20h9V18H5v1q0,0.43 0.29,0.71T6,20ZM5,20q0,0 0-0.29Q5,19.43 5,19V18v2Z",
+    shipping:
+      "M3.88,19.13Q3,18.25 3,17H1V6Q1,5.18 1.59,4.59T3,4H17V8h3l3,4v5H21q0,1.25-0.88,2.13T18,20t-2.13-0.88T15,17H9q0,1.25-0.88,2.13T6,20T3.88,19.13Zm2.84-1.41Q7,17.43 7,17T6.71,16.29T6,16q-0.42,0-0.71,0.29T5,17t0.29,0.71T6,18t0.71-0.29ZM3,15H3.8q0.43-0.45 0.98-0.73T6,14t1.23,0.27T8.2,15H15V6H3v9Zm15.71,2.71Q19,17.43 19,17t-0.29-0.71T18,16t-0.71,0.29T17,17t0.29,0.71T18,18t0.71-0.29ZM17,13h4.25L19,10H17v3ZM9,10.5Z",
+    payments:
+      "M14,13q-1.25,0-2.13-0.88T11,10t0.88-2.13T14,7t2.13,0.88T17,10t-0.88,2.13T14,13ZM7,16q-0.82,0-1.41-0.59T5,14V6Q5,5.18 5.59,4.59T7,4H21q0.83,0 1.41,0.59Q23,5.18 23,6v8q0,0.82-0.59,1.41T21,16H7Zm2-2H19q0-0.83 0.59-1.41T21,12V8q-0.82,0-1.41-0.59T19,6H9Q9,6.82 8.41,7.41Q7.83,8 7,8v4q0.83,0 1.41,0.59Q9,13.18 9,14Zm11,6H3q-0.82,0-1.41-0.59T1,18V7H3V18H20v2ZM7,14V6v8Z",
+    package:
+      "M11,19.43V12.58L5,9.1v6.85l6,3.48Zm2,0l6-3.48V9.1l-6,3.47v6.85Zm-2,2.3L4,17.7q-0.47-0.27-0.74-0.72Q3,16.52 3,15.98V8.02q0-0.55 0.26-1T4,6.3l7-4.03Q11.48,2 12,2q0.53,0 1,0.27L20,6.3q0.48,0.27 0.74,0.72t0.26,1v7.95q0,0.55-0.26,1T20,17.7l-7,4.03Q12.53,22 12,22t-1-0.27Zm5-13.2l1.93-1.1L12,4L10.05,5.13L16,8.52Zm-4,2.33l1.95-1.13L8.03,6.3L6.08,7.43L12,10.85Z",
+    person:
+      "M9.18,10.83Q8,9.65 8,8T9.18,5.18T12,4t2.83,1.18T16,8t-1.17,2.82T12,12T9.18,10.83ZM4,20V17.2q0-0.85 0.44-1.56q0.44-0.71 1.16-1.09q1.55-0.78 3.15-1.16T12,13t3.25,0.39t3.15,1.16q0.72,0.38 1.16,1.09T20,17.2V20H4Zm2-2H18V17.2q0-0.27-0.14-0.5q-0.14-0.22-0.36-0.35q-1.35-0.68-2.72-1.01T12,15T9.23,15.34T6.5,16.35Q6.28,16.48 6.14,16.7Q6,16.93 6,17.2V18Zm7.41-8.59Q14,8.82 14,8T13.41,6.59T12,6T10.59,6.59Q10,7.18 10,8t0.59,1.41T12,10t1.41-0.59ZM12,8Zm0,10Z",
+    chat_bubble:
+      "M2,22V4Q2,3.17 2.59,2.59T4,2H20q0.83,0 1.41,0.59T22,4V16q0,0.82-0.59,1.41T20,18H6L2,22Zm3.15-6H20V4H4V17.13L5.15,16ZM4,16V4V16Z",
+    layers:
+      "M12,14L1,8L12,2L23,8L12,14Zm0,4L1.58,12.33l2.1-1.15L12,15.73l8.33-4.55l2.1,1.15L12,18Zm0,4L1.58,16.33l2.1-1.15L12,19.73l8.33-4.55l2.1,1.15L12,22Zm0-10.28L18.83,8L12,4.27L5.18,8L12,11.73ZM12,8Z",
+  });
+  const icon = (key) => {
+    const name = icons[key] || icons.package;
+    return `<svg class="admin-material-icon admin-material-icon--${name}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="${iconPaths[name]}" /></svg>`;
+  };
   // Use the same arrow as the site cards for old -> new values in activity details.
   const changeArrow = `<svg
     class="icon-arrow card__icon"
@@ -190,7 +211,7 @@ const AstelAdminActivity = (() => {
     return `<details class="admin-order-history" data-order-history="${escape(id)}" ${openOrders.has(String(id)) ? "open" : ""}>
       <summary class="admin-order-history__toggle">
         <span class="admin-order-history__label">${icon("layers")} Історія змін <span class="admin-order-history__count" data-order-history-count="${escape(id)}">${entries.length}</span></span>
-        <span class="admin-material-icon admin-order-history__arrow" aria-hidden="true">expand_more</span>
+        <span class="admin-order-history__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg></span>
       </summary>
       <div class="admin-order-history__content" data-order-history-list="${escape(id)}">${orderRows(id)}</div>
     </details>`;

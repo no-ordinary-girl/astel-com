@@ -1,26 +1,12 @@
-/* Activity log / order change history. Frontend prototype, shared with existing admin UI. */
-/* Google Material Symbols Outlined (font subset declared in admin.html).
-   All icon ligatures are fixed strings, never taken from activity records. */
+/* Activity log / order history: user-supplied Material SVGs rendered inline.
+   No Google Fonts dependency, SVG mask URLs, or file:// loading issues. */
 .admin-material-icon {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-  width:20px;
-  height:20px;
-  font-family:"Material Symbols Outlined";
-  font-size:20px;
-  font-weight:normal;
-  font-style:normal;
-  line-height:1;
-  letter-spacing:normal;
-  text-transform:none;
-  white-space:nowrap;
-  direction:ltr;
-  font-feature-settings:"liga";
-  -webkit-font-feature-settings:"liga";
-  -webkit-font-smoothing:antialiased;
-  font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  vertical-align: middle;
 }
 .admin-activity-page { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 .admin-activity-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; padding: 8px 2px 0; }
@@ -63,7 +49,7 @@
 }
 .admin-activity-entry__meta { display:flex; align-items:center; flex-wrap:wrap; gap:7px; color:#7a808b; font-size:12px; line-height:1.4; margin-top:6px; }
 .admin-activity-entry__actor { display:inline-flex; align-items:center; gap:5px; color:#454b54; font-weight:600; }
-.admin-activity-entry__actor .admin-material-icon { width:14px; height:14px; font-size:14px; }
+.admin-activity-entry__actor .admin-material-icon { width:14px; height:14px; }
 .admin-activity-entry__separator { color:#a1a5aa; }
 .admin-activity-entry__link { color:#171717; background:transparent; padding:0; border:0; text-decoration:underline; text-underline-offset:3px; cursor:pointer; font:700 12px var(--font-mono,monospace); }
 .admin-activity-entry__link:hover { text-decoration-thickness:2px; }
@@ -71,7 +57,7 @@
 .admin-activity-disclaimer { margin:0; padding:14px 22px 18px; color:#737a85; border-top:1px solid #e5e5e5; font-size:12px; line-height:1.55; }
 .admin-activity-empty { color:#78808c; font-size:13px; line-height:1.5; }
 .admin-activity-empty--global { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:35px 20px 42px; }
-.admin-activity-empty--global > .admin-material-icon { width:30px; height:30px; font-size:30px; color:#777; margin-bottom:3px; }
+.admin-activity-empty--global > .admin-material-icon { width:30px; height:30px; color:#777; margin-bottom:3px; }
 .admin-activity-empty--global strong { color:#171717; font-size:17px; }
 .admin-activity-empty--global p { margin:0 0 6px; max-width:430px; }
 .admin-activity-examples { border-top:1px dashed #d8d8d8; padding:12px 0 10px; }
@@ -86,13 +72,14 @@
 .admin-order-history__label { display:inline-flex; align-items:center; gap:9px; font-size:14px; font-weight:700; }
 .admin-order-history__label > .admin-material-icon { color:#626b78; }
 .admin-order-history__count { font:700 11px var(--font-mono,monospace); min-width:23px; height:23px; display:inline-grid; place-items:center; background:#ececec; border-radius:99px; color:#525a64; padding:2px 7px; }
-.admin-order-history__arrow { color:#66707a; width:20px; height:20px; font-size:20px; transition:transform .2s ease; flex-shrink:0; }
+.admin-order-history__arrow { color:#66707a; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; transition:transform .2s ease; flex-shrink:0; }
+.admin-order-history__arrow svg { display:block; width:20px; height:20px; }
 .admin-order-history[open] .admin-order-history__arrow { transform:rotate(180deg); }
 .admin-order-history__content { border-top:1px solid #e5e5e5; padding:6px 18px 12px; }
 .admin-order-history__content > .admin-activity-entries { margin:0; }
 .admin-order-history__content .admin-activity-entry:first-child { border-top:0; }
 .admin-activity-empty--inline { display:flex; align-items:center; gap:12px; padding:16px 0; }
-.admin-activity-empty--inline > .admin-material-icon { width:22px; height:22px; font-size:22px; }
+.admin-activity-empty--inline > .admin-material-icon { width:22px; height:22px; }
 .admin-order-history__content .admin-activity-entry__top strong { font-size:13px; }
 .admin-order-history__content .admin-activity-entry__icon { width:32px; height:32px; flex-basis:32px; }
 .admin-order-history__content .admin-activity-entry__detail { margin:3px 0; }
@@ -155,3 +142,10 @@ html[data-theme="dark"] .admin-order-history__toggle:hover { background:#303030;
 html[data-theme="dark"] .admin-order-history__count { background:#444; color:#e4e4e4; }
 html[data-theme="dark"] .admin-activity-examples__notice { background:#303030; color:#ddd; }
 html[data-theme="dark"] .admin-note-author { color:#c1c4cd; }
+
+/* Distinct category colors remain visible in dark mode. */
+html[data-theme="dark"] .admin-activity-entry--delivery .admin-activity-entry__icon { background:#233448; border-color:#344f6e; color:#93b9fa; }
+html[data-theme="dark"] .admin-activity-entry--payment .admin-activity-entry__icon { background:#1d382b; border-color:#305642; color:#8ce6b2; }
+html[data-theme="dark"] .admin-activity-entry--note .admin-activity-entry__icon { background:#3b3021; border-color:#645039; color:#f0bf78; }
+html[data-theme="dark"] .admin-order-history__label > .admin-material-icon { color:#b8c0cc; }
+html[data-theme="dark"] .admin-order-history__arrow { color:#b8c0cc; }

@@ -1,0 +1,6 @@
+Material-style icons supplied by the project owner, self-hosted under assets/icons/material/.
+Google Material Symbols and Material Icons are available under Apache License 2.0.
+https://fonts.google.com/icons
+https://github.com/google/material-design-icons
+The seven original SVG shapes were copied unchanged. Colors are supplied by CSS masks using currentColor.
+The order-history chevron is a small inline SVG and does not require a font.

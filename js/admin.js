@@ -917,11 +917,10 @@ if (typeof document !== "undefined") {
       lastOrderFingerprint = getOrderFingerprint(allOrders);
       const clients = buildClientsList(allOrders);
 
+      // Count orders that still require processing or dispatch.
+      // A shipped order already has a TTN and must leave this KPI.
       const pendingCount = allOrders.filter(
-        (o) =>
-          o.statusCode === "active" ||
-          o.statusCode === "processing" ||
-          o.statusCode === "shipped",
+        (o) => o.statusCode === "active" || o.statusCode === "processing",
       ).length;
       const totalRevenue = OrderFinance.total(allOrders);
 

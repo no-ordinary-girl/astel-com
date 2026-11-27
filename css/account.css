@@ -717,11 +717,6 @@
   color: #059669;
 }
 
-.order-status-pill--canceled {
-  background-color: rgba(220, 38, 38, 0.12);
-  color: #dc2626;
-}
-
 .order-status-pill--processing,
 .order-status-pill--active {
   background-color: rgba(217, 119, 6, 0.14);
@@ -895,6 +890,64 @@
 .carrier-option.is-selected {
   border-color: var(--gray-900);
   background-color: var(--gray-100);
+}
+
+
+/* ===========================
+   ACCOUNT MOBILE NAV TABS (up to 959px)
+   =========================== */
+@media (max-width: 959px) {
+  .account-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    overflow: visible;
+    padding: 4px;
+    background-color: #fafafa;
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+  }
+
+  .account-nav__btn {
+    min-width: 0;
+    min-height: 56px;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.25;
+    padding: 12px 10px;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 11px;
+    letter-spacing: 0;
+    gap: 6px;
+  }
+
+  .account-nav__btn:hover {
+    background-color: var(--gray-100);
+    border-color: transparent;
+  }
+
+  .account-nav__btn.is-active {
+    background-color: var(--gray-900);
+    border-color: var(--gray-900);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .account-nav__btn--logout {
+    grid-column: 2;
+    grid-row: 2;
+    border: none;
+    background: transparent;
+    color: #dc2626;
+  }
+
+  .account-nav__btn--logout:hover {
+    background-color: #fef2f2;
+    border-color: transparent;
+  }
 }
 
 /* ===========================

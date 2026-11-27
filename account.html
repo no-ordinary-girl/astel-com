@@ -1043,9 +1043,11 @@
         ordersListEl.innerHTML = orders
           .map((ord) => {
             const pillClass =
-              ord.statusCode === "completed"
-                ? "order-status-pill--completed"
-                : "order-status-pill--processing";
+              ord.statusCode === "canceled"
+                ? "order-status-pill--canceled"
+                : ord.statusCode === "completed"
+                  ? "order-status-pill--completed"
+                  : "order-status-pill--processing";
 
             const itemsHtml = (ord.items || [])
               .map(

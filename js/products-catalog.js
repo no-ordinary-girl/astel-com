@@ -27,7 +27,7 @@
           <button type="button" class="product-card__qty-btn" data-action="inc" aria-label="${loc('Збільшити','Increase')}">+</button>
         </div>` : '';
       const sale=en?(p.saleTermsCode==='retail'?'Wholesale & Retail':'Wholesale Only'):p.saleTerms;
-      const stock=en?(p.inStock?'In Stock':'Out of Stock'):p.stockText;
+      const stock=en?(p.inStock?'Available to order':'Out of Stock'):p.stockText;
       const from=p.id==='com-900-psg-4g'?loc('від ','from '):'';
       return `<article class="product-card" data-product-id="${esc(p.id)}" data-category="${esc(p.category)}" data-price="${p.numericPrice}" data-instock="${p.inStock}">
         <button class="product-card__cart" type="button" aria-label="${loc('Додати в кошик','Add to cart')}" title="${p.inStock?loc('Додати в кошик','Add to cart'):loc('Немає в наявності','Out of stock')}" ${p.inStock?'':'disabled'}>

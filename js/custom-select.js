@@ -113,7 +113,10 @@
       close();
       return;
     }
-    document.body.append(menu); // Escapes overflowing table containers and dialogs.
+    // A modal <dialog> creates a top layer. A popup appended to body would be
+    // underneath that layer and unclickable, even with a huge z-index.
+    const modalDialog = select.closest("dialog[open]");
+    (modalDialog || document.body).append(menu);
     active = { select, button: ui.button, menu };
     ui.button.setAttribute("aria-expanded", "true");
     position(ui.button, menu);

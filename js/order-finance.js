@@ -3,6 +3,7 @@
 const OrderFinance = Object.freeze({
   isCash(payment) { return /готівк|cash/i.test(String(payment||'')); },
   paymentStatus(order) {
+    if(typeof AstelAdminPayments !== 'undefined') return AstelAdminPayments.status(order);
     if(order?.paymentVerification?.verified===true && order?.paymentVerification?.provider && order?.paymentVerification?.orderId===String(order.orderId||order.id) &&
       Number(order.paymentVerification.amount)===Number(order.subtotal) && order.paymentVerification.currency==='UAH') {
       return order?.paymentStatus==='paid' ? 'paid' : 'unpaid';
@@ -11,8 +12,11 @@ const OrderFinance = Object.freeze({
   },
   paymentLabel(order,language='uk') {
     const state=this.paymentStatus(order);
-    if(language==='en')return state==='paid'?'Paid (verified)':state==='cash-on-delivery'?'Pay on delivery':'Awaiting payment confirmation';
-    return state==='paid' ? 'Сплачено (підтверджено)' : state==='cash-on-delivery' ? 'Оплата при отриманні' : 'Очікує підтвердження оплати';
+    if (state==='partial') return language==='en' ? 'Partially paid' : 'Частково сплачено';
+    if (state==='overpaid') return language==='en' ? 'Overpaid' : 'Переплата';
+    if (state==='pending') return language==='en' ? 'Payment awaiting confirmation' : 'Очікує підтвердження платежу';
+    if(language==='en')return state==='paid'?(typeof AstelAdminPayments !== 'undefined' && AstelAdminPayments.entriesFor(order.orderId||order.id).length ? 'Payment confirmed by manager' : 'Paid (verified)'):state==='cash-on-delivery'?'Pay on delivery':'Awaiting payment confirmation';
+    return state==='paid' ? (typeof AstelAdminPayments !== 'undefined' && AstelAdminPayments.entriesFor(order.orderId||order.id).length ? 'Оплату підтверджено менеджером' : 'Сплачено (підтверджено)') : state==='cash-on-delivery' ? 'Оплата при отриманні' : 'Очікує підтвердження оплати';
   },
   acceptedGreen(order) { return this.isCash(order?.payment) || this.paymentStatus(order)==='paid'; },
   contribution(order) {

@@ -217,6 +217,12 @@ const AstelAdminActivity = (() => {
     </details>`;
   }
 
+  // Direct content for the mutually exclusive order workspace tabs.
+  // Clients retain the old standalone, collapsible order history.
+  function orderPane(id) {
+    return `<div class="admin-order-history__content admin-order-history__content--tab" data-order-history-list="${escape(id)}">${orderRows(id)}</div>`;
+  }
+
   const exampleEvents = () => {
     const now = Date.now();
     return [
@@ -441,6 +447,7 @@ const AstelAdminActivity = (() => {
     read,
     forOrder,
     orderSection,
+    orderPane,
     renderGlobal,
     rowsHTML,
     refreshOrder,

@@ -99,6 +99,8 @@ if (typeof document !== "undefined") {
     const editingOrderIds = new Set();
     // Order-specific notes use the same customer profiles as the Clients tab.
     const expandedOrderNoteIds = new Set();
+    // One mutually exclusive lower workspace per order; closed by default.
+    const activeOrderPanes = new Map();
     const openOrderNoteComposers = new Set();
     const orderNoteDrafts = new Map();
     // Preserve an address being typed if another admin action re-renders an open editor.
@@ -685,7 +687,7 @@ if (typeof document !== "undefined") {
     function renderOrderNotePanel(ord) {
       const id = String(ord.orderId);
       const customerKey = AdminCustomers.keyFor(ord.customer);
-      if (!customerKey || !expandedOrderNoteIds.has(id)) return "";
+      if (!customerKey) return "";
       const notes = AdminCustomers.notesForOrder(
         customerProfile(customerKey),
         id,
@@ -737,27 +739,90 @@ if (typeof document !== "undefined") {
       </button>`;
     }
 
-    // Update only notes UI: never re-render the order editor and lose unsaved changes.
+    // Update just the note pane. Re-rendering the entire card would discard
+    // unsubmitted order edits or other form fields in a different tab.
     function refreshOrderNoteUI(orderId) {
-      const order = loadAllOrders().find(
-        (entry) => String(entry.orderId) === String(orderId),
-      );
-      const card = [
-        ...ordersContainer.querySelectorAll(".admin-order-card"),
-      ].find((entry) => entry.dataset.orderId === String(orderId));
-      if (!card || !order) return;
-      const toolbar = card.querySelector(".admin-order-inline-actions");
-      const button = toolbar?.querySelector("[data-admin-order-notes-toggle]");
-      if (!toolbar || !button) return;
-      button.outerHTML = orderNoteButton(order);
-      const panel = card.querySelector(".admin-order-note-panel");
-      const html = renderOrderNotePanel(order);
-      if (panel) {
-        if (html) panel.outerHTML = html;
-        else panel.remove();
-      } else if (html) {
-        toolbar.insertAdjacentHTML("afterend", html);
-      }
+      const id = String(orderId);
+      const order = loadAllOrders().find((entry) => String(entry.orderId) === id);
+      const card = [...ordersContainer.querySelectorAll(".admin-order-card")]
+        .find((entry) => entry.dataset.orderId === id);
+      const pane = card?.querySelector('[data-order-pane="notes"]');
+      if (pane && order) pane.innerHTML = renderOrderNotePanel(order);
+      const badge = card?.querySelector('[data-order-notes-count]');
+      const key = order && AdminCustomers.keyFor(order.customer);
+      const count = key ? AdminCustomers.notesForOrder(customerProfile(key), id).length : 0;
+      if (badge) { badge.textContent = String(count); badge.hidden = count === 0; }
+    }
+    function renderOrderWorkspace(ord) {
+      const id = String(ord.orderId);
+      const active = activeOrderPanes.get(id) || "";
+      const key = AdminCustomers.keyFor(ord.customer);
+      const noteCount = key ? AdminCustomers.notesForOrder(customerProfile(key), id).length : 0;
+      const warrantyCount = AstelAdminWarranty.forOrder(id).length;
+      const historyCount = AstelAdminActivity.forOrder(id).length;
+      const items = [
+        ["notes", "Примітки", noteCount, "data-order-notes-count"],
+        ["edit", "Редагувати дані", null, ""],
+        ["payments", "Розрахунки та оплата", null, ""],
+        ["warranty", "Гарантійні звернення", warrantyCount, ""],
+        ["history", "Історія змін", historyCount, "data-order-history-count"],
+      ];
+      const tabs = items.map(([name, label, count, attribute]) => `
+        <button type="button" class="admin-order-workspace__tab ${active === name ? "is-active" : ""}"
+          data-order-tab="${name}" aria-expanded="${active === name}"
+          aria-controls="order-pane-${name}-${esc(id)}" id="order-tab-${name}-${esc(id)}">
+          ${label}${count !== null ? `<span class="admin-order-workspace__count" ${attribute}="${esc(id)}" ${count === 0 ? "hidden" : ""}>${count}</span>` : ""}
+        </button>`).join("");
+      const panel = (name, html) => `<div class="admin-order-workspace__panel" role="region"
+        data-order-pane="${name}" id="order-pane-${name}-${esc(id)}"
+        aria-labelledby="order-tab-${name}-${esc(id)}" ${active === name ? "" : "hidden"}>${html}</div>`;
+      const editContent = ord.statusCode === "processing"
+        ? (active === "edit" ? renderOrderEditor(ord) : "")
+        : `<div class="admin-order-workspace__notice"><strong>Редагування недоступне</strong><p>Змінювати дані замовлення можна на етапі «В обробці». Для виконаного замовлення використайте «Повернути в роботу», якщо справді потрібно змінити початкові дані. Гарантійні випадки оформлюйте окремо.</p></div>`;
+      const warrantyContent = AstelAdminWarranty.panel(ord) ||
+        '<div class="admin-order-workspace__notice"><strong>Гарантійні звернення</strong><p>Нове звернення можна зареєструвати після завершення замовлення.</p></div>';
+      return `<div class="admin-order-workspace" data-order-workspace="${esc(id)}">
+        <div class="admin-order-workspace__tabs" role="group" aria-label="Деталі замовлення #${esc(id)}">${tabs}</div>
+        ${panel("notes", renderOrderNotePanel(ord))}
+        ${panel("edit", editContent)}
+        ${panel("payments", AstelAdminPayments.panel(ord))}
+        ${panel("warranty", warrantyContent)}
+        ${panel("history", AstelAdminActivity.orderPane(id))}
+      </div>`;
+    }
+    function setOrderPane(card, id, paneName) {
+      const next = activeOrderPanes.get(id) === paneName ? "" : paneName;
+      if (next) activeOrderPanes.set(id, next);
+      else activeOrderPanes.delete(id);
+      if (next === "edit") {
+        editingOrderIds.add(id);
+        const editorPane = card.querySelector('[data-order-pane="edit"]');
+        if (editorPane && !editorPane.querySelector("[data-order-editor]")) {
+          const order = loadAllOrders().find((item) => String(item.orderId) === id);
+          if (order?.statusCode === "processing") {
+            editorPane.innerHTML = renderOrderEditor(order);
+            const form = editorPane.querySelector("[data-order-editor]");
+            if (form) {
+              form.dataset.adminDeliveryKey = JSON.stringify([
+                form.elements.city.value.trim(), form.elements.carrierKey.value,
+                form.elements.deliveryType.value,
+              ]);
+              refreshAdminBranches(form);
+              window.AstelCustomSelect?.refresh?.();
+            }
+          }
+        }
+      } else editingOrderIds.delete(id);
+      card.querySelectorAll("[data-order-tab]").forEach((tab) => {
+        const selected = tab.dataset.orderTab === next;
+        tab.classList.toggle("is-active", selected);
+        tab.setAttribute("aria-expanded", String(selected));
+      });
+      card.querySelectorAll("[data-order-pane]").forEach((pane) => {
+        pane.hidden = pane.dataset.orderPane !== next;
+      });
+      const controls = card.querySelector(".admin-order-card__controls");
+      if (controls) controls.hidden = next === "edit";
     }
     function renderOrderEditor(ord) {
       const destinationDraft = orderDestinationDrafts.get(String(ord.orderId));
@@ -907,6 +972,7 @@ if (typeof document !== "undefined") {
       orderAddressDrafts.delete(id);
       orderDestinationDrafts.delete(id);
       editingOrderIds.delete(id);
+      activeOrderPanes.delete(id);
       renderDashboard();
       scrollToOrderCard(id);
       showUndoToast(`Дані замовлення #${id} оновлено`, () => writeOrder(ord));
@@ -1128,27 +1194,10 @@ if (typeof document !== "undefined") {
                     <div class="admin-order-items">
                       ${itemsHtml}
                     </div>
-                    <div class="admin-order-inline-actions">
-                      ${orderNoteButton(ord)}
-                      ${
-                        ord.statusCode === "processing"
-                          ? `<button class="admin-btn admin-btn--outline" data-edit-order="${esc(ord.orderId)}" type="button">
-                        ${editingOrderIds.has(String(ord.orderId)) ? "Закрити редагування" : "Редагувати дані"}
-                      </button>`
-                          : ""
-                      }
-                    </div>
-                    ${renderOrderNotePanel(ord)}
-                    ${ord.statusCode === "processing" && editingOrderIds.has(String(ord.orderId)) ? renderOrderEditor(ord) : ""}
-                    ${AstelAdminActivity.orderSection(ord.orderId)}
-
-                    ${
-                      !editingOrderIds.has(String(ord.orderId))
-                        ? `<div class="admin-order-card__controls">
+                    ${renderOrderWorkspace(ord)}
+                    <div class="admin-order-card__controls" ${activeOrderPanes.get(String(ord.orderId)) === "edit" ? "hidden" : ""}>
                       ${bottomControlsHtml}
-                    </div>`
-                        : ""
-                    }
+                    </div>
                   </article>
                 `;
           })
@@ -1835,6 +1884,20 @@ if (typeof document !== "undefined") {
       });
     });
 
+    ordersContainer.addEventListener("keydown", (event) => {
+      const tab = event.target.closest?.("[data-order-tab]");
+      if (!tab) return;
+      const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+      if (!keys.includes(event.key)) return;
+      const tabs = [...tab.closest('[role="group"]').querySelectorAll("[data-order-tab]")];
+      const index = tabs.indexOf(tab);
+      const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1
+        : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+      event.preventDefault();
+      tabs[next].focus();
+      tabs[next].click();
+    });
+
     // Order Actions Click Handler
     ordersContainer.addEventListener("click", async (e) => {
       const card = e.target.closest(".admin-order-card");
@@ -1842,6 +1905,12 @@ if (typeof document !== "undefined") {
       const orderId = String(card.getAttribute("data-order-id"));
       const ttnInput = card.querySelector(".order-ttn-input");
       const currentTtn = ttnInput ? ttnInput.value.trim() : undefined;
+
+      const paneToggle = e.target.closest("[data-order-tab]");
+      if (paneToggle) {
+        setOrderPane(card, orderId, paneToggle.dataset.orderTab);
+        return;
+      }
 
       const notesToggle = e.target.closest("[data-admin-order-notes-toggle]");
       if (notesToggle) {
@@ -1928,6 +1997,7 @@ if (typeof document !== "undefined") {
         orderAddressDrafts.delete(orderId);
         orderDestinationDrafts.delete(orderId);
         editingOrderIds.delete(orderId);
+        activeOrderPanes.delete(orderId);
         renderDashboard();
         scrollToOrderCard(orderId);
         return;
@@ -2387,7 +2457,7 @@ if (typeof document !== "undefined") {
       add("Назва", before.title, after.title);
       add("English", before.titleEn, after.titleEn);
       add("Ціна", `${before.price} ₴`, `${after.price} ₴`);
-      add("Наявність", before.inStock ? "В наявності" : "Немає", after.inStock ? "В наявності" : "Немає");
+      add("Наявність", before.inStock ? "Доступний до замовлення" : "Немає в наявності", after.inStock ? "Доступний до замовлення" : "Немає в наявності");
       add("Категорія", CatalogManager.CATEGORIES[before.category] || before.category, CatalogManager.CATEGORIES[after.category] || after.category);
       add("Умови продажу", before.saleTermsCode, after.saleTermsCode);
       add("Видимість", before.isVisible ? "Показано" : "Приховано", after.isVisible ? "Показано" : "Приховано");
@@ -2513,7 +2583,7 @@ if (typeof document !== "undefined") {
               <td data-label="Категорія"><select class="admin-select admin-inventory-select" data-product-category aria-label="Категорія">${options(CatalogManager.CATEGORIES, draft.category)}</select></td>
               <td data-label="Умови продажу"><select class="admin-select admin-inventory-select" data-product-terms aria-label="Умови продажу">${options(CatalogManager.SALE_TERMS, draft.saleTermsCode)}</select></td>
               <td data-label="Ціна без ПДВ"><input type="number" class="admin-price-input" value="${esc(draft.price)}" min="1" max="99999999" step="1" aria-label="Ціна" /></td>
-              <td data-label="Наявність"><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● В наявності" : "○ Немає в наявності"}</button></td>
+              <td data-label="Наявність"><button type="button" class="stock-toggle-btn ${draft.inStock ? "is-instock" : "is-outstock"}" data-toggle-stock="${esc(p.id)}">${draft.inStock ? "● Доступний до замовлення" : "○ Немає в наявності"}</button></td>
               <td class="admin-inventory-product-row__actions"><div class="admin-inventory-actions">
                 <button type="button" class="admin-btn admin-btn--outline" data-save-product="${esc(p.id)}" ${dirty ? "" : "disabled"}>Оновити</button>
                 <button type="button" class="admin-inventory-visibility ${p.isVisible === false ? "is-hidden" : ""}"
@@ -3014,6 +3084,17 @@ if (typeof document !== "undefined") {
       });
     });
 
+    // Warranty cases and manual payment ledger are separate from the original
+    // order status and recognized revenue. Keep all records browser-local until API integration.
+    const operationsBindings = {
+      findOrder: (id) => loadAllOrders().find((o) => String(o.orderId) === String(id)),
+      refresh: () => renderDashboard(),
+      activity: activityRecord,
+      toast: (message) => showUndoToast(message, null),
+    };
+    AstelAdminWarranty.bindUI(operationsBindings);
+    AstelAdminPayments.bindUI(operationsBindings);
+
     renderDashboard();
     renderProductsTable();
 
@@ -3030,6 +3111,8 @@ if (typeof document !== "undefined") {
           ACTIVE_ORDER_KEY,
           COMPLETED_ORDERS_KEY,
           AdminCustomers.STORAGE_KEY,
+          AstelAdminWarranty.KEY,
+          AstelAdminPayments.KEY,
         ].includes(event.key)
       )
         renderDashboard();

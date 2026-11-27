@@ -49,6 +49,7 @@
     <link rel="stylesheet" href="css/admin-customers.css" />
 
     <link rel="stylesheet" href="css/admin-activity.css" />
+    <link rel="stylesheet" href="css/admin-operations.css" />
   </head>
   <body>
     <!-- SHARED:HEADER:START -->
@@ -341,10 +342,13 @@
                 <option value="canceled">Скасовано</option>
               </optgroup>
               <optgroup label="Статус оплати">
-                <option value="payment:unpaid">
-                  Картка / Google Pay — очікує підтвердження
-                </option>
+                <option value="payment:unpaid">Очікує оплату</option>
                 <option value="payment:paid">Сплачено (підтверджено)</option>
+                <option value="payment:partial">Частково сплачено</option>
+                <option value="payment:overpaid">Переплата</option>
+                <option value="payment:pending">
+                  Очікує підтвердження платежу
+                </option>
                 <option value="payment:cash-on-delivery">
                   Готівка — оплата при отриманні
                 </option>
@@ -825,6 +829,7 @@
     <script src="js/i18n.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/order-lifecycle.js"></script>
+    <script src="js/admin-payments.js"></script>
     <script src="js/order-finance.js"></script>
     <script src="js/delivery-data.js"></script>
     <script src="js/admin-delivery.js"></script>
@@ -833,6 +838,7 @@
     <script src="js/admin-new-product.js"></script>
     <script src="js/admin-customers.js"></script>
     <script src="js/admin-activity.js"></script>
+    <script src="js/admin-warranty.js"></script>
     <script src="js/admin-greeting.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/admin-validation.js"></script>

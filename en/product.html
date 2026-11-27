@@ -524,7 +524,7 @@
               <div class="product-hero__top-content" style="display: flex; flex-direction: column; gap: 12px;">
                 <div class="product-hero__badges">
                   <span class="badge ${product.inStock ? "badge--instock" : "badge--outstock"}">
-                    ${esc(product.stockText)}
+                    ${product.inStock ? 'Available to order' : 'Out of stock'}
                   </span>
                   <span class="badge badge--terms">${esc(product.saleTerms)}</span>
                 </div>

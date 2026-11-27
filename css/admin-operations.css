@@ -1,0 +1,178 @@
+/* Frontend-only after-sales cases and payment reconciliation */
+.admin-operations { margin-top:22px; border:1px solid #dedee1; border-radius:18px; padding:24px; background:#fafafa; min-width:0; }
+.admin-operations__heading {display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:18px;margin-bottom:19px;}
+.admin-operations__heading h3{font-size:18px;line-height:1.3;margin:0 0 5px;font-weight:750;color:#18181b;}
+.admin-operations__heading p {font-size:13px;color:#717785;margin:0;line-height:1.5;}
+.admin-operations-count{display:inline-flex;align-items:center;justify-content:center;background:#e8e8ea;color:#52525b;font:700 12px var(--font-mono);border-radius:50%;min-width:24px;height:24px;margin-left:5px;vertical-align:middle;}
+.admin-operations-actions{display:flex;flex-wrap:wrap;gap:9px;}
+.admin-operations-empty {font-size:14px;color:#717785;margin:5px 0 0;}
+.admin-operations-records,.admin-operations-transactions {display:grid;gap:10px;}
+.admin-operations-record,.admin-operations-transaction {padding:17px 18px;border:1px solid #e3e3e6;background:white;border-radius:12px;min-width:0;}
+.admin-operations-record__head,.admin-operations-record__foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.admin-operations-record__head strong {font-size:14px;min-width:0;overflow-wrap:anywhere;}
+.admin-operations-record p{font-size:13px;line-height:1.5;margin:8px 0;overflow-wrap:anywhere;}
+.admin-operations-record p span{color:#697084;}
+.admin-operations-record__foot{margin-top:14px;}
+.admin-operations-record__foot small{color:#717785;font-size:12px;}
+.admin-operations-chip {display:inline-flex;white-space:nowrap;border-radius:7px;padding:6px 10px;background:#f1f1f2;color:#52525b;font:700 11px var(--font-mono);}
+.admin-operations-chip--resolved{background:#e2f3ea;color:#008658;}
+.admin-operations-chip--replacement_sent{background:#e8edff;color:#5148a6;}
+.admin-operations-chip--rejected{background:#feeae9;color:#b42318;}
+.admin-operations-chip--investigating {background:#fff0d9;color:#ac5909;}
+.admin-operations-link{border:0;background:none;color:#18181b;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:5px 0;font:700 12px var(--font-mono);}
+.admin-operations-link:hover{color:#007e62;}
+.admin-operations-link--muted{color:#767b86;}
+.admin-payment-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:15px;}
+.admin-payment-metrics>div{display:grid;gap:8px;padding:15px 17px;border:1px solid #e3e3e6;border-radius:12px;background:#fff;min-width:0;}
+.admin-payment-metrics small {font:700 11px var(--font-mono);text-transform:uppercase;color:#707688;}
+.admin-payment-metrics strong{font-size:23px;line-height:1.1;letter-spacing:-.03em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;}
+.admin-payment-metrics__received{color:#059669;}
+.admin-payment-metrics__overpaid{color:#b45309;}
+.admin-payment-pending {font-size:12px;color:#9a5505;background:#fff4e0;border-radius:8px;padding:10px 12px;margin:0 0 14px;line-height:1.5;}
+.admin-operations-transaction {display:flex;justify-content:space-between;gap:18px;align-items:flex-start;}
+.admin-operations-transaction__main{display:grid;gap:5px;min-width:0;overflow-wrap:anywhere;}
+.admin-operations-transaction__main strong{font-size:13px;}
+.admin-operations-transaction__main small {color:#737987;font-size:12px;line-height:1.4;}
+.admin-operations-transaction__side{display:grid;justify-items:end;gap:8px;flex-shrink:0;}
+.admin-operations-transaction__side>strong{font:700 15px var(--font-mono);color:#059669;font-variant-numeric:tabular-nums;}
+.admin-operations-transaction__side>strong.is-refund{color:#b45309;}
+.admin-operations-transaction__actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end;}
+.admin-payment-record-state{font:700 11px var(--font-mono);border-radius:6px;padding:5px 8px;background:#eee;color:#717785;}
+.admin-payment-record-state--confirmed{color:#047857;background:#e0f2e9;}
+.admin-payment-record-state--pending{color:#b45309;background:#fff0d9;}
+.admin-operations-transaction.is-void{opacity:.62;}
+.admin-payment-state--partial,.admin-payment-state--pending{color:#b45309;background:#fff0d9;}
+.admin-payment-state--overpaid{color:#8d4b10;background:#ffebca;}
+/* Explicit centering is required because global.css resets the dialog UA margins. */
+.admin-operations-dialog{
+ position:fixed;
+ top:50%;left:50%;right:auto;bottom:auto;
+ transform:translate(-50%,-50%);
+ margin:0;
+ width:min(610px,calc(100vw - 24px));
+ max-height:min(90vh,850px);
+ max-height:min(90dvh,850px);
+ border:1px solid #ddd;border-radius:22px;padding:0;color:#18181b;background:#fafafa;
+ box-shadow:0 25px 60px #0003;overflow:auto;
+}
+.admin-operations-dialog::backdrop{background:rgba(14,16,20,.58);}
+.admin-operations-dialog__body{padding:28px 30px;display:block;}
+.admin-operations-dialog__top{display:flex;justify-content:space-between;gap:14px;align-items:start;}
+.admin-operations-dialog__top h2{font-size:23px;line-height:1.25;margin:6px 0 8px;letter-spacing:-.015em;}
+.admin-operations-eyebrow{font:700 11px var(--font-mono);color:#767b87;}
+.admin-operations-dialog__close{border:0;background:#eaeaec;border-radius:8px;font-size:22px;width:34px;height:34px;cursor:pointer;flex-shrink:0;}
+.admin-operations-dialog__description{font-size:13px;line-height:1.5;color:#737987;margin:0 0 22px;}
+.admin-operations-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 15px;}
+.admin-operations-field {display:flex;flex-direction:column;gap:7px;min-width:0;font-size:13px;font-weight:700;}
+.admin-operations-field small{font-size:11px;font-weight:400;color:#737987;}
+.admin-operations-field--full{grid-column:1/-1;}
+.admin-operations-field input,.admin-operations-field textarea,.admin-operations-field select{box-sizing:border-box;width:100%;min-width:0;border:1px solid #d6d7d9;border-radius:10px;background:#fff;color:#18181b;padding:13px 14px;font:400 14px var(--font-base, sans-serif);}
+.admin-operations-field textarea {min-height:115px;resize:vertical;}
+.admin-operations-field input:focus-visible,.admin-operations-field select:focus-visible,.admin-operations-field textarea:focus-visible{outline:2px solid #0f766e;outline-offset:2px;}
+.admin-operations-dialog__actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:22px;}
+.admin-operations-error{background:#fef2f2;color:#b91c1c;padding:10px 12px;margin-top:14px;border-radius:8px;font-size:13px;}
+.admin-operations-error[hidden]{display:none;}
+@media(max-width:700px){
+ .admin-operations{padding:16px;border-radius:14px;margin-top:14px;}
+ .admin-operations__heading{gap:14px;}
+ .admin-operations__heading .admin-btn{flex:1 1 auto;}
+ .admin-operations-actions{width:100%;}
+ .admin-operations-actions .admin-btn{flex:1 1 100%;}
+ .admin-payment-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+ .admin-payment-metrics>div{padding:12px;}
+ .admin-payment-metrics>div:last-child{grid-column:1/-1;}
+ .admin-payment-metrics strong{font-size:20px;}
+ .admin-operations-transaction{flex-wrap:wrap;}
+ .admin-operations-transaction__side{width:100%;justify-items:start;}
+ .admin-operations-transaction__actions{justify-content:flex-start;}
+ .admin-operations-dialog__body{padding:21px 17px;}
+ .admin-operations-dialog__top h2{font-size:20px;}
+ .admin-operations-form-grid{grid-template-columns:1fr;}
+ .admin-operations-field--full{grid-column:auto;}
+ .admin-operations-dialog__actions .admin-btn{flex:1 1 100%;}
+}
+
+/* Compact, collapsible payment summary keeps long order lists scannable. */
+.admin-reconciliation{padding:0;}
+.admin-reconciliation__summary{display:flex;align-items:center;flex-wrap:wrap;gap:9px 20px;cursor:pointer;padding:19px 23px;list-style:none;}
+.admin-reconciliation__summary::-webkit-details-marker{display:none;}
+.admin-reconciliation__summary-title{font-size:16px;font-weight:750;color:#18181b;}
+.admin-reconciliation__summary-meta{font-size:12px;color:#707688;font-weight:600;}
+.admin-reconciliation__chevron{margin-left:auto;font-size:23px;color:#707688;line-height:1;transition:transform .2s;}
+.admin-reconciliation[open] .admin-reconciliation__chevron{transform:rotate(180deg);}
+.admin-reconciliation__content{border-top:1px solid #e3e3e6;padding:21px 23px 23px;}
+@media(max-width:700px){.admin-reconciliation__summary{padding:16px;gap:8px 12px;}.admin-reconciliation__summary-meta{flex-basis:100%;order:3;}.admin-reconciliation__content{padding:17px 15px;}}
+
+/* Order workspace: five mutually exclusive panels instead of stacked cards. */
+.admin-order-workspace { min-width:0; display:flex; flex-direction:column; }
+.admin-order-workspace__tabs {
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px;
+  padding:6px; background:#f1f1f2; border:1px solid #e1e1e4;
+  border-radius:14px;
+}
+.admin-order-workspace__tab {
+  min-width:0; min-height:49px; padding:10px 7px; border:1px solid transparent;
+  border-radius:10px; color:#555c68; background:transparent;
+  font:700 12px/1.35 var(--font-mono,monospace);
+  cursor:pointer; display:flex; gap:8px; justify-content:center;
+  align-items:center; text-align:center; overflow-wrap:break-word;
+  transition:background .15s ease,color .15s ease;
+}
+.admin-order-workspace__tab:hover:not(.is-active) { background:#fff; color:#18181b; border-color:#e2e2e4; }
+.admin-order-workspace__tab.is-active { background:#18181b; color:#fff; }
+.admin-order-workspace__tab:focus-visible { outline:2px solid #0f766e; outline-offset:2px; }
+.admin-order-workspace__count { display:inline-grid; place-items:center; flex-shrink:0; min-width:21px;
+  height:21px; padding:0 5px; border-radius:12px; background:#dedee1; color:#3f4249; font:700 11px var(--font-mono,monospace); }
+.admin-order-workspace__tab.is-active .admin-order-workspace__count { background:#4b4b4d; color:#fff; }
+.admin-order-workspace__count[hidden],.admin-order-workspace__panel[hidden],.admin-order-card__controls[hidden] { display:none!important; }
+.admin-order-workspace__panel {
+  min-width:0; padding:22px; background:#f8f8f9; border:1px solid #e1e1e4;
+  border-radius:14px; margin-top:9px;
+}
+/* The tab panel supplies the background and padding: no card-within-card framing. */
+.admin-order-workspace__panel .admin-reconciliation,
+.admin-order-workspace__panel .admin-warranty,
+.admin-order-workspace__panel .admin-order-note-panel {
+  margin:0; padding:0; background:transparent; border:0; border-radius:0;
+}
+.admin-order-workspace__panel .admin-order-history__content--tab { padding:0; background:transparent; border:0; }
+.admin-order-workspace__panel .admin-order-history__content--tab .admin-activity-entry:first-child { border-top:0; }
+.admin-order-workspace__panel .admin-order-editor { margin:0; }
+.admin-order-workspace__notice { padding:8px 2px; }
+.admin-order-workspace__notice strong { color:#18181b; font-size:15px; }
+.admin-order-workspace__notice p { margin:9px 0 0; max-width:720px; font-size:13px; line-height:1.55; color:#717785; }
+/* Reconciliation is only opened on demand, so use a compact balance strip. */
+.admin-order-workspace__panel .admin-reconciliation__heading { margin-bottom:18px; }
+.admin-reconciliation__balance { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px; }
+.admin-reconciliation__balance>div { display:flex;flex-direction:column;gap:7px;min-width:0;padding:14px 16px;
+  background:#fff;border:1px solid #e2e2e5;border-radius:12px; }
+.admin-reconciliation__balance span { font:700 11px/1.4 var(--font-mono,monospace);text-transform:uppercase;color:#747b88; }
+.admin-reconciliation__balance strong { font:750 clamp(16px,2vw,22px)/1.25 var(--font-mono,monospace);overflow-wrap:anywhere;color:#18181b; }
+.admin-reconciliation__balance .admin-reconciliation__received { color:#059669; }
+.admin-reconciliation__balance .admin-payment-metrics__overpaid { color:#b45309; }
+.admin-order-workspace__panel .admin-operations-transactions { margin-top:14px; }
+.admin-order-workspace__panel .admin-operations-empty { padding:5px 0; }
+@media (max-width:1050px) {
+  .admin-order-workspace__tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .admin-order-workspace__tabs .admin-order-workspace__tab:nth-child(4),
+  .admin-order-workspace__tabs .admin-order-workspace__tab:nth-child(5) { grid-column:span 1; }
+}
+@media (max-width:620px) {
+  .admin-order-workspace__tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px;padding:5px; }
+  .admin-order-workspace__tab { min-height:44px; font-size:11px;padding:9px 6px; }
+  .admin-order-workspace__tab:last-child { grid-column:1/-1; }
+  .admin-order-workspace__panel { padding:15px; }
+  .admin-reconciliation__balance { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .admin-reconciliation__balance > div { padding:11px; }
+  .admin-reconciliation__balance > div:last-child { grid-column:1/-1; }
+  .admin-reconciliation__balance strong { font-size:17px; }
+}
+html[data-theme="dark"] .admin-order-workspace__tabs,
+html[data-theme="dark"] .admin-order-workspace__panel { background:#292929; border-color:#484848; }
+html[data-theme="dark"] .admin-order-workspace__tab { color:#dedee0; }
+html[data-theme="dark"] .admin-order-workspace__tab.is-active { background:#f1f1f2; color:#161616; }
+html[data-theme="dark"] .admin-order-workspace__tab:hover:not(.is-active) { background:#3b3b3b;color:#fff; border-color:#555; }
+html[data-theme="dark"] .admin-reconciliation__balance>div { background:#242424; border-color:#474747; }
+html[data-theme="dark"] .admin-reconciliation__balance strong,
+html[data-theme="dark"] .admin-order-workspace__notice strong { color:#fff; }
+html[data-theme="dark"] .admin-reconciliation__balance .admin-reconciliation__received { color:#34d399; }

@@ -7,7 +7,7 @@ const PRODUCTS_DATA = {
     price: "4 300 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -110,7 +110,7 @@ const PRODUCTS_DATA = {
     price: "4 300 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -204,7 +204,7 @@ const PRODUCTS_DATA = {
     price: "від 4 300 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -362,7 +362,7 @@ const PRODUCTS_DATA = {
     price: "8 064 ₴",
     vatNote: "Ціна вказана без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -444,7 +444,7 @@ const PRODUCTS_DATA = {
     price: "9 360 ₴",
     vatNote: "Ціна вказана без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -532,7 +532,7 @@ const PRODUCTS_DATA = {
     price: "120 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -567,7 +567,7 @@ const PRODUCTS_DATA = {
     price: "150 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -601,7 +601,7 @@ const PRODUCTS_DATA = {
     price: "220 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Тільки оптом",
     saleTermsCode: "wholesale",
     minOrderQty: 10,
@@ -631,7 +631,7 @@ const PRODUCTS_DATA = {
     price: "1 160 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Оптом і в роздріб",
     saleTermsCode: "retail",
     minOrderQty: 1,
@@ -665,7 +665,7 @@ const PRODUCTS_DATA = {
     price: "1 160 ₴",
     vatNote: "Ціна без ПДВ",
     inStock: true,
-    stockText: "В наявності",
+    stockText: "Доступний до замовлення",
     saleTerms: "Оптом і в роздріб",
     saleTermsCode: "retail",
     minOrderQty: 1,
@@ -945,7 +945,7 @@ const CatalogManager = (() => {
     const amount=validPrice(p.numericPrice ?? String(p.price).replace(/[^\d]/g,'')) ?? 1;
     p.numericPrice=amount; p.price=amount.toLocaleString('uk-UA')+' ₴';
     p.isVisible = p.isVisible !== false;
-    p.stockText=p.inStock ? 'В наявності' : 'Немає в наявності';
+    p.stockText=p.inStock ? 'Доступний до замовлення' : 'Немає в наявності';
     p.categoryName=getCategoryName(p.category) || 'Категорія';
     p.saleTerms=SALE_TERMS[p.saleTermsCode] || SALE_TERMS.wholesale;
     p.minOrderQty=p.saleTermsCode==='retail' ? 1 : 10;

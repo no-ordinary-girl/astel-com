@@ -403,6 +403,12 @@
                 <div class="orders-list" id="account-orders-list">
                   <!-- Populated via JS -->
                 </div>
+                <nav
+                  class="account-pagination"
+                  id="account-orders-pagination"
+                  aria-label="Сторінки історії замовлень"
+                  hidden
+                ></nav>
               </div>
             </section>
 
@@ -1040,7 +1046,15 @@
           });
         };
 
-        ordersListEl.innerHTML = orders
+        const ordersPaginationEl = document.getElementById("account-orders-pagination");
+        const ORDERS_PER_PAGE = 10;
+        const orderPageCount = Math.ceil(orders.length / ORDERS_PER_PAGE);
+        let currentOrderPage = 1;
+
+        function renderOrderPage() {
+          const firstOrder = (currentOrderPage - 1) * ORDERS_PER_PAGE;
+          const visibleOrders = orders.slice(firstOrder, firstOrder + ORDERS_PER_PAGE);
+          ordersListEl.innerHTML = visibleOrders
           .map((ord) => {
             const pillClass =
               ord.statusCode === "canceled"
@@ -1108,6 +1122,47 @@
             `;
           })
           .join("");
+
+          if (orderPageCount <= 1) {
+            ordersPaginationEl.hidden = true;
+            ordersPaginationEl.innerHTML = "";
+            return;
+          }
+
+          // Show neighbouring pages plus first/last, with ellipses for long histories.
+          const pages = Array.from({ length: orderPageCount }, (_, i) => i + 1)
+            .filter((page) => page === 1 || page === orderPageCount ||
+              Math.abs(page - currentOrderPage) <= 1);
+          const pageButtons = [];
+          let lastPage = 0;
+          for (const page of pages) {
+            if (page > lastPage + 1) {
+              pageButtons.push('<span class="account-pagination__ellipsis" aria-hidden="true">…</span>');
+            }
+            pageButtons.push(`<button type="button" class="account-pagination__button${page === currentOrderPage ? ' is-active' : ''}" data-order-page="${page}" aria-label="Сторінка ${page}" ${page === currentOrderPage ? 'aria-current="page"' : ''}>${page}</button>`);
+            lastPage = page;
+          }
+          ordersPaginationEl.innerHTML = `
+            <span class="account-pagination__summary">${firstOrder + 1}–${Math.min(firstOrder + ORDERS_PER_PAGE, orders.length)} із ${orders.length} замовлень}</span>
+            <button type="button" class="account-pagination__button" data-order-page="${currentOrderPage - 1}" aria-label="Попередня сторінка" ${currentOrderPage === 1 ? 'disabled' : ''}>&lsaquo;</button>
+            ${pageButtons.join('')}
+            <button type="button" class="account-pagination__button" data-order-page="${currentOrderPage + 1}" aria-label="Наступна сторінка" ${currentOrderPage === orderPageCount ? 'disabled' : ''}>&rsaquo;</button>
+          `;
+          ordersPaginationEl.hidden = false;
+        }
+
+        renderOrderPage();
+
+        ordersPaginationEl.addEventListener("click", (event) => {
+          const button = event.target.closest("button[data-order-page]");
+          if (!button || button.disabled) return;
+          const nextPage = Number(button.dataset.orderPage);
+          if (!Number.isInteger(nextPage) || nextPage < 1 || nextPage > orderPageCount || nextPage === currentOrderPage) return;
+          currentOrderPage = nextPage;
+          renderOrderPage();
+          // Return to the first visible order instead of leaving the customer at the old page bottom.
+          ordersListEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
 
         // Copy Last Order Hero Button
         document

@@ -845,6 +845,8 @@ const CatalogManager = (() => {
   const CATEGORY_EN = {gsm:'GSM/LTE Modems', nbiot:'NBIoT Modems',
     pos:'Accessories for Banking Terminals',antenna:'Antennas',cables:'Low-Voltage Power Cables'};
   const SALE_TERMS = Object.freeze({wholesale: 'Тільки оптом', retail: 'Оптом і в роздріб'});
+  // Local placeholder for products created before the manager uploads photographs.
+  const DEFAULT_PRODUCT_IMAGE = 'assets/images/default.png';
   const base = Object.fromEntries(Object.entries(PRODUCTS_DATA).map(([id,p]) => [id, JSON.parse(JSON.stringify(p))]));
   const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
   function validPrice(value) {
@@ -1024,8 +1026,9 @@ const CatalogManager = (() => {
     if(titleEn.length<3 || titleEn.length>200) throw new Error('Англійська назва обов’язкова (від 3 до 200 символів)');
     if(validPrice(payload.price)===null) throw new Error('Некоректна ціна');
     if(!CATEGORIES[payload.category] || !SALE_TERMS[payload.saleTermsCode]) throw new Error('Оберіть категорію та умови продажу');
-    const images=Array.isArray(payload.images) ? payload.images : [];
-    if(!images.length || images.length>12 || !images.every(validImageSource)) throw new Error('Додайте принаймні одне коректне фото');
+    const providedImages=Array.isArray(payload.images) ? payload.images : [];
+    const images=providedImages.length ? providedImages : [DEFAULT_PRODUCT_IMAGE];
+    if(images.length>12 || !images.every(validImageSource)) throw new Error('Додайте коректні фото у форматі PNG, JPG або WebP');
     const p={id,title,titleEn,category:payload.category,saleTermsCode:payload.saleTermsCode,
       numericPrice:Number(payload.price),inStock:payload.inStock===true,isVisible:true,
       image:images[0], images:[...images],
@@ -1064,7 +1067,7 @@ const CatalogManager = (() => {
     if([STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY].includes(e.key)){applyOverrides();notify('all');}
   });
   return Object.freeze({STORAGE_KEY,CUSTOM_KEY,DELETED_KEY,CATEGORY_KEY,REMOVED_CATEGORIES_KEY,
-    CATEGORIES,SALE_TERMS,isFixedCategory,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
+    CATEGORIES,SALE_TERMS,DEFAULT_PRODUCT_IMAGE,isFixedCategory,getCategoryName,addCategory,deleteCategory,readCategories,readRemovedCategories,validPrice,validImageSource,
     validPdfSource,validSpecSections,validDocs,readOverrides,readCustom,readDeleted,
     getOriginalPrice,applyOverrides,updateProduct,addProduct,deleteProduct,syncProductCards,
     getStorefrontProduct:(id) => PRODUCTS_DATA[id]?.isVisible === false ? null : (PRODUCTS_DATA[id] || null),

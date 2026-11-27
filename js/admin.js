@@ -2957,8 +2957,12 @@ if (typeof document !== "undefined") {
       if (!p) return;
       try {
         const files = await imagesFromInput(input);
-        const draft = getDraft(id),
-          images = [...draft.images, ...files];
+        const draft = getDraft(id);
+        // The placeholder is not a real photo; replace it with the first upload.
+        const existingImages = draft.images.filter(
+          (src) => src !== CatalogManager.DEFAULT_PRODUCT_IMAGE,
+        );
+        const images = [...existingImages, ...files];
         if (images.length > 12) throw new Error("Максимум 12 фото");
         setDraft(id, { ...draft, images });
         renderProductsTable();
@@ -2979,8 +2983,7 @@ if (typeof document !== "undefined") {
         const specSections = AstelProductEditor.extractSections(addProductForm);
         const docs = await AstelProductEditor.extractDocuments(addProductForm);
         const photoFiles = AstelProductEditor.getPhotos(addProductForm);
-        if (!photoFiles.length)
-          throw new Error("Додайте принаймні одну фотографію");
+        // CatalogManager uses default.png when there are no uploaded photos.
         const photos = [];
         for (const file of photoFiles) photos.push(await compressImage(file));
         const newProduct = CatalogManager.addProduct({

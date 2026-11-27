@@ -105,7 +105,7 @@ const CheckoutAutocomplete = (() => {
       picker.input.removeAttribute("aria-activedescendant");
     }
 
-    async function open(picker) {
+    async function open(picker, showAll = false) {
       if (activePicker && activePicker !== picker) close(activePicker);
       activePicker = picker;
       picker.open = true;
@@ -123,7 +123,9 @@ const CheckoutAutocomplete = (() => {
         reposition(picker);
       }
       try {
-        const rows = await picker.getRows(picker.input.value);
+        // Saved city/branch text is a selection, not a new search query.
+        // On focus or arrow click, show available choices; filter only while typing.
+        const rows = await picker.getRows(showAll ? "" : picker.input.value);
         if (picker.open && requestId === picker.requestId) showRows(picker, rows);
       } catch (error) {
         if (picker.open && requestId === picker.requestId) showRows(picker, []);
@@ -153,12 +155,13 @@ const CheckoutAutocomplete = (() => {
       const picker = { wrap, input, list, button, getRows, onSelect, emptyMessage, isAsync, rows: [], open: false, requestId: 0, highlight: -1 };
       pickers.push(picker);
 
-      input.addEventListener("focus", () => open(picker));
+      input.addEventListener("focus", () => open(picker, true));
+      input.addEventListener("click", () => { if (!picker.open) open(picker, true); });
       input.addEventListener("input", () => open(picker));
       input.addEventListener("keydown", (event) => {
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {
           event.preventDefault();
-          if (!picker.open) { open(picker); return; }
+          if (!picker.open) { open(picker, true); return; }
           highlightRow(picker, picker.highlight + (event.key === "ArrowDown" ? 1 : -1));
         } else if (event.key === "Enter" && picker.open) {
           event.preventDefault(); // Never submit checkout while selecting a suggestion.
@@ -172,7 +175,7 @@ const CheckoutAutocomplete = (() => {
       button.addEventListener("pointerdown", (event) => event.preventDefault());
       button.addEventListener("click", () => {
         if (picker.open) close(picker);
-        else { input.focus({ preventScroll: true }); if (!picker.open) open(picker); }
+        else { input.focus({ preventScroll: true }); if (!picker.open) open(picker, true); }
       });
       return picker;
     }

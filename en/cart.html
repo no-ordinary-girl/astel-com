@@ -815,6 +815,12 @@
     <script src="js/order-lifecycle.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Initialize checkout dropdowns before replacing the sign-in form for an
+        // authorized customer. This must also work with saved/pre-filled values.
+        CheckoutAutocomplete.init({
+          language: document.documentElement.lang === "en" ? "en" : "uk",
+        });
+
         // --- Render Cart Items & Summary ---
         const cartListEl = document.getElementById("cart-items-list");
         const subtotalEl = document.getElementById("summary-subtotal");
@@ -1458,7 +1464,9 @@
         const loginForm = document.getElementById("login-form");
         const loginFeedback = document.getElementById("login-feedback");
 
-        loginForm.addEventListener("submit", (e) => {
+        // The signed-in checkout intentionally removes the login form.
+        // Do not attach handlers to elements that no longer exist.
+        loginForm?.addEventListener("submit", (e) => {
           e.preventDefault();
           loginFeedback.classList.remove("is-visible");
 
@@ -1490,7 +1498,7 @@
         // Forgot Password Handler
         document
           .getElementById("forgot-pass-btn")
-          .addEventListener("click", () => {
+          ?.addEventListener("click", () => {
             const loginEmail = document
               .getElementById("loginEmail")
               .value.trim();
@@ -1506,11 +1514,6 @@
             loginFeedback.innerHTML = `Інструкції для відновлення пароля надіслано на <strong>${loginEmail}</strong>.`;
             loginFeedback.classList.add("is-visible");
           });
-        // Dropdowns are rendered above the page so long option lists remain visible
-        // on mobile and when editing an order. Shared by Ukrainian/English checkout.
-        CheckoutAutocomplete.init({
-          language: document.documentElement.lang === "en" ? "en" : "uk",
-        });
       });
     </script>
     <script src="js/i18n.js"></script>

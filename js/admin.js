@@ -44,6 +44,16 @@ const AdminSafety = Object.freeze({
       : "assets/images/logo-main.svg";
   },
 });
+// A previously ordered product can become unavailable later. Warn managers
+// only while fulfillment is still in progress, never rewrite the order snapshot.
+const AdminOrderItemAvailability = Object.freeze({
+  needsNotice(statusCode, productId, catalog) {
+    if (!["active", "processing", "shipped"].includes(statusCode)) return false;
+    const id = String(productId ?? "");
+    return !!catalog && Object.prototype.hasOwnProperty.call(catalog, id) &&
+      catalog[id]?.inStock === false;
+  },
+});
 // Payment and order-progress are independent dimensions of the admin filter.
 // A localStorage payment flag alone is not proof: use OrderFinance.paymentStatus().
 const AdminOrderFilters = Object.freeze({
@@ -61,6 +71,7 @@ if (typeof module !== "undefined")
   module.exports = {
     ...AdminSafety,
     matchesOrderFilter: AdminOrderFilters.matches,
+    orderItemNeedsAvailabilityNotice: AdminOrderItemAvailability.needsNotice,
   };
 
 if (typeof document !== "undefined") {
@@ -1067,11 +1078,14 @@ if (typeof document !== "undefined") {
             const itemsHtml = (ord.items || [])
               .map(
                 (item) => `
-                  <div class="admin-order-item">
+                  <div class="admin-order-item" data-order-product-id="${esc(item.id)}">
                     <img src="${esc(AdminSafety.safeImageUrl(item.image))}" alt="${esc(item.title)}" class="admin-order-item__img" />
                     <div>
                       <div class="admin-order-item__title">${esc(item.title)}</div>
-                      <div class="admin-order-item__meta">${esc(item.qty)} шт. × ${formatMoney(item.price)}</div>
+                      <div class="admin-order-item__details">
+                        <div class="admin-order-item__meta">${esc(item.qty)} шт. × ${formatMoney(item.price)}</div>
+                        <span class="admin-order-item__availability" ${AdminOrderItemAvailability.needsNotice(ord.statusCode, item.id, PRODUCTS_DATA) ? "" : "hidden"}>Немає в наявності</span>
+                      </div>
                     </div>
                     <div class="admin-order-item__sum">${formatMoney(item.price * item.qty)}</div>
                   </div>
@@ -1157,7 +1171,7 @@ if (typeof document !== "undefined") {
             }
 
             return `
-                  <article class="admin-order-card" data-order-id="${esc(ord.orderId)}">
+                  <article class="admin-order-card" data-order-id="${esc(ord.orderId)}" data-order-status="${esc(ord.statusCode)}">
                     <div class="admin-order-card__header">
                       <div class="admin-order-card__id-group">
                         <span class="admin-order-card__id">Замовлення #${esc(ord.orderId)}</span>
@@ -3016,9 +3030,20 @@ if (typeof document !== "undefined") {
         button.disabled = false;
       }
     });
-    window.addEventListener("astel:catalog-updated", () =>
-      renderProductsTable(),
-    );
+    window.addEventListener("astel:catalog-updated", () => {
+      renderProductsTable();
+      // Refresh just the badge, not the entire order card: do not lose an
+      // unfinished manager note or order edit when catalog availability changes.
+      ordersContainer.querySelectorAll(".admin-order-card").forEach((card) => {
+        const status = card.dataset.orderStatus;
+        card.querySelectorAll("[data-order-product-id]").forEach((line) => {
+          const badge = line.querySelector(".admin-order-item__availability");
+          if (badge) badge.hidden = !AdminOrderItemAvailability.needsNotice(
+            status, line.dataset.orderProductId, PRODUCTS_DATA,
+          );
+        });
+      });
+    });
 
     // Create Demo Order Button
     document

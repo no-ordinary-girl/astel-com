@@ -429,6 +429,8 @@
 .product-card__status {
   font-size: 13px;
   font-weight: 500;
+  /* Reserve two lines for consistent price/status alignment across cards. */
+  min-height: 2.4em;
 }
 .product-card__status--instock {
   color: #059669;
@@ -464,6 +466,8 @@
   /* margin: 0 8px; */
   margin: 0 2px;
   border-top: 1px solid var(--gray-200);
+  /* Unavailable products have no quantity selector; keep footer heights equal. */
+  min-height: 56px;
 }
 
 .product-card__qty-control {

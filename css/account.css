@@ -897,6 +897,15 @@
    ACCOUNT MOBILE NAV TABS (up to 959px)
    =========================== */
 @media (max-width: 959px) {
+  /* On mobile, show the support contact before the 2x2 account tabs. */
+  .account-sidebar .manager-card {
+    order: 1;
+  }
+
+  .account-sidebar .account-nav {
+    order: 2;
+  }
+
   .account-nav {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

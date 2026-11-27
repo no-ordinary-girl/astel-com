@@ -425,6 +425,10 @@
                     м. Київ — Нова Пошта (Відділення №15: вул. Машинобудівна,
                     44)
                   </div>
+                  <div class="saved-payment-pref">
+                    <span class="saved-address-banner__tag">Збережений спосіб оплати (для наступного замовлення)</span>
+                    <span class="saved-payment-pref__value" id="saved-payment-text"></span>
+                  </div>
                 </div>
 
                 <form id="address-form" novalidate>
@@ -956,7 +960,7 @@
           document.getElementById("prof-email").value =
             user.email || "example@gmail.com";
           document.getElementById("prof-phone").value =
-            user.phone || "+380501234567";
+            user.phone ?? "+380501234567";
 
           const addr = user.address || {
             city: "Київ",
@@ -971,6 +975,8 @@
           document.getElementById("addr-branch").value = addr.branch || "";
           document.getElementById("saved-address-text").textContent =
             `м. ${addr.city} — ${addr.carrierName} (${addr.type}: ${addr.branch})`;
+          document.getElementById("saved-payment-text").textContent =
+            user.preferredPayment || "Не вибрано";
 
           document
             .querySelectorAll('input[name="acct_carrier"]')

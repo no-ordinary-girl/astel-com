@@ -322,6 +322,11 @@ const DeliveryDirectory = {
   },
 
   async fetchNovaPoshtaWarehouses(cityName, isLocker) {
+    // This static prototype has no API credentials. Skip a request that would
+    // fail or stall the checkout dropdown; use the built-in demo suggestions.
+    // The production backend will supply verified carrier data instead.
+    const apiKey = "";
+    if (!apiKey) return null;
     const cacheKey = `${cityName}_${isLocker ? "locker" : "branch"}`;
     if (this.warehouseCache[cacheKey]) return this.warehouseCache[cacheKey];
 
@@ -332,7 +337,7 @@ const DeliveryDirectory = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            apiKey: "",
+            apiKey,
             modelName: "Address",
             calledMethod: "getCities",
             methodProperties: { FindByString: cityName, Limit: "5" },

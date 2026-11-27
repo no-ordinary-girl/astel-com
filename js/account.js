@@ -95,6 +95,89 @@ const AuthManager = (function () {
     return updated;
   }
 
+  // After saving a change to the customer's own order, synchronize ONLY the
+  // changed fields. Unchanged order fields never overwrite newer profile data.
+  // Order records themselves retain their historical delivery/payment snapshots.
+  function syncProfileFromEditedOrder(previousOrder, updatedOrder) {
+    const user = getUser();
+    const previousCustomer = previousOrder && previousOrder.customer;
+    const updatedCustomer = updatedOrder && updatedOrder.customer;
+    const previousEmail = String(previousCustomer?.email || "").trim().toLowerCase();
+    const accountEmail = String(user?.email || "").trim().toLowerCase();
+
+    if (
+      !user || !previousCustomer || !updatedCustomer ||
+      !previousOrder.orderId ||
+      String(previousOrder.orderId) !== String(updatedOrder.orderId) ||
+      !previousEmail || previousEmail !== accountEmail
+    ) return false;
+
+    const changes = {};
+    for (const field of ["firstName", "lastName", "phone", "email"]) {
+      const before = String(previousCustomer[field] || "").trim();
+      const after = String(updatedCustomer[field] || "").trim();
+      if (after !== before && (field === "phone" || after)) changes[field] = after;
+    }
+
+    const addressFields = ["city", "carrierKey", "carrierName", "type", "branch"];
+    const oldDelivery = previousOrder.delivery || {};
+    const newDelivery = updatedOrder.delivery || {};
+    const addressChanged = addressFields.some((field) =>
+      String(newDelivery[field] || "").trim() !== String(oldDelivery[field] || "").trim());
+    if (addressChanged && newDelivery.city && newDelivery.branch) {
+      changes.address = Object.fromEntries(addressFields.map((field) =>
+        [field, String(newDelivery[field] || "").trim()]));
+    }
+
+    const previousPayment = String(previousOrder.payment || "").trim();
+    const updatedPayment = String(updatedOrder.payment || "").trim();
+    if (updatedPayment && previousPayment !== updatedPayment &&
+        updatedPayment !== user.preferredPayment) {
+      changes.preferredPayment = updatedPayment;
+    }
+
+    if (!Object.keys(changes).length) return false;
+    saveUser(changes);
+    return true;
+  }
+
+  // A new checkout placed by the signed-in customer updates the account's
+  // contact details and preferred delivery/payment for their NEXT checkout.
+  // Orders keep their own immutable customer, delivery and payment snapshots.
+  // Guests and accounts changed while the form was open are never updated.
+  function syncProfileFromNewOrder(order, signedInEmailAtStart) {
+    const user = getUser();
+    const expectedEmail = String(signedInEmailAtStart || "").trim().toLowerCase();
+    if (!user || !order?.customer || !order?.delivery || !expectedEmail ||
+        String(user.email || "").trim().toLowerCase() !== expectedEmail) return false;
+
+    const changes = {};
+    for (const field of ["firstName", "lastName", "phone", "email"]) {
+      const value = String(order.customer[field] ?? "").trim();
+      if (field !== "phone" && !value) continue;
+      if (value !== String(user[field] ?? "").trim()) changes[field] = value;
+    }
+
+    const address = order.delivery;
+    const preferredAddress = {
+      city: String(address.city || "").trim(),
+      carrierKey: String(address.carrierKey || "").trim(),
+      carrierName: String(address.carrierName || "").trim(),
+      type: String(address.type || "").trim(),
+      branch: String(address.branch || "").trim(),
+    };
+    if (preferredAddress.city && preferredAddress.branch &&
+        Object.entries(preferredAddress).some(([key, value]) => value !== String(user.address?.[key] ?? "").trim())) {
+      changes.address = preferredAddress;
+    }
+    const payment = String(order.payment || "").trim();
+    if (payment && payment !== user.preferredPayment) changes.preferredPayment = payment;
+
+    if (!Object.keys(changes).length) return false;
+    saveUser(changes);
+    return true;
+  }
+
   function login(email, extra = {}) {
     const existing = getUser();
     const defaultProfile = {
@@ -103,6 +186,7 @@ const AuthManager = (function () {
       email: email || (existing && existing.email) || "example@gmail.com",
       phone: extra.phone || (existing && existing.phone) || "+380501234567",
       authMethod: extra.authMethod || "E-mail",
+      preferredPayment: extra.preferredPayment || (existing && existing.preferredPayment) || "Готівка",
       address: (existing && existing.address) || {
         city: "Київ",
         carrierKey: "nova",
@@ -256,6 +340,8 @@ const AuthManager = (function () {
     getUser,
     isLoggedIn,
     saveUser,
+    syncProfileFromEditedOrder,
+    syncProfileFromNewOrder,
     login,
     logout,
     getOrders,

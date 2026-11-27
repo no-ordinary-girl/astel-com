@@ -845,6 +845,21 @@
   line-height: 1.4;
 }
 
+/* Checkout stores the preferred payment method; this is not a payment receipt. */
+.saved-payment-pref {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  margin-top: 6px;
+  border-top: 1px solid var(--gray-200);
+}
+.saved-payment-pref__value {
+  color: var(--gray-900);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 /* Carrier Radio Cards inside Address Tab */
 .carrier-grid {
   display: grid;

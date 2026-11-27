@@ -753,6 +753,14 @@ if (typeof document !== "undefined") {
       const count = key ? AdminCustomers.notesForOrder(customerProfile(key), id).length : 0;
       if (badge) { badge.textContent = String(count); badge.hidden = count === 0; }
     }
+    // Canceled orders keep their five workspace tabs and payment ledger, but
+    // the header must not present an outstanding payment status as active.
+    function renderOrderPaymentBadge(ord) {
+      if (ord.statusCode === "canceled") return "";
+      return `<span class="admin-payment-state admin-payment-state--${esc(OrderFinance.paymentStatus(ord))}">
+        ${esc(OrderFinance.paymentLabel(ord))}
+      </span>`;
+    }
     function renderOrderWorkspace(ord) {
       const id = String(ord.orderId);
       const active = activeOrderPanes.get(id) || "";
@@ -778,7 +786,9 @@ if (typeof document !== "undefined") {
         aria-labelledby="order-tab-${name}-${esc(id)}" ${active === name ? "" : "hidden"}>${html}</div>`;
       const editContent = ord.statusCode === "processing"
         ? (active === "edit" ? renderOrderEditor(ord) : "")
-        : `<div class="admin-order-workspace__notice"><strong>Редагування недоступне</strong><p>Змінювати дані замовлення можна на етапі «В обробці». Для виконаного замовлення використайте «Повернути в роботу», якщо справді потрібно змінити початкові дані. Гарантійні випадки оформлюйте окремо.</p></div>`;
+        : ord.statusCode === "canceled"
+          ? `<div class="admin-order-workspace__notice"><strong>Редагування недоступне</strong><p>Замовлення скасовано. Натисніть «Відновити замовлення», щоб повернути його в обробку та редагувати дані.</p></div>`
+          : `<div class="admin-order-workspace__notice"><strong>Редагування недоступне</strong><p>Змінювати дані замовлення можна на етапі «В обробці». Для виконаного замовлення використайте «Повернути в роботу», якщо справді потрібно змінити початкові дані. Гарантійні випадки оформлюйте окремо.</p></div>`;
       const warrantyContent = AstelAdminWarranty.panel(ord) ||
         '<div class="admin-order-workspace__notice"><strong>Гарантійні звернення</strong><p>Нове звернення можна зареєструвати після завершення замовлення.</p></div>';
       return `<div class="admin-order-workspace" data-order-workspace="${esc(id)}">
@@ -1157,9 +1167,7 @@ if (typeof document !== "undefined") {
                         <span class="status-pill status-pill--${ord.statusCode}">
                           ${STATUS_LABELS[ord.statusCode]}
                         </span>
-                        <span class="admin-payment-state admin-payment-state--${OrderFinance.paymentStatus(ord)}">
-                          ${esc(OrderFinance.paymentLabel(ord))}
-                        </span>
+                        ${renderOrderPaymentBadge(ord)}
                         ${(() => {
                           const key = AdminCustomers.keyFor(ord.customer);
                           const status = customerProfile(key).status;

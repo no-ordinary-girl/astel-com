@@ -44,6 +44,7 @@
   // A pending record does not affect the balance. A manager-confirmed record
   // is written in one operation, eliminating the old add-then-confirm workflow.
   function createRecord(order, payload, nextStatus, store) {
+    requireActiveOrder(order);
     const orderId = String(order?.orderId || "");
     if (!orderId) throw new Error("Замовлення не знайдено");
     const type = String(payload.type);
@@ -79,6 +80,7 @@
     return "other";
   }
   function changeState(order, entryId, nextStatus, store) {
+    requireActiveOrder(order);
     if (!["confirmed", "void"].includes(nextStatus)) throw new Error("Невірний статус запису");
     const all = read(store);
     const existing = all.find((r) => r.id === entryId && r.orderId === String(order?.orderId));
@@ -95,7 +97,15 @@
   const format = (cents) => `${(Number(cents || 0) / 100).toLocaleString("uk-UA", { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 })} ₴`;
   const dateTime = (time) => new Date(time).toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
   const STATUS_LABELS = Object.freeze({ confirmed: "Підтверджено менеджером", pending: "Очікує підтвердження", void: "Запис скасовано" });
+  const isCanceled = (order) => order?.statusCode === "canceled";
+  function requireActiveOrder(order) {
+    if (isCanceled(order)) throw new Error("Розрахунки та оплата недоступні для скасованого замовлення");
+  }
   function panel(order) {
+    if (isCanceled(order)) return `<div class="admin-order-workspace__notice" role="status">
+      <strong>Розрахунки та оплата недоступні</strong>
+      <p>Замовлення скасовано. Фінансові операції недоступні до його відновлення. Раніше створені платіжні записи збережено.</p>
+    </div>`;
     const s = summary(order);
     const entries = [...s.entries].sort((a, b) => b.createdAt - a.createdAt);
     const oid = escape(order.orderId);
@@ -152,8 +162,11 @@
       const form = e.currentTarget;
       const data = Object.fromEntries(new FormData(form));
       try {
+        const currentOrder = context?.findOrder?.(order.orderId);
+        if (!currentOrder) throw new Error("Замовлення не знайдено");
+        requireActiveOrder(currentOrder);
         const entry = data.verification === "confirmed"
-          ? recordConfirmed(order, { ...data, type }) : add(order, { ...data, type });
+          ? recordConfirmed(currentOrder, { ...data, type }) : add(currentOrder, { ...data, type });
         context?.activity?.({ type: "payment", action: type === "refund" ? "payment.refund.created" : "payment.created", entityType: "order", entityId: String(order.orderId), summary: type === "refund" ? "Зареєстровано повернення коштів" : "Додано запис про платіж", detail: `${format(entry.amountCents)} · ${METHODS[entry.method]} · ${entry.status === "confirmed" ? "Підтверджено менеджером" : "Очікує перевірки"}` });
         close(); context?.refresh?.(); context?.toast?.(entry.status === "confirmed" ? "Операцію підтверджено й враховано в балансі" : "Запис додано. Він очікує перевірки.");
       } catch (err) { const message = form.querySelector("[data-form-error]"); message.textContent = err.message; message.hidden = false; }
@@ -178,7 +191,11 @@
     });
     if (!accepted) return;
     const latest = context?.findOrder?.(order.orderId);
-    if (!latest) return;
+    if (!latest || isCanceled(latest)) {
+      context?.toast?.("Розрахунки та оплата недоступні для скасованого замовлення");
+      context?.refresh?.();
+      return;
+    }
     const fresh = summary(latest);
     if (fresh.pending || fresh.remaining !== current.remaining) {
       context?.toast?.("Баланс змінився. Перевірте платежі ще раз.");
@@ -207,7 +224,9 @@
     });
     if (!accepted) return;
     try {
-      const changed = changeState(order, recordId, next);
+      const latest = context?.findOrder?.(order.orderId);
+      if (!latest) throw new Error("Замовлення не знайдено");
+      const changed = changeState(latest, recordId, next);
       context?.activity?.({ type: "payment", action: next === "confirmed" ? "payment.confirmed" : "payment.void", entityType: "order", entityId: String(order.orderId), summary: next === "confirmed" ? "Менеджер підтвердив операцію" : "Скасовано запис про операцію", detail: `${changed.type === "refund" ? "Повернення" : "Платіж"} · ${format(changed.amountCents)} · ${METHODS[changed.method]}` });
       context?.refresh?.(); context?.toast?.(next === "confirmed" ? "Операцію підтверджено" : "Запис скасовано");
     } catch (err) { context?.toast?.(err.message); }
@@ -224,6 +243,11 @@
       const id = quick?.dataset.paymentFull || add?.dataset.paymentAdd || refund?.dataset.paymentRefund || confirm?.dataset.paymentOrder || cancel?.dataset.paymentOrder;
       if (!id) return;
       const order = context.findOrder(id); if (!order) return;
+      if (isCanceled(order)) {
+        context?.toast?.("Розрахунки та оплата недоступні для скасованого замовлення");
+        context?.refresh?.();
+        return;
+      }
       if (quick) confirmFullPayment(order);
       else if (add || refund) dialog(order, refund ? "refund" : "payment");
       else updateRecord(order, (confirm || cancel).dataset[confirm ? "paymentConfirm" : "paymentVoid"], confirm ? "confirmed" : "void");

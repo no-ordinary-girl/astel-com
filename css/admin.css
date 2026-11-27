@@ -129,7 +129,9 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  /* Background and text must change together with the count badge.
+     Transitioning all properties leaves a brief mismatched frame on tab switches. */
+  transition: box-shadow 0.2s ease;
 }
 
 .admin-tab:hover {
@@ -421,42 +423,6 @@
   font-weight: 700;
   color: var(--gray-900);
   white-space: nowrap;
-}
-
-/* Keep the order snapshot (quantity × original unit price) and current
-   production-availability notice on one line when space permits. */
-.admin-order-item__details {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  margin-top: 4px;
-  min-width: 0;
-}
-.admin-order-item__details .admin-order-item__meta {
-  margin-top: 0;
-}
-.admin-order-item__details .admin-order-item__availability {
-  margin-top: 0;
-}
-
-/* Non-blocking warning for an ordered product whose production availability
-   was changed after the order was placed. */
-.admin-order-item__availability {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  margin-top: 5px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  background-color: rgba(220, 38, 38, 0.10);
-  color: #dc2626;
-  font: 700 11px/1.3 var(--font-mono);
-}
-.admin-order-item__availability[hidden] { display: none; }
-html[data-theme="dark"] .admin-order-item__availability {
-  background-color: rgba(248, 113, 113, 0.15);
-  color: #f87171;
 }
 
 /* --- Bottom Controls Bar (Clean 2-Sided Layout) --- */

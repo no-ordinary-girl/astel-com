@@ -576,7 +576,7 @@ if (typeof document !== "undefined") {
             <div class="admin-client-order__identity">
               <div class="admin-client-order__title">
                 <button class="admin-client-order-link" type="button" data-client-order="${esc(orderId)}">#${esc(orderId)}</button>
-                <span class="admin-client-order__state">${esc(STATUS_LABELS[ord.statusCode] || ord.status || "—")}</span>
+                <span class="admin-client-order__state admin-client-order__state--${["active", "processing", "shipped", "completed", "canceled"].includes(ord.statusCode) ? ord.statusCode : "unknown"}">${esc(STATUS_LABELS[ord.statusCode] || ord.status || "—")}</span>
               </div>
               <time>${formatDate(ord.createdAt)}</time>
               <p class="admin-client-order__delivery" title="Адреса доставки"><span>Доставка:</span> ${esc(orderDeliveryAddress(ord.delivery))}</p>
@@ -3100,6 +3100,44 @@ if (typeof document !== "undefined") {
         );
       });
 
+    // Switching main panels closes nested sections, without discarding unsaved
+    // order/product form values. A manager may reopen an editor to continue.
+    function closeNestedAdminPanels() {
+      activeOrderPanes.clear();
+      editingOrderIds.clear();
+      expandedOrderNoteIds.clear();
+      openOrderNoteComposers.clear();
+      ordersContainer.querySelectorAll("[data-order-tab]").forEach((button) => {
+        button.classList.remove("is-active");
+        button.setAttribute("aria-expanded", "false");
+      });
+      ordersContainer.querySelectorAll("[data-order-pane]").forEach((pane) => {
+        pane.hidden = true;
+      });
+      ordersContainer.querySelectorAll(".admin-order-card__controls").forEach((controls) => {
+        controls.hidden = false;
+      });
+      ordersContainer.querySelectorAll("[data-admin-order-note-compose]").forEach((button) => {
+        button.setAttribute("aria-expanded", "false");
+        button.textContent = "+ Додати примітку";
+      });
+      ordersContainer.querySelectorAll("[data-admin-order-note-form]").forEach((form) => {
+        form.hidden = true;
+      });
+
+      const hadExpandedClients = expandedClientKeys.size > 0;
+      expandedClientKeys.clear();
+      customerSelectedOrders.clear();
+      openClientNoteComposers.clear();
+      AstelAdminActivity.closeOrderHistories();
+      if (hadExpandedClients) renderClientsTable(buildClientsList(loadAllOrders()));
+
+      // showDetails() collapses the editor without destroying its live form,
+      // including unsaved text and files selected for upload.
+      for (const id of [...detailOpen]) showDetails(id);
+      detailOpen.clear();
+    }
+
     // Switch Admin Tabs
     const tabBtns = document.querySelectorAll("[data-admin-tab]");
     const panels = document.querySelectorAll(".admin-panel");
@@ -3109,6 +3147,8 @@ if (typeof document !== "undefined") {
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         const target = btn.getAttribute("data-admin-tab");
+        // Ignore another click on the already active main section.
+        if (!btn.classList.contains("is-active")) closeNestedAdminPanels();
         tabBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
         panels.forEach((p) => p.classList.toggle("is-active", p.id === target));
         filterBar.hidden = target !== "panel-orders";

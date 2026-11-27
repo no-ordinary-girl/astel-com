@@ -57,7 +57,12 @@
 .admin-client-order__identity time { color: #7a818b; font: 12px var(--font-mono, monospace); }
 .admin-client-order__delivery { margin: 0; color: #525965; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
 .admin-client-order__delivery span { color: #7a818b; }
-.admin-client-order__state { display: inline-flex; align-items: center; color: #555d68; font: 700 11px var(--font-mono, monospace); padding: 6px 9px; border-radius: 6px; background: #efefef; }
+/* Mirror order-status colors in the client order history. */
+.admin-client-order__state { display: inline-flex; align-items: center; color: #6b7280; font: 700 11px var(--font-mono, monospace); padding: 6px 9px; border-radius: 6px; background: #eeeeee; }
+.admin-client-order__state--processing { background: rgba(217, 119, 6, 0.14); color: #b45309; }
+.admin-client-order__state--shipped { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+.admin-client-order__state--completed { background: rgba(5, 150, 105, 0.12); color: #059669; }
+.admin-client-order__state--canceled { background: rgba(220, 38, 38, 0.12); color: #dc2626; }
 .admin-client-order__amount { font: 700 14px var(--font-mono, monospace); white-space: nowrap; justify-self: end; }
 .admin-client-order__notes-toggle {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
